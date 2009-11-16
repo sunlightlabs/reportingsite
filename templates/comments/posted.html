@@ -1,0 +1,17 @@
+<html>
+<head>
+<script type="text/javascript">
+<!--
+function delayer(){
+    window.location = "{% url blogdor_post comment.content_object.date_published.year comment.content_object.slug %}"
+}
+//-->
+</script>
+</head>
+<body onLoad="setTimeout('delayer()', 2500)">
+<h2>Thanks for your comment!</h2>
+<p>Comments are moderated to prevent spam, but your comment will appear as soon as we get the chance.</p>
+<p>Now taking you back to <a href="{% url blogdor_post comment.content_object.date_published.year comment.content_object.slug %}">the article</a>...</p>
+</body>
+</html>
+

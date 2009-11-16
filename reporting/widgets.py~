@@ -1,0 +1,36 @@
+from django import forms
+from django.db.models import get_model
+from django.utils import simplejson
+from django.utils.safestring import mark_safe
+from tagging.models import Tag
+
+from models import Post
+
+#Post = get_model('reporting', 'post')
+
+class CloudTagInput(forms.TextInput):
+    class Media:
+        css = {
+            'all': ('jquery.autocomplete.css',)
+        }
+        js = (
+            'js/jquery.js',
+            'js/jquery.bgiframe.min.js',
+            'js/jquery.ajaxQueue.js',
+            'jquery.autocomplete.js'
+        )
+
+    def render(self, name, value, attrs=None):
+        output = super(CloudTagInput, self).render(name, value, attrs)
+        page_tags = Tag.objects.usage_for_model(Post)
+        #tag_list = simplejson.dumps([tag.name for tag in page_tags], ensure_ascii=False)
+        tag_list = 'taglist = Array('
+        for tag in page_tags:
+            tag_list = tag_list + '"' + tag.name + '",'
+        tag_list = tag_list + ');'
+        return output + mark_safe(u'''<a onclick="$('#tagcloud').load('/tag/admin/')">Select a tag</a><div id="tagcloud"></div>
+                                    <script type="text/javascript">alert("'''+value+'''");
+                                    function addtag(tagname) {
+                                        $('#id_tags').val( tagname + ', ' + $('#id_tags').val() );
+                                    }</script>''')
+

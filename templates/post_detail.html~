@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+
+{% load comments %}
+{% load markup %}
+{% load tagging_tags %}
+
+
+{% block content %}
+
+{% get_comment_list for post as comment_list %}
+<div>
+	<h2>{{ post.title }}</h2>
+ {{post.byline}} {% if comment_list %}(<a href="#comments">{{ comment_list|length}} comments</a>){%endif%}<br/><br/>
+
+
+{% autoescape off %}	
+
+{{ post.content }}
+
+
+</div>
+
+{% tags_for_object post as tags %}
+
+{% if tags %}
+    <div>
+        <span>Tags:</span>
+        <ul>
+            {% for tag in tags %}
+            	<li><a href="{% url blogdor_tag tag %}">{{ tag }}</a></li>
+            {% endfor %}
+        </ul>
+    </div>  
+{% endif %}
+
+{% if post.is_published %}
+    <div>
+        <h3>Comments</h3>
+        {% render_comment_form for post %}
+<a name="comments"/>
+ {% if comment_list %}
+            <ol id="comments">
+                {% for comment in comment_list %}
+                    <li id="c{{ comment.pk }}">
+                        <div>
+                        	{% if comment.user_url %}
+                                <p><a href="{{ comment.user_url }}">{{ comment.user_name }}</a></p>
+                            {% else %}
+                                <p>{{ comment.user_name }}</p>
+                            {% endif %}
+						</div>
+                        <div class="entry-content"><p>{{ comment.comment}}</p></div>
+						<div class="clear"></div>
+                    </li>
+                {% endfor %}
+            </ol>
+        {% endif %}
+    </div>    
+{% endif %}
+
+{%endautoescape%}
+
+{%endblock%}
+
+
+{% block sidebar %}
+{{sidebar}}
+{%endblock%}

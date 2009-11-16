@@ -1,0 +1,120 @@
+<script type="text/javascript">
+function cleardefault(box)
+{
+if (box.value=='Search SLRG') { box.value=''; }
+}
+</script>
+<form method="get" action="/search/">
+<input type="text" name="terms" value="Search SLRG" onFocus="cleardefault(this);">
+</form>
+
+Latest posts
+<ul>
+{%for entry in ourposts %}
+<li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{entry.title}}</a></li>
+{%endfor%}
+</ul>
+
+Latest Comments<br/><ul>
+{% for comment in comments %}
+<li><a href="{{comment.content_object.get_content_object_url}}#comments">{{ comment.content_object.title }}</a> - {{ comment.comment}}</li>
+{% endfor %}</ul>
+
+Dates we're watching
+<ul>
+{% for cal in calendars %}
+<li><b>{{cal.date}}</b> - {{cal.summary}}</a></li>
+{%endfor%}
+</ul>
+
+Resources we're watching<br/>
+{% regroup resources by date_published as resources2 %}
+{%for resource in resources2%}
+{{ resource.grouper }}
+<ul>
+{%for entry in resource.list %}
+<li>{{entry.feed.title}}: <a href="{{entry.link}}" target="_blank">{{entry.title}}</a></li>
+{%endfor%}
+</ul>
+{%endfor%}
+
+
+Reporting we watch<br/>
+{% for feed in news %}
+{{feed.title}}
+<ul>
+{%for entry in feed.entries.all %}
+{%ifequal forloop.counter 1%}
+<li><a href="{{entry.link}}" target="_blank">{{entry.title}}</a></li>
+{%endifequal%}
+{%ifequal forloop.counter 2%}
+<li><a href="{{entry.link}}" target="_blank">{{entry.title}}</a></li>
+{%endifequal%}
+{%endfor%}
+</ul>
+
+{%endfor%}
+
+
+
+
+
+Popular tags<br/>
+
+<style type="text/css">
+.tag1 {
+    font-size: 6pt;
+}
+
+.tag2 {
+    font-size: 8pt;
+}
+
+.tag3 {
+    font-size: 10pt;
+}
+
+.tag4 {
+    font-size: 12pt;
+}
+
+.tag5 {
+    font-size: 14pt;
+}
+
+.tag6 {
+    font-size: 16pt;
+}
+
+.tag7 {
+    font-size: 18pt;
+}
+
+.tag8 {
+    font-size: 20pt;
+}
+
+.tag9 {
+    font-size: 22pt;
+}
+
+.tag10 {
+    font-size: 24pt;
+}
+
+.tagbox .group {
+    text-align: center;
+    margin-bottom: 20px;
+}
+</style>
+
+
+{% load tagging_tags %}
+        {% tag_cloud_for_model reporting.Post as entry_tags with steps=5 min_count=9 distribution=log %}
+        {% for tag in entry_tags %}
+            <a class="tag{{ tag.font_size }}" a href="/tag/{{tag}}">{{ tag }}</a>
+        {% endfor %}
+
+
+
+

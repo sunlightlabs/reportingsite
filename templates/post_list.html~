@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block content %}
+{% autoescape off%}
+<ol>
+	{% for post in post_list %}
+		<li><h2><a href="{% url blogdor_post post.date_published.year post.slug %}">{{ post.title }}</a></h2>
+{{ post.byline }} {%if comment_count%}({{comment_count}} comments){%endif%}<br/><br/>
+
+{{ post.lede }}
+</li>
+	{% endfor %}
+</ol>
+
+{%endautoescape %}
+
+{% include 'blogdor/paginator.html' %}
+
+
+{%endblock%}
