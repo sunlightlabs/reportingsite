@@ -23,8 +23,20 @@ class CloudTagInput(forms.TextInput):
     def render(self, name, value, attrs=None):
         output = super(CloudTagInput, self).render(name, value, attrs)
         #page_tags = Tag.objects.usage_for_model(Post)
-        return output + mark_safe(u'''<a onclick="$('#tagcloud').load('/tag/admin/')">Select a tag</a><div id="tagcloud"></div>
+        return output + mark_safe(u'''<a onclick="tagswitch()" id="tagflip">Select tags</a><div id="tagcloud"></div>
                                     <script type="text/javascript">
+                                    function tagswitch() {
+                                        if( $('#tagcloud').html()=='') {
+                                            $('#tagcloud').load('/tag/admin/');
+                                        }    
+                                        if( $('#tagflip').html()=='Select tags') {
+                                            $('#tagflip').html('Hide tags');
+                                            $('#tagcloud').toggle()
+                                        }  else {
+                                            $('#tagflip').html('Select tags');
+                                            $('#tagcloud').toggle()
+                                        }
+                                    }
                                     function addtag(tagname) {
                                         $('#id_tags').val( tagname + ', ' + $('#id_tags').val() );
                                     }</script>''')

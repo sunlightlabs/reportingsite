@@ -1,0 +1,9 @@
+pip
+python-memcached
+Django==1.1
+-e git://github.com/sunlightlabs/django-mediasync.git#egg=django-mediasync          
+django-tagging
+feedinator
+feedparser
+
+

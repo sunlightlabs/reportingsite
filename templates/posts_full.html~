@@ -20,7 +20,7 @@
 </ol>
 {%endautoescape%}
 
-{% include 'blogdor/paginator.html' %}
+{% include 'paginator.html' %}
 
 
 {%endblock%}

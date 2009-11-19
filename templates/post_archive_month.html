@@ -1,9 +1,10 @@
+{% extends "base.html" %}
 
 {% block content %}
 
 <h1>{{ month|date:"F Y" }}</h1>
 
-{% include "reporting/post_list.html" %}
+{% include "post_list.html" %}
 
 
 {%endblock%}

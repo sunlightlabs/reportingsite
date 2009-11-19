@@ -2,7 +2,6 @@ from django.conf import settings
 from django.contrib.auth.models import User
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from markupfield.fields import MarkupField
 from tagging.fields import TagField
 import datetime
 from django.contrib.sites.models import Site
@@ -12,7 +11,6 @@ from django.contrib.comments.moderation import moderator
 
 COMMENT_FILTERS = getattr(settings, "BLOGDOR_COMMENT_FILTERS", [])
 WP_PERMALINKS = getattr(settings, "BLOGDOR_WP_PERMALINKS", False)
-DEFAULT_MARKUP = getattr(settings, "BLOGDOR_DEFAULT_MARKUP", "markdown")
 
 
 class PostQuerySet(models.query.QuerySet):
@@ -44,7 +42,7 @@ class Post(models.Model):
     author = models.ForeignKey(User, related_name='posts')
     
     content = models.TextField() 
-    excerpt = models.TextField()  
+    excerpt = models.TextField(blank=True)  
     
     timestamp = models.DateTimeField(auto_now_add=True)
     last_updated = models.DateTimeField(auto_now=True, auto_now_add=True)
@@ -62,6 +60,7 @@ class Post(models.Model):
     blogreport = models.CharField(max_length=10, choices=(('B', 'Blog'), ('R','Report')))
 
     pullquote = models.CharField(max_length=255, blank=True)
+    override_byline = models.CharField(max_length=255, blank=True)
 
 
     def byline(self):
@@ -70,7 +69,9 @@ class Post(models.Model):
         d2 = self.date_published.strftime("%I:%M%P")
         if d2[0:1]=='0':
             d2 = d2[1:]
-        d = d1 + " " + d2      
+        d = d1 + " " + d2
+        if self.override_byline:
+            return "By " + self.override_byline + " " + d 
         return "By " + self.author.first_name + " " + self.author.last_name + " " + d
 
     def lede(self): 

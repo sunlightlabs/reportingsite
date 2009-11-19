@@ -52,9 +52,9 @@
 
 {% load tagging_tags %}
 <div class="tagbox">
-    <div class="header">Browse our reporting by Tag:</div>
+    <div class="header">Browse our reporting by tag:</div>
     <div class="group">
-        {% tag_cloud_for_model reporting.Post as entry_tags with steps=8 min_count=3 distribution=log %}
+        {% tag_cloud_for_model reporting.Post as entry_tags with steps=10 min_count=2 distribution=log %}
         {% for tag in entry_tags %}
             <a class="tag{{ tag.font_size }}" a href="/tag/{{tag}}">{{ tag }}</a>
         {% endfor %}

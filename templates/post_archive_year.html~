@@ -1,6 +1,8 @@
+{% extends "base.html" %}
+
+{% block content %}
+
 <h1>{{ year }}</h1>
-
-
 
 {% if date_list %}
 	<ol>
@@ -11,5 +13,8 @@
 {% endif %}
 
 {% if post_list %}
-	{% include "blogdor/post_list.html" %}
+	{% include "reporting/post_list.html" %}
 {% endif %}
+
+
+{%endblock%}

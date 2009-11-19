@@ -85,8 +85,8 @@ def archive_month(request, year, month):
                     year=year,
                     month=month,
                     month_format="%m",
+                    template_name='post_archive_month.html',
                     template_object_name='post',
-                    template_name='posts_lede.html',
                     allow_empty=True)
 
 def archive_year(request, year):
@@ -96,6 +96,7 @@ def archive_year(request, year):
                     date_field='date_published',
                     year=year,
                     template_object_name='post',
+                    template_name='post_archive_year.html',
                     make_object_list=YEAR_POST_LIST,
                     allow_empty=True)
 
