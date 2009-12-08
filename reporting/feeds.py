@@ -29,7 +29,7 @@ class BlogdorFeed(Feed):
 
 class LatestPosts(BlogdorFeed):
 
-    title = u"Latest blog posts"
+    title = u"Recent Sunlight Foundation investigative reports"
     description = title
     
     def items(self):
@@ -48,7 +48,7 @@ class LatestComments(BlogdorFeed):
     title_template = 'blogdor/feeds/comment_title.html'
     description_template = 'blogdor/feeds/comment_description.html'
 
-    title = u"Latest blog comments"
+    title = u"Recent comments on Sunlight Foundation investigative reports"
     description = title
 
     def items(self):
@@ -63,7 +63,7 @@ class LatestComments(BlogdorFeed):
 
 class LatestForAuthor(BlogdorFeed):
 
-    feed_title = u"Recent blog posts authored by %s"
+    feed_title = u"Recent Sunlight Foundation investigative reports by %s"
     feed_description = feed_title
     
     def _display_name(self, user):
@@ -80,6 +80,9 @@ class LatestForAuthor(BlogdorFeed):
     def description(self, author):
         return self.feed_description % self._display_name(author)
 
+    def item_pubdate(self, post):
+        return post.date_published
+
     def get_object(self, bits):
         try:
             return User.objects.get(username=bits[-1])
@@ -91,7 +94,7 @@ class LatestForAuthor(BlogdorFeed):
 
 class LatestForTag(BlogdorFeed):
     
-    feed_title = u"Recent blog posts tagged with '%s'"
+    feed_title = u"Recent Sunlight Foundation investigative reports tagged with '%s'"
     feed_description = feed_title
     
     def title(self, tag):
@@ -105,6 +108,9 @@ class LatestForTag(BlogdorFeed):
             return Tag.objects.get(name=bits[-1])
         except Tag.DoesNotExist:
             return bits[-1]
+
+    def item_pubdate(self, post):
+        return post.date_published
 
     def items(self, tag):
         return TaggedItem.objects.get_by_model(Post.objects.published(), tag)[:ITEMS_PER_FEED]

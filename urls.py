@@ -36,14 +36,14 @@ urlpatterns = patterns(
     url(r'^(?P<year>\d{4})/(?P<slug>[\w-]+)/$', 'post', name='blogdor_post'),
     
     # author
-    url(r'^author/(?P<username>[\w]+)/$', 'author', name='blogdor_author'),
+    url(r'^author/(?P<username>[\w\s]+)/$', 'author', name='blogdor_author'),
     
     # preview
     url(r'^preview/(?P<post_id>\d+)/(?P<slug>[\w-]+)/$', 'preview', name='blogdor_preview'),
 
     #pages by length (blog or report)
-    url(r'^realtime$', 'realtime'),
-    url(r'^stories$', 'stories'),
+    url(r'^realtime/$', 'entries', {'blogreport': 'B'}),
+    url(r'^stories/$', 'entries', {'blogreport': 'R'}),
     #page by topic: flit, ss, slrg pages    
     url(r'^(?P<site>.\w{1,5})/$', 'bysite'),
 )
@@ -67,7 +67,10 @@ urlpatterns += patterns('django.contrib.syndication.views',
         url(r'^feeds/(?P<url>.*)/$', 'feed', params, name="blogdor_feeds"),
 )
 
+from django.conf import settings
+if (settings.DEBUG):  
+    urlpatterns += patterns('',  
+        url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),  
+    )  
 
-urlpatterns += patterns('',
-    (r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': '/home/luke/reportingsite/reporting/media/' }),
-)
+

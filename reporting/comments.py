@@ -4,7 +4,7 @@ from django.contrib.comments.moderation import CommentModerator, moderator
 from django.contrib.sites.models import Site
 
 
-AKISMET_KEY = getattr(settings, "AKISMET_KEY", '***REMOVED***')
+AKISMET_KEY = getattr(settings, "AKISMET_KEY", None)
 
 
 class BlogdorModerator(CommentModerator):

@@ -1,119 +1,113 @@
+{% load smart_if %}
+
+
+{% load tagging_tags %}
+{% tags_for_object post as tags %}
+
+
 <script type="text/javascript">
 function cleardefault(box)
 {
 if (box.value=='Search SLRG') { box.value=''; }
 }
+
 </script>
+<div class="mainModule recentPosts">
 <form method="get" action="/search/">
-<input type="text" name="terms" value="Search SLRG" onFocus="cleardefault(this);">
+<input type="text" id="searchbox" name="terms" value="Search SLRG" onFocus="cleardefault(this);">
 </form>
-
-Latest posts
-<ul>
-{%for entry in ourposts %}
-<li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{entry.title}}</a></li>
-{%endfor%}
-</ul>
-
-Latest Comments<br/><ul>
-{% for comment in comments %}
-<li><a href="{{comment.content_object.get_content_object_url}}#comments">{{ comment.content_object.title }}</a> - {{ comment.comment}}</li>
-{% endfor %}</ul>
-
-Dates we're watching
-<ul>
-{% for cal in calendars %}
-<li><b>{{cal.date}}</b> - {{cal.summary}}</a></li>
-{%endfor%}
-</ul>
-
-Resources we're watching<br/>
-{% regroup resources by date_published as resources2 %}
-{%for resource in resources2%}
-{{ resource.grouper|date:"m/d" }}
-<ul>
-{%for entry in resource.list %}
-<li>{{entry.feed.title}}: <a href="{{entry.link}}" target="_blank">{{entry.title}}</a></li>
-{%endfor%}
-</ul>
-{%endfor%}
+</div>
 
 
-Reporting we watch<br/>
-{% for feed in news %}
+{% if widget %}
+<div class="mainModule recentPosts">
+<h3>SLRG Tool:</h3>
+{% for feed in widget %}
 {{feed.title}}
 <ul>
 {%for entry in feed.entries.all %}
-{%ifequal forloop.counter 1%}
+{%if forloop.counter < 7%}
 <li><a href="{{entry.link}}" target="_blank">{{entry.title}}</a></li>
-{%endifequal%}
-{%ifequal forloop.counter 2%}
-<li><a href="{{entry.link}}" target="_blank">{{entry.title}}</a></li>
-{%endifequal%}
+{%endif%}
 {%endfor%}
 </ul>
-
 {%endfor%}
+</div>
+{%endif%}
 
 
 
+{% if tags %}
+<div class="mainModule categories">
+              <h3>Related Content</h3>
+              <ul>
+{% for tag in tags %}
+{% tagged_objects tag in reporting.Post as posts %}
+                <li>
+                  <a href="{% url blogdor_tag tag %}"><a href="{% url blogdor_tag tag %}">{{ tag }}</a>
+                  <span>{{posts|length}}</span>
+                </li>
+{%endfor%}              
+              </ul> 
+            </div>
+{%endif%}
 
 
-Popular tags<br/>
 
-<style type="text/css">
-.tag1 {
-    font-size: 6pt;
-}
-
-.tag2 {
-    font-size: 8pt;
-}
-
-.tag3 {
-    font-size: 10pt;
-}
-
-.tag4 {
-    font-size: 12pt;
-}
-
-.tag5 {
-    font-size: 14pt;
-}
-
-.tag6 {
-    font-size: 16pt;
-}
-
-.tag7 {
-    font-size: 18pt;
-}
-
-.tag8 {
-    font-size: 20pt;
-}
-
-.tag9 {
-    font-size: 22pt;
-}
-
-.tag10 {
-    font-size: 24pt;
-}
-
-.tagbox .group {
-    text-align: center;
-    margin-bottom: 20px;
-}
-</style>
+           <div class="mainModule recentPosts">
+                <h3>Recent Posts</h3>
+              <ol class="moduleLists">
+{%for entry in ourposts %}
+<li><a class="title" href="{% url blogdor_post entry.date_published.year entry.slug %}">{{entry.title}}</a></li>
+{%endfor%}
+              </ol>
+            </div>
 
 
+
+<div class="mainModule categories">
+              <h3>Latest Comments</h3>
+              <ul>
+{% for comment in comments %}
+               <li><a href="{{comment.content_object.get_content_object_url}}#comments">{{ comment.content_object.title }}: <i>"{{ comment.comment|striptags|truncatewords:10}}...</i>"</a></li>
+{%endfor%}              
+              </ul> 
+            </div>
+
+
+{% regroup resources by date_published as resources2 %}
+           <div class="mainModule recentPosts">
+                <h3>Resources we're watching</h3>
+{%for resource in resources2%}
+              <ol class="moduleLists">
+{{ resource.grouper|date:"m/d" }}
+{%for entry in resource.list %}
+<li><a class="title" href="{{entry.link}}" target="_blank">{{entry.feed.title}}: {{entry.title}}</a></li>
+{%endfor%}
+              </ol>
+{%endfor%}
+            </div>
+
+
+           <div class="mainModule categories">
+                <h3>Reporting we're watching</h3>
+<ul>
+{% for fentry in news %}
+<li><a href="{{fentry.link}}" target="_blank">{{fentry.feed.title}}: {{fentry.title}}</a></li>
+{%endfor%}
+</ul>
+</div>
+
+
+
+   <div class="mainModule recentPosts">
+                <h3>Popular tags</h3>         
 {% load tagging_tags %}
         {% tag_cloud_for_model reporting.Post as entry_tags with steps=5 min_count=9 distribution=log %}
         {% for tag in entry_tags %}
             <a class="tag{{ tag.font_size }}" a href="/tag/{{tag}}">{{ tag }}</a>
         {% endfor %}
+</div>
 
 
 

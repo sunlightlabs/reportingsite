@@ -1,73 +1,49 @@
-<html><head>
-<title>Sunlight Reporting Group</title>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml" >
+  <head>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Sunlight Foundation Reporting Group</title>
+    <link rel="stylesheet" href="/media/css/main.css" type="text/css" media="screen" />
+    <script type="text/javascript" src="/media/js/jquery.js"></script>
 
-<link rel="stylesheet" href="http://blog.sunlightfoundation.com/css/new/blueprint/print.css" type="text/css" media="print">   
-<!--[if IE]><link rel="stylesheet" href="http://assets.sunlightfoundation.com/css/new/blueprint/ie.css" type="text/css" media="screen, projection"><![endif]-->
-<link rel="stylesheet" href="http://blog.sunlightfoundation.com/wp-content/themes/sf_2/style.css" type="text/css" media="screen, projection">
+    <!--script type="text/javascript" src="/media/js/labs.js"></script-->
+    <script type="text/javascript" src="http://use.typekit.com/foz3kwy.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
 
+  <!--[if IE 6]><link rel="stylesheet" href="buggy.css" type="text/css" media="screen" /><![endif]-->
+  <!--[if IE 7]><link rel="stylesheet" href="buggy7.css" type="text/css" media="screen" /><![endif]-->
 
-</head>
-<body>
+  </head>
 
-<h1 style="text-align:center"><a href="/">SUNLIGHT FOUNDATION REPORTING GROUP</a></h1>
+  <body class="{%if bodyclass%}{{bodyclass}}{%else%}fullWidth{%endif%}">  
+    <div id="pageMain">
+      <div id="header">
+        <div id="logo">
+          <h1>
+            <a href="/"><small>Sunlight Foundation</small>
+            <big>Reporting Group</big></a>
+          </h1>
 
+        </div>
+        <span id="todayDate">Friday, November 13, 2009</span>
+        <div id="nav">
+          <ul>
 
+            <li class="firstLi" id="nav_blog"><a href="/realtime">Blog</a></li>
+            <li id="nav_reports"><a href="/stories">Reports</a></li>
+            <li><a href="/feeds/latest/"><img src="http://assets.sunlightfoundation.com/images/blog/social_icons/rss_16x16.png"></a></li>
+            <!--li id="nav_features"><a href="#">Features</a></li-->
 
-<table><tr><td>
-{% block content %}{% endblock %}
-</td>
+          </ul>
+        </div>
+      </div>
+      <div id="mainContent">
 
-<td valign="top">
-{%block sidebar%}{%endblock%}
-</tr></table>
+<div id="columns">
 
-
-
-<div class="column span-24"><div id="header_fat_footer"><h3>Reporting Resources</h3></div></div>
-		<div class="column span-6" style="float:left">
-			<ul id="iuws_list">
-		    <li><a href="http://www.opensecrets.org" target="_new" title="Open Secrets">Center for Responsive Politics</a></li></span>
-		    <li><a href="http://www.opensecrets.org/lobbyists" target="_new" >CRP's Lobbying</a></li>
-			<li><a href="http://www.opensecrets.org/revolving" target="_new" >CRP's Revolving Door</a></li>
-			<li><a href="http://www.opensecrets.org/pfds/overview.asp" target="_new" >CRP's Personal Financial Disclosures</a></li>	
-			</ul>
-		</div>
-
-		<div class="column span-6" style="float:left">
-			<ul id="iuws_list">
-				<li><a href="http://www.bailoutwatch.net" target="_new">BailoutWatch.net</a></li>
-				<li><a href="http://capitolwords.org/" target="_new" title="Capitol Words">Capitol Words</a></li>
-			    <li><a href="http://www.contractormisconduct.org" target="_new" title="Contractor Misconduct">Contractor Misconduct</a></li>
-			    <li><a href="http://www.fedspending.org" target="_new" title="Fedspending.org">FedSpending</a></li>
-			    <li><a href="http://www.followthemoney.org" target="_new" title="Follow The Money">Follow the Money</a></li>
-			</ul>
-		</div>
-		<div class="column span-6" style="float:left">
-
-			<ul id="iuws_list">
-				<li><a href="http://www.GovTrack.us" target="_new" title="GovTrack.us">Govtrack</a></li>
-				<li><a href="http://governmentdocs.org" target="_new" title="Government Documents">Government Docs</a></li>
-			    <li><a href="http://www.legistorm.com" target="_new" title="Legistorm">Legistorm</a></li>	
-				<li><a href="http://www.louisdb.org" target="_new" title="LOUIS">LOUIS</a></li>
-				<li><a href="http://www.maplight.org" target="_new" title="MAPLight">MapLight</a></li>
-			<li><a href="http://www.opencongress.org" target="_new" title="OpenCongress.org">OpenCongress</a></li>				
-
-			</ul>
-		</div>			
-
-		<div class="column span-6 last" style="float:left">
-			<ul id="iuws_list">
-			<li><a href="http://www.opencrs.com" target="_new" title="OpenCRS">OpenCRS</a></li>
-		    <li><a href="http://openhearings.org/live/" target="_new" title="Open Hearings">Open Hearings</a></li>		
-			<li><a href="http://www.vote-smart.org" target="_new" title="Project Vote Smart">Project Vote Smart</a></li>
-			<li><a href="http://www.trac.syr.edu" target="_new" title="TRAC">TRAC</a></li>
-			<li><a href="http://www.washingtonwatch.com" target="_new" title="WashingtonWatch">WashingtonWatch</a></li>
-			<li>(see <a href="http://www.sunlightfoundation.com/resources/" target="_top">full page with descriptions</a>)</li>
-			</ul>
-			
-
-		</div>
+{%block content%}{%endblock%}
 
 
-
-</body></html>
+     {% include 'footer.html' %}

@@ -9,9 +9,12 @@ from django.contrib.sites.models import Site
 from comments import BlogdorModerator
 from django.contrib.comments.moderation import moderator
 
+from django.template.loader import render_to_string
+
 COMMENT_FILTERS = getattr(settings, "BLOGDOR_COMMENT_FILTERS", [])
 WP_PERMALINKS = getattr(settings, "BLOGDOR_WP_PERMALINKS", False)
-
+WHICHSITE_CHOICES = getattr(settings, "WHICHSITE_CHOICES", False)
+ENTRY_TYPES = getattr(settings, "ENTRY_TYPES", [])
 
 class PostQuerySet(models.query.QuerySet):
     
@@ -56,8 +59,8 @@ class Post(models.Model):
     
     tags = TagField()
 
-    whichsite = models.CharField(max_length=10, choices=(('SLRG', 'Sunlight Reporting Group'), ('SS', 'SubsidyScope'), ('FLIT', 'FLIT')))
-    blogreport = models.CharField(max_length=10, choices=(('B', 'Blog'), ('R','Report')))
+    whichsite = models.CharField(max_length=10, choices=WHICHSITE_CHOICES)
+    blogreport = models.CharField(max_length=1, choices=ENTRY_TYPES)
 
     pullquote = models.CharField(max_length=255, blank=True)
     override_byline = models.CharField(max_length=255, blank=True)
@@ -74,33 +77,37 @@ class Post(models.Model):
             return "By " + self.override_byline + " " + d 
         return "By " + self.author.first_name + " " + self.author.last_name + " " + d
 
+    def shortbyline(self):
+        if self.override_byline:
+            return "By " + self.override_byline
+        return 'By <a href="/author/' + self.author.username + '">' + self.author.first_name + " " + self.author.last_name + '</a>'
+
     def lede(self): 
-        from django.utils.html import strip_tags 
 
         if self.excerpt.strip()!='' and self.excerpt.strip()!=None and self.excerpt!='<br>':
-            return strip_tags(self.excerpt)
-        if len(self.content)<200:
-            return strip_tags(self.content)  
+            return render_to_string('render_lede.html',  {'url': self.get_absolute_url(), 'graf': self.excerpt, 'more': True})
+        if len(self.content)<400:
+            return render_to_string('render_lede.html',  {'url': self.get_absolute_url(), 'graf': self.content, 'more': False})
 
-        readmore = ' <a href="'+self.get_absolute_url()+'">(Read all about it...)</a>'
-  
-        grafs = self.content.strip().split('\n')
-        if grafs[0].strip()!='' and  grafs[0].strip()!=None:
-            lede = grafs[0]
-        else: 
-            lede = grafs[1]
-        if len(lede)<300:
-            return strip_tags(lede) + readmore
-        else:
+        grafs = self.content.strip().split('<p>')
+        for g in grafs:
+            lede = g
+            if lede:
+                break
+
+        #if len(lede)<300:
+        return render_to_string('render_lede.html',  {'url': self.get_absolute_url(), 'graf': lede, 'more': True})
+        """else:
             sentences = lede.split('. ')
             if len(sentences[0])>400:
-                return strip_tags(sentences[0][:400]) + readmore
+                return render_to_string('render_lede.html',  {'url': self.get_absolute_url(), 'graf': sentences[0][:400], 'more': True})
             i=0
             lede = sentences[0]
             while len(sentences)>i+1 and len(lede)<400:
                 i = i+1
                 lede = lede + ". " + sentences[i]
-            return strip_tags(lede) + readmore
+            return render_to_string('render_lede.html',  {'url': self.get_absolute_url(), 'graf': sentences[0][:400], 'more': True})"""
+
 
   
     class Meta:

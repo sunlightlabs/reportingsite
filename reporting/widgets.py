@@ -2,11 +2,11 @@ from django import forms
 from django.db.models import get_model
 from django.utils import simplejson
 from django.utils.safestring import mark_safe
-from tagging.models import Tag
+from tagging.forms import TagField
+from tagging.models import *
 
+from tagging.forms import TagAdminForm
 from models import Post
-
-#Post = get_model('reporting', 'post')
 
 class CloudTagInput(forms.TextInput):
     class Media:
@@ -22,7 +22,8 @@ class CloudTagInput(forms.TextInput):
 
     def render(self, name, value, attrs=None):
         output = super(CloudTagInput, self).render(name, value, attrs)
-        #page_tags = Tag.objects.usage_for_model(Post)
+        #page_tags = Tag.objects.get_for_object(Post)
+        print 
         return output + mark_safe(u'''<a onclick="tagswitch()" id="tagflip">Select tags</a><div id="tagcloud"></div>
                                     <script type="text/javascript">
                                     function tagswitch() {

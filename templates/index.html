@@ -2,110 +2,109 @@
 
 {% block content %}
 
-<div style="width: 400px; float: left; padding: 5px;">
-{% autoescape off %}
-<div style="border: solid black 1px;">
-<strong><a href="/realtime">Real Time Investigations</a></strong>
 
-		<ul id="stories" style="list-style-type: none">			
-   			{% for entry in blogs %}
-			<li>
-    			<h4>{{ entry.title }}</h4>
-				<p><i>{{entry.date}}</i> {{ entry.text }}</p>
-			</li>	
-    		{% endfor %}	
-		</ul>		
-
-	<p class="view_all"><a href="/realtime">More Blog Entries</a></p>	
-</div>
-
-<div style="border: solid black 1px;">
-<strong><a href="/stories">Latest Reports</a></strong>
-	
-		<ul id="stories" style="list-style-type: none">			
-   			{% for entry in stories %}
-			<li>
-    			<h4><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></h4>
-				<p class="meta">{{ entry.byline }}</p>
-				<p>{{ entry.lede }}</p>
-			</li>	
-    		{% endfor %}	
-		</ul>		
-
-	<p class="view_all"><a href="/stories">More Reports</a></p>	
-</div>
+{%load comments%}
 
 
 
-</div>
+        
+          <div id="ltColumn">
+            <div class="mainModule">
+              <h3 class="linkedTitle"><a href="/realtime">Real Time Investigations</a></h3>
 
-<div>
+              <ol class="moduleLists">
+                
+{% for entry in blogs %}
+                <li class="module">
+{%if entry.title%}
+                  <div class="post">
+                    <span class="title">{{ entry.title }}</span>
+                    <p><i>{{entry.date}}</i> {{ entry.text|safe }}</p>
+                  </div>
+{%else%}
+                <span class="tweet">
+                    {{ entry.text|safe }}
+                    <span class="tweetDate">{{entry.date}}</span>
+                  </span>
+{%endif%}
+                </li>  
+{% endfor %}	
 
+
+
+              </ol>  
+            </div>
+            <div class="mainModule lastItem">
+              <h3 class="linkedTitle"><a href="/stories">Recent Reports</a></h3>
+              <ol class="moduleLists">
+                
+{% for entry in stories %}
+{% get_comment_count for entry as comment_count %}
+                <li>
+                  <a class="title" href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a>
+                <span class="postMeta">
+                {%autoescape off%}{{entry.shortbyline}}{%endautoescape%}
+                <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
+                <span class="posttime">{{entry.date_published|date:"P"}}</span>
+                {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
+              </span>
+                    <p>{{ entry.lede }}</p>
+                </li>
+{% endfor %}	
+
+              </ol>
+              <a class="viewAll" href="/stories/">« Older Reports</a>  
+            </div>  
+
+
+
+
+  <div class="mainModule calendar lastItem">
+
+              <h3>Dates we're watching</h3>
+              <ol>
+{%for event in calendar%}
+                <li class="{% cycle 'even' 'odd' %}">
+                  <div class="calendarDate">
+                    <span class="month">{{event.date|date:"M"}}</span>
+                    <span class="day">{{event.date|date:"d"}}</span>
+                  </div>  
+                  <span class="title">{{event.summary}}</span>
+                </li>
+{%endfor%}              </ol>  
+            </div>  
+
+
+
+
+
+
+
+          </div>
+
+{%autoescape off%}
+          <div id="rtColumn">
+            <div class="mainModule features">
+{% for entry in featured %}
+{% get_comment_count for entry as comment_count %}
+              <div class="module">
+                <h2><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></h2>
+               <span class="postMeta">
+                {{entry.shortbyline}}
+                <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
+                <span class="posttime">{{entry.date_published|date:"P"}}</span>
+                {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
+              </span>
+                <!--img class="center" alt="" src="images/blogImg.jpg"/-->
+                <p>{{ entry.content }}</p>
+              </div>
+{%endfor%}             
+            </div>
+{%endautoescape%}            
 
 		
-
-<div valign="top">
-<strong>Featured Stories</strong>
-	
-		<ul id="stories" style="list-style-type: none">			
-   			{% for entry in featured %}
-			<li>
-    			<h4><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }} {%if comment_count%}({{comment_count}} comment{{comment|pluralize}}{%endif%}</a></h4>
-				<p class="meta">{{ entry.byline }}</p>
-				<p>{{ entry.content }}</p>
-			</li>	
-    		{% endfor %}	
-		</ul>		
-	
 </div>
 
-</div>
-
-
-
-<div>
-<div>	
-<a href="/SLRG/">Sunlight Reporting Group</a>
-		<ul id="stories" style="list-style-type: none">			
-   			{% for entry in SLRG %}
-			<li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></h4></li>	
-    		{% endfor %}	
-		</ul>	
-</div>	
-
-<div>	
-<a href="/FLIT/">Foreign Lobbyist Influence Tracker</a>
-		<ul id="stories" style="list-style-type: none">			
-   			{% for entry in FLIT %}
-			<li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></h4></li>	
-    		{% endfor %}	
-		</ul>	
-</div>		
-
-<div>
-<a href="/SS/">SubsidyScope</a>
-		<ul id="stories" style="list-style-type: none">			
-   			{% for entry in SS %}
-			<li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></h4></li>	
-    		{% endfor %}	
-		</ul>	
-</div>	
-
-<div>	
-<a href="http://blog.politicalpartytime.org">Political PartyTime</a>
-		<ul id="stories" style="list-style-type: none">			
-   			{% for entry in PT %}
-			<li><a href="{{entry.link}}">{{ entry.title|safe }}</a></h4></li>	
-    		{% endfor %}	
-		</ul>	
-</div>
-</div>
-
-
-
-		
-
-{%endautoescape%}
 
 {% endblock %}
 

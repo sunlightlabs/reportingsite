@@ -5,7 +5,8 @@ from reporting.widgets import CloudTagInput
 
 from django.contrib.admin import widgets
 
-
+from models import Post
+#from tagging.forms import TagAdminForm
 from django import forms
 
 class PostAdminModelForm(forms.ModelForm):
@@ -16,7 +17,7 @@ class PostAdminModelForm(forms.ModelForm):
 
 
     class Meta:
-        model = get_model('reporting', 'post')
+        model = Post
 
 
     class Media:
