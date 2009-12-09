@@ -14,17 +14,24 @@
 
               <ol class="moduleLists">
                 
-{% for entry in blogs %}
+{% for entry in blogs|dictsortreversed:"date_published"|slice:":7"  %}
                 <li class="module">
+
 {%if entry.title%}
                   <div class="post">
-                    <span class="title">{{ entry.title }}</span>
-                    <p><i>{{entry.date}}</i> {{ entry.text|safe }}</p>
+                     <a class="title" href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a>
+<span class="postMeta">
+                {{entry.shortbyline|safe}}
+                <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
+                <span class="posttime">{{entry.date_published|date:"P"}}</span>
+                {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
+              </span>
+                    <p>{{ entry.lede|safe }}</p>
                   </div>
 {%else%}
                 <span class="tweet">
-                    {{ entry.text|safe }}
-                    <span class="tweetDate">{{entry.date}}</span>
+                    {{ entry.text }}
+                    <span class="tweetDate">{{entry.date_published|date:"M d, Y P"}}</span>
                   </span>
 {%endif%}
                 </li>  

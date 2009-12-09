@@ -4,6 +4,7 @@ from tagging.forms import TagField
 from reporting.widgets import CloudTagInput
 
 from django.contrib.admin import widgets
+from adminfiles.utils import render_uploads
 
 from models import Post
 #from tagging.forms import TagAdminForm
@@ -14,7 +15,14 @@ class PostAdminModelForm(forms.ModelForm):
 
     date_published = forms.DateTimeField(widget=widgets.AdminSplitDateTime)
 
-
+    def save(self, force_insert=False, force_update=False, commit=True):
+        m = super(PostAdminModelForm, self).save(commit=False)
+        # do custom stuff
+        #if commit:
+        m.content = render_uploads(m.content)
+        print render_uploads(m.content)
+        m.save()
+        return m
 
     class Meta:
         model = Post

@@ -88,6 +88,9 @@ INSTALLED_APPS = (
     'feedparser',
     'reporting',
     'django.contrib.humanize',
+    'adminfiles',
+    'sorl.thumbnail',
+    'mediasync'
 )
 
 
@@ -105,9 +108,10 @@ try:
 except ImportError, exp:
     pass
 
-MEDIASYNC_AWS_KEY = "" #"s3_key"  
-MEDIASYNC_AWS_SECRET = "" # "s3_secret"  
-MEDIASYNC_AWS_BUCKET = "" #"bucket_name"  
+MEDIASYNC_AWS_KEY = "***REMOVED***"
+MEDIASYNC_AWS_SECRET = "***REMOVED***"
+MEDIASYNC_AWS_BUCKET = "assets.sunlightfoundation.com" #"bucket_name"  
+MEDIASYNC_AWS_PREFIX = "reporting/1.0"
 
 TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
 "django.core.context_processors.debug",
@@ -117,6 +121,7 @@ TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
 "context_processors.latest_by_site"
 )
 
-
-
+ADMINFILES_USE_SIGNALS = True
+ADMINFILES_REF_START = '[{['
+ADMINFILES_REF_END = ']}]'
 

@@ -46,14 +46,15 @@ urlpatterns = patterns(
     url(r'^stories/$', 'entries', {'blogreport': 'R'}),
     #page by topic: flit, ss, slrg pages    
     url(r'^(?P<site>.\w{1,5})/$', 'bysite'),
+
+    url(r'^adminfiles/', include('adminfiles.urls')) 
 )
 
 
 
 
     
-from reporting.feeds import (LatestPosts, LatestComments, LatestForAuthor, LatestForTag)
-    
+from reporting.feeds import LatestPosts, LatestComments, LatestForAuthor, LatestForTag    
 default_feeds = {
         'latest': LatestPosts,
         'comments': LatestComments,

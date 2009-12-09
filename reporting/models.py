@@ -11,6 +11,7 @@ from django.contrib.comments.moderation import moderator
 
 from django.template.loader import render_to_string
 
+
 COMMENT_FILTERS = getattr(settings, "BLOGDOR_COMMENT_FILTERS", [])
 WP_PERMALINKS = getattr(settings, "BLOGDOR_WP_PERMALINKS", False)
 WHICHSITE_CHOICES = getattr(settings, "WHICHSITE_CHOICES", False)
@@ -65,8 +66,11 @@ class Post(models.Model):
     pullquote = models.CharField(max_length=255, blank=True)
     override_byline = models.CharField(max_length=255, blank=True)
 
+    image = models.FileField(upload_to='images', max_length=500)
 
-    def byline(self):
+
+
+    """def byline(self):
         import time, datetime
         d1 = self.date_published.strftime("%h %d")
         d2 = self.date_published.strftime("%I:%M%P")
@@ -75,7 +79,7 @@ class Post(models.Model):
         d = d1 + " " + d2
         if self.override_byline:
             return "By " + self.override_byline + " " + d 
-        return "By " + self.author.first_name + " " + self.author.last_name + " " + d
+        return "By " + self.author.first_name + " " + self.author.last_name + " " + d"""
 
     def shortbyline(self):
         if self.override_byline:
@@ -129,7 +133,7 @@ class Post(models.Model):
             params['day'] = "%02d" % self.date_published.day
         return (urlname, (), params)
         
-    def publish(self):
+    def publish(self):        
         self.is_published = True
         self.save()
     
