@@ -1,6 +1,5 @@
 from feedinator.models import Feed, FeedEntry
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from icalendar import Calendar, Event, vDatetime
 from django.db.models import Q
 import urllib
 import datetime
@@ -173,20 +172,20 @@ def index(request):
     def mergetweets(posts, tweetsfeed):
         elist = []
         for p in posts:
-            elist.append({ 'title': '<a href="'+p.get_absolute_url()+'">'+p.title+'</a>', 'date': p.date_published, 'byline': p.author, 'text': p.lede() })
-        for t in tweetsfeed.entries.all()[:7]:
-            elist.append({ 'title': '', 'date': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
-        elist = sorted(elist, key=itemgetter('date'))
-        elist.reverse()
-        for e in elist:
-            day = e['date'].strftime("%m/%d/%y")
+            elist.append(p) #{ 'title': '<a href="'+p.get_absolute_url()+'">'+p.title+'</a>', 'date': p.date_published, 'byline': p.author, 'text': p.lede() })
+        for t in tweetsfeed.entries.all():
+            elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
+        #elist = sorted(elist, key=itemgetter('date_published'))
+        #elist.reverse()
+        """for e in elist:
+            day = e['date_published'].strftime("%m/%d/%y")
             now = datetime.datetime.now().strftime("%m/%d/%y")
             if day==now:
-                e['date']= e['date'].strftime("%H:%m%P")
-                if e['date'][:1]=='0':
-                    e['date'] = e['date'][1:]
+                e['date_published']= e['date_published'].strftime("%H:%m%P")
+                if e['date_published'][:1]=='0':
+                    e['date_published'] = e['date_published'][1:]
             else:
-                e['date']=''
+                e['date_published']=''"""
         return elist
 
 
@@ -208,7 +207,7 @@ def index(request):
     f1 = featured[0].pk
     f2 = featured[1].pk
     stories = Post.objects.exclude(pk=f1).exclude(pk=f2).filter(blogreport='R', is_published=True)[0:7] 
-    blogs = mergetweets( Post.objects.filter(blogreport='B', is_published=True)[0:7], Feed.objects.get(codename__startswith='tweetsRT-')  )[0:7]
+    blogs = mergetweets( Post.objects.filter(blogreport='B', is_published=True)[0:7], Feed.objects.get(codename__startswith='tweetsRT-')  )
 
     return render_to_response('index.html', {'blogs': blogs, 'stories': stories, 'featured': featured, 'bodyclass': 'home', 'calendar': getcal() }, context_instance=RequestContext(request) )
 
