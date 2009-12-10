@@ -27,6 +27,8 @@ h1 a{ width: 800px; height: 214px; display: block; background: url(/media/img/lo
 h1 a:hover { width: 800px; height: 214px; display: block; background: url(/media/img/logo_rollover3.png) top center no-repeat; text-indent: -9999em;}
 h1 { width: 800px; height: 214px; margin: 0 auto;}
 
+div#rssIcon { float: right; background: url();}
+
 div#nav li { float: left; margin-left: 18px; padding-left: 18px; border-left: 1px solid #b3b5b7; line-height: 15px;}
 div#nav a.active { color: #8c8d35;}
 div#nav a { color: #5e5e5e;}
@@ -49,11 +51,11 @@ div#fullWidth { margin-top: 40px;}
 div#fullWidth h3 { padding-left: 15px;}
 
 body.fullWidth div#header{ background: url(/media/img/header_full.png) left 154px no-repeat;}
-body.fullWidth div#columns { background: url(/media/img/column_ltFull.png) top left repeat-y; padding:20px; }
+body.fullWidth div#columns { background: url(/media/img/column_ltFull.png) top left repeat-y;}
 body.fullWidth div#mainContent { padding: 0 0 0 3px;}
 
 li.module, div.module{ background: url(/media/img/break_module.png) bottom left repeat-x; margin-bottom: 20px; padding-bottom: 20px;}
-div.mainModule { background: url(/media/img/break_mainModule.png) /*bottom left repeat-x;*/ margin-bottom: 40px; padding-bottom: 20px;}
+div.mainModule { background: url(/media/img/break_mainModule.png) bottom left repeat-x; margin-bottom: 40px; padding-bottom: 40px;}
 div.lastItem, li.lastModule { background: none;}
 
 div.otherProperty { float: left; width: 208px; padding: 0 15px;}
@@ -63,17 +65,17 @@ div.otherProperty li { margin-bottom: 10px; line-height: 20px;}
 div.otherProperty li a { color: #020000;}
 div.otherProperty li a:hover { color: #8c8d35;}
 
-div.features h2 { font-size: 220%; text-align: center; line-height: 43px; margin-bottom: 20px; }
-h2 { font-size: 200%; font-weight: bold; margin-bottom: 5px; }
-div.features h2, h3, div.features h2 a, h3 a:link { color: #8c8d35;}
-div.features h2 a:hover, h3 a:hover, h4 a:hover { color: #414042;}
+div.features h2 { font-size: 300%; text-align: center; line-height: 43px; margin-bottom: 20px;}
+h2 { font-size: 220%; font-weight: bold; margin-bottom: 5px; }
+div.features h2, h3, div.features h2 a, h3 a:link { color: #414042;}
+div.features h2 a:hover, h3 a:hover, h4 a:hover { color: #8c8d35;}
 h3 { text-transform: uppercase; margin-bottom: 25px; font-weight: bold; font-size: 170%;}
 
-a.readMoreFeature { background: url(/media/img/arrow_feature.png) top left no-repeat; height: 36px; display: block; padding: 6px 0 0 20px; color: #fff; font-style: oblique;}
+a.readMoreFeature { background: url(/media/img/arrow_feature.png) top left no-repeat; height: 36px; display: block; padding: 6px 0 0 20px; color: #fff; font-style: oblique; text-transform: lowercase}
 a.viewAll { text-align: center; display: block; font-size: 110%;}
 a.continueReading { font-size: 110%; background: url(/media/img/arrow.png) right 3px no-repeat; padding-right: 25px; text-transform: lowercase; font-style: oblique;}
 
-p { margin-bottom: 20px; color: #000000;}
+p { margin-bottom: 20px; color: #58595b; font-family: Helvetica Neue, Helvetica, Arial, sans-serif;}
 
 span.tweetDate { display: block; color: #808285; font-style: oblique; font-size: 90%;}
 span.tweet { background: url(/media/img/icon_tweet.png) top left no-repeat; display: block; padding-left: 50px;}
@@ -82,10 +84,10 @@ div.post { background: url(/media/img/icon_post.png) top left no-repeat; display
 img { margin-bottom: 30px; border: 5px solid #d1d3d4;}
 img.center { margin: 0 auto 30px; display: block;}
 
-a.title:hover { color: #020000; }
-a.title { font-size: 120%; color: #8c8d35; display: block; }
-h3.linkedTitle a:hover { color: #020000;}
-h3.linkedTitle a { color: #8c8d35;}
+a.title { font-size: 120%; color: #020000; display: block; }
+a.title:hover { color: #8c8d35;}
+h3.linkedTitle a { color: #020000;}
+h3.linkedTitle a:hover { color: #8c8d35;}
 
 span.title { margin-bottom: 10px; display: block;}
 
@@ -95,13 +97,12 @@ span.postMeta span { padding-left: 7px; margin-left: 7px; border-left: 1px solid
 form li { margin-bottom: 15px;}
 label { width: 100px; display: block; float: left; }
 input { background: none; border: none; border-bottom: 1px solid #B8B9B9; width: 400px;}
-input#searchbox { border: 1px solid #B8B9B9; width: 240px; background: #FFFFFF; }
-textarea { background: url(/media/img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 90px; line-height: 24px;}
+textarea { background: url(/media/img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 265px; line-height: 24px;}
 
 body.home div#footer { margin-top: 40px; }
-div#footer { background: url(/media/img/bar_bottom.png) top left no-repeat; padding: 50px 15px 0; margin-top: -11px;}
+div#footer { background: url(/media/img/bar_bottom.png) top left no-repeat; padding: 50px 15px 0; margin-top: -11px; margin-bottom: 40px;}
 
-div.categories span {  }
+div.categories span{ float: right; }
 div.categories li { font-size: 120%; padding: 7px 10px; border-bottom: 1px solid #B8B9B9;}
 div.categories li a {color: #5E5E5E;}
 div.categories li a:hover {color: #8c8d35;}
@@ -109,8 +110,7 @@ div.categories li:hover { background-color: #fff; -moz-border-radius: 5px; -webk
 div.categories li.lastCategory { border-bottom: none;}
 
 button { text-indent: -9999em; display: block; border: none; height: 42px; cursor: pointer;}
-button.submitbtn { background: url(/media/img/btn_submit.png) top left no-repeat; margin-top: 30px; margin-left: 100px; width: 108px;}
-/*p.submit button { background: url(/media/img/btn_submit.png) top left no-repeat; margin-top: 30px; margin-left: 100px; width: 108px;}*/
+button.submitBtn { background: url(/media/img/btn_submit.png) top left no-repeat; margin-top: 30px; margin-left: 100px; width: 108px;}
 
 div.calendarDate { background: url(/media/img/calendar_bg.png) top left no-repeat; width: 63px; height: 62px; float: left; margin-right: 20px;}
 div.calendarDate span { display: block; text-align: center; font-family: Helvetica Neue, Helvetica, Arial, sans-serif;}
@@ -122,9 +122,19 @@ div.calendar span.title { margin-bottom: 0;}
 div.calendar li.even { margin-right: 30px;}
 div.calendar p { margin-left: 83px; line-height:20px;} 
 
+div#reportingResources a { text-indent: -9999em; display: block; float: left; margin-right: 30px;}
+a#legistorm { background: url(/media/img/logo_legistorm_grey.png) left 3px no-repeat; width: 163px; height: 52px;}
+a#legistorm:hover { background: url(/media/img/logo_legistorm_color.png) left 3px no-repeat;}
+a#openSecrets { background: url(/media/img/logo_opensecrets_grey.png) top left no-repeat; width: 138px; height: 52px;}
+a#openSecrets:hover { background: url(/media/img/logo_opensecrets_color.png) top left no-repeat; width: 138px; height: 52px;}
+
+a#sunlightFoundation { background: url(/media/img/logo_sunlightFoundation.png) top left no-repeat; width: 119px; height: 55px; float: left; text-indent: -9999em;}
+div#copyright p { margin-left: 150px; font-size: 80%; line-height: 18px; color: #fff; margin-bottom: 0px;}
+div#copyright { background: url(/media/img/copyright_bg.png) left top no-repeat; height: 161px; margin: -80px auto 0; width: 960px;}
+div#copyrightContent { padding-top: 95px;}
+div#copyrightWrapper { background: url(/media/img/copyright_wrapper.png) top left repeat-x;}
+
 .clear { clear: both;}
-
-
 
 
 

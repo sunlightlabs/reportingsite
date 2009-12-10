@@ -4,73 +4,56 @@
 
 
 {%load comments%}
-
-
-
-        
           <div id="ltColumn">
             <div class="mainModule">
               <h3 class="linkedTitle"><a href="/realtime">Real Time Investigations</a></h3>
-
-              <ol class="moduleLists">
-                
-{% for entry in blogs|dictsortreversed:"date_published"|slice:":7"  %}
+              <ol class="moduleLists"> 
+                {% for entry in blogs|dictsortreversed:"date_published"|slice:":7"  %}
                 <li class="module">
-
-{%if entry.title%}
+                  {%if entry.title%}
                   <div class="post">
-                     <a class="title" href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a>
-<span class="postMeta">
-                {{entry.shortbyline|safe}}
-                <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
-                <span class="posttime">{{entry.date_published|date:"P"}}</span>
+                    <a class="title" href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a>
+                    <span class="postMeta">
+                      {{entry.shortbyline|safe}}
+                      <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
+                      <span class="posttime">{{entry.date_published|date:"P"}}</span>
                 {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
-              </span>
+                    </span>
                     <p>{{ entry.lede|safe }}</p>
                   </div>
-{%else%}
-                <span class="tweet">
+                  {%else%}
+                  <span class="tweet">
                     {{ entry.text }}
                     <span class="tweetDate">{{entry.date_published|date:"M d, Y P"}}</span>
                   </span>
-{%endif%}
+                  {%endif%}
                 </li>  
-{% endfor %}	
-
-
-
+                {% endfor %}
               </ol>  
             </div>
             <div class="mainModule lastItem">
               <h3 class="linkedTitle"><a href="/stories">Recent Reports</a></h3>
               <ol class="moduleLists">
-                
-{% for entry in stories %}
-{% get_comment_count for entry as comment_count %}
+                {% for entry in stories %}
+                {% get_comment_count for entry as comment_count %}
                 <li>
                   <a class="title" href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a>
-                <span class="postMeta">
-                {%autoescape off%}{{entry.shortbyline}}{%endautoescape%}
-                <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
-                <span class="posttime">{{entry.date_published|date:"P"}}</span>
-                {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
-              </span>
-                    <p>{{ entry.lede }}</p>
+                  <span class="postMeta">
+                    {%autoescape off%}{{entry.shortbyline}}{%endautoescape%}
+                    <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
+                    <span class="posttime">{{entry.date_published|date:"P"}}</span>
+                    {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
+                  </span>
+                  <p>{{ entry.lede }}</p>
                 </li>
-{% endfor %}	
-
+                {% endfor %}	
               </ol>
               <a class="viewAll" href="/stories/">« Older Reports</a>  
-            </div>  
-
-
-
-
-  <div class="mainModule calendar lastItem">
-
+            </div>
+            <div class="mainModule calendar lastItem">
               <h3>Dates we're watching</h3>
               <ol>
-{%for event in calendar%}
+                {%for event in calendar%}
                 <li class="{% cycle 'even' 'odd' %}">
                   <div class="calendarDate">
                     <span class="month">{{event.date|date:"M"}}</span>
@@ -78,42 +61,29 @@
                   </div>  
                   <span class="title">{{event.summary}}</span>
                 </li>
-{%endfor%}              </ol>  
+                {%endfor%}              
+              </ol>  
             </div>  
-
-
-
-
-
-
-
           </div>
-
-{%autoescape off%}
+          {%autoescape off%}
           <div id="rtColumn">
             <div class="mainModule features">
-{% for entry in featured %}
-{% get_comment_count for entry as comment_count %}
+              {% for entry in featured %}
+              {% get_comment_count for entry as comment_count %}
               <div class="module">
                 <h2><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></h2>
-               <span class="postMeta">
-                {{entry.shortbyline}}
-                <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
-                <span class="posttime">{{entry.date_published|date:"P"}}</span>
-                {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
-              </span>
+                <span class="postMeta">
+                  {{entry.shortbyline}}
+                  <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
+                  <span class="posttime">{{entry.date_published|date:"P"}}</span>
+                  {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
+                </span>
                 <!--img class="center" alt="" src="images/blogImg.jpg"/-->
-                <p>{{ entry.content }}</p>
+                {{ entry.content }}
               </div>
-{%endfor%}             
+              {%endfor%}             
             </div>
-{%endautoescape%}            
-
-		
-</div>
-
+            {%endautoescape%}            
+          </div>
 
 {% endblock %}
-
-
-
