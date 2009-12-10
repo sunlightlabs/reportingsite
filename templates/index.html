@@ -33,21 +33,19 @@
             </div>
             <div class="mainModule lastItem">
               <h3 class="linkedTitle"><a href="/stories">Recent Reports</a></h3>
-              <ol class="moduleLists">
-                {% for entry in stories %}
+              {% for entry in stories %}
+              <div class="module">
                 {% get_comment_count for entry as comment_count %}
-                <li>
-                  <a class="title" href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a>
-                  <span class="postMeta">
-                    {%autoescape off%}{{entry.shortbyline}}{%endautoescape%}
-                    <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
-                    <span class="posttime">{{entry.date_published|date:"P"}}</span>
-                    {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
-                  </span>
-                  <p>{{ entry.lede }}</p>
-                </li>
-                {% endfor %}	
-              </ol>
+                <a class="title" href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a>
+                <span class="postMeta">
+                  {%autoescape off%}{{entry.shortbyline}}{%endautoescape%}
+                  <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
+                  <span class="posttime">{{entry.date_published|date:"P"}}</span>
+                  {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
+                </span>
+                <p>{{ entry.lede }}</p>
+              </div>
+              {% endfor %}	
               <a class="viewAll" href="/stories/">« Older Reports</a>  
             </div>
             <div class="mainModule calendar lastItem">

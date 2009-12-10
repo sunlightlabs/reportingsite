@@ -1,48 +1,48 @@
         <div class="clear"></div> 
         </div> 
-        <div id="fullWidth">
-          <div id="otherPosts">
-            <div class="otherProperty">
-              <h4><a href="/SLRG">Sunlight Foundation Reporting Group</a></h4>
-              <ol>
-                {% for entry in SLRG %}
-                <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></li>
-                {%endfor%}
-              </ol>  
-            </div> 
-            <div class="otherProperty">
-              <h4><a href="/FLIT">Foreign Lobbyist Influence Tracker</a></h4>
-              <ol>
-                {% for entry in FLIT %}
-                <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></li>
-                {%endfor%}
-              </ol>  
-            </div> 
-            <div class="otherProperty">
-
-              <h4><a href="/SS">Subsidy Scope</a></h4>
-              <ol>
-  {% for entry in SS %}
-                <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></li>
-                {%endfor%}              
-              </ol>  
-            </div>
-            <div class="otherProperty">
-              <h4><a href="http://blog.politicalpartytime.org">Political Party Time</a></h4>
-              <ol>
-  {% for entry in PT %}
-                <li><a href="{{entry.link}}">{{ entry.title|safe }}</a></li>
-                {%endfor%}
-              </ol>  
-            </div> 
-          </div>
-        </div>
-        <div class="clear"></div>
-      </div>
-      <div id="footer">
-      
       </div>
     </div>
+    <div id="footer">
+      <div id="fullWidth">
+        <div id="otherPosts">
+          <div class="otherProperty">
+            <h4><a href="/SLRG">Sunlight Foundation Reporting Group</a></h4>
+            <ol>
+              {% for entry in SLRG %}
+              <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></li>
+              {%endfor%}
+            </ol>  
+          </div> 
+          <div class="otherProperty">
+            <h4><a href="/FLIT">Foreign Lobbyist Influence Tracker</a></h4>
+            <ol>
+              {% for entry in FLIT %}
+              <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></li>
+              {%endfor%}
+            </ol>  
+          </div> 
+          <div class="otherProperty">
+
+            <h4><a href="/SS">Subsidy Scope</a></h4>
+            <ol>
+{% for entry in SS %}
+              <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></li>
+              {%endfor%}              
+            </ol>  
+          </div>
+          <div class="otherProperty">
+            <h4><a href="http://blog.politicalpartytime.org">Political Party Time</a></h4>
+            <ol>
+{% for entry in PT %}
+              <li><a href="{{entry.link}}">{{ entry.title|safe }}</a></li>
+              {%endfor%}
+            </ol>  
+          </div>
+          <div class="clear"></div> 
+        </div>
+      </div>
+    </div>
+    <div class="clear"></div>
     <div id="copyrightWrapper">
       <div id="copyright">
         <div id="copyrightContent">
