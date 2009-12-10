@@ -65,16 +65,6 @@ if (box.value=='Search SLRG') { box.value=''; }
 
 
 
-<div class="mainModule categories">
-              <h3>Latest Comments</h3>
-              <ul>
-{% for comment in comments %}
-               <li><a href="{{comment.content_object.get_content_object_url}}#comments">{{ comment.content_object.title }}: <i>"{{ comment.comment|striptags|truncatewords:10}}...</i>"</a></li>
-{%endfor%}              
-              </ul> 
-            </div>
-
-
 {% regroup resources by date_published as resources2 %}
            <div class="mainModule recentPosts">
                 <h3>Resources we're watching</h3>
