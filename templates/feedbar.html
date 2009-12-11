@@ -1,21 +1,22 @@
 {% load smart_if %}
 
-
 {% load tagging_tags %}
 {% tags_for_object post as tags %}
-
 
 <script type="text/javascript">
 function cleardefault(box)
 {
 if (box.value=='Search SLRG') { box.value=''; }
 }
-
 </script>
 <div class="mainModule recentPosts">
-<form method="get" action="/search/">
-<input type="text" id="searchbox" name="terms" value="Search SLRG" onFocus="cleardefault(this);">
-</form>
+  <h3>Search the Blog</h3>
+  <form method="get" action="/search/">
+    <input type="text" id="searchbox" name="terms" value="Search SLRG" onFocus="cleardefault(this);">
+    <button class="searchBtn" type="submit">
+      <span>Search</span>
+    </button>
+  </form>
 </div>
 
 
@@ -35,70 +36,54 @@ if (box.value=='Search SLRG') { box.value=''; }
 </div>
 {%endif%}
 
-
-
-{% if tags %}
-<div class="mainModule categories">
+            {% if tags %}
+            <div class="mainModule categories">
               <h3>Related Content</h3>
               <ul>
-{% for tag in tags %}
-{% tagged_objects tag in reporting.Post as posts %}
+                {% for tag in tags %}
+                {% tagged_objects tag in reporting.Post as posts %}
                 <li>
                   <a href="{% url blogdor_tag tag %}"><a href="{% url blogdor_tag tag %}">{{ tag }}</a>
                   <span>{{posts|length}}</span>
                 </li>
-{%endfor%}              
+                {%endfor%}              
               </ul> 
             </div>
-{%endif%}
-
-
-
+            {%endif%}
            <div class="mainModule recentPosts">
-                <h3>Recent Posts</h3>
-              <ol class="moduleLists">
-{%for entry in ourposts %}
-<li><a class="title" href="{% url blogdor_post entry.date_published.year entry.slug %}">{{entry.title}}</a></li>
-{%endfor%}
-              </ol>
-            </div>
+             <h3>Recent Posts</h3>
+             <ol class="moduleLists">
+               {%for entry in ourposts %}
+               <li><a class="title" href="{% url blogdor_post entry.date_published.year entry.slug %}">{{entry.title}}</a></li>
+               {%endfor%}
+             </ol>
+           </div>
 
-
-
-{% regroup resources by date_published as resources2 %}
+           {% regroup resources by date_published as resources2 %}
            <div class="mainModule recentPosts">
-                <h3>Resources we're watching</h3>
-{%for resource in resources2%}
-              <ol class="moduleLists">
-{{ resource.grouper|date:"m/d" }}
-{%for entry in resource.list %}
-<li><a class="title" href="{{entry.link}}" target="_blank">{{entry.feed.title}}: {{entry.title}}</a></li>
-{%endfor%}
-              </ol>
-{%endfor%}
-            </div>
-
-
+             <h3>Resources we're watching</h3>
+             {%for resource in resources2%}
+             <ol class="moduleLists">
+               {{ resource.grouper|date:"m/d" }}
+               {%for entry in resource.list %}
+               <li><a class="title" href="{{entry.link}}" target="_blank">{{entry.feed.title}}: {{entry.title}}</a></li>
+               {%endfor%}
+             </ol>
+             {%endfor%}
+           </div>
            <div class="mainModule categories">
-                <h3>Reporting we're watching</h3>
-<ul>
-{% for fentry in news %}
-<li><a href="{{fentry.link}}" target="_blank">{{fentry.feed.title}}: {{fentry.title}}</a></li>
-{%endfor%}
-</ul>
-</div>
-
-
-
-   <div class="mainModule recentPosts">
-                <h3>Popular tags</h3>         
-{% load tagging_tags %}
-        {% tag_cloud_for_model reporting.Post as entry_tags with steps=5 min_count=9 distribution=log %}
-        {% for tag in entry_tags %}
+             <h3>Reporting we're watching</h3>
+             <ul>
+               {% for fentry in news %}
+               <li><a href="{{fentry.link}}" target="_blank">{{fentry.feed.title}}: {{fentry.title}}</a></li>
+               {%endfor%}
+             </ul>
+           </div>
+           <div class="mainModule recentPosts">
+             <h3>Popular tags</h3>         
+             {% load tagging_tags %}
+             {% tag_cloud_for_model reporting.Post as entry_tags with steps=5 min_count=9 distribution=log %}
+             {% for tag in entry_tags %}
             <a class="tag{{ tag.font_size }}" a href="/tag/{{tag}}">{{ tag }}</a>
-        {% endfor %}
-</div>
-
-
-
-
+            {% endfor %}
+          </div>

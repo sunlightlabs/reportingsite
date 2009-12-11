@@ -17,8 +17,7 @@
   <!--[if IE 7]>    {%css "css/buggy7.css"%}<![endif]-->
 
   </head>
-
-  <body class="{%if bodyclass%}{{bodyclass}}{%else%}fullWidth{%endif%}">  
+  <body class="{% if bodyclass %}{{bodyclass}}{% endif %}">  
     <div id="pageMain">
       <div id="header">
         <div id="rssIcon">

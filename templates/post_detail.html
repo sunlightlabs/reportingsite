@@ -1,18 +1,11 @@
 {% extends "base.html" %}
-
-
-
 {% block content %}
 
 {% load comments %}
 {% load markup %}
 {% get_comment_list for post as comment_list %}
 
-
-
 {% autoescape off %}	
-
-
         <div id="columns">
           <div id="ltColumn">
             <div class="module">
@@ -27,7 +20,6 @@
               {{post.content}}        </div>
             <div class="module"><a name="comments"/>
               <h3>Comments</h3>
-
 
 {% if comment_list %}
 <a href="#leavecomment">(Leave us a comment)</a><br/>
