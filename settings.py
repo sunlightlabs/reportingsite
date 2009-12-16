@@ -36,17 +36,17 @@ USE_I18N = True
 
 # Absolute path to the directory that holds media.
 # Example: "/home/media/media.lawrence.com/"
-MEDIA_ROOT = 'reportingsite/media/'
+MEDIA_ROOT = '/media/'
 
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = 'media/'
+MEDIA_URL = '/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
 # Examples: "http://foo.com/media/", "/media/".
-ADMIN_MEDIA_PREFIX = 'media/admin/'
+ADMIN_MEDIA_PREFIX = 'http://assets.sunlightfoundation.com.s3.amazonaws.com/admin/1.1.1/'
 
 # Make this unique, and don't share it with anybody.
 SECRET_KEY = '***REMOVED***'
@@ -55,7 +55,6 @@ SECRET_KEY = '***REMOVED***'
 TEMPLATE_LOADERS = (
     'django.template.loaders.filesystem.load_template_source',
     'django.template.loaders.app_directories.load_template_source',
-#     'django.template.loaders.eggs.load_template_source',
 )
 
 MIDDLEWARE_CLASSES = (
@@ -69,9 +68,6 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'reportingsite.urls'
 
 TEMPLATE_DIRS = (
-    # Put strings here, like "/home/html/django_templates" or "C:/www/django/templates".
-    # Always use forward slashes, even on Windows.
-    # Don't forget to use absolute paths, not relative paths.
     'reportingsite/templates'
 )
 
@@ -90,7 +86,7 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'adminfiles',
     'sorl.thumbnail',
-    'mediasync'
+    'mediasync',
 )
 
 
@@ -103,25 +99,24 @@ AKISMET_KEY = '***REMOVED***'
 WHICHSITE_CHOICES = [('SLRG', 'Sunlight Reporting Group'), ('SS', 'SubsidyScope'), ('FLIT', 'FLIT')]
 ENTRY_TYPES = [('B', 'Blog'), ('R','Report')]
 
-try:
-    from local_settings import *
-except ImportError, exp:
-    pass
-
 MEDIASYNC_AWS_KEY = "***REMOVED***"
 MEDIASYNC_AWS_SECRET = "***REMOVED***"
 MEDIASYNC_AWS_BUCKET = "assets.sunlightfoundation.com" #"bucket_name"  
 MEDIASYNC_AWS_PREFIX = "reporting/1.0"
 
-TEMPLATE_CONTEXT_PROCESSORS = ("django.core.context_processors.auth",
-"django.core.context_processors.debug",
-"django.core.context_processors.i18n",
-"django.core.context_processors.media",
-
-"context_processors.latest_by_site"
+TEMPLATE_CONTEXT_PROCESSORS = (
+    "django.core.context_processors.auth",
+    "django.core.context_processors.debug",
+    "django.core.context_processors.i18n",
+    "django.core.context_processors.media",
+    "context_processors.latest_by_site",
 )
 
 ADMINFILES_USE_SIGNALS = True
 ADMINFILES_REF_START = '[{['
 ADMINFILES_REF_END = ']}]'
 
+try:
+    from local_settings import *
+except ImportError, exp:
+    pass
