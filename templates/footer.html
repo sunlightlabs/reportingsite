@@ -6,7 +6,7 @@
       <div id="fullWidth">
         <div id="otherPosts">
           <div class="otherProperty">
-            <h4><a href="/SLRG">Sunlight Foundation Reporting Group</a></h4>
+            <a href="/SLRG"><img class="reportinggroupLogo" alt="Reporting Group Logo" src="images/logo_partytime_grey.png"/></a>
             <ol>
               {% for entry in SLRG %}
               <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></li>
@@ -14,7 +14,7 @@
             </ol>  
           </div> 
           <div class="otherProperty">
-            <h4><a href="/FLIT">Foreign Lobbyist Influence Tracker</a></h4>
+            <h4 id="flit"><a href="/FLIT">Foreign Lobbyist Influence Tracker</a></h4>
             <ol>
               {% for entry in FLIT %}
               <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></li>
@@ -22,8 +22,7 @@
             </ol>  
           </div> 
           <div class="otherProperty">
-
-            <h4><a href="/SS">Subsidy Scope</a></h4>
+            <a href="/SS"><img class="subsityscopeLogo" alt="Subsity Scope Logo" src="images/logo_subsity_grey.png"/></a>
             <ol>
 {% for entry in SS %}
               <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></li>
@@ -31,7 +30,7 @@
             </ol>  
           </div>
           <div class="otherProperty">
-            <h4><a href="http://blog.politicalpartytime.org">Political Party Time</a></h4>
+            <a href="http://blog.politicalpartytime.org"><img class="partytimeLogo" alt="Party Time Logo" src="images/logo_partytime_grey.png"/></a>
             <ol>
 {% for entry in PT %}
               <li><a href="{{entry.link}}">{{ entry.title|safe }}</a></li>

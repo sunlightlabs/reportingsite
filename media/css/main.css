@@ -61,7 +61,7 @@ div.mainModule { background: url(/media/img/break_mainModule.png) bottom left re
 div.lastItem, li.lastModule { background: none;}
 
 div.otherProperty { float: left; width: 208px; padding: 0 15px;}
-div.otherProperty h4 { border-bottom: 2px solid #bcbec0; font-size: 140%; font-weight: bold; padding-bottom: 10px; margin-bottom: 20px;}
+div.otherProperty h4 { font-size: 140%; font-weight: bold; padding-bottom: 10px; margin-bottom: 20px;}
 div.otherProperty h4 a { color: #424140; }
 div.otherProperty li { margin-bottom: 10px; line-height: 20px;}
 div.otherProperty li a { color: #020000;}
@@ -83,8 +83,11 @@ span.tweetDate { display: block; color: #808285; font-style: oblique; font-size:
 span.tweet { background: url(/media/img/icon_tweet.png) top left no-repeat; display: block; padding-left: 50px;}
 div.post { background: url(/media/img/icon_post.png) top left no-repeat; display: block; padding-left: 50px;}
 
-img { margin-bottom: 30px; border: 5px solid #d1d3d4;}
+img { border: 5px solid #d1d3d4;}
+div#otherPosts img { border: none; border-bottom: 2px solid #bcbec0;}
 img.center { margin: 0 auto 30px; display: block;}
+img.leftImg { float: left; margin-right: 20px;}
+img.rightImg { float: right; margin-left: 20px;}
 
 a.title { font-size: 120%; color: #020000; display: block; }
 a.title:hover { color: #457b80;}
@@ -145,8 +148,9 @@ div#paginatorNumbers { float: left; text-align: center; width: 500px; display: b
 a.paginatorPrevious { text-align: left; }
 a.paginatorNext { text-align: right;}
 
-.clear { clear: both;}
+td { padding: 5px 10px;}
 
+.clear { clear: both;}
 
 
 
