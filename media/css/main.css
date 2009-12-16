@@ -8,10 +8,10 @@ dl li{list-style: none;}
 
 a { text-decoration: none;}
 
-a:link{outline: none; color: #8c8d35;}
-a:visited{outline: none; color: #8c8d35;}
-a:hover{outline: none; color: #8c8d35;}
-a:active{outline: none; color: #8c8d35;}
+a:link{outline: none; color: #457b80;}
+a:visited{outline: none; color: #457b80;}
+a:hover{outline: none; color: #457b80;}
+a:active{outline: none; color: #457b80;}
 
 body{
     color: #020000;
@@ -27,12 +27,14 @@ h1 a{ width: 800px; height: 214px; display: block; background: url(/media/img/lo
 h1 a:hover { width: 800px; height: 214px; display: block; background: url(/media/img/logo_rollover3.png) top center no-repeat; text-indent: -9999em;}
 h1 { width: 800px; height: 214px; margin: 0 auto;}
 
-div#rssIcon { float: right; background: url(/media/img/feed-icon-14x14.png) left 8px no-repeat; padding:3px 0 0 20px;}
+div#rssIcon { float: right; background: url(/media/img/feed-icon-14x14.png) left 8px no-repeat; padding:3px 0 0 20px; text-transform: uppercase;}
+div#rssIcon a { color: #414042;}
+div#rssIcon a:hover { color: #457b80;}
 
 div#nav li { float: left; margin-left: 18px; padding-left: 18px; border-left: 1px solid #b3b5b7; line-height: 15px;}
-div#nav a.active { color: #8c8d35;}
+div#nav a.active { color: #457b80;}
 div#nav a { color: #5e5e5e;}
-div#nav a:hover { color: #8c8d35;}
+div#nav a:hover { color: #457b80;}
 div#nav { float: right; font-size: 110%; font-style: oblique; margin-right: 23px; margin-top: -30px; text-decoration: none; text-transform: uppercase; font-weight: bold;}
 div#nav li.firstLi { border-left: none;}
 
@@ -63,12 +65,12 @@ div.otherProperty h4 { border-bottom: 2px solid #bcbec0; font-size: 140%; font-w
 div.otherProperty h4 a { color: #424140; }
 div.otherProperty li { margin-bottom: 10px; line-height: 20px;}
 div.otherProperty li a { color: #020000;}
-div.otherProperty li a:hover { color: #8c8d35;}
+div.otherProperty li a:hover { color: #457b80;}
 
 div.features h2 { font-size: 300%; text-align: center; line-height: 43px;}
 h2 { font-size: 220%; font-weight: bold; margin-bottom: 5px; line-height:35px; }
-div.features h2, h3, div.features h2 a, h3 a, h2, h2 a { color: #414042;}
-div.features h2 a:hover, h3 a:hover, h4 a:hover, h2 a:hover { color: #8c8d35;}
+div.features h2, h3, div.features h2 a, h3 a, h2, h2 a, div.features h2:visited, h3:visited, div.features h2 a:visited, h3 a:visited, h2:visited, h2 a:visited { color: #414042;}
+div.features h2 a:hover, h3 a:hover, h4 a:hover, h2 a:hover { color: #457b80;}
 h3 { text-transform: uppercase; margin-bottom: 25px; font-weight: bold; font-size: 170%;}
 
 a.readMoreFeature { background: url(/media/img/arrow_feature.png) top left no-repeat; height: 36px; display: block; padding: 6px 0 0 20px; color: #fff; font-style: oblique; text-transform: lowercase}
@@ -85,9 +87,9 @@ img { margin-bottom: 30px; border: 5px solid #d1d3d4;}
 img.center { margin: 0 auto 30px; display: block;}
 
 a.title { font-size: 120%; color: #020000; display: block; }
-a.title:hover { color: #8c8d35;}
+a.title:hover { color: #457b80;}
 h3.linkedTitle a { color: #020000;}
-h3.linkedTitle a:hover { color: #8c8d35;}
+h3.linkedTitle a:hover { color: #457b80;}
 
 span.title { margin-bottom: 10px; display: block;}
 
@@ -105,9 +107,11 @@ div#footer { background: url(/media/img/bar_bottom.png) top left no-repeat; padd
 div.categories span{ float: right; }
 div.categories li { font-size: 120%; padding: 7px 10px; border-bottom: 1px solid #B8B9B9;}
 div.categories li a {color: #5E5E5E;}
-div.categories li a:hover {color: #8c8d35;}
+div.categories li a:hover {color: #d45500;}
 div.categories li:hover { background-color: #fff; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
 div.categories li.lastCategory { border-bottom: none;}
+
+blockquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 150%; color: #000000;}
 
 button { text-indent: -9999em; display: block; border: none; height: 42px; cursor: pointer;}
 button.submitBtn { background: url(/media/img/btn_submit.png) top left no-repeat; margin-top: 30px; margin-left: 100px; width: 108px;}
@@ -122,6 +126,7 @@ div.calendar li { float: left; width: 240px;}
 div.calendar span.title { margin-bottom: 0;}
 div.calendar li.even { margin-right: 30px;}
 div.calendar p { margin-left: 83px; line-height:20px;} 
+
 
 div#reportingResources a { text-indent: -9999em; display: block; float: left; margin-right: 30px;}
 a#legistorm { background: url(/media/img/logo_legistorm_grey.png) left 3px no-repeat; width: 163px; height: 52px;}
