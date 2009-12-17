@@ -17,7 +17,7 @@
       </span>
       {{ post.content }}
     </div>
-    <div class="module">
+    <div class="module commentSection">
       <h3>Comments</h3>
       {% if comment_list %}
         <ol id="comments">
@@ -25,9 +25,9 @@
             <li id="c{{ comment.pk }}">
               <div>
                 {% if comment.user_url %}
-                  <p><b><a href="{{ comment.user_url }}">{{ comment.user_name }}</a></b></p>
+                  <a href="{{ comment.user_url }}">{{ comment.user_name }}</a>
                 {% else %}
-                  <p><b>{{ comment.user_name }}</b></p>
+                  {{ comment.user_name }}
                 {% endif %}
               </div>
               <div class="entry-content"><p>{{ comment.comment}}</p></div>
