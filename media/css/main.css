@@ -61,7 +61,7 @@ div.mainModule { background: url(/media/img/break_mainModule.png) bottom left re
 div.lastItem, li.lastModule { background: none;}
 
 div.otherProperty { float: left; width: 208px; padding: 0 15px;}
-div.otherProperty h4 { font-size: 140%; font-weight: bold; padding-bottom: 10px; margin-bottom: 20px;}
+div.otherProperty h4 { font-size: 140%; font-weight: bold; }
 div.otherProperty h4 a { color: #424140; }
 div.otherProperty li { margin-bottom: 10px; line-height: 20px;}
 div.otherProperty li a { color: #020000;}
@@ -84,7 +84,7 @@ span.tweet { background: url(/media/img/icon_tweet.png) top left no-repeat; disp
 div.post { background: url(/media/img/icon_post.png) top left no-repeat; display: block; padding-left: 50px;}
 
 img { border: 5px solid #d1d3d4;}
-div#otherPosts img { border: none; border-bottom: 2px solid #bcbec0;}
+div#otherPosts img { border: none; border-bottom: 2px solid #bcbec0; padding-bottom: 10px; margin-bottom: 20px;}
 img.center { margin: 0 auto 30px; display: block;}
 img.leftImg { float: left; margin-right: 20px;}
 img.rightImg { float: right; margin-left: 20px;}
