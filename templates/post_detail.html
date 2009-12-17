@@ -23,13 +23,13 @@
         <ol id="comments">
           {% for comment in comment_list %}
             <li id="c{{ comment.pk }}">
-              <div>
+              <span class="commentMetaAuthor">
                 {% if comment.user_url %}
                   <a href="{{ comment.user_url }}">{{ comment.user_name }}</a>
                 {% else %}
                   {{ comment.user_name }}
                 {% endif %}
-              </div>
+              </span>
               <div class="entry-content"><p>{{ comment.comment}}</p></div>
               <div class="clear"></div>
             </li>
