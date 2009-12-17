@@ -2,7 +2,7 @@
 
 {% block content %}
 
-
+{%load lede%}
 {%load comments%}
           <div id="ltColumn">
             <div class="mainModule">
@@ -76,8 +76,8 @@
                   <span class="posttime">{{entry.date_published|date:"P"}}</span>
                   {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
                 </span>
-                <!--img class="center" alt="" src="images/blogImg.jpg"/-->
-                {{ entry.content }}
+                
+{{entry.content|grafs:3}}
               </div>
               {%endfor%}             
             </div>
