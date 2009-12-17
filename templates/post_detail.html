@@ -1,82 +1,62 @@
 {% extends "base.html" %}
-
-
+{% load comments %}
+{% load markup %}
 
 {% block content %}
 
-{% load comments %}
-{% load markup %}
-{% get_comment_list for post as comment_list %}
+  {% get_comment_list for post as comment_list %}
 
+  {% autoescape off %}	
+    <div class="module">
+      <h2>{{post.title}}</h2>
+      <span class="postMeta">
+        {{post.shortbyline}}
+        <span class="postdate">{{post.date_published|date:"M d Y"}}</span>
+        <span class="posttime">{{post.date_published|date:"P"}}</span>
+        {% if comment_list %}<span class="posttime"><a href="#comments">{{ comment_list|length}} comment{{comment_list|length|pluralize}}</a></span>{%endif%}
+      </span>
+      {{ post.content }}
+    </div>
+    <div class="module">
+      <h3>Comments</h3>
+      {% if comment_list %}
+        <ol id="comments">
+          {% for comment in comment_list %}
+            <li id="c{{ comment.pk }}">
+              <div>
+                {% if comment.user_url %}
+                  <p><b><a href="{{ comment.user_url }}">{{ comment.user_name }}</a></b></p>
+                {% else %}
+                  <p><b>{{ comment.user_name }}</b></p>
+                {% endif %}
+              </div>
+              <div class="entry-content"><p>{{ comment.comment}}</p></div>
+              <div class="clear"></div>
+            </li>
+          {% endfor %}
+        </ol>
+      {% endif %}
 
-
-{% autoescape off %}	
-
-
-        <div id="columns">
-          <div id="ltColumn">
-            <div class="module">
-              <h2>{{post.title}}</h2>
-
-              <span class="postMeta">
-                {{post.shortbyline}}
-                <span class="postdate">{{post.date_published|date:"M d Y"}}</span>
-                <span class="posttime">{{post.date_published|date:"P"}}</span>
-                {% if comment_list %}<span class="posttime"><a href="#comments">{{ comment_list|length}} comment{{comment_list|length|pluralize}}</a></span>{%endif%}
-              </span>
-              {{post.content}}        </div>
-            <div class="module"><a name="comments"/>
-              <h3>Comments</h3>
-
-
-{% if comment_list %}
-<a href="#leavecomment">(Leave us a comment)</a><br/>
-            <ol id="comments">
-                {% for comment in comment_list %}
-                    <li id="c{{ comment.pk }}">
-                        <div>
-                        	{% if comment.user_url %}
-                                <p><b><a href="{{ comment.user_url }}">{{ comment.user_name }}</a></b></p>
-                            {% else %}
-                                <p><b>{{ comment.user_name }}</b></p>
-                            {% endif %}
-						</div>
-                        <div class="entry-content"><p>{{ comment.comment}}</p></div>
-						<div class="clear"></div>
-                    </li>
-                {% endfor %}
-            </ol>
-{% endif %}
-
-
-{% get_comment_form for post as form %}
-<form id="comment" method="post" action="{% comment_form_target %}">
-{{form.content_type}}
-{{form.object_pk}}
-{{form.timestamp}}
-{{form.security_hash}}
-<input id="id_honeypot" name="honeypot" style="display:none">
-<ul>
-<li><label for="id_name">Name</label> <input id="id_name" class="full" type="text" name="name" maxlength="50" /></li>
-<li><label for="id_email">Email address</label> <input type="text" class="full" name="email" id="id_email" /></li>
-<li><label for="id_url">URL</label> <input type="text" name="url" class="full" id="id_url" /></li>		
-<li><label for="id_comment">Comment</label> <textarea id="id_comment" class="textarea full" rows="5" cols="32" name="comment"></textarea></li>		
-<li>
-                    <button class="submitbtn" type="submit">
-                      <span>Submit</span>
-                    </button>
-                  </li>
-                </ul>
-
-              </form>  
-
- 
-
-
-
-            </div>  
-          </div>
-          <div id="rtColumn">
-            {{sidebar}}</div>
-{%endautoescape%}
+      {% get_comment_form for post as form %}
+      <h3>Leave Us a Comment</h3>
+      <form id="comment" method="post" action="{% comment_form_target %}">
+        {{form.content_type}}
+        {{form.object_pk}}
+        {{form.timestamp}}
+        {{form.security_hash}}
+        <input id="id_honeypot" name="honeypot" style="display:none">
+        <ul>
+          <li><label for="id_name">Name</label> <input id="id_name" class="full" type="text" name="name" maxlength="50" /></li>
+          <li><label for="id_email">Email address</label> <input type="text" class="full" name="email" id="id_email" /></li>
+          <li><label for="id_url">URL</label> <input type="text" name="url" class="full" id="id_url" /></li>		
+          <li><label for="id_comment">Comment</label> <textarea id="id_comment" class="textarea full" rows="5" cols="32" name="comment"></textarea></li>		
+          <li>
+            <button class="submitbtn" type="submit">
+              <span>Submit</span>
+            </button>
+          </li>
+        </ul>
+      </form>  
+  </div>
+  {%endautoescape%}
 {%endblock%}
