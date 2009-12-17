@@ -149,6 +149,8 @@ div#paginatorNumbers { float: left; text-align: center; width: 500px; display: b
 a.paginatorPrevious { text-align: left; }
 a.paginatorNext { text-align: right;}
 
+strong { font-weight: bold;}
+
 td { padding: 5px 10px;}
 
 .clear { clear: both;}

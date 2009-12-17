@@ -6,9 +6,7 @@ body.home div#header { background:transparent url(/media/img/header_top_8.png) n
 
 div#columns { zoom: 1;}
 body.home div#columns { width: 954px;}
-body.home div#rtColumn, body.home div#ltColumn { overflow: none;}
-body.home div#ltColumn  { margin: 0 25px 0 0; width: 340px;}
-body.home div#rtColumn { width: 500px;}
+div#rtColumn, div#ltColumn { overflow: hidden;}
 
 div.post { background:transparent url(/media/img/icon_post_8.png) no-repeat scroll left top;}
 span.tweet { background:transparent url(/media/img/icon_tweet_8.png) no-repeat scroll left top; }
@@ -19,3 +17,13 @@ div#columns { background:transparent url(/media/img/column_lt_8.png) repeat-y sc
 a.continueReading { background:transparent url(/media/img/arrow_8.png) no-repeat scroll right 3px;}
 
 div.calendarDate { background: none; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="/media/img/calendar_bg.png", sizingMethod="crop");}
+
+a#sunlightFoundation { background: none; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="/media/img/logo_sunlightFoundation.png", sizingMethod="crop");}
+
+div#copyright { background: none; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="/media/img/copyright_bg.png", sizingMethod="crop");}
+div#copyrightWrapper { background:transparent url(/media/img/copyright_wrapper_8.png) repeat-x scroll left top;}
+
+div.mainModule { background:transparent url(/media/img/break_mainModule_8.png) repeat-x scroll left bottom;}
+li.module, div.module { background:transparent url(/media/img/break_module_8.png) repeat-x scroll left bottom;}
+
+div#footer{ background: none; filter: progid:DXImageTransform.Microsoft.AlphaImageLoader(src="/media/img/bar_bottom.png", sizingMethod="crop");}

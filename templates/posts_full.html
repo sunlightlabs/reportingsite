@@ -1,14 +1,14 @@
 {% extends "base.html" %}
 {% load comments %}
-{% block bodyclass %}blog{% endblock %}
+
+{% block body %}blog{% endblock %}
 
 {% block content %}
-{%autoescape off%}
-<div id="ltColumn">
   <ol class="moduleLists">
     {% for post in page_obj.object_list %}
     {% get_comment_count for post as comment_count %}
     <li class="module">
+      {%autoescape off%}
       <h2><a href="{% url blogdor_post post.date_published.year post.slug %}">{{ post.title }}</a></h2>
       <span class="postMeta">
         {{post.shortbyline}}
@@ -17,12 +17,9 @@
         {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post post.date_published.year post.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
       </span>
       {{ post.content }}
+      {%endautoescape%}
     </li>
     {% endfor %}
   </ol>
   {% include 'paginator.html' %}
-</div>
-{%endautoescape%}
-
-
 {%endblock%}
