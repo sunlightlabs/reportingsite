@@ -1,7 +1,7 @@
 {% load smart_if %}
 {% load sidebar %}
 {% load tagging_tags %}
-{% tags_for_object post as tags %}
+
 
 <script type="text/javascript">
 function cleardefault(box)
@@ -34,24 +34,11 @@ if (box.value=='Search SLRG') { box.value=''; }
 </div>
 {%endif%}
 
-            {% if tags %}
-            <div class="mainModule categories">
-              <h3>Related Content</h3>
-              <ul>
-                {% for tag in tags %}
-                {% tagged_objects tag in reporting.Post as posts %}
-                <li>
-                  <a href="{% url blogdor_tag tag %}">{{ tag }}</a>
-                  <span>{{posts|length}}</span>
-                </li>
-                {%endfor%}              
-              </ul> 
-            </div>
-            {%endif%}
+           
            <div class="mainModule categories">
              <h3>Recent Posts</h3>
              <ul>
-                {% get_ourposts post %}
+                {% get_ourposts %}
                {%for entry in ourposts|slice:":5" %}
                <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{entry.title}}</a></li>
                {%endfor%}

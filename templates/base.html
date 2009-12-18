@@ -8,8 +8,8 @@
     <title>Sunlight Foundation Reporting Group</title>
     {%css "css/main.css"%}
     {%js "js/jquery.js"%}
-
-    <script type="text/javascript" src="/media/js/reporting.js"></script>
+    {%js "js/reporting.js"%}
+    <script src="http://services.sunlightlabs.com/brandingbar/hat_js/sunlightlabs/" type="text/javascript"></script>
     <script type="text/javascript" src="http://use.typekit.com/foz3kwy.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
 
@@ -29,12 +29,12 @@
             <big>Reporting Group</big></a>
           </h1>
         </div>
-        <span id="todayDate">Friday, November 13, 2009</span>
+        <span id="todayDate">{% now "l, F m, Y" %}</span>
         <div id="nav">
           <ul>
             <!--li class="firstLi" id="nav_blog"><a href="/realtime">Blog</a></li-->
-            <li class="firstLi" id="nav_blog"><a href="/stories">Reports</a></li>
-            <!--li id="nav_features"><a href="#">Features</a></li-->
+            <li class="firstLi" id="nav_blog"><a href="/features">Featured Stories</a></li>
+            <li id="nav_features"><a href="/blog">Blog</a></li>
           </ul>
         </div>
       </div>
@@ -45,8 +45,7 @@
           </div>
           <div id="rtColumn">
             {% block sidebar %}
-              !!!!! sidebar goes here
-              {% include "feedbar.html" %}
+              
             {% endblock %}
           </div>  
           <div class="clear"></div> 
@@ -75,8 +74,8 @@
             </ol>  
           </div> 
           <div class="otherProperty">
-            <a href="/SS"><img class="subsityscopeLogo" alt="Subsity Scope Logo" src="{% media_url %}/img/logo_subsity_grey.png" data-grey="{% media_url %}/img/logo_subsity_grey.png" data-color="{% media_url %}/img/logo_subsity_color.png"/></a>
-            <span>Subsity Scope</span>
+            <a href="/SS"><img class="subsityscopeLogo" alt="Subsidy Scope Logo" src="{% media_url %}/img/logo_subsity_grey.png" data-grey="{% media_url %}/img/logo_subsity_grey.png" data-color="{% media_url %}/img/logo_subsity_color.png"/></a>
+            <span>SubsidyScope</span>
             <ol>
 {% for entry in SS %}
               <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></li>

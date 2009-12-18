@@ -1,13 +1,14 @@
 {% extends "base.html" %}
-{% load comments %}
+{% load comments %}{% load lede %} {%load sidebar%}
 
 {% block body %}home{% endblock %}
 
 {% block content %}
   <div class="mainModule">
-    <h3 class="linkedTitle"><a href="/realtime">Real Time Investigations</a></h3>
+    <h3 class="linkedTitle"><a href="/blog">Real Time Investigations</a></h3>
     <ol class="moduleLists"> 
-      {% for entry in blogs|dictsortreversed:"date_published"|slice:":7"  %}
+{%autoescape off%}
+      {% for entry in blogs|dictsortreversed:"date_published"|slice:":8"  %}
       <li class="module">
         {%if entry.title%}
         <div class="post">
@@ -18,7 +19,7 @@
             <span class="posttime">{{entry.date_published|date:"P"}}</span>
       {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
           </span>
-          <p>{{ entry.lede|safe }}</p>
+          <p>{{ entry|lede }}</p>
         </div>
         {%else%}
         <span class="tweet">
@@ -30,27 +31,11 @@
       {% endfor %}
     </ol>  
   </div>
-  <div class="mainModule lastItem">
-    <h3 class="linkedTitle"><a href="/stories">Recent Reports</a></h3>
-    {% for entry in stories %}
-    <div class="module">
-      {% get_comment_count for entry as comment_count %}
-      <a class="title" href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a>
-      <span class="postMeta">
-        {%autoescape off%}{{entry.shortbyline}}{%endautoescape%}
-        <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
-        <span class="posttime">{{entry.date_published|date:"P"}}</span>
-        {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
-      </span>
-      <p>{{ entry.lede }}</p>
-    </div>
-    {% endfor %}	
-    <a class="viewAll" href="/stories/">« Older Reports</a>  
-  </div>
+{%endautoescape%}
   <div class="mainModule calendar lastItem">
     <h3>Dates we're watching</h3>
-    <ol>
-      {%for event in calendar%}
+    <ol>{%get_calendar%}
+      {%for event in events|slice:"2"%}
       <li class="{% cycle 'even' 'odd' %}">
         <div class="calendarDate">
           <span class="month">{{event.date|date:"M"}}</span>
@@ -77,7 +62,7 @@
         {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
       </span>
       <!--img class="center" alt="" src="images/blogImg.jpg"/-->
-      {{ entry.content }}
+      {{ entry.content|grafs:4 }}
       {% endautoescape %}
     </div>
     {%endfor%}             
