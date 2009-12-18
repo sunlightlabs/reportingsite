@@ -87,11 +87,12 @@ INSTALLED_APPS = (
     'adminfiles',
     'sorl.thumbnail',
     'mediasync',
+    'markdown'
 )
 
 
 DEFAULT_MARKUP = 'plain'
-BLOGDOR_POSTS_PER_PAGE = 25
+BLOGDOR_POSTS_PER_PAGE = 14
 BLOGDOR_ENABLE_FEEDS = True
 
 AKISMET_KEY = '***REMOVED***'
@@ -115,6 +116,9 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 ADMINFILES_USE_SIGNALS = True
 ADMINFILES_REF_START = '[{['
 ADMINFILES_REF_END = ']}]'
+FLICKR_USER = None
+YOUTUBE_USER = None
+
 
 try:
     from local_settings import *

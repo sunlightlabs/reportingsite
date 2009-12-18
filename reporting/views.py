@@ -136,7 +136,7 @@ def tag_list_admin(request):
 def author(request, username):
     try:
         author = User.objects.get(username=username)
-        topinfo = 'Investigative journalism from Sunlight Foundation reporter <a href="http://sunlightfoundation.com/people/">' + author.first_name + ' ' + author.last_name + '</a>'
+        topinfo = 'Investigative journalism from Sunlight Foundation reporter <a href="http://sunlightfoundation.com/people/'+username+'">' + author.first_name + ' ' + author.last_name + '</a>'
         return list_detail.object_list(
                     request,
                     queryset=Post.objects.published().select_related().filter(author=author),
@@ -172,89 +172,26 @@ def index(request):
     def mergetweets(posts, tweetsfeed):
         elist = []
         for p in posts:
-            elist.append(p) #{ 'title': '<a href="'+p.get_absolute_url()+'">'+p.title+'</a>', 'date': p.date_published, 'byline': p.author, 'text': p.lede() })
+            elist.append(p) 
         for t in tweetsfeed.entries.all():
             elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
-        #elist = sorted(elist, key=itemgetter('date_published'))
-        #elist.reverse()
-        """for e in elist:
-            day = e['date_published'].strftime("%m/%d/%y")
-            now = datetime.datetime.now().strftime("%m/%d/%y")
-            if day==now:
-                e['date_published']= e['date_published'].strftime("%H:%m%P")
-                if e['date_published'][:1]=='0':
-                    e['date_published'] = e['date_published'][1:]
-            else:
-                e['date_published']=''"""
         return elist
 
-
-    def getcal():      
-        cal = FeedEntry.objects.filter(feed__codename__startswith='Calendar-')  
-        cl = []
-        today = datetime.datetime.now().date()
-        for e in cal:
-            d = e.summary[10:22]
-            t = time.strptime(d, "%b %d, %Y")
-            t = datetime.date.fromtimestamp(time.mktime(t))
-            if t>=today:
-                cl.append({'date': t, 'summary': e.title })
-        cl = sorted(cl, key=itemgetter('date'))
-        return cl[:4]
-
-
-    featured = Post.objects.published().filter(is_favorite=True)[0:2] 
+    featured = Post.objects.published().filter(blogreport='R')[:3] 
     f1 = featured[0].pk
     f2 = featured[1].pk
-    stories = Post.objects.exclude(pk=f1).exclude(pk=f2).filter(blogreport='R', is_published=True)[0:7] 
-    blogs = mergetweets( Post.objects.filter(blogreport='B', is_published=True)[0:7], Feed.objects.get(codename__startswith='tweetsRT-')  )
+    stories = Post.objects.published().exclude(pk=f1).exclude(pk=f2).filter(blogreport='R')[:3] 
+    blogs = mergetweets( Post.objects.filter(is_published=True), Feed.objects.get(codename__startswith='tweetsRT-')  )[:8]
 
-    return render_to_response('index.html', {'blogs': blogs, 'stories': stories, 'featured': featured, 'bodyclass': 'home', 'calendar': getcal() }, context_instance=RequestContext(request) )
+    return render_to_response('index.html', {'blogs': blogs, 'stories': stories, 'featured': featured, 'bodyclass': 'home' }, context_instance=RequestContext(request) )
 
-
-
-def feedbar(request):
-    ourposts = Post.objects.published()[:6]
-    resources = FeedEntry.objects.filter(feed__codename__startswith='Resource-')[:35]
-    news = FeedEntry.objects.filter(feed__codename__startswith='News-')  
-
-    def getcal():      
-        cal = FeedEntry.objects.filter(feed__codename__startswith='Calendar-')  
-        cl = []
-        today = datetime.datetime.now().date()
-        for e in cal:
-            d = e.summary[10:22]
-            t = time.strptime(d, "%b %d, %Y")
-            t = datetime.date.fromtimestamp(time.mktime(t))
-            if t>=today:
-                cl.append({'date': t, 'summary': e.title })
-        cl = sorted(cl, key=itemgetter('date'))
-        for c in cl:
-            c['date'] = str(c['date'])[5:]
-        return cl[:4]
-
-    calendars = getcal()
-    comments = Comment.objects.for_model(Post).filter(is_public=True).order_by('-submit_date')[:2]
-    return render_to_response('feedbar.html',  {'resources': resources, 'news': news, 'calendars': calendars, 'ourposts': ourposts, 'comments': comments })
-
-
-def entries(request, blogreport):
-    stories = Post.objects.published().filter(blogreport=blogreport)   
-    if blogreport=='R':
-        t='posts_lede.html'
-    else:
-        t='posts_full.html'
-    return list_detail.object_list(
-                    request,
-                    queryset=stories,
-                    paginate_by=POSTS_PER_PAGE,
-                    template_name=t,
-                    template_object_name='post', allow_empty=True,
-                    )
 
 
 def bysite(request, site):
-    stories = Post.objects.published().filter(whichsite=site)   
+    if site=='features':
+        stories = Post.objects.published().filter(blogreport='R')   
+    else:
+        stories = Post.objects.published().filter(whichsite=site)  
 
     if site=='FLIT':
         t='flit.html'

@@ -52,7 +52,7 @@
           <li><label for="id_url">URL</label> <input type="text" name="url" class="full" id="id_url" /></li>		
           <li><label for="id_comment">Comment</label> <textarea id="id_comment" class="textarea full" rows="5" cols="32" name="comment"></textarea></li>		
           <li>
-            <button class="submitbtn" type="submit">
+            <button class="submitBtn" type="submit">
               <span>Submit</span>
             </button>
           </li>
@@ -60,4 +60,11 @@
       </form>  
   </div>
   {%endautoescape%}
+{%endblock%}
+
+
+
+
+{%block sidebar%}
+{% include "feedbar.html" %}
 {%endblock%}

@@ -10,6 +10,8 @@ from models import Post
 #from tagging.forms import TagAdminForm
 from django import forms
 
+import mediasync
+
 class PostAdminModelForm(forms.ModelForm):
     tags = TagField(widget=CloudTagInput(), required=False)
 
@@ -30,12 +32,11 @@ class PostAdminModelForm(forms.ModelForm):
 
     class Media:
         css = {
-            'all': ('jquery.autocomplete.css',)
+            'all': ('jquery.autocomplete.css', 'admin/rte/rte.css',)
         }
         js = (
             'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
             'js/urlify.js',
-            'rte/jquery.rte.js',
             'jquery.bgiframe.min.js',
 
             '/js/RelatedObjectLookups.js', '/js/calendar.js', '/js/DateTimeShortcuts.js'

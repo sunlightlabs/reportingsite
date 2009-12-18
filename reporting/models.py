@@ -69,51 +69,13 @@ class Post(models.Model):
     image = models.FileField(upload_to='images', max_length=500)
 
 
-
-    """def byline(self):
-        import time, datetime
-        d1 = self.date_published.strftime("%h %d")
-        d2 = self.date_published.strftime("%I:%M%P")
-        if d2[0:1]=='0':
-            d2 = d2[1:]
-        d = d1 + " " + d2
-        if self.override_byline:
-            return "By " + self.override_byline + " " + d 
-        return "By " + self.author.first_name + " " + self.author.last_name + " " + d"""
-
     def shortbyline(self):
         if self.override_byline:
             return "By " + self.override_byline
         return 'By <a href="/author/' + self.author.username + '">' + self.author.first_name + " " + self.author.last_name + '</a>'
 
-    def lede(self): 
 
-        if self.excerpt.strip()!='' and self.excerpt.strip()!=None and self.excerpt!='<br>':
-            return render_to_string('render_lede.html',  {'url': self.get_absolute_url(), 'graf': self.excerpt, 'more': True})
-        if len(self.content)<400:
-            return render_to_string('render_lede.html',  {'url': self.get_absolute_url(), 'graf': self.content, 'more': False})
-
-        grafs = self.content.strip().split('<p>')
-        for g in grafs:
-            lede = g
-            if lede:
-                break
-
-        #if len(lede)<300:
-        return render_to_string('render_lede.html',  {'url': self.get_absolute_url(), 'graf': lede, 'more': True})
-        """else:
-            sentences = lede.split('. ')
-            if len(sentences[0])>400:
-                return render_to_string('render_lede.html',  {'url': self.get_absolute_url(), 'graf': sentences[0][:400], 'more': True})
-            i=0
-            lede = sentences[0]
-            while len(sentences)>i+1 and len(lede)<400:
-                i = i+1
-                lede = lede + ". " + sentences[i]
-            return render_to_string('render_lede.html',  {'url': self.get_absolute_url(), 'graf': sentences[0][:400], 'more': True})"""
-
-
-  
+ 
     class Meta:
         ordering = ['-date_published','-timestamp']
         

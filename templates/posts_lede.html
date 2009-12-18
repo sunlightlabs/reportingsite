@@ -1,13 +1,11 @@
 {% extends "base.html" %}
-{% load comments %}
+{% load comments %}{%load lede%}
 
 
 
 
 
 {% block content %}
-{%block sitespecific%}<h3>{{topinfo|safe}}</h3>{%endblock%}
-
 
 <ol class="moduleLists">
 	{% for post in page_obj.object_list %}
@@ -21,7 +19,7 @@
                 {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post post.date_published.year post.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
               </span>
 
-{{ post.lede }}
+{{ post|lede|safe }}
 
 </li>
 	{% endfor %}
@@ -31,4 +29,12 @@
 {% include 'paginator.html' %}
 
 
+{%endblock%}
+
+
+
+{%block sidebar%}
+<h3>{{topinfo|safe}}</h3>
+
+{% include "feedbar2.html" %}
 {%endblock%}

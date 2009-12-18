@@ -14,7 +14,7 @@ urlpatterns = patterns(
     url(r'^$', 'index'),
     (r'^admin/', include(admin.site.urls)),
 
-    url(r'^dashboard$', 'feedbar'),
+    #url(r'^dashboard$', 'dashboard'),
 
     url(r'^search/$', 'search'),
 
@@ -29,7 +29,7 @@ urlpatterns = patterns(
     # archives
     url(r'^(?P<year>\d{4})/$', 'archive_year', name='blogdor_archive_year'),
     url(r'^(?P<year>\d{4})/(?P<month>\d{2})/$', 'archive_month', name='blogdor_archive_month'),
-    url(r'^archive/$', 'archive', name='blogdor_archive'),
+    url(r'^blog/$', 'archive', name='blogdor_archive'),
     
     # post
     url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[\w-]+)/$', 'post_wpcompat', name='blogdor_post_wpcompat'),  
@@ -40,10 +40,7 @@ urlpatterns = patterns(
     
     # preview
     url(r'^preview/(?P<post_id>\d+)/(?P<slug>[\w-]+)/$', 'preview', name='blogdor_preview'),
-
-    #pages by length (blog or report)
-    url(r'^realtime/$', 'entries', {'blogreport': 'B'}),
-    url(r'^stories/$', 'entries', {'blogreport': 'R'}),
+    url(r'^features/$', 'bysite', {'site': 'features'}),
     #page by topic: flit, ss, slrg pages    
     url(r'^(?P<site>.\w{1,5})/$', 'bysite'),
 
