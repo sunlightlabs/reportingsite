@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 {% load comments %}
 {% load markup %}
+{% load reporting_tags %}
 
 {% block content %}
 
@@ -15,7 +16,7 @@
         <span class="posttime">{{post.date_published|date:"P"}}</span>
         {% if comment_list %}<span class="posttime"><a href="#comments">{{ comment_list|length}} comment{{comment_list|length|pluralize}}</a></span>{%endif%}
       </span>
-      {{ post.content }}
+      {{ post.content|cleantags|markdown }}
     </div>
     <div class="module commentSection">
       <h3>Comments</h3>
