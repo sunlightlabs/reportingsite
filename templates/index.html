@@ -1,5 +1,8 @@
 {% extends "base.html" %}
 {% load comments %}{% load lede %} {%load sidebar%}
+{% load markup %}
+{% load reporting_tags %}
+
 
 {% block body %}home{% endblock %}
 
@@ -62,7 +65,7 @@
         {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
       </span>
       <!--img class="center" alt="" src="images/blogImg.jpg"/-->
-      {{ entry.content|grafs:4 }}
+      {{ entry.content|grafs:4|cleantags|markdown }}
       {% endautoescape %}
     </div>
     {%endfor%}             

@@ -87,6 +87,7 @@ INSTALLED_APPS = (
     'adminfiles',
     'sorl.thumbnail',
     'mediasync',
+    'markdown'
 )
 
 
