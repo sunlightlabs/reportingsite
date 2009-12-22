@@ -100,8 +100,8 @@ span.postMeta span { padding-left: 7px; margin-left: 7px; border-left: 1px solid
 div.otherProperty span { text-align: center;}
 
 form li { margin-bottom: 15px;}
-label { width: 100px; display: block; float: left; }
-input { background: none; border: none; border-bottom: 1px solid #B8B9B9; width: 400px;}
+div#pageMain label { width: 100px; display: block; float: left; }
+div#pageMain input { background: none; border: none; border-bottom: 1px solid #B8B9B9; width: 400px;}
 input#searchbox { width: 190px; float: left; margin-right: 20px; padding-bottom: 5px; padding-top: 3px; background: #FFFFFF;}
 textarea { background: url(/media/img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 265px; line-height: 24px;}
 
