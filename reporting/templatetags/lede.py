@@ -16,7 +16,7 @@ def grafs(post, num):
                     newg.append('<p>'+n.strip()+'</p>')
     lede = ''.join(newg[:num]) 
     if len(newg)>num:
-        lede = '<p>' + lede +  ' </p><a class="readMoreFeature" href="' + post.get_absolute_url() + '">Read all about it</a>'  
+        lede = lede + '<a class="readMoreFeature" href="' + post.get_absolute_url() + '">Read all about it</a>'  
     return lede
 
 
@@ -35,8 +35,7 @@ def lede(post):
             for n in new:
                 if n.strip():
                     newg.append(n.strip())
-    lede = striptags(newg[0])
-    print newg
+    lede = '<p>'+striptags(newg[0])+'</p>'
     if lede and len(newg)>1:
         lede = lede + readmore
     return lede
