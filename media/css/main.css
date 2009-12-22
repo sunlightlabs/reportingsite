@@ -80,7 +80,10 @@ p { margin-bottom: 20px; color: #58595b; font-family: Helvetica Neue, Helvetica,
 
 span.tweetDate { display: block; color: #808285; font-style: oblique; font-size: 90%;}
 span.tweet { background: url(/media/img/icon_tweet.png) top left no-repeat; display: block; padding-left: 50px;}
+span.tweet p { margin-bottom: 5px;}
 div.post { background: url(/media/img/icon_post.png) top left no-repeat; display: block; padding-left: 50px;}
+div.post span.postMeta { margin-bottom: 10px;}
+div.post p { margin-bottom: 15px;}
 
 img { border: 5px solid #d1d3d4;}
 div#otherPosts img { border: none; border-bottom: 2px solid #bcbec0; padding-bottom: 8px; margin-bottom: 6px;}
@@ -130,9 +133,8 @@ div.calendarDate span { display: block; text-align: center; font-family: Helveti
 div.calendarDate span.month { text-transform: uppercase; color: #d1d3d4; font-size: 90%; padding-top: 5px;}
 div.calendarDate span.day { color: #fff; font-size: 200%; font-weight: bold; }
 
-div.calendar li { float: left; width: 240px;}
+div.calendar li { float: left; width: 310px; margin-bottom: 20px;}
 div.calendar span.title { margin-bottom: 0;}
-div.calendar li.even { margin-right: 30px;}
 div.calendar p { margin-left: 83px; line-height:20px;} 
 
 div.commentSection h3 { margin-top: 40px;}
