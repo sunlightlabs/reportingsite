@@ -2,6 +2,7 @@
 {% load comments %}
 {% load markup %}
 {% load reporting_tags %}
+{%load lede%}
 
 {% block content %}
 
@@ -16,7 +17,7 @@
         <span class="posttime">{{post.date_published|date:"P"}}</span>
         {% if comment_list %}<span class="posttime"><a href="#comments">{{ comment_list|length}} comment{{comment_list|length|pluralize}}</a></span>{%endif%}
       </span>
-      {{ post.content|cleantags|markdown }}
+      {{ post|body }}
     </div>
     <div class="module commentSection">
       <h3>Comments</h3>
@@ -52,7 +53,7 @@
           <li><label for="id_url">URL</label> <input type="text" name="url" class="full" id="id_url" /></li>		
           <li><label for="id_comment">Comment</label> <textarea id="id_comment" class="textarea full" rows="5" cols="32" name="comment"></textarea></li>		
           <li>
-            <button class="submitbtn" type="submit">
+            <button class="submitBtn" type="submit">
               <span>Submit</span>
             </button>
           </li>

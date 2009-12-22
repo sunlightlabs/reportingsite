@@ -48,6 +48,7 @@ if (box.value=='Search SLRG') { box.value=''; }
               </ul> 
             </div>
             {%endif%}
+{%if post%}
            <div class="mainModule categories">
              <h3>Recent Posts</h3>
              <ul>
@@ -57,10 +58,10 @@ if (box.value=='Search SLRG') { box.value=''; }
                {%endfor%}
              </ul>
            </div>
-
+{%endif%}
 
            <div class="mainModule categories">
-             <h3>Resources we're watching</h3>
+             <h3>Data Feed</h3>
              {%get_resources%}
              <ul>
                {%for entry in entries|slice:":5" %}
