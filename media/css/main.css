@@ -30,11 +30,11 @@ div#rssIcon { float: right; background: url(/media/img/feed-icon-14x14.png) left
 div#rssIcon a { color: #414042;}
 div#rssIcon a:hover { color: #457b80;}
 
-div#nav li { float: left; margin-left: 12px; padding-left: 14px; border-left: 1px solid #b3b5b7; line-height: 15px;}
+div#nav li { float: left; margin-left: 10px; padding-left: 10px; border-left: 1px solid #b3b5b7; line-height: 15px;}
 div#nav a.active { color: #457b80;}
 div#nav a { color: #5e5e5e;}
 div#nav a:hover { color: #457b80;}
-div#nav { float: right; font-size: 110%; font-style: oblique; margin-right: 23px; margin-top: -30px; text-decoration: none; text-transform: uppercase; font-weight: bold;}
+div#nav { float: right; font-size: 105%; font-style: oblique; margin-right: 23px; margin-top: -30px; text-decoration: none; text-transform: uppercase; font-weight: bold;}
 div#nav li.firstLi { border-left: none;}
 
 body.home div#header { background: url(/media/img/header_top.png) left 154px no-repeat; }
@@ -103,7 +103,7 @@ form li { margin-bottom: 15px;}
 div#pageMain label { width: 100px; display: block; float: left; }
 div#pageMain input { background: none; border: none; border-bottom: 1px solid #B8B9B9; width: 400px;}
 
-div#pageMain input#searchbox { width: 190px; float: left; margin-right: 20px; background: #FFFFFF; padding: 5px; border-bottom: none; -moz-border-radius: 3px; -webkit-border-radius: 3px; color: #a7a9ac;}
+div#pageMain input#searchbox { width: 190px; float: left; margin-right: 15px; background: #FFFFFF; padding: 5px; border-bottom: none; -moz-border-radius: 3px; -webkit-border-radius: 3px; color: #a7a9ac;}
 textarea { background: url(/media/img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 265px; line-height: 24px;}
 
 
@@ -116,8 +116,8 @@ div.categories li:hover a {color: #457b80;}
 div.categories li:hover { background-color: #fff; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
 div.categories li.lastCategory { border-bottom: none;}
 
-blockquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 150%; color: #000000;}
-div.pullquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 200%; color: #000000;  border-top: 1px solid; border-bottom: 1px solid; line-height: 30px; padding: 10px 10px; margin: 5px; font-style: oblique; text-align: center;}
+blockquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 150%; color: #000000; font-style: oblique; line-height: 27px; margin-bottom: 15px;}
+div.pullquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 200%; color: #000000;  border-top: 1px solid; border-bottom: 1px solid; line-height: 30px; padding: 10px 10px; margin: 5px; font-style: oblique; text-align: center; margin-bottom: 15px;}
 
 span.commentMetaAuthor { font-size: 110%; font-weight: bold; margin-bottom: 5px; display: block;}
 div.entry-content p { color:#58595B; font-size: 95%; line-height: 20px;}
@@ -162,8 +162,11 @@ strong { font-weight: bold;}
 td { padding: 5px 10px;}
 tbody { border: 1px solid ;}
 
-body.home #brandingbar { border-bottom: 1px solid #bcbec0; padding:0.4em 0.9em 0.4em 0; }
-body.home #brandingbar a#sllink { background:#F6F8FB url(http://assets.sunlightfoundation.com/images/project_of_sf.gif) 0 3px no-repeat;}
+body.home #brandingbar, body.theblog #brandingbar, body.about #brandingbar { border-bottom: 1px solid #bcbec0; padding:0.4em 0.9em 0.4em 0; }
+body.home #brandingbar a#sllink, body.theblog #brandingbar a#sllink, body.about #brandingbar a#sllink  { background:#F6F8FB url(http://assets.sunlightfoundation.com/images/project_of_sf.gif) 0 3px no-repeat;}
+
+div.features ul, div.about ul, div.posts ul { list-style-type: disc; padding-left: 30px; margin-bottom: 20px;}
+div.features ol, div.about ol, div.posts ul{ list-style-type: decimal;}
 
 .clear { clear: both;}
 

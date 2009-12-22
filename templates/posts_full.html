@@ -7,7 +7,7 @@
   <ol class="moduleLists">
     {% for post in page_obj.object_list %}
     {% get_comment_count for post as comment_count %}
-    <li class="module">
+    <li class="module posts">
       {%autoescape off%}
       <h2><a href="{% url blogdor_post post.date_published.year post.slug %}">{{ post.title }}</a></h2>
       <span class="postMeta">
