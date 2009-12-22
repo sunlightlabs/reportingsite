@@ -14,6 +14,10 @@ jQuery.fn.rte = function(css_url, media_url) {
             var textarea = $(this);
             enableDesignMode(textarea);
         });
+        /*$("#id_content").( function(){
+            var textarea = $("#id_content");
+            enableDesignMode(textarea);
+        });*/
     }
     
     function formatText(iframe, command, option) {

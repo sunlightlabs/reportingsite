@@ -80,7 +80,7 @@ def archive_month(request, year, month):
                     month_format="%m",
                     template_name='post_archive_month.html',
                     template_object_name='post',
-                    allow_empty=True)
+                    allow_empty=False)
 
 def archive_year(request, year):
     return date_based.archive_year(
@@ -177,19 +177,19 @@ def index(request):
             elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
         return elist
 
-    featured = Post.objects.published().filter(blogreport='R')[:3] 
+    featured = Post.objects.published().filter(is_favorite=True)[:3] 
     f1 = featured[0].pk
     f2 = featured[1].pk
-    stories = Post.objects.published().exclude(pk=f1).exclude(pk=f2).filter(blogreport='R')[:3] 
-    blogs = mergetweets( Post.objects.filter(is_published=True), Feed.objects.get(codename__startswith='tweetsRT-')  )[:8]
+    f3 = featured[1].pk
+    blogs = mergetweets( Post.objects.published().exclude(pk=f1).exclude(pk=f2).exclude(pk=f3), Feed.objects.get(codename__startswith='tweetsRT-')  )
 
-    return render_to_response('index.html', {'blogs': blogs, 'stories': stories, 'featured': featured, 'bodyclass': 'home' }, context_instance=RequestContext(request) )
+    return render_to_response('index.html', {'blogs': blogs, 'featured': featured, 'bodyclass': 'home' }, context_instance=RequestContext(request) )
 
 
 
 def bysite(request, site):
     if site=='features':
-        stories = Post.objects.published().filter(blogreport='R')   
+        stories = Post.objects.published().filter(is_favorite=True)   
     else:
         stories = Post.objects.published().filter(whichsite=site)  
 
@@ -223,5 +223,6 @@ def search(request):
                     template_name='posts_lede.html',
                     template_object_name='post', allow_empty=True
                     )
-
+def handler404(request):
+    return archive(request)
 

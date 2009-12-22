@@ -1,5 +1,6 @@
 {%load comments%}{%load lede%}
 {% autoescape off%}
+{%if post_list%}
 <ol class="moduleLists">
 	{% for post in post_list %}
 {% get_comment_count for post as comment_count %}
@@ -16,15 +17,11 @@
 </li>
 	{% endfor %}
 </ol>
-
+{%endif%}
 {%endautoescape %}
 
 {% include 'paginator.html' %}
 
 
-
-{%block sidebar%}
-{% include "feedbar2.html" %}
-{%endblock%}
 
 

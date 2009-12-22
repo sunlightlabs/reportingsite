@@ -30,7 +30,7 @@ div#rssIcon { float: right; background: url(/media/img/feed-icon-14x14.png) left
 div#rssIcon a { color: #414042;}
 div#rssIcon a:hover { color: #457b80;}
 
-div#nav li { float: left; margin-left: 18px; padding-left: 18px; border-left: 1px solid #b3b5b7; line-height: 15px;}
+div#nav li { float: left; margin-left: 12px; padding-left: 14px; border-left: 1px solid #b3b5b7; line-height: 15px;}
 div#nav a.active { color: #457b80;}
 div#nav a { color: #5e5e5e;}
 div#nav a:hover { color: #457b80;}
@@ -102,8 +102,8 @@ div.otherProperty span { text-align: center;}
 form li { margin-bottom: 15px;}
 div#pageMain label { width: 100px; display: block; float: left; }
 div#pageMain input { background: none; border: none; border-bottom: 1px solid #B8B9B9; width: 400px;}
-input#searchbox { width: 190px; float: left; margin-right: 20px; padding-bottom: 5px; padding-top: 3px; background: #FFFFFF;}
-textarea { background: url(/media/img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 265px; line-height: 24px;}
+input#searchbox { width: 100px; float: left; margin-right: 20px; padding-bottom: 5px; padding-top: 3px; background: #FFFFFF;}
+textarea { background: url(/media/img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 200px; line-height: 24px;}
 
 div#footer { background: url(/media/img/bar_bottom.png) top left no-repeat; padding: 60px 0 0; margin: -11px auto 40px auto; width: 960px;}
 

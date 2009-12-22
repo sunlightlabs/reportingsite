@@ -42,7 +42,7 @@ urlpatterns = patterns(
     url(r'^preview/(?P<post_id>\d+)/(?P<slug>[\w-]+)/$', 'preview', name='blogdor_preview'),
     url(r'^features/$', 'bysite', {'site': 'features'}),
     #page by topic: flit, ss, slrg pages    
-    url(r'^(?P<site>.\w{1,5})/$', 'bysite'),
+    url(r'^(?P<site>\w{1,4})/$', 'bysite'),
 
     url(r'^adminfiles/', include('adminfiles.urls')) 
 )

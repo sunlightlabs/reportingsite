@@ -61,7 +61,16 @@ get_calendar = register.tag(get_calendar)
 
 class ResourceFeed(Node):
     def render(self, context):
-        context['entries'] = FeedEntry.objects.filter(feed__codename__startswith='Resource-')[:10]
+        f = FeedEntry.objects.filter(feed__codename__startswith='Resource-')
+        usedfeed = []        
+        l = []
+        for ff in f:
+            if ff.feed.title not in usedfeed:
+                usedfeed.append(ff.feed.title)
+                l.append(ff)
+                if len(l)>=10:
+                    break 
+        context['entries'] = l        
         return ''
     
 def get_resources(parser, token):

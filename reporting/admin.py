@@ -13,11 +13,11 @@ AUTHOR_GROUP = getattr(settings, 'BLOGDOR_AUTHOR_GROUP', None)
 class PostAdmin(FilePickerAdmin):
     fieldsets = (
         (None, {
-            'fields': ('title', 'slug', 'author', 'content', 'excerpt', 'pullquote', 'whichsite', 'blogreport', 'date_published', 'override_byline', 'is_published', 'is_favorite', 'comments_enabled', 'tags')
+            'fields': ('title', 'slug', 'author', 'content', 'excerpt', 'pullquote', 'whichsite', 'date_published', 'override_byline', 'is_published', 'is_favorite', 'comments_enabled', 'tags')
         }),
     )
 
-    list_display = ('title', 'author', 'blogreport', 'is_published','date_published', 'whichsite','is_favorite', )
+    list_display = ('title', 'author', 'is_favorite', 'is_published','date_published', 'whichsite', )
     list_filter = ('whichsite', 'is_published', 'author')
     list_display_links = ('title',)
     prepopulated_fields = {'slug': ('title',)}
