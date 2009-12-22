@@ -17,7 +17,7 @@ get_outside_articles = register.tag(get_outside_articles)
 
 
 class OurPosts(Node):
-    def __init__(self, exclude):
+    def __init__(self, exclude=None):
         self.exclude = exclude
     def render(self, context):
         if self.exclude:

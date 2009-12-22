@@ -15,7 +15,6 @@ from django.template.loader import render_to_string
 COMMENT_FILTERS = getattr(settings, "BLOGDOR_COMMENT_FILTERS", [])
 WP_PERMALINKS = getattr(settings, "BLOGDOR_WP_PERMALINKS", False)
 WHICHSITE_CHOICES = getattr(settings, "WHICHSITE_CHOICES", False)
-ENTRY_TYPES = getattr(settings, "ENTRY_TYPES", [])
 
 class PostQuerySet(models.query.QuerySet):
     
@@ -61,7 +60,6 @@ class Post(models.Model):
     tags = TagField()
 
     whichsite = models.CharField(max_length=10, choices=WHICHSITE_CHOICES)
-    blogreport = models.CharField(max_length=1, choices=ENTRY_TYPES)
 
     pullquote = models.CharField(max_length=255, blank=True)
     override_byline = models.CharField(max_length=255, blank=True)

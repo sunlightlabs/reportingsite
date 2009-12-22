@@ -117,7 +117,7 @@ div.categories li:hover { background-color: #fff; -moz-border-radius: 5px; -webk
 div.categories li.lastCategory { border-bottom: none;}
 
 blockquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 150%; color: #000000;}
-div.pullquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 200%; color: #000000;  border-top: 1px solid; border-bottom: 1px solid; line-height: 30px; padding: 15px 10px; font-style: oblique; text-align: center;}
+div.pullquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 200%; color: #000000;  border-top: 1px solid; border-bottom: 1px solid; line-height: 30px; padding: 10px 10px; margin: 5px; font-style: oblique; text-align: center;}
 
 span.commentMetaAuthor { font-size: 110%; font-weight: bold; margin-bottom: 5px; display: block;}
 div.entry-content p { color:#58595B; font-size: 95%; line-height: 20px;}
