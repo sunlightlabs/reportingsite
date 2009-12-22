@@ -36,26 +36,8 @@ def _post(request, year, slug):
 
 def _post_by_id(request, id):
     post = Post.objects.get(pk=id)
-    ourposts = Post.objects.published().exclude(pk=post.id)[:4]
 
-    from django.template.loader import render_to_string
-    widget = Feed.objects.filter(codename__startswith='Widget-')[:7]
-    resourcefeeds = Feed.objects.filter(codename__startswith='Resource-')
-    resourcelist = []
-    for feed in resourcefeeds:
-        items = feed.entries.order_by('-date_published')[:4]
-        for item in items:
-            resourcelist.append(item)
-    resourcelist.sort(key=lambda x: x.date_published, reverse=True)
-    resourcelist = resourcelist[:7]
-    news = FeedEntry.objects.filter(feed__codename__startswith='News-')[:8] 
-
-
-    comments = Comment.objects.for_model(Post).filter(is_public=True).order_by('-submit_date')[:2]
-    side = render_to_string('feedbar.html',  {'resources': resourcelist, 'news': news, 'ourposts': ourposts, 'comments': comments, 'widget': widget, 'post': post })
-
-
-    return render_to_response('post_detail.html', {'post': post, 'sidebar': side, 'bodyclass': 'blog'   }, context_instance=RequestContext(request))
+    return render_to_response('post_detail.html', {'post': post, 'bodyclass': 'blog'   }, context_instance=RequestContext(request))
 
 #
 # Post archive views

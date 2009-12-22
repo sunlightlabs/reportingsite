@@ -26,8 +26,8 @@
         </div>
         {%else%}
         <span class="tweet">
-          {{ entry.text }}
-          <span class="tweetDate">{{entry.date_published|date:"M d, Y P"}}</span>
+          <p>{{ entry.text }}</p>
+          <span class="tweetDate"><a href="http://www.twitter.com/{{entry.twit}}">{{entry.date_published|date:"M d, Y P"}}</a></span>
         </span>
         {%endif%}
       </li>  
