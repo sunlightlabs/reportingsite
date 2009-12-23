@@ -4,16 +4,23 @@ import re
 register = template.Library()
 
 
+
+def cleantags(value):
+    BR_RE = re.compile(r'<br(.*?)>', re.I)
+    P_RE = re.compile(r'</?p>', re.I)
+    SPAN_RE = re.compile(r'</?span(.*?)>')
+    value = BR_RE.sub('\n', value)
+    value = P_RE.sub('\n', value)
+    value = SPAN_RE.sub('', value)
+    return value
+
 @register.filter(name='grafs')
 def grafs(post, num): 
-    grafs = post.content.strip().split('<p>') 
+    grafs = cleantags( post.content.strip() ).split('\n')
     newg = []
     for g in grafs:
-        if g:
-            new = g.replace('</p>','').replace('<p>','').strip('<br><br>').split('<br><br>')
-            for n in new:
-                if n.strip():
-                    newg.append('<p>'+n.strip()+'</p>')
+        if g.strip():
+            newg.append('<p>'+g+'</p>')
     lede = ''.join(newg[:num]) 
     if len(newg)>num:
         lede = lede + '<a class="readMoreFeature" href="' + post.get_absolute_url() + '">Read all about it</a>'  
@@ -24,17 +31,14 @@ def grafs(post, num):
 def lede(post): 
     from django.template.defaultfilters import striptags
     readmore = ' <a class="continueReading" href="' + post.get_absolute_url() + '">Read all about it</a>'  
-    excerpt = striptags(post.excerpt).strip()
+    excerpt = striptags(post.excerpt)
     if excerpt:
         return excerpt + readmore 
-    grafs = post.content.strip().split('<p>') 
+    grafs = cleantags( post.content.strip() ).split('\n') 
     newg = []
     for g in grafs:
         if g.strip():
-            new = g.replace('</p>','').replace('<p>','').split('<br><br>')
-            for n in new:
-                if n.strip():
-                    newg.append(n.strip())
+            newg.append( g )
     lede = '<p>'+striptags(newg[0])+'</p>'
     if lede and len(newg)>1:
         lede = lede + readmore
@@ -43,17 +47,14 @@ def lede(post):
 
 
 @register.filter(name='body')
-def body(value): 
-    grafs = value.content.strip().split('<p>') 
+def body(post): 
+    grafs = cleantags( post.content ).split('\n') 
     newg = []
     for g in grafs:
-        if g:
-            new = g.replace('</p>','').replace('<p>','').split('<br><br>')
-            for n in new:
-                if n.strip():
-                    newg.append('<p>'+n.strip()+'</p>')
-                    if len(newg)==2 and value.pullquote:
-                        newg.append('<div class="pullquote">'+value.pullquote+'</div>')
+        if g.strip():
+            newg.append('<p>'+g+'</p>')
+            if len(newg)==2 and post.pullquote:
+                newg.append('<div class="pullquote">'+post.pullquote+'</div>')
     lede = ''.join(newg) 
     return lede
 

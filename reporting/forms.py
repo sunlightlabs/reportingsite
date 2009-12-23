@@ -19,8 +19,6 @@ class PostAdminModelForm(forms.ModelForm):
 
     def save(self, force_insert=False, force_update=False, commit=True):
         m = super(PostAdminModelForm, self).save(commit=False)
-        # do custom stuff
-        #if commit:
         m.content = render_uploads(m.content)
         m.save()
         return m
