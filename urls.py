@@ -1,10 +1,9 @@
 from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.views.static import serve
-
 import settings
 
-
+handler404 = 'reporting.views.archive'
 admin.autodiscover()
 
 
@@ -13,8 +12,6 @@ urlpatterns = patterns(
     'reporting.views',
     url(r'^$', 'index'),
     (r'^admin/', include(admin.site.urls)),
-
-    #url(r'^dashboard$', 'dashboard'),
 
     url(r'^search/$', 'search'),
 
@@ -63,6 +60,7 @@ params = {'feed_dict': default_feeds}
     
 urlpatterns += patterns('django.contrib.syndication.views',
         url(r'^feeds/(?P<url>.*)/$', 'feed', params, name="blogdor_feeds"),
+        url(r'^feed/atom/$', 'feed', {'feed_dict': default_feeds, 'url': 'latest'}, name="blogdor_feeds"),
 )
 
 from django.conf import settings
