@@ -15,7 +15,7 @@ a:active{outline: none; color: #457b80;}
 
 body{
     color: #020000;
-    background: url(/media/img/bg_3.png) top left repeat;
+    background: url(../img/bg_3.png) top left repeat;
     font-size: 82%;
     line-height: 23px;
     font-family: Georgia, Times New Roman, Times, serif;
@@ -23,27 +23,27 @@ body{
 
 div#pageMain{ width: 960px; margin: 0 auto; }
 
-h1 a { width: 800px; height: 214px; display: block; background: url(/media/img/logo_rollover4.png) top center no-repeat; text-indent: -9999em;}
+h1 a { width: 800px; height: 214px; display: block; background: url(../img/logo_rollover4.png) top center no-repeat; text-indent: -9999em;}
 h1 { width: 800px; height: 214px; margin: 0 auto;}
 
-div#rssIcon { float: right; background: url(/media/img/feed-icon-14x14.png) left 15px no-repeat; padding: 10px 0 0 20px; }
+div#rssIcon { float: right; background: url(../img/feed-icon-14x14.png) left 15px no-repeat; padding: 10px 0 0 20px; }
 div#rssIcon a { color: #414042;}
 div#rssIcon a:hover { color: #457b80;}
 
-div#nav li { float: left; margin-left: 12px; padding-left: 14px; border-left: 1px solid #b3b5b7; line-height: 15px;}
+div#nav li { float: left; margin-left: 10px; padding-left: 10px; border-left: 1px solid #b3b5b7; line-height: 15px;}
 div#nav a.active { color: #457b80;}
 div#nav a { color: #5e5e5e;}
 div#nav a:hover { color: #457b80;}
-div#nav { float: right; font-size: 110%; font-style: oblique; margin-right: 23px; margin-top: -30px; text-decoration: none; text-transform: uppercase; font-weight: bold;}
+div#nav { float: right; font-size: 105%; font-style: oblique; margin-right: 23px; margin-top: -30px; text-decoration: none; text-transform: uppercase; font-weight: bold;}
 div#nav li.firstLi { border-left: none;}
 
-body.home div#header { background: url(/media/img/header_top.png) left 154px no-repeat; }
-div#header { background: url(/media/img/header_topInterior.png) left 154px no-repeat; height: 213px;}
+body.home div#header { background: url(../img/header_top.png) left 154px no-repeat; }
+div#header { background: url(../img/header_topInterior.png) left 154px no-repeat; height: 213px;}
 span#todayDate { margin-left: 33px; margin-top: -30px; float: left; font-size: 110%; font-style: oblique; color: #5e5e5e; }
 
 div#mainContent { padding: 0 3px;}
-div#columns { padding-bottom: 40px; background: url(/media/img/column_lt.png) top left repeat-y;}
-body.home div#columns { background: url(/media/img/column_ltHome.png) top left repeat-y;}
+div#columns { padding-bottom: 40px; background: url(../img/column_lt.png) top left repeat-y;}
+body.home div#columns { background: url(../img/column_ltHome.png) top left repeat-y;}
 
 body.home div#ltColumn { width: 340px; }
 div#ltColumn { float: left; padding-top: 40px; width: 580px; padding: 40px 30px 0; margin-right: 25px; }
@@ -51,12 +51,12 @@ div#rtColumn{ float: left; padding-top: 40px; width: 285px;}
 body.home div#rtColumn { width: 525px; }
 div#fullWidth h3 { padding-left: 15px;}
 
-body.fullWidth div#header{ background: url(/media/img/header_full.png) left 154px no-repeat;}
-body.fullWidth div#columns { background: url(/media/img/column_ltFull.png) top left repeat-y;}
+body.fullWidth div#header{ background: url(../img/header_full.png) left 154px no-repeat;}
+body.fullWidth div#columns { background: url(../img/column_ltFull.png) top left repeat-y;}
 body.fullWidth div#mainContent { padding: 0 0 0 3px;}
 
-li.module, div.module{ background: url(/media/img/break_module.png) bottom left repeat-x; margin-bottom: 20px; padding-bottom: 20px;}
-div.mainModule { background: url(/media/img/break_mainModule.png) bottom left repeat-x; margin-bottom: 40px; padding-bottom: 40px;}
+li.module, div.module{ background: url(../img/break_module.png) bottom left repeat-x; margin-bottom: 20px; padding-bottom: 20px;}
+div.mainModule { background: url(../img/break_mainModule.png) bottom left repeat-x; margin-bottom: 40px; padding-bottom: 40px;}
 div.lastItem, li.lastModule { background: none;}
 
 div.otherProperty { float: left; width: 208px; padding: 0 15px;}
@@ -72,15 +72,16 @@ div#pageMain div.features h2, div#pageMain h3, div#pageMain div.features h2 a, d
 div#pageMain div.features h2 a:hover, div#pageMain h3 a:hover, div#pageMain h4 a:hover, div#pageMain h2 a:hover { color: #457b80;}
 h3 { text-transform: uppercase; margin-bottom: 25px; font-weight: bold; font-size: 170%;}
 
-a.readMoreFeature { background: url(/media/img/arrow_feature.png) top left no-repeat; height: 36px; display: block; padding: 6px 0 0 20px; color: #fff; font-style: oblique; text-transform: lowercase}
+a.readMoreFeature { background: url(../img/arrow_feature.png) top left no-repeat; height: 36px; display: block; padding: 6px 0 0 20px; color: #fff; font-style: oblique; text-transform: lowercase}
 a.viewAll { text-align: center; display: block; font-size: 110%;}
-a.continueReading { font-size: 110%; background: url(/media/img/arrow.png) right 3px no-repeat; padding-right: 25px; text-transform: lowercase; font-style: oblique;}
+a.continueReading { font-size: 110%; background: url(../img/arrow.png) right 3px no-repeat; padding-right: 25px; text-transform: lowercase; font-style: oblique;}
 
 p { margin-bottom: 20px; color: #58595b; font-family: Helvetica Neue, Helvetica, Arial, sans-serif;}
 
 span.tweetDate { display: block; color: #808285; font-style: oblique; font-size: 90%;}
-span.tweet { background: url(/media/img/icon_tweet.png) top left no-repeat; display: block; padding-left: 50px;}
-div.post { background: url(/media/img/icon_post.png) top left no-repeat; display: block; padding-left: 50px;}
+span.tweet { background: url(../img/icon_tweet.png) top left no-repeat; display: block; padding-left: 50px;}
+div.post { background: url(../img/icon_post.png) top left no-repeat; display: block; padding-left: 50px;}
+
 
 img { border: 5px solid #d1d3d4;}
 div#otherPosts img { border: none; border-bottom: 2px solid #bcbec0; padding-bottom: 8px; margin-bottom: 6px;}
@@ -104,10 +105,10 @@ div#pageMain label { width: 100px; display: block; float: left; }
 div#pageMain input { background: none; border: none; border-bottom: 1px solid #B8B9B9; width: 400px;}
 
 div#pageMain input#searchbox { width: 190px; float: left; margin-right: 20px; background: #FFFFFF; padding: 5px; border-bottom: none; -moz-border-radius: 3px; -webkit-border-radius: 3px; color: #a7a9ac;}
-textarea { background: url(/media/img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 265px; line-height: 24px;}
+textarea { background: url(../img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 265px; line-height: 24px;}
 
 
-div#footer { background: url(/media/img/bar_bottom.png) top left no-repeat; padding: 60px 0 0; margin: -11px auto 40px auto; width: 960px;}
+div#footer { background: url(../img/bar_bottom.png) top left no-repeat; padding: 60px 0 0; margin: -11px auto 40px auto; width: 960px;}
 
 div.categories span{ float: right; }
 div.categories li { font-size: 105%; padding: 7px 10px; border-bottom: 1px solid #B8B9B9;}
@@ -116,23 +117,22 @@ div.categories li:hover a {color: #457b80;}
 div.categories li:hover { background-color: #fff; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
 div.categories li.lastCategory { border-bottom: none;}
 
-blockquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 150%; color: #000000;}
-div.pullquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 200%; color: #000000;  border-top: 1px solid; border-bottom: 1px solid; line-height: 30px; padding: 10px 10px; margin: 5px; font-style: oblique; text-align: center;}
+blockquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 150%; color: #000000; font-style: oblique; line-height: 27px; margin-bottom: 15px;}
+div.pullquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 200%; color: #000000;  border-top: 1px solid; border-bottom: 1px solid; line-height: 30px; padding: 10px 10px; margin: 5px; font-style: oblique; text-align: center; margin-bottom: 15px;}
 
 span.commentMetaAuthor { font-size: 110%; font-weight: bold; margin-bottom: 5px; display: block;}
 div.entry-content p { color:#58595B; font-size: 95%; line-height: 20px;}
 button { text-indent: -9999em; display: block; border: none; height: 42px; cursor: pointer;}
-button.submitBtn { background: url(/media/img/btn_submit.png) top left no-repeat; margin-top: 30px; margin-left: 100px; width: 108px;}
-button.searchBtn { background: url(/media/img/btn_search.png) top left no-repeat; margin-top: 20px; width: 108px;}
+button.submitBtn { background: url(../img/btn_submit.png) top left no-repeat; margin-top: 30px; margin-left: 100px; width: 108px;}
+button.searchBtn { background: url(../img/btn_search.png) top left no-repeat; margin-top: 20px; width: 108px;}
 
-div.calendarDate { background: url(/media/img/calendar_bg.png) top left no-repeat; width: 63px; height: 62px; float: left; margin-right: 20px;}
+div.calendarDate { background: url(../img/calendar_bg.png) top left no-repeat; width: 63px; height: 62px; float: left; margin-right: 20px;}
 div.calendarDate span { display: block; text-align: center; font-family: Helvetica Neue, Helvetica, Arial, sans-serif;}
 div.calendarDate span.month { text-transform: uppercase; color: #d1d3d4; font-size: 90%; padding-top: 5px;}
 div.calendarDate span.day { color: #fff; font-size: 200%; font-weight: bold; }
 
-div.calendar li { float: left; width: 240px;}
+div.calendar li { float: left; width: 310px; margin-bottom: 20px;}
 div.calendar span.title { margin-bottom: 0;}
-div.calendar li.even { margin-right: 30px;}
 div.calendar p { margin-left: 83px; line-height:20px;} 
 
 div.commentSection h3 { margin-top: 40px;}
@@ -141,16 +141,16 @@ div#rtColumn img { border: none; }
 
 
 div#reportingResources a { text-indent: -9999em; display: block; float: left; margin-right: 30px;}
-a#legistorm { background: url(/media/img/logo_legistorm_grey.png) left 3px no-repeat; width: 163px; height: 52px;}
-a#legistorm:hover { background: url(/media/img/logo_legistorm_color.png) left 3px no-repeat;}
-a#openSecrets { background: url(/media/img/logo_opensecrets_grey.png) top left no-repeat; width: 138px; height: 52px;}
-a#openSecrets:hover { background: url(/media/img/logo_opensecrets_color.png) top left no-repeat; width: 138px; height: 52px;}
+a#legistorm { background: url(../img/logo_legistorm_grey.png) left 3px no-repeat; width: 163px; height: 52px;}
+a#legistorm:hover { background: url(../img/logo_legistorm_color.png) left 3px no-repeat;}
+a#openSecrets { background: url(../img/logo_opensecrets_grey.png) top left no-repeat; width: 138px; height: 52px;}
+a#openSecrets:hover { background: url(../img/logo_opensecrets_color.png) top left no-repeat; width: 138px; height: 52px;}
 
-a#sunlightFoundation { background: url(/media/img/logo_sunlightFoundation.png) top left no-repeat; width: 119px; height: 55px; float: left; text-indent: -9999em;}
+a#sunlightFoundation { background: url(../img/logo_sunlightFoundation.png) top left no-repeat; width: 119px; height: 55px; float: left; text-indent: -9999em;}
 div#copyright p { margin-left: 150px; font-size: 80%; line-height: 18px; color: #fff; margin-bottom: 0px;}
-div#copyright { background: url(/media/img/copyright_bg.png) left top no-repeat; height: 161px; margin: -80px auto 0; width: 960px;}
+div#copyright { background: url(../img/copyright_bg.png) left top no-repeat; height: 161px; margin: -80px auto 0; width: 960px;}
 div#copyrightContent { padding-top: 95px;}
-div#copyrightWrapper { background: url(/media/img/copyright_wrapper.png) top left repeat-x;}
+div#copyrightWrapper { background: url(../img/copyright_wrapper.png) top left repeat-x;}
 
 a.paginatorPrevious, a.paginatorNext { float: left;}
 div#paginatorNumbers { float: left; text-align: center; width: 500px; display: block; }
@@ -162,8 +162,11 @@ strong { font-weight: bold;}
 td { padding: 5px 10px;}
 tbody { border: 1px solid ;}
 
-body.home #brandingbar { border-bottom: 1px solid #bcbec0; padding:0.4em 0.9em 0.4em 0; }
-body.home #brandingbar a#sllink { background:#F6F8FB url(http://assets.sunlightfoundation.com/images/project_of_sf.gif) 0 3px no-repeat;}
+body.home #brandingbar, body.theblog #brandingbar, body.about #brandingbar { border-bottom: 1px solid #bcbec0; padding:0.4em 0.9em 0.4em 0; }
+body.home #brandingbar a#sllink, body.theblog #brandingbar a#sllink, body.about #brandingbar a#sllink  { background:#F6F8FB url(http://assets.sunlightfoundation.com/images/project_of_sf.gif) 0 3px no-repeat;}
+
+div.features ul, div.about ul, div.posts ul { list-style-type: disc; padding-left: 30px; margin-bottom: 20px;}
+div.features ol, div.about ol, div.posts ul{ list-style-type: decimal;}
 
 .clear { clear: both;}
 
