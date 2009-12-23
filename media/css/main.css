@@ -30,7 +30,7 @@ div#rssIcon { float: right; background: url(../img/feed-icon-14x14.png) left 15p
 div#rssIcon a { color: #414042;}
 div#rssIcon a:hover { color: #457b80;}
 
-div#nav li { float: left; margin-left: 10px; padding-left: 10px; border-left: 1px solid #b3b5b7; line-height: 15px; font-size: 80%;}
+div#nav li { float: left; margin-left: 10px; padding-left: 10px; border-left: 1px solid #b3b5b7; line-height: 15px; }
 div#nav a.active { color: #457b80;}
 div#nav a { color: #5e5e5e;}
 div#nav a:hover { color: #457b80;}

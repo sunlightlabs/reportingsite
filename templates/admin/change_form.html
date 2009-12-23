@@ -11,14 +11,14 @@
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
 <script type="text/javascript" src="{% media_url %}/js/urlify.js"></script>
 <script type="text/javascript" src="{% media_url %}/rte/jquery.rte.js"></script>
-<script type="text/javascript" src="/media/jquery.bgiframe.min.js"></script>
-<script type="text/javascript" src="/media/js/jquery.autocomplete.js"></script>
+<script type="text/javascript" src="{% media_url %}/jquery.bgiframe.min.js"></script>
+<script type="text/javascript" src="{% media_url %}/js/jquery.autocomplete.js"></script>
 
-<script type="text/javascript" src="/media/js/admin/RelatedObjectLookups.js"></script>
-<script type="text/javascript" src="/media/js/admin/DateTimeShortcuts.js"></script>
-<script type="text/javascript" src="/media/js/calendar.js"></script>
-<script type="text/javascript" src="/media/adminfiles/model.js"></script>
-<script type="text/javascript" src="/media/adminfiles/adminfiles.js"></script>
+<script type="text/javascript" src="{% media_url %}/js/admin/RelatedObjectLookups.js"></script>
+<script type="text/javascript" src="{% media_url %}/js/admin/DateTimeShortcuts.js"></script>
+<script type="text/javascript" src="{% media_url %}/js/calendar.js"></script>
+<script type="text/javascript" src="{% media_url %}/adminfiles/model.js"></script>
+<script type="text/javascript" src="{% media_url %}/adminfiles/adminfiles.js"></script>
 
 
 
@@ -87,7 +87,7 @@
 </div>
 
 <script type="text/javascript">
-$('textarea').rte('/media/rte/rte.css', '/media/rte/');
+$('textarea').rte('{%media_url%}/rte/rte.css', '{%media_url%}/rte/');
 </script>
 
 </form></div>
