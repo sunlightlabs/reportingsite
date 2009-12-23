@@ -6,8 +6,8 @@ from django.core.urlresolvers import reverse
 from reporting.models import Post
 from tagging.models import Tag, TaggedItem
 
-ITEMS_PER_FEED = getattr(settings, 'BLOGDOR_ITEMS_PER_FEED', 10)
-FEED_TTL = getattr(settings, 'BLOGDOR_FEED_TTL', 120)
+ITEMS_PER_FEED = getattr(settings, 'BLOGDOR_ITEMS_PER_FEED', 15)
+FEED_TTL = getattr(settings, 'BLOGDOR_FEED_TTL', 60)
 
 #
 # Generic blogdor feed
@@ -29,7 +29,7 @@ class BlogdorFeed(Feed):
 
 class LatestPosts(BlogdorFeed):
 
-    title = u"Recent Sunlight Foundation investigative reports"
+    title = u"Recent Sunlight Foundation Reporting Group investigative reports"
     description = title
     
     def items(self):
@@ -38,7 +38,7 @@ class LatestPosts(BlogdorFeed):
     def item_author_name(self, post):
         if post.author:
             return post.author.get_full_name()
-        return "Anonymous"
+        return ""
     
     def item_pubdate(self, post):
         return post.date_published
@@ -63,7 +63,7 @@ class LatestComments(BlogdorFeed):
 
 class LatestForAuthor(BlogdorFeed):
 
-    feed_title = u"Recent Sunlight Foundation investigative reports by %s"
+    feed_title = u"Recent Sunlight Foundation Reporting Group investigative reports by %s"
     feed_description = feed_title
     
     def _display_name(self, user):
@@ -94,7 +94,7 @@ class LatestForAuthor(BlogdorFeed):
 
 class LatestForTag(BlogdorFeed):
     
-    feed_title = u"Recent Sunlight Foundation investigative reports tagged with '%s'"
+    feed_title = u"Recent Sunlight Foundation Reporting Group investigative reports tagged with '%s'"
     feed_description = feed_title
     
     def title(self, tag):

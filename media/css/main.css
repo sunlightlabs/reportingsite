@@ -30,11 +30,11 @@ div#rssIcon { float: right; background: url(../img/feed-icon-14x14.png) left 15p
 div#rssIcon a { color: #414042;}
 div#rssIcon a:hover { color: #457b80;}
 
-div#nav li { float: left; margin-left: 10px; padding-left: 10px; border-left: 1px solid #b3b5b7; line-height: 15px;}
+div#nav li { float: left; margin-left: 10px; padding-left: 10px; border-left: 1px solid #b3b5b7; line-height: 15px; font-size: 80%;}
 div#nav a.active { color: #457b80;}
 div#nav a { color: #5e5e5e;}
 div#nav a:hover { color: #457b80;}
-div#nav { float: right; font-size: 105%; font-style: oblique; margin-right: 23px; margin-top: -30px; text-decoration: none; text-transform: uppercase; font-weight: bold;}
+div#nav { float: right; font-size: 100%; font-style: oblique; margin-right: 15px; margin-top: -30px; text-decoration: none; text-transform: uppercase; font-weight: bold;}
 div#nav li.firstLi { border-left: none;}
 
 body.home div#header { background: url(../img/header_top.png) left 154px no-repeat; }
@@ -104,7 +104,7 @@ div#pageMain label { width: 100px; display: block; float: left; }
 div#pageMain input { background: none; border: none; border-bottom: 1px solid #B8B9B9; width: 400px;}
 
 div#pageMain input#searchbox { width: 190px; float: left; margin-right: 20px; background: #FFFFFF; padding: 5px; border-bottom: none; -moz-border-radius: 3px; -webkit-border-radius: 3px; color: #a7a9ac;}
-textarea { background: url(../img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 265px; line-height: 24px;}
+textarea { background: url(../img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 100px; line-height: 24px;}
 
 
 
