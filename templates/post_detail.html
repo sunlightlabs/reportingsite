@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load comments %}
+{% load markup %}
+{% load reporting_tags %}
+{%load lede%}
+
+{% block body %}theblog{% endblock %}
+
+{% block content %}
+
+  {% get_comment_list for post as comment_list %}
+
+  {% autoescape off %}	
+    <div class="module posts">
+      <h2>{{post.title}}</h2>
+      <span class="postMeta">
+        {{post.shortbyline}}
+        <span class="postdate">{{post.date_published|date:"M d Y"}}</span>
+        <span class="posttime">{{post.date_published|date:"P"}}</span>
+        {% if comment_list %}<span class="posttime"><a href="#comments">{{ comment_list|length}} comment{{comment_list|length|pluralize}}</a></span>{%endif%}
+      </span>
+      {{ post|body }}
+    </div>
+    <div class="module commentSection">
+      <h3>Comments</h3>
+      {% if comment_list %}
+        <ol id="comments">
+          {% for comment in comment_list %}
+            <li id="c{{ comment.pk }}">
+              <span class="commentMetaAuthor">
+                {% if comment.user_url %}
+                  <a href="{{ comment.user_url }}">{{ comment.user_name }}</a>
+                {% else %}
+                  {{ comment.user_name }}
+                {% endif %}
+              </span>
+              <div class="entry-content"><p>{{ comment.comment}}</p></div>
+              <div class="clear"></div>
+            </li>
+          {% endfor %}
+        </ol>
+      {% endif %}
+
+      {% get_comment_form for post as form %}
+      <h3>Leave Us a Comment</h3>
+      <form id="comment" method="post" action="{% comment_form_target %}">
+        {{form.content_type}}
+        {{form.object_pk}}
+        {{form.timestamp}}
+        {{form.security_hash}}
+        <input id="id_honeypot" name="honeypot" style="display:none">
+        <ul>
+          <li><label for="id_name">Name</label> <input id="id_name" class="full" type="text" name="name" maxlength="50" /></li>
+          <li><label for="id_email">Email address</label> <input type="text" class="full" name="email" id="id_email" /></li>
+          <li><label for="id_url">URL</label> <input type="text" name="url" class="full" id="id_url" /></li>		
+          <li><label for="id_comment">Comment</label> <textarea id="id_comment" class="textarea full" rows="5" cols="32" name="comment"></textarea></li>		
+          <li>
+            <button class="submitBtn" type="submit">
+              <span>Submit</span>
+            </button>
+          </li>
+        </ul>
+      </form>  
+  </div>
+  {%endautoescape%}
+{%endblock%}
+
+
+
+
+{%block sidebar%}
+{% include "feedbar.html" %}
+{%endblock%}

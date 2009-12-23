@@ -1,0 +1,75 @@
+{% load smart_if %}
+{% load sidebar %}
+{% load tagging_tags %}
+
+
+<script type="text/javascript">
+function cleardefault(box)
+{
+if (box.value=='Search SLRG') { box.value=''; }
+}
+</script>
+<div class="mainModule recentPosts">
+  <h3>Search the Blog</h3>
+  <form method="get" action="/search/">
+    <input type="text" id="searchbox" name="terms" value="Search posts" onFocus="cleardefault(this);">
+    <button class="searchBtn" type="submit">
+      <span>Search</span>
+    </button>
+  </form>
+</div>
+
+
+{% if widget %}
+<div class="mainModule recentPosts">
+<h3>SLRG Tool:</h3>
+{% for feed in widget %}
+{{feed.title}}
+<ul>
+{%for entry in feed.entries.all|slice:":7" %}
+<li><a href="{{entry.link}}" target="_blank">{{entry.title}}</a></li>
+{%endfor%}
+</ul>
+{%endfor%}
+</div>
+{%endif%}
+
+           
+           <div class="mainModule categories">
+             <h3>Recent Posts</h3>
+             <ul>
+                {% get_ourposts %}
+               {%for entry in ourposts|slice:":5" %}
+               <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{entry.title}}</a></li>
+               {%endfor%}
+             </ul>
+           </div>
+
+
+           <div class="mainModule categories">
+             <h3>Data Feed</h3>
+             {%get_resources%}
+             <ul>
+               {%for entry in entries|slice:":5" %}
+               <li><a href="{{entry.link}}" target="_blank">{{entry.feed.title}}: {{entry.title}}</a></li>
+               {%endfor%}
+             </ul>
+             
+           </div>
+           <div class="mainModule categories">
+             <h3>Reporting we're watching</h3>
+             <ul>
+                {% get_outside_articles %}
+               {% for fentry in entries|slice:":5" %}
+               <li><a href="{{fentry.link}}" target="_blank">{{fentry.feed.title}}: {{fentry.title}}</a></li>
+               {%endfor%}
+             </ul>
+           </div>
+           <div class="mainModule recentPosts">
+             <h3>Popular tags</h3>         
+             {% load tagging_tags %}
+             {% tag_cloud_for_model reporting.Post as entry_tags with steps=5 min_count=9 distribution=log %}
+             {% for tag in entry_tags %}
+            <a class="tag{{ tag.font_size }}" a href="/tag/{{tag}}">{{ tag }}</a>
+            {% endfor %}
+          </div>

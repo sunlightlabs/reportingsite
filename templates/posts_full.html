@@ -1,0 +1,31 @@
+{% extends "base.html" %}
+{% load comments %}
+
+{% block body %}blog{% endblock %}
+
+{% block content %}
+  <ol class="moduleLists">
+    {% for post in page_obj.object_list %}
+    {% get_comment_count for post as comment_count %}
+    <li class="module posts">
+      {%autoescape off%}
+      <h2><a href="{% url blogdor_post post.date_published.year post.slug %}">{{ post.title }}</a></h2>
+      <span class="postMeta">
+        {{post.shortbyline}}
+        <span class="postdate">{{post.date_published|date:"M d, Y"}}</span>
+        <span class="posttime">{{post.date_published|date:"P"}}</span>
+        {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post post.date_published.year post.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
+      </span>
+      {{ post.content }}
+      {%endautoescape%}
+    </li>
+    {% endfor %}
+  </ol>
+  {% include 'paginator.html' %}
+{%endblock%}
+
+
+
+{%block sidebar%}
+{% include "feedbar2.html" %}
+{%endblock%}

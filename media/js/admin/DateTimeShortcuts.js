@@ -18,7 +18,7 @@ var DateTimeShortcuts = {
         var scripts = document.getElementsByTagName('script');
         for (var i=0; i<scripts.length; i++) {
             if (scripts[i].src.match(/DateTimeShortcuts/)) {
-                var idx = scripts[i].src.indexOf('js/admin/DateTimeShortcuts');
+                var idx = scripts[i].src.indexOf('http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/admin/DateTimeShortcuts');
                 DateTimeShortcuts.admin_media_prefix = scripts[i].src.substring(0, idx);
                 break;
             }
