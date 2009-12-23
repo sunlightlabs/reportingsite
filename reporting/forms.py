@@ -22,7 +22,6 @@ class PostAdminModelForm(forms.ModelForm):
         # do custom stuff
         #if commit:
         m.content = render_uploads(m.content)
-        print render_uploads(m.content)
         m.save()
         return m
 
