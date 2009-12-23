@@ -4,7 +4,7 @@
 <ol class="moduleLists">
 	{% for post in post_list %}
 {% get_comment_count for post as comment_count %}
-		<li class="module"><h2><a href="{% url blogdor_post post.date_published.year post.slug %}">{{ post.title }}</a></h2>
+		<li class="module posts"><h2><a href="{% url blogdor_post post.date_published.year post.slug %}">{{ post.title }}</a></h2>
         <span class="postMeta">
                 {{post.shortbyline}}
                 <span class="postdate">{{post.date_published|date:"M d, Y"}}</span>

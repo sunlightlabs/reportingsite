@@ -4,12 +4,14 @@
 {% load reporting_tags %}
 {%load lede%}
 
+{% block body %}theblog{% endblock %}
+
 {% block content %}
 
   {% get_comment_list for post as comment_list %}
 
   {% autoescape off %}	
-    <div class="module">
+    <div class="module posts">
       <h2>{{post.title}}</h2>
       <span class="postMeta">
         {{post.shortbyline}}

@@ -82,7 +82,6 @@ span.tweetDate { display: block; color: #808285; font-style: oblique; font-size:
 span.tweet { background: url(../img/icon_tweet.png) top left no-repeat; display: block; padding-left: 50px;}
 div.post { background: url(../img/icon_post.png) top left no-repeat; display: block; padding-left: 50px;}
 
-
 img { border: 5px solid #d1d3d4;}
 div#otherPosts img { border: none; border-bottom: 2px solid #bcbec0; padding-bottom: 8px; margin-bottom: 6px;}
 img.center { margin: 0 auto 30px; display: block;}
@@ -106,6 +105,7 @@ div#pageMain input { background: none; border: none; border-bottom: 1px solid #B
 
 div#pageMain input#searchbox { width: 190px; float: left; margin-right: 20px; background: #FFFFFF; padding: 5px; border-bottom: none; -moz-border-radius: 3px; -webkit-border-radius: 3px; color: #a7a9ac;}
 textarea { background: url(../img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 265px; line-height: 24px;}
+
 
 
 div#footer { background: url(../img/bar_bottom.png) top left no-repeat; padding: 60px 0 0; margin: -11px auto 40px auto; width: 960px;}

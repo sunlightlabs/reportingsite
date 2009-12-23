@@ -11,5 +11,4 @@ django-adminfiles
 sorl-thumbnail
 boto
 
-
-
+markdown
