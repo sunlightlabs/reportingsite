@@ -1,0 +1,109 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% load media %}
+<html xmlns="http://www.w3.org/1999/xhtml" >
+  <head>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+    <title>Sunlight Foundation Reporting Group</title>
+    {%css "css/main.css"%}
+    {%js "js/jquery.js"%}
+    {%js "js/reporting.js"%}
+    <script src="http://services.sunlightlabs.com/brandingbar/hat_js/sunlightlabs/" type="text/javascript"></script>
+    <script type="text/javascript" src="http://use.typekit.com/foz3kwy.js"></script>
+    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
+
+  <!--[if IE 6]>{%css "css/buggy.css"%}<![endif]-->
+  <!--[if IE 7]>{%css "css/buggy7.css"%}<![endif]-->
+
+  </head>
+  <body class="{% block body %}{% endblock %}">  
+    <div id="pageMain">
+      <div id="header">
+        <div id="rssIcon">
+          <a href="/feeds/latest/">Subscribe to our feed</a>
+        </div>
+        <div id="logo">
+          <h1>
+            <a href="/"><small>Sunlight Foundation</small>
+            <big>Reporting Group</big></a>
+          </h1>
+        </div>
+        <span id="todayDate">{% now "l, F d, Y" %}</span>
+        <div id="nav">
+          <ul>
+            <li class="firstLi" id="nav_blog"><a href="/features">Featured Stories</a></li>
+            <li id="nav_features"><a href="/blog">Blog</a></li>
+            <li id="nav_features"><a href="/about">About</a></li>
+          </ul>
+        </div>
+      </div>
+      <div id="mainContent">
+        <div id="columns">
+          <div id="ltColumn">
+            {% block content %}{% endblock %}
+          </div>
+          <div id="rtColumn">
+            {% block sidebar %}
+              
+            {% endblock %}
+          </div>  
+          <div class="clear"></div> 
+        </div> 
+      </div>
+    </div>
+    <div id="footer">
+      <div id="fullWidth">
+        <div id="otherPosts">
+          <div class="otherProperty">
+            <a href="/SLRG"><img class="reportinggroupLogo" alt="Reporting Group Logo" src="{% media_url %}/img/logo_reporting_grey.png" data-grey="{% media_url %}/img/logo_reporting_grey.png" data-color="{% media_url %}/img/logo_reporting_color.png"/></a>
+            <span>Sunlight Foundation Reporting Group</span>
+            <ol>
+              {% for entry in SLRG %}
+              <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></li>
+              {%endfor%}
+            </ol>  
+          </div> 
+          <div class="otherProperty">
+            <a href="/FLIT"><img class="flitLogo" alt="Foreign Lobbying Influence Tracker Logo" src="{% media_url %}/img/logo_flit_grey.png" data-grey="{% media_url %}/img/logo_flit_grey.png" data-color="{% media_url %}/img/logo_flit_color.png"/></a>
+            <span>Foreign Lobbying Influence Tracker</span>
+            <ol>
+              {% for entry in FLIT %}
+              <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></li>
+              {%endfor%}
+            </ol>  
+          </div> 
+          <div class="otherProperty">
+            <a href="/SS"><img class="subsityscopeLogo" alt="Subsidy Scope Logo" src="{% media_url %}/img/logo_subsity_grey.png" data-grey="{% media_url %}/img/logo_subsity_grey.png" data-color="{% media_url %}/img/logo_subsity_color.png"/></a>
+            <span>SubsidyScope</span>
+            <ol>
+{% for entry in SS %}
+              <li><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></li>
+              {%endfor%}              
+            </ol>  
+          </div>
+          <div class="otherProperty">
+            <a href="http://blog.politicalpartytime.org"><img class="partytimeLogo" alt="Party Time Logo" src="{% media_url %}/img/logo_partytime_grey.png" data-grey="{% media_url %}/img/logo_partytime_grey.png" data-color="{% media_url %}/img/logo_partytime_color.png"/></a>
+            <span>Political Party Time</span>
+            <ol>
+{% for entry in PT %}
+              <li><a href="{{entry.link}}">{{ entry.title|safe }}</a></li>
+              {%endfor%}
+            </ol>  
+          </div>
+          <div class="clear"></div> 
+        </div>
+      </div>
+    </div>
+    <div class="clear"></div>
+    <div id="copyrightWrapper">
+      <div id="copyright">
+        <div id="copyrightContent">
+          <a id="sunlightFoundation" href="http://www.sunlightfoundation.com/">Sunlight Foundation</a>
+          <p>The Site may contain links to Internet sites that are not operated by Sunlight Foundation. These links are provided as a service and do not imply any endorsement of the activities or content of these sites, nor any association with their operators. Sunlight Foundation does not control these Internet sites and is not responsible for their content, security, or privacy practices. We urge you to review the privacy policy posted on web sites you visit before using the site or providing personal information.</p>
+        </div>
+      </div> 
+    </div>
+  </body>
+</html>            
+
