@@ -162,7 +162,7 @@ def index(request):
     featured = Post.objects.published().filter(is_favorite=True)[:3] 
     f1 = featured[0].pk
     f2 = featured[1].pk
-    f3 = featured[2].pk
+    f3 = featured[1].pk
     blogs = mergetweets( Post.objects.published().exclude(pk=f1).exclude(pk=f2).exclude(pk=f3), Feed.objects.get(codename__startswith='tweetsRT-')  )
 
     return render_to_response('index.html', {'blogs': blogs, 'featured': featured, 'bodyclass': 'home' }, context_instance=RequestContext(request) )
