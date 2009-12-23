@@ -5,7 +5,7 @@ register = template.Library()
 
 
 
-def cleantags(value):
+def cleantags(value): #split on newline
     BR_RE = re.compile(r'<br(.*?)>', re.I)
     P_RE = re.compile(r'</?p>', re.I)
     SPAN_RE = re.compile(r'</?span(.*?)>')
@@ -14,9 +14,18 @@ def cleantags(value):
     value = SPAN_RE.sub('', value)
     return value
 
+def fixtags(value): #split on p tag
+    BR_RE = re.compile(r'<br(.*?)>', re.I)
+    P_RE = re.compile(r'</?p>', re.I)
+    SPAN_RE = re.compile(r'</?span(.*?)>')
+    value = BR_RE.sub('<p>', value)
+    value = P_RE.sub('<p>', value)
+    value = SPAN_RE.sub('<p>', value)
+    return value
+
 @register.filter(name='grafs')
 def grafs(post, num): 
-    grafs = cleantags( post.content.strip() ).split('\n')
+    grafs = fixtags( post.content.strip() ).split('<p>')
     newg = []
     for g in grafs:
         if g.strip():
@@ -34,7 +43,7 @@ def lede(post):
     excerpt = striptags(post.excerpt)
     if excerpt:
         return excerpt + readmore 
-    grafs = cleantags( post.content.strip() ).split('\n') 
+    grafs = fixtags( post.content.strip() ).split('<p>') 
     newg = []
     for g in grafs:
         if g.strip():
@@ -48,7 +57,7 @@ def lede(post):
 
 @register.filter(name='body')
 def body(post): 
-    grafs = cleantags( post.content ).split('\n') 
+    grafs = fixtags( post.content ).split('<p>') 
     newg = []
     for g in grafs:
         if g.strip():
