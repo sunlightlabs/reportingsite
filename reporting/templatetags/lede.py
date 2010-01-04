@@ -48,7 +48,9 @@ def lede(post):
     for g in grafs:
         if g.strip():
             newg.append( g )
-    lede = '<p>'+striptags(newg[0])+'</p>'
+    lede = ''
+    if len(newg)>0:
+        lede = '<p>'+striptags(newg[0])+'</p>'
     if lede and len(newg)>1:
         lede = lede + readmore
     return lede
@@ -77,3 +79,9 @@ def sentence(value):
         s = s+'. '+sens[i]
         i = i+1
     return s+'.'
+
+
+
+@register.filter(name='feedclean')
+def feedclean(st): 
+    return st.encode('UTF-8').replace("&amp;",'$$').replace('&','$$')

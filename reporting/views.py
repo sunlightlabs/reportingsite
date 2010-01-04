@@ -31,11 +31,11 @@ def post_wpcompat(request, year, month, day, slug):
     return  _post_by_id(request, post.id)
 
 def _post(request, year, slug):
-    post = Post.objects.get(date_published__year=year, slug=slug, is_published=True)
+    post = get_object_or_404(Post, date_published__year=year, slug=slug, is_published=True)
     return _post_by_id(request, post.id)
 
 def _post_by_id(request, id):
-    post = Post.objects.get(pk=id)
+    post = get_object_or_404(Post, pk=id)
 
     return render_to_response('post_detail.html', {'post': post, 'bodyclass': 'blog'   }, context_instance=RequestContext(request))
 
@@ -170,6 +170,7 @@ def index(request):
 
 
 def bysite(request, site):
+    topinfo=''
     if site=='features':
         stories = Post.objects.published().filter(is_favorite=True)   
     else:
@@ -187,6 +188,7 @@ def bysite(request, site):
                     paginate_by=POSTS_PER_PAGE,
                     template_name=t,
                     template_object_name='post', allow_empty=True,
+                    extra_context={'topinfo': topinfo},
                     )
 
 

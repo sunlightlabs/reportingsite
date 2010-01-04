@@ -5,9 +5,10 @@ from django.contrib.syndication.feeds import Feed
 from django.core.urlresolvers import reverse
 from reporting.models import Post
 from tagging.models import Tag, TaggedItem
+from reporting.templatetags import lede
 
 ITEMS_PER_FEED = getattr(settings, 'BLOGDOR_ITEMS_PER_FEED', 15)
-FEED_TTL = getattr(settings, 'BLOGDOR_FEED_TTL', 60)
+FEED_TTL = getattr(settings, 'BLOGDOR_FEED_TTL', 1)
 
 #
 # Generic blogdor feed
@@ -15,13 +16,17 @@ FEED_TTL = getattr(settings, 'BLOGDOR_FEED_TTL', 60)
 
 class BlogdorFeed(Feed):
 
-    description_template = 'blogdor/feeds/post_description.html'
+    description_template = 'feeds/post_description.html'
+    title_template = 'feeds/post_title.html'
    
     def link(self):
         return reverse('blogdor_archive')
 
     def ttl(self):
         return str(FEED_TTL)
+
+    def item_description(self, post):
+        return post.lede
 
 #
 # Specific blogdor feeds
@@ -33,8 +38,12 @@ class LatestPosts(BlogdorFeed):
     description = title
     
     def items(self):
-        return Post.objects.published()[:ITEMS_PER_FEED]
+        p = Post.objects.published()[:ITEMS_PER_FEED] 
+        return p
         
+    def item_title(self,post):
+        return post.title.replace('&amp;','').replace('&#','')
+
     def item_author_name(self, post):
         if post.author:
             return post.author.get_full_name()
@@ -42,6 +51,8 @@ class LatestPosts(BlogdorFeed):
     
     def item_pubdate(self, post):
         return post.date_published
+
+
 
 class LatestComments(BlogdorFeed):
 

@@ -11,14 +11,14 @@
     <h3 class="linkedTitle"><a href="/blog">Real Time Investigations</a></h3>
     <ol class="moduleLists"> 
 {%autoescape off%}
-      {% for entry in blogs|dictsortreversed:"date_published"|slice:":11"  %}
+      {% for entry in blogs|dictsortreversed:"date_published"|slice:":10"  %}
       <li class="module">
         {%if entry.title%}
         <div class="post">
-          <a class="title" href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a>
+          <a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a>
           <span class="postMeta">
             {{entry.shortbyline|safe}}
-            <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
+            <span class="postdate">{{entry.date_published|date:"M j, Y"}}</span>
             <span class="posttime">{{entry.date_published|date:"P"}}</span>
       {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
           </span>
@@ -27,7 +27,7 @@
         {%else%}
         <span class="tweet">
           <p>{{ entry.text }}</p>
-          <span class="tweetDate"><a href="http://www.twitter.com/{{entry.twit}}">{{entry.date_published|date:"M d, Y P"}}</a></span>
+          <span class="tweetDate"><a href="http://www.twitter.com/{{entry.twit}}">{{entry.date_published|date:"M j, Y P"}}</a></span>
         </span>
         {%endif%}
       </li>  
@@ -52,19 +52,19 @@
 {% endblock %}
 
 {% block sidebar %}
-  <div class="mainModule features">
+  <div class="mainModule lastItem features">
     {% for entry in featured %}
     {% get_comment_count for entry as comment_count %}
-    <div class="module">
+    <div class="module {% if forloop.last%}lastItem{%endif%}">
       {% autoescape off %}
       <h2><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></h2>
       <span class="postMeta">
         {{entry.shortbyline}}
-        <span class="postdate">{{entry.date_published|date:"M d, Y"}}</span>
+        <span class="postdate">{{entry.date_published|date:"M j, Y"}}</span>
         <span class="posttime">{{entry.date_published|date:"P"}}</span>
         {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
       </span>
-      {{ entry|grafs:4 }}
+      {{ entry|grafs:3 }}
       {% endautoescape %}
     </div>
     {%endfor%}             
