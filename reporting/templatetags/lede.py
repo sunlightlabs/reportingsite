@@ -42,7 +42,7 @@ def lede(post):
     readmore = ' <a class="continueReading" href="' + post.get_absolute_url() + '">Read all about it</a>'  
     excerpt = striptags(post.excerpt)
     if excerpt:
-        return excerpt + readmore 
+        return '<p>'+excerpt+'</p>' + readmore 
     grafs = fixtags( post.content.strip() ).split('<p>') 
     newg = []
     for g in grafs:
@@ -84,4 +84,4 @@ def sentence(value):
 
 @register.filter(name='feedclean')
 def feedclean(st): 
-    return st.encode('UTF-8').replace("&amp;",'$$').replace('&','$$')
+    return st.encode('UTF-8').replace("&amp;",'').replace('&#','')

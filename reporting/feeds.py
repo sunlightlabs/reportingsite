@@ -54,24 +54,6 @@ class LatestPosts(BlogdorFeed):
 
 
 
-class LatestComments(BlogdorFeed):
-
-    title_template = 'blogdor/feeds/comment_title.html'
-    description_template = 'blogdor/feeds/comment_description.html'
-
-    title = u"Recent comments on Sunlight Foundation investigative reports"
-    description = title
-
-    def items(self):
-        comments = Comment.objects.for_model(Post).filter(is_public=True, is_removed=False)
-        return comments.order_by('-submit_date')[:ITEMS_PER_FEED]
-
-    def item_author_name(self, comment):
-        return comment.user_name
-
-    def item_pubdate(self, comment):
-        return comment.submit_date
-
 class LatestForAuthor(BlogdorFeed):
 
     feed_title = u"Recent Sunlight Foundation Reporting Group investigative reports by %s"
