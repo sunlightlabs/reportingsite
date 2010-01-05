@@ -3,7 +3,7 @@ from django.contrib import admin
 from django.views.static import serve
 import settings
 
-handler404 = 'reporting.views.archive'
+#handler404 = 'reporting.views.archive'
 admin.autodiscover()
 
 
@@ -48,10 +48,9 @@ urlpatterns = patterns(
 
 
     
-from reporting.feeds import LatestPosts, LatestComments, LatestForAuthor, LatestForTag    
+from reporting.feeds import LatestPosts, LatestForAuthor, LatestForTag    
 default_feeds = {
         'latest': LatestPosts,
-        'comments': LatestComments,
         'tag': LatestForTag,
         'author': LatestForAuthor,
 }
