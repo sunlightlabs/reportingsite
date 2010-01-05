@@ -8,7 +8,7 @@ from tagging.models import Tag, TaggedItem
 from reporting.templatetags import lede
 
 ITEMS_PER_FEED = getattr(settings, 'BLOGDOR_ITEMS_PER_FEED', 15)
-FEED_TTL = getattr(settings, 'BLOGDOR_FEED_TTL', 1)
+FEED_TTL = getattr(settings, 'BLOGDOR_FEED_TTL', 20)
 
 #
 # Generic blogdor feed
@@ -34,7 +34,7 @@ class BlogdorFeed(Feed):
 
 class LatestPosts(BlogdorFeed):
 
-    title = u"Recent Sunlight Foundation Reporting Group investigative reports"
+    title = u"Sunlight Foundation Reporting Group investigative reports"
     description = title
     
     def items(self):
@@ -56,7 +56,7 @@ class LatestPosts(BlogdorFeed):
 
 class LatestForAuthor(BlogdorFeed):
 
-    feed_title = u"Recent Sunlight Foundation Reporting Group investigative reports by %s"
+    feed_title = u"Sunlight Foundation Reporting Group investigative reports by %s"
     feed_description = feed_title
     
     def _display_name(self, user):
@@ -87,7 +87,7 @@ class LatestForAuthor(BlogdorFeed):
 
 class LatestForTag(BlogdorFeed):
     
-    feed_title = u"Recent Sunlight Foundation Reporting Group investigative reports tagged with '%s'"
+    feed_title = u"Sunlight Foundation Reporting Group investigations tagged '%s'"
     feed_description = feed_title
     
     def title(self, tag):
