@@ -11,10 +11,27 @@
     <h3 class="linkedTitle"><a href="/blog">Real Time Investigations</a></h3>
     <ol class="moduleLists"> 
 {%autoescape off%}
-      {% for entry in blogs|dictsortreversed:"date_published"|slice:":10"  %}
+      {% for entry in blogs|dictsortreversed:"date_published"|slice:":11"  %}
       <li class="module">
-        {%if entry.title%}
+        {%ifequal entry.feed.codename 'partytime'%}
         <div class="post">
+ <a href="{{entry.link}}">{{ entry.title|safe }}</a>
+          <span class="postMeta">
+            By {{entry.author_name|capfirst}}
+            <span class="postdate">{{entry.date_published|date:"M j, Y"}}</span>
+            <span class="posttime">{{entry.date_published|date:"P"}}</span>     
+          </span>
+    <p>{{entry.summary}}</p>
+        </div>
+        {%else%}
+        {%if entry.twit%}
+        <span class="tweet">
+          <p>{{ entry.text }}</p>
+          <span class="tweetDate"><a href="http://www.twitter.com/{{entry.twit}}">{{entry.twit}}</a> {{entry.date_published|date:"M j, Y P"}}</span>
+        </span>
+        {%else%}
+
+<div class="post">
           <a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a>
           <span class="postMeta">
             {{entry.shortbyline|safe}}
@@ -24,12 +41,7 @@
           </span>
           {{ entry|lede|safe }}
         </div>
-        {%else%}
-        <span class="tweet">
-          <p>{{ entry.text }}</p>
-          <span class="tweetDate"><a href="http://www.twitter.com/{{entry.twit}}">{{entry.date_published|date:"M j, Y P"}}</a></span>
-        </span>
-        {%endif%}
+        {%endif%}{%endifequal%}
       </li>  
       {% endfor %}
     </ol>  

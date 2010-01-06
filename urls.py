@@ -3,9 +3,8 @@ from django.contrib import admin
 from django.views.static import serve
 import settings
 
-#handler404 = 'reporting.views.archive'
-admin.autodiscover()
 
+admin.autodiscover()
 
 
 urlpatterns = patterns(
@@ -41,7 +40,9 @@ urlpatterns = patterns(
     #page by topic: flit, ss, slrg pages    
     url(r'^(?P<site>\w{1,4})/$', 'bysite'),
 
-    url(r'^adminfiles/', include('adminfiles.urls')) 
+    url(r'^adminfiles/', include('adminfiles.urls')),
+
+    url(r'^adminajax/(?P<user_id>\d+)/(?P<post_id>\d+)/$', 'admin_currentedit', name='admin_currentedit')
 )
 
 

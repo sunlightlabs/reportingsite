@@ -4,13 +4,13 @@
 
 {% block extrahead %}{{ block.super }}
 
+
 <script type="text/javascript" src="../../../jsi18n/"></script>
 
 
 <script type="text/javascript" src="{% media_url %}/js/core.js"></script>
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js"></script>
 <script type="text/javascript" src="{% media_url %}/js/urlify.js"></script>
-<script type="text/javascript" src="{% media_url %}/rte/jquery.rte.js"></script>
 <script type="text/javascript" src="{% media_url %}/jquery.bgiframe.min.js"></script>
 <script type="text/javascript" src="{% media_url %}/js/jquery.autocomplete.js"></script>
 
@@ -20,12 +20,23 @@
 <script type="text/javascript" src="{% media_url %}/adminfiles/model.js"></script>
 <script type="text/javascript" src="{% media_url %}/adminfiles/adminfiles.js"></script>
 
-
-
-
-
-
-
+{%ifequal opts.verbose_name "post" %}
+<script type="text/javascript">
+$(document).ready(function(){ setInterval ( "ajax()", 60 * 1000 * 3 ); })
+function ajax() {
+    $("#othersediting").load( '/adminajax/{{user.id}}/{{ object_id }}/' ); 
+    newtext = $("#othersediting").text()
+    if(newtext=='') {
+       $("#othersediting").hide(); 
+       $("#othersediting").removeClass('errornote');   
+    } else {
+       $("#othersediting").show();
+       $("#othersediting").addClass('errornote');
+    }
+}
+</script>
+<script type="text/javascript" src="{% media_url %}/rte/jquery.rte.js"></script>
+{%endifequal%}
 
 {% endblock %}
 
@@ -52,6 +63,14 @@
   </ul>
 {% endif %}{% endif %}
 {% endblock %}
+
+
+{%ifequal opts.verbose_name "post" %}
+<p id="othersediting" style="display:none">
+</p>
+{%endifequal%}
+
+
 <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.module_name }}_form">{% block form_top %}{% endblock %}
 <div>
 {% if is_popup %}<input type="hidden" name="_popup" value="1" />{% endif %}

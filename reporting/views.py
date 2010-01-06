@@ -13,7 +13,7 @@ from django.shortcuts import render_to_response, get_object_or_404
 from django.views.generic import date_based, list_detail
 from tagging.models import Tag
 from tagging.views import tagged_object_list
-from models import Post
+from models import *
 import datetime, time
 from django.contrib.comments.models import Comment
 from django.template import RequestContext
@@ -27,7 +27,7 @@ def post(request, year, slug):
     return _post(request, year, slug)
 
 def post_wpcompat(request, year, month, day, slug):
-    post = get_object_or_404(Post, date_published__year=year, date_published__month=month, slug__startswith=slug[:60], is_published=True)
+    post = get_object_or_404(Post, date_published__year=year, date_published__month=month, slug__startswith=slug[:56], is_published=True)
     return  _post_by_id(request, post.id)
 
 def _post(request, year, slug):
@@ -110,6 +110,28 @@ def tag_list_admin(request):
                     template_object_name='tag',
                     allow_empty=True)
 
+def admin_currentedit(request, user_id, post_id):
+    from django.contrib.auth.decorators import login_required
+    from time import time
+
+    login_required(admin_currentedit)
+
+    t = time()
+    twominago = t-150
+    u = User.objects.get(id=user_id)
+    p = Post.objects.get(id=post_id)
+    deleteyou = CurrentEdit.objects.filter(post=p,user=u).delete()
+    check = CurrentEdit.objects.filter(post=p,time__gt=twominago)
+    listusers = []
+    for c in check:
+        listusers.append( c.user.username )
+    CurrentEdit(post=p,user=u,time=t).save()
+    if len(listusers)>0:
+         s = "Also editing: " + ", ".join(listusers)
+    else:
+        s=''
+    return HttpResponse(s )
+
 
 #
 # Author views
@@ -151,9 +173,11 @@ def preview(request, post_id, slug):
 
 def index(request):
    
-    def mergetweets(posts, tweetsfeed):
+    def mergetweets(posts, tweetsfeed, ptentries):
         elist = []
         for p in posts:
+            elist.append(p) 
+        for p in ptentries.entries.all():
             elist.append(p) 
         for t in tweetsfeed.entries.all():
             elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
@@ -163,7 +187,7 @@ def index(request):
     f1 = featured[0].pk
     f2 = featured[1].pk
     f3 = featured[1].pk
-    blogs = mergetweets( Post.objects.published().exclude(pk=f1).exclude(pk=f2).exclude(pk=f3), Feed.objects.get(codename__startswith='tweetsRT-')  )
+    blogs = mergetweets( Post.objects.published().exclude(pk=f1).exclude(pk=f2).exclude(pk=f3), Feed.objects.get(codename__startswith='tweetsRT-'), Feed.objects.get(codename='partytime')  )
 
     return render_to_response('index.html', {'blogs': blogs, 'featured': featured, 'bodyclass': 'home' }, context_instance=RequestContext(request) )
 

@@ -107,5 +107,11 @@ class Post(models.Model):
 moderator.register(Post, BlogdorModerator)
 
 
+class CurrentEdit(models.Model):
+    post = models.ForeignKey(Post)
+    user = models.ForeignKey(User)
+    time = models.IntegerField()
+
+
 
 

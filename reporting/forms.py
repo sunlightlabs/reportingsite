@@ -35,8 +35,7 @@ class PostAdminModelForm(forms.ModelForm):
             'http://ajax.googleapis.com/ajax/libs/jquery/1.3.2/jquery.min.js',
             'js/urlify.js',
             'jquery.bgiframe.min.js',
-
-            '/js/RelatedObjectLookups.js', '/js/calendar.js', '/js/DateTimeShortcuts.js'
+            '/js/RelatedObjectLookups.js', '/js/calendar.js', '/js/DateTimeShortcuts.js', 
         )
 
 
