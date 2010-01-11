@@ -78,9 +78,10 @@ a.continueReading { font-size: 110%; background: url(../img/arrow.png) right 3px
 
 p { margin-bottom: 20px; color: #58595b; font-family: Helvetica Neue, Helvetica, Arial, sans-serif;}
 
-span.tweetDate { display: block; color: #808285; font-style: oblique; font-size: 90%;}
+span.tweetDate { display: block; color: #808285; font-style: oblique; font-size: 90%; margin-top: -10px;}
 span.tweet { background: url(../img/icon_tweet.png) top left no-repeat; display: block; padding-left: 50px;}
 div.post { background: url(../img/icon_post.png) top left no-repeat; display: block; padding-left: 50px;}
+div.post p{ margin-bottom: 10px;}
 
 img { border: 5px solid #d1d3d4;}
 div#otherPosts img { border: none; border-bottom: 2px solid #bcbec0; padding-bottom: 8px; margin-bottom: 6px;}
@@ -117,7 +118,7 @@ div.categories li:hover a {color: #457b80;}
 div.categories li:hover { background-color: #fff; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
 div.categories li.lastCategory { border-bottom: none;}
 
-blockquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 150%; color: #000000; font-style: oblique; line-height: 27px; margin-bottom: 15px;}
+blockquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 150%; color: #000000; font-style: oblique; line-height: 27px; margin-bottom: 15px; background-color: #E3E3DF; margin-bottom: 15px; padding: 20px; }
 div.pullquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 200%; color: #000000;  border-top: 1px solid; border-bottom: 1px solid; line-height: 30px; padding: 10px 10px; margin: 5px; font-style: oblique; text-align: center; margin-bottom: 15px;}
 
 span.commentMetaAuthor { font-size: 110%; font-weight: bold; margin-bottom: 5px; display: block;}
