@@ -85,3 +85,14 @@ def sentence(value):
 @register.filter(name='feedclean')
 def feedclean(st): 
     return st.encode('UTF-8').replace("&amp;",'').replace('&#','')
+
+
+@register.filter(name='twitter_link')
+def twitter_link(s): 
+    r1 = r"(\b(http|https)://([-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]))"
+    r2 = r"((^|\b)www\.([-A-Za-z0-9+&@#/%?=~_()|!:,.;]*[-A-Za-z0-9+&@#/%=~_()|]))"
+    return re.sub(r2,r'<a rel="nofollow" target="_blank" href="http://\1">\1</a>',re.sub(r1,r'<a target="_blank" href="\1">\1</a>',s))
+
+
+
+    return s.encode('UTF-8').replace("&amp;",'').replace('&#','')

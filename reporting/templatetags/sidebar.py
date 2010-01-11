@@ -44,7 +44,8 @@ class Calendar(Node):
         cl = []
         today = datetime.datetime.now().date()
         for e in cal:
-            d = e.summary[10:22]
+            da = e.summary.split()
+            d = da[2] + ' ' + da[3] + ' ' + da[4][:4]
             t = time.strptime(d, "%b %d, %Y")
             t = datetime.date.fromtimestamp(time.mktime(t))
             if t>=today:
