@@ -39,6 +39,24 @@ def _post_by_id(request, id):
 
     return render_to_response('post_detail.html', {'post': post, 'bodyclass': 'blog'   }, context_instance=RequestContext(request))
 
+
+#
+# Preview view
+#
+def preview(request, object_id):
+    from django.contrib.auth.decorators import login_required
+    login_required(preview)
+    try:
+        post = Post.objects.get(pk=object_id)
+        if post.is_published:
+            return HttpResponsePermanentRedirect(post.get_absolute_url())
+        else:
+            return render_to_response('post_detail.html', {'post': post, 'bodyclass': 'blog'   }, context_instance=RequestContext(request))
+    except Post.DoesNotExist:
+        return HttpResponseRedirect(reverse('blogdor_archive'))
+
+
+
 #
 # Post archive views
 #
@@ -152,23 +170,6 @@ def author(request, username):
     except User.DoesNotExist:
         return HttpResponseRedirect(reverse('blogdor_archive'))
 
-#
-# Preview view
-#
-
-def preview(request, post_id, slug):
-    try:
-        post = Post.objects.select_related().get(pk=post_id, slug=slug)
-        if post.is_published:
-            return HttpResponsePermanentRedirect(post.get_absolute_url())
-        else:
-            return list_detail.object_detail(
-                    request,
-                    queryset=Post.objects.select_related().all(),
-                    object_id=post_id,
-                    template_object_name='post')
-    except Post.DoesNotExist:
-        return HttpResponseRedirect(reverse('blogdor_archive'))
 
 
 def index(request):
