@@ -138,12 +138,13 @@ def admin_currentedit(request, user_id, post_id):
     twominago = t-150
     u = User.objects.get(id=user_id)
     p = Post.objects.get(id=post_id)
-    deleteyou = CurrentEdit.objects.filter(post=p,user=u).delete()
-    check = CurrentEdit.objects.filter(post=p,time__gt=twominago)
+    #c = request.POST['content']
+    deleteyou = Backup.objects.filter(post=p,user=u).delete()
+    check = Backup.objects.filter(post=p,time__gt=twominago)
     listusers = []
     for c in check:
         listusers.append( c.user.username )
-    CurrentEdit(post=p,user=u,time=t).save()
+    Backup(post=p,user=u,time=t).save()
     if len(listusers)>0:
          s = "Also editing: " + ", ".join(listusers)
     else:

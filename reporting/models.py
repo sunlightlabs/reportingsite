@@ -62,7 +62,7 @@ class Post(models.Model):
     whichsite = models.CharField(max_length=10, choices=WHICHSITE_CHOICES)
 
     pullquote = models.CharField(max_length=255, blank=True)
-    override_byline = models.CharField(max_length=255, blank=True)
+    override_byline = models.CharField("Use this when we have a special contributor or multiple writers", max_length=255, blank=True)
 
     image = models.FileField(upload_to='images', max_length=500)
 
@@ -107,10 +107,11 @@ class Post(models.Model):
 moderator.register(Post, BlogdorModerator)
 
 
-class CurrentEdit(models.Model):
+class Backup(models.Model):
     post = models.ForeignKey(Post)
     user = models.ForeignKey(User)
     time = models.IntegerField()
+  
 
 
 

@@ -21,10 +21,15 @@
 <script type="text/javascript" src="{% media_url %}/adminfiles/adminfiles.js"></script>
 
 {%ifequal opts.verbose_name "post" %}
+<script type="text/javascript" src="{% media_url %}/rte/jquery.rte.js"></script>
 <script type="text/javascript">
-$(document).ready(function(){ setInterval ( "ajax()", 60 * 1000 * 3 ); })
+$(document).ready(function(){ 
+    setInterval ( "ajax()", 6 * 1000 * 3 ); 
+    $('textarea#id_content').rte('{%media_url%}/rte/rte.css', '{%media_url%}/rte/');
+})
 function ajax() {
-    $("#othersediting").load( '/adminajax/{{user.id}}/{{ object_id }}/' ); 
+    $("#othersediting").load( '/adminajax/{{user.id}}/{{ object_id }}/'  ); 
+    //alert(  $('id_content').contents() )
     newtext = $("#othersediting").text()
     if(newtext=='') {
        $("#othersediting").hide(); 
@@ -35,7 +40,6 @@ function ajax() {
     }
 }
 </script>
-<script type="text/javascript" src="{% media_url %}/rte/jquery.rte.js"></script>
 {%endifequal%}
 
 {% endblock %}
@@ -105,9 +109,6 @@ function ajax() {
 
 </div>
 
-<script type="text/javascript">
-$('textarea').rte('{%media_url%}/rte/rte.css', '{%media_url%}/rte/');
-</script>
 
 </form></div>
 {% endblock %}

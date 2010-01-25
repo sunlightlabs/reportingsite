@@ -48,6 +48,18 @@ if (box.value=='Search posts') { box.value=''; }
               </ul> 
             </div>
             {%endif%}
+
+           <div class="mainModule categories">
+             <h3>Real Time Ticker</h3>
+             {%get_resources%}
+             <ul>
+               {%for entry in entries|slice:":5" %}
+               <li><a href="{{entry.link}}" target="_blank">{{entry.feed.title}}: {{entry.title}}</a></li>
+               {%endfor%}
+             </ul>             
+           </div>
+
+
 {%if post%}
            <div class="mainModule categories">
              <h3>Recent Posts</h3>
@@ -60,16 +72,7 @@ if (box.value=='Search posts') { box.value=''; }
            </div>
 {%endif%}
 
-           <div class="mainModule categories">
-             <h3>Real Time Ticker</h3>
-             {%get_resources%}
-             <ul>
-               {%for entry in entries|slice:":5" %}
-               <li><a href="{{entry.link}}" target="_blank">{{entry.feed.title}}: {{entry.title}}</a></li>
-               {%endfor%}
-             </ul>
-             
-           </div>
+
            <div class="mainModule categories">
              <h3>Reporting we're watching</h3>
              <ul>

@@ -1,4 +1,4 @@
-from models import Post
+from models import *
 from django.contrib import admin
 
 from tagging.fields import TagField
@@ -78,3 +78,7 @@ class PostAdmin(FilePickerAdmin):
 
 admin.site.register(Post, PostAdmin)
 
+
+class BackupAdmin(admin.ModelAdmin):
+    list_display = ('post', 'user', 'time' )
+#admin.site.register(Backup, BackupAdmin)
