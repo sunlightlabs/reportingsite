@@ -53,7 +53,7 @@ class Post(models.Model):
     date_published = models.DateTimeField(blank=True, null=True)
     is_published = models.BooleanField(default=False)
     
-    is_favorite = models.BooleanField(default=False)
+    is_favorite = models.BooleanField("Is_favorite (Check if this is a longer report, leave unchecked if it should appear as a blog post on the left sidebar)", default=False)
     
     comments_enabled = models.BooleanField(default=True)
     

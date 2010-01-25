@@ -52,7 +52,7 @@ urlpatterns = patterns(
 
 
     
-from reporting.feeds import LatestPosts, LatestForAuthor, LatestForTag    
+from reporting.feeds import *
 default_feeds = {
         'latest': LatestPosts,
         'tag': LatestForTag,
@@ -64,6 +64,7 @@ params = {'feed_dict': default_feeds}
 urlpatterns += patterns('django.contrib.syndication.views',
         url(r'^feeds/(?P<url>.*)/$', 'feed', params, name="blogdor_feeds"),
         url(r'^feed/atom/$', 'feed', {'feed_dict': default_feeds, 'url': 'latest'}, name="blogdor_feeds"),
+        url(r'^feeds/site/(?P<site>.*)/$', 'feed', {'feed_dict': default_feeds, 'url': 'site'}, name="blogdor_feeds"),
 )
 
 from django.conf import settings

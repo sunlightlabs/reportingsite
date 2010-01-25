@@ -10,6 +10,7 @@ from reporting.templatetags import lede
 ITEMS_PER_FEED = getattr(settings, 'BLOGDOR_ITEMS_PER_FEED', 15)
 FEED_TTL = getattr(settings, 'BLOGDOR_FEED_TTL', 20)
 
+WHICHSITE_CHOICES = getattr(settings, "WHICHSITE_CHOICES", False)
 #
 # Generic blogdor feed
 #
@@ -28,13 +29,14 @@ class BlogdorFeed(Feed):
     def item_description(self, post):
         return post.lede
 
+
 #
 # Specific blogdor feeds
 #
 
 class LatestPosts(BlogdorFeed):
 
-    title = u"Sunlight Foundation Reporting Group investigative reports"
+    title = u"Sunlight Foundation Reporting Group"
     description = title
     
     def items(self):
@@ -56,7 +58,7 @@ class LatestPosts(BlogdorFeed):
 
 class LatestForAuthor(BlogdorFeed):
 
-    feed_title = u"Sunlight Foundation Reporting Group investigative reports by %s"
+    feed_title = u"%s - Sunlight Foundation Reporting Group"
     feed_description = feed_title
     
     def _display_name(self, user):
@@ -87,7 +89,7 @@ class LatestForAuthor(BlogdorFeed):
 
 class LatestForTag(BlogdorFeed):
     
-    feed_title = u"Sunlight Foundation Reporting Group investigations tagged '%s'"
+    feed_title = u"'%s' - Sunlight Foundation Reporting Group"
     feed_description = feed_title
     
     def title(self, tag):
@@ -106,4 +108,9 @@ class LatestForTag(BlogdorFeed):
         return post.date_published
 
     def items(self, tag):
+        if tag in [x[0] for x in WHICHSITE_CHOICES]:
+            return Post.objects.published().filter(whichsite=tag)[:ITEMS_PER_FEED]
         return TaggedItem.objects.get_by_model(Post.objects.published(), tag)[:ITEMS_PER_FEED]
+
+
+
