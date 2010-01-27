@@ -159,7 +159,7 @@ def admin_currentedit(request, user_id, post_id):
 def author(request, username):
     try:
         author = User.objects.get(username=username)
-        topinfo = 'Investigative journalism from Sunlight Foundation reporter <a href="http://sunlightfoundation.com/people/'+username+'">' + author.first_name + ' ' + author.last_name + '</a>'
+        topinfo = 'Investigations by Sunlight Foundation reporter <a href="http://sunlightfoundation.com/people/'+username+'">' + author.first_name + ' ' + author.last_name + '</a>'
         return list_detail.object_list(
                     request,
                     queryset=Post.objects.published().select_related().filter(author=author),
@@ -185,11 +185,12 @@ def index(request):
             elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
         return elist
 
-    featured = Post.objects.published().filter(is_favorite=True)[:3] 
+    featured = Post.objects.published().filter(is_favorite=True)[:4] 
     f1 = featured[0].pk
     f2 = featured[1].pk
-    f3 = featured[1].pk
-    blogs = mergetweets( Post.objects.published().exclude(pk=f1).exclude(pk=f2).exclude(pk=f3), FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-'), Feed.objects.get(codename='partytime')  )
+    f3 = featured[2].pk
+    f4 = featured[3].pk
+    blogs = mergetweets( Post.objects.published().exclude(pk=f1).exclude(pk=f2).exclude(pk=f3).exclude(pk=f4), FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-'), Feed.objects.get(codename='partytime')  )
 
     return render_to_response('index.html', {'blogs': blogs, 'featured': featured, 'bodyclass': 'home' }, context_instance=RequestContext(request) )
 

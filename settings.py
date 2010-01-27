@@ -113,7 +113,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "context_processors.latest_by_site",
 )
 
-ADMINFILES_MEDIA_URL = 'http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/admin/'
+ADMINFILES_MEDIA_URL = 'http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/'
 ADMINFILES_USE_SIGNALS = True
 ADMINFILES_REF_START = '[{['
 ADMINFILES_REF_END = ']}]'

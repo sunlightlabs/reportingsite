@@ -53,7 +53,7 @@ class Post(models.Model):
     date_published = models.DateTimeField(blank=True, null=True)
     is_published = models.BooleanField(default=False)
     
-    is_favorite = models.BooleanField("Is_favorite (Check if this is a longer report, leave unchecked if it should appear as a blog post on the left sidebar)", default=False)
+    is_favorite = models.BooleanField( default=False)
     
     comments_enabled = models.BooleanField(default=True)
     
@@ -62,7 +62,7 @@ class Post(models.Model):
     whichsite = models.CharField(max_length=10, choices=WHICHSITE_CHOICES)
 
     pullquote = models.CharField(max_length=255, blank=True)
-    override_byline = models.CharField("Use this when we have a special contributor or multiple writers", max_length=255, blank=True)
+    override_byline = models.CharField("Override byline (for special contributor or multiple writers)", max_length=255, blank=True)
 
     image = models.FileField(upload_to='images', max_length=500)
 

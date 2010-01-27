@@ -55,6 +55,26 @@ class LatestPosts(BlogdorFeed):
         return post.date_published
 
 
+class LatestFeatures(BlogdorFeed):
+
+    title = u"Sunlight Foundation Reporting Group features"
+    description = title
+    
+    def items(self):
+        p = Post.objects.published().filter(is_favorite=True)[:ITEMS_PER_FEED] 
+        return p
+        
+    def item_title(self,post):
+        return post.title.replace('&amp;','').replace('&#','')
+
+    def item_author_name(self, post):
+        if post.author:
+            return post.author.get_full_name()
+        return ""
+    
+    def item_pubdate(self, post):
+        return post.date_published
+
 
 class LatestForAuthor(BlogdorFeed):
 

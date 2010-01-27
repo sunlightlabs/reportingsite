@@ -7,7 +7,7 @@
 {% block body %}home{% endblock %}
 
 {% block content %}
-  <div class="mainModule">
+  <div class="mainModule lastItem">
     <h3 class="linkedTitle"><a href="/blog">Real Time Investigations</a></h3>
     <ol class="moduleLists"> 
 {%autoescape off%}
@@ -21,7 +21,7 @@
             <span class="postdate">{{entry.date_published|date:"M j, Y"}}</span>
             <span class="posttime">{{entry.date_published|date:"P"}}</span>     
           </span>
-    <p>{{entry.summary}}</p>
+    <p>{%if entry.summary%}{{entry.summary}}{%else%}{{entry.content}}{%endif%}</p>
         </div>
         {%else%}
         {%if entry.twit%}
@@ -45,29 +45,16 @@
       </li>  
       {% endfor %}
     </ol>  
+<a class="readMoreRT" href="/blog/">there's more</a>
   </div>
 {%endautoescape%}
-  <div class="mainModule calendar lastItem">
-    <h3>Dates we're watching</h3>
-    <ol>{%get_calendar%}
-      {%for event in events|slice:"2"%}
-      <li class="{% cycle 'even' 'odd' %}">
-        <div class="calendarDate">
-          <span class="month">{{event.date|date:"M"}}</span>
-          <span class="day">{{event.date|date:"d"}}</span>
-        </div>  
-        <span class="title">{{event.summary}}</span>
-      </li>
-      {%endfor%}              
-    </ol>  
-  </div>
 {% endblock %}
 
 {% block sidebar %}
-  <div class="mainModule lastItem features">
+  <div class="mainModule features">
     {% for entry in featured %}
     {% get_comment_count for entry as comment_count %}
-    <div class="module {% if forloop.last%}lastItem{%endif%}">
+    <div class="module">
       {% autoescape off %}
       <h2><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></h2>
       <span class="postMeta">
@@ -79,6 +66,22 @@
       {{ entry|grafs:3 }}
       {% endautoescape %}
     </div>
-    {%endfor%}             
+    {%endfor%}       
+ 
   </div>
+<div class="mainModule calendar lastItem">      
+  <h3>Dates we're watching</h3>
+    <ol>{%get_calendar%}
+      {%for event in events|slice:"2"%}
+      <li class="{% cycle 'even' 'odd' %}">
+        <div class="calendarDate">
+          <span class="month">{{event.date|date:"M"}}</span>
+          <span class="day">{{event.date|date:"d"}}</span>
+        </div>  
+        <span class="title">{{event.summary}}</span>
+      </li>
+      {%endfor%}              
+    </ol>  
+</div>
+
 {% endblock %}

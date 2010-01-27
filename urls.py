@@ -57,6 +57,7 @@ default_feeds = {
         'latest': LatestPosts,
         'tag': LatestForTag,
         'author': LatestForAuthor,
+        'features': LatestFeatures
 }
     
 params = {'feed_dict': default_feeds}
