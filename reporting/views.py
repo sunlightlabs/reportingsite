@@ -219,12 +219,16 @@ def bysite(request, site):
                     )
 
 
-def search(request):
+def searchredirect(request):
 
     if request.GET['terms']:
         terms = request.GET['terms']
+        return HttpResponseRedirect('/search/'+terms)
     else:
         return HttpResponseRedirect(reverse('blogdor_archive'))
+
+  
+def search(request, terms):
 
     stories = Post.objects.published().filter(Q(title__icontains=terms) | Q(content__icontains=terms)) #change to __search on mysql  
 
@@ -234,6 +238,8 @@ def search(request):
                     template_name='posts_lede.html',
                     template_object_name='post', allow_empty=True
                     )
+
+
 def handler404(request):
     return archive(request)
 

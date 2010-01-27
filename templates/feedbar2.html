@@ -11,7 +11,7 @@ if (box.value=='Search posts') { box.value=''; }
 </script>
 <div class="mainModule recentPosts">
   <h3>Search the Blog</h3>
-  <form method="get" action="/search/">
+  <form method="get" action="/search/" id="searchform">
     <input type="text" id="searchbox" name="terms" value="Search posts" onFocus="cleardefault(this);">
     <button class="searchBtn" type="submit">
       <span>Search</span>
