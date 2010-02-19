@@ -87,7 +87,7 @@ INSTALLED_APPS = (
     'adminfiles',
     'sorl.thumbnail',
     'mediasync',
-    'markdown'
+    'reportingsite.millions', 'millions'
 )
 
 
@@ -111,6 +111,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "context_processors.latest_by_site",
+
+    "context_processors.filters",
 )
 
 ADMINFILES_MEDIA_URL = 'http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/'
