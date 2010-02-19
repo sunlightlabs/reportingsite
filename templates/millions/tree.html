@@ -1,0 +1,244 @@
+<html>
+<head> <title>Sunlight's Recovery Explorer</title>
+<script src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/millions/jquery.js" type="text/javascript"></script> 
+<script src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/millions/interface.js" type="text/javascript"></script> 
+<script src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/millions/treemap.js" type="text/javascript"></script> 
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"></script> 
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.3/scriptaculous.js"></script> 
+
+ 
+<script type="text/javascript"> 
+
+jQuery(function(){
+		var data = getData();
+		var tree = jQuery("#treemap").treemap(950,750,{getData:function(){return data;}});
+		enhanceTreemap(tree,data);
+        jQuery("select",this).each(function(){   greyxyfromfilter(this); });  
+        jQuery('#options_1').hide();
+
+jQuery('#togglefilters').toggle(function() {
+  jQuery('#options_1').show();
+  jQuery('#togglefilters').html("Hide criteria");
+}, function() {
+  jQuery('#options_1').hide();
+  jQuery('#togglefilters').html("View/set criteria");
+});
+	});
+	
+	function enhanceTreemap(t,data) {
+		jQuery("div.treemapCell",t).hover(function(){jQuery(this).addClass("selected")},function(){jQuery(this).removeClass("selected")});
+		jQuery("div.treemapHead",t).click(function(){
+			var cell = jQuery(this);
+			var transferComplete = function() {
+				var tree = jQuery("<div>").
+				treemap(950,750,{getData:function(){
+					var branch = cell.html();
+					for(var i=0,dl=data.length;i<dl;i++)
+						if(data[i][0]==branch) return data[i][1];
+				}})
+				.css({"position":"absolute","top":t[0].offsetTop,"left":t[0].offsetLeft,"z-index":1});
+				enhanceTreemap(tree,data);
+				jQuery("<a href='#'>").
+				css({"cursor":"pointer","position":"absolute","top":t[0].offsetTop,"left":t[0].offsetLeft+1000}).
+				html("return to main view").
+				click(function(){tree.add(this).remove();return false;}).
+				appendTo("body");
+				tree.appendTo("body");
+			};
+			cell.TransferTo({to:t[0],duration:"normal",className:"transfer",complete:transferComplete});
+		})
+	}
+	
+	function getData() {
+		var data = [];
+		var cont = {};
+		jQuery("#treemap tr",this).each(function(){
+			var cell = jQuery("td",this);
+			if(!cell.length) return;
+			var c = cell.filter(":eq(1)").html();
+            var c2 = cell.filter(":eq(2)").html();
+			if(!cont[c]) cont[c] = [];
+			var num = cell.filter(":eq(0)").html();
+			var formatnum = addCommas(num);
+			//if(cell.length>2) 
+            var row = ['<a href="#" onclick="acton(\''+cell.filter(':eq(1)').html()+'\', \''+c2+'\');">'+cell.filter(':eq(2)').html()+'<small> '+formatnum+'</small></a>',num];
+            //        else var row = [cell.filter(":eq(2)").html()+"<small> ("+formatnum+")</small>",num];
+			cont[c].push(row);
+		});
+		jQuery.each(cont,function(i,n){
+			data.push([i,n]);
+		})
+		
+		return data;
+	}
+
+    function acton(t,t2) {
+        sl = "sliceby="+Sortable.sequence('group1');
+        q = "{{xyused.0}}="+t+"&{{xyused.1}}="+t2;
+        document.forms[0].elements['sliceby'].value = Sortable.sequence('group1');
+        document.forms[0].elements['{{xyused.0}}'].value = t;
+        document.forms[0].elements['{{xyused.1}}'].value = t2;
+        //window.open("detail?"+q,"detail");
+        document.forms[0].submit();
+    }
+
+    function gotodetail() {
+        s = "";
+        jQuery("select",this).each(function(){
+            s+= '&'+this.name+'='+this.value;
+        });
+        window.open("recip?"+s,"detail");
+    }
+
+
+ function addCommas(nStr) {
+    	nStr += '';
+	    x = nStr.split('.');
+	    x1 = x[0];
+	    x2 = x.length > 1 ? '.' + x[1] : '';
+	    var rgx = /(\d+)(\d{3})/;
+	    while (rgx.test(x1)) {
+	    	x1 = x1.replace(rgx, '$1' + ',' + '$2');
+	    }
+	    return x1;
+    }
+
+    sections = ['group1',];
+ 
+	function createLineItemSortables() {
+		for(var i = 0; i < sections.length; i++) {
+			Sortable.create(sections[i],{tag:'div',dropOnEmpty: true, containment: sections,only:'lineitem'});
+		}
+	}
+ 
+	function destroyLineItemSortables() {
+		for(var i = 0; i < sections.length; i++) {
+			Sortable.destroy(sections[i]);
+		}
+	}
+ 	
+	function getGroupOrder() {
+        seq = Sortable.sequence('group1');
+        document.forms[0].elements['sliceby'].value = seq;
+        return true;
+	}
+
+    function greyxyfromfilter(n) {
+        jQuery("#group1").children().each(function(){          
+            if (jQuery(this).html().match(n.name)) {
+                if(n.value.length==0 || n.value==null || n.value=="") { jQuery(this).fadeTo("slow",1); jQuery(this).children().filter("span").fadeTo("slow",0);  } else { jQuery(this).fadeTo("slow", 0.3); jQuery(this).children().filter("span").fadeTo("slow",1); } 
+            }                
+        });
+    }
+
+    function clearfilter(n) {
+        jQuery("#group1").children().each(function(){          
+            if (jQuery(this).html().match(n)) {
+                document.forms[0].elements[n].selectedIndex=0;
+                jQuery(this).fadeTo("slow",1); 
+                jQuery(this).children().filter("span").fadeTo("slow",0);     
+            }                
+        });
+    }
+    
+
+
+	</script> 
+<style type="text/css"> 
+
+body { font-family:helvetica; // needs full font stack}
+ 
+  	.treemapCell {background-color:#BAE4B3; font-size: 9pt; }
+  	.treemapHead {cursor:pointer;background-color:#74C476}
+		.treemapCell.selected, .treemapCell.selected .treemapCell.selected {background-color:#EDF8E9}
+  	.treemapCell.selected .treemapCell {background-color:#31A354}
+  	.treemapCell.selected .treemapHead {background-color:#006D2C}
+  	.transfer {border:1px solid black}
+
+.treemapCell a {text-decoration: none; }
+ 
+#options_1 { margin:0; padding:0;}
+#options_1 li { list-style:none; margin:0 40px 0px 30px; float:left;}
+#clearfix { clear:both;}
+#page { margin-bottom:20px; float:left; margin-right:20px;}
+#group1 { margin-left:30px; padding-top:20px;}
+#group2 { margin-left:30px; padding-top:20px;}
+.lineitem { background-color:#eeeeee; margin-bottom:1px; padding:5px; width:300px;}
+.lineitem span {float: right} 
+#group2 .lineitem { background-color:#FFFFFF; margin-bottom:1px; padding:5px; width:300px;}
+
+legend { font-weight:bold;}
+ 
+#the_form { width:1000px;}
+#sumby { }
+#sumlist li {list-style:none; margin:0 40px 0px 30px;}
+</style> 	
+</head> 
+<body> xy: {{xy}} selectedxy: {{selectedxy}} xyused: {{xyused}}
+{%load tags%}
+<div id="the_form"> 
+ 
+<form method="get" action="./" name="recoveryform" onsubmit="javascript: return getGroupOrder();"> 
+	<fieldset> 
+	 <legend id="togglefilters">View/set criteria</legend>
+ 
+<ul id="options_1"> 
+{%for f in filterparams%}
+<li>{{f}}<br/><select name="{{f}}" onchange="greyxyfromfilter(this)">
+{%isfilterselected f %}
+{%for tt in ttlist%}<option value="{{tt.name}}"{%if tt.selected%} selected{%endif%}>{{tt.name}}</option>{%endfor%}
+</select>
+</li>
+{%endfor%}
+</ul></fieldset>
+<div id="clearfix">&nbsp;</div> 
+ 
+<div id="page"> 
+	<fieldset> 
+	  <legend>Drill down in this order (drag to order)</legend>	
+<div id="group1" class="section">
+{%getxylist%}
+{%for x in orderedxy|slice:":-2"%}
+		<div id="xy_{{x.id}}" class="lineitem">{{x.name}} <span><a href="#" onclick="clearfilter('{{x.name}}');">X</a></span></div> 
+{%endfor%}
+</div>  
+<div id="group2" class="section">
+{%for x in orderedxy|slice:"-2:"%}
+		<div id="xy_{{x.id}}" class="lineitem">{{x.name}}</div> 
+{%endfor%}
+</div>  
+</fieldset>
+ </div>
+<div id="sumby"> 
+<fieldset> 
+  <legend>Box size represents:</legend> 
+	<ul id="sumlist"> 
+
+{%for s in sumon%}
+<li><input type="radio" name="sumon" value="{{s}}" {%ifequal s sumonselected%}checked{%endifequal%}/>{{s}}</li> 
+{%endfor%}
+</ul> 
+</fieldset> 
+</div> 
+
+<input type="hidden" name="sliceby" id="sliceby" value=""/>
+<input type="submit"/><input type="button" onclick="gotodetail()" value="View detail"/>
+</form>
+<div id="clearfix">&nbsp;</div> 
+
+<table id="treemap">
+{%for r in recs%}
+<tr><td>{{    r.0 }}</td><td>{{    r.1  }}</td><td>{{    r.2  }}</td>{%if r.3%}<td>{{    r.3  }}</td>{%endif%}{%if r.4%}<td>{{    r.4  }}</td>{%endif%}</tr>
+{%endfor%}
+</table>
+
+
+
+
+<script type="text/javascript"> 
+	// <![CDATA[
+	Sortable.create('group1',{tag:'div',dropOnEmpty: true, containment: sections,only:'lineitem'});
+	// ]]>
+ </script> 
+</body></html>

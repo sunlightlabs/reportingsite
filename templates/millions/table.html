@@ -1,0 +1,156 @@
+<html>
+<head>
+		<script type="text/javascript" language="javascript" src="http://www.datatables.net/release-datatables/media/js/jquery.js"></script> 
+		<script type="text/javascript" language="javascript" src="http://www.datatables.net/release-datatables/media/js/jquery.dataTables.js"></script> 
+<script type="text/javascript">
+$(document).ready(function() {
+	$('#tablesorter').dataTable();
+} );
+</script>
+<style>
+/* tables */
+table.tablesorter {
+	font-family:arial;
+	background-color: #CDCDCD;
+	margin:10px 0pt 15px;
+	font-size: 8pt;
+	width: 100%;
+	text-align: left;
+}
+table.tablesorter thead tr th, table.tablesorter tfoot tr th {
+	background-color: #e6EEEE;
+	border: 1px solid #FFF;
+	font-size: 8pt;
+	padding: 4px;
+}
+table.tablesorter thead tr .header {
+	background-image: url(bg.gif);
+	background-repeat: no-repeat;
+	background-position: center right;
+	cursor: pointer;
+}
+table.tablesorter tbody td {
+	color: #3D3D3D;
+	padding: 4px;
+	background-color: #FFF;
+	vertical-align: top;
+}
+table.tablesorter tbody tr.odd td {
+	background-color:#F0F0F6;
+}
+table.tablesorter thead tr .headerSortUp {
+	background-image: url(asc.gif);
+}
+table.tablesorter thead tr .headerSortDown {
+	background-image: url(desc.gif);
+}
+table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSortUp {
+background-color: #8dbdd8;
+}
+</style>
+<title>Sunlight Foundation's Recovery Explorer Alpha</title>
+</head>
+
+
+<body>
+{%load tags%}
+
+{%if award_key%}
+Viewing recipients, subrecipients and vendors for award # {{award_key}}
+{%else%}
+
+<form method="get" action="/detail/" name="recoveryform"> 
+	<fieldset> 
+	  <legend>View Only</legend> 
+ 
+<ul id="options_1"> 
+{%for f in filterparams%}
+<li>{{f}}<br/><select name="{{f}}">
+{%isfilterselected f %}
+{%for tt in ttlist%}
+<option value="{{tt.name}}"{%if tt.selected%} selected{%endif%}>{{tt.name}}</option>
+{%endfor%}
+</select>
+</li>
+{%endfor%}
+</ul>
+<input type="submit"/>
+</fieldset></form>
+{% endif %}
+
+<table id="tablesorter" class="tablesorter">
+<thead><tr>
+<th>    recipient role </th>
+<th>    Awarding agency  </th>
+<th>    Recipient  </th>
+<th>    recipient state  </th>
+<th>    recipient cong dist  </th>
+<th>    award_type  </th>
+<th>    award_date  </th>
+<th>    award_description  </th>
+<th>    award_amount  </th>
+<th>    project_name  </th>
+<th>    project_description  </th>
+<th>    job_creation  </th>
+<th>    # of jobs </th>
+<th>    total__arra_received </th>
+<th>    total__arra_exp  </th>
+<th>    total_infrastructure_exp  </th>
+<th>    infrastrucutre_rationale  </th>
+<th>    performance state  </th>
+<th>    performance city </th>
+<th>    cong_dist  </th>
+<th>    highcomp_flag  </th>
+<th>    number_small_subaward_vend </th>
+<th>    amount_small_subaward_vend  </th>
+<th>    infrastructure address </th>
+<th>    infrastructure city  </th>
+<th>    infrastructure state  </th>
+<th>    infrastructure zip  </th>
+<th>    Description </th>
+<th> Other info</th>
+</tr></thead>
+
+{%for r in recs%}
+<tr>
+<td>{{    r.recipient_role }}</td>
+<td>{{    r.awarding_agency_name  }}</td>
+<td>{{    r.recipient_namee  }}</td>
+<td>{{    r.recipient_state  }}</td>
+<td>{{    r.recipient_cong_dist  }}</td>
+<td>{{    r.award_type  }}</td>
+<td>{{    r.award_date|slice:":10"  }}</td>
+<td>{{    r.award_description|truncatewords:50   }}</td>
+<td>${{    r.award_amount  }}</td>
+<td>{{    r.project_name  }}</td>
+<td>{{    r.project_description|truncatewords:50  }}</td>
+<td>{{    r.job_creation|truncatewords:50   }}</td>
+<td>{{    r.number_of_jobs }}</td>
+<td>${{    r.total_fed_arra_received }}</td>
+<td>${{    r.total_fed_arra_exp  }}</td>
+<td>${{    r.total_infrastructure_exp  }}</td>
+<td>{{    r.infrastrucutre_rationale  }}</td>
+<td>{{    r.pop_state_cd  }}</td>
+<td>{{    r.pop_city }}</td>
+<td>{{    r.pop_cong_dist  }}</td>
+<td>{{    r.prime_recipient_highcomp_rpt_app_flag  }}</td>
+<td>{{    r.total_number_small_subaward_vend }}</td>
+<td>{{    r.total_amount_small_subaward_vend  }}</td>
+<td>{{    r.infrastructure_st_address_1 }}</td>
+<td>{{    r.infrastructure_city  }}</td>
+<td>{{    r.infrastructure_state_cd  }}</td>
+<td>{{    r.infrastructure_postal_cd  }}</td>
+<td>{{    r.project_activity_desc }}</td>
+<td>Award #: {{    r.award_numbere  }}
+<br/>Subaward #: {{    r.sub_award_number  }}
+<br/>Recipient DUNS: {{    r.recipient_duns_number }}
+<br/>Subrecipient DUNS: {{    r.sub_duns_number  }}
+<br/>Recipient account #: {{    r.recipient_account_number }}
+<br/>Activity code: {{    r.activity_code  }}
+<br/>Status: {{    r.project_status }}
+</tr>
+{%endfor%}
+
+</table>
+
+</body></html>
