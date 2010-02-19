@@ -8,11 +8,11 @@ admin.autodiscover()
 
 
 urlpatterns = patterns(
+    
     'reporting.views',
     url(r'^$', 'index'),
     url(r'^admin/r/21/(?P<object_id>[0-9]+)/$', 'preview'),
     (r'^admin/', include(admin.site.urls)),
-
     url(r'^search/(?P<terms>.+)/$', 'search'),
     url(r'^search/$', 'searchredirect'),
 
@@ -44,7 +44,9 @@ urlpatterns = patterns(
 
     url(r'^adminfiles/', include('adminfiles.urls')),
 
-    url(r'^adminajax/(?P<user_id>\d+)/(?P<post_id>\d+)/$', 'admin_currentedit', name='admin_currentedit')
+    url(r'^adminajax/(?P<user_id>\d+)/(?P<post_id>\d+)/$', 'admin_currentedit', name='admin_currentedit'),
+
+    url(r'^recovery/', include('millions.urls')),
 
 
 )
