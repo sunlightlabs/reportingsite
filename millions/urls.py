@@ -9,7 +9,7 @@ urlpatterns = patterns('',
 
     (r'^$', 'millions.views.tree'),
     (r'^detail/$', 'millions.views.detail'),
-    #(r'^detail//$', 'recovery.millions.views.detail'),
+    (r'^recipient/$', 'millions.views.reciptree'),
     # Uncomment the admin/doc line below and add 'django.contrib.admindocs' 
     # to INSTALLED_APPS to enable admin documentation:
     # (r'^admin/doc/', include('django.contrib.admindocs.urls')),

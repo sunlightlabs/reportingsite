@@ -4,7 +4,7 @@ import re
 register = template.Library()
 
 
-
+@register.filter(name='cleantags')
 def cleantags(value): #split on newline
     BR_RE = re.compile(r'<br(.*?)>', re.I)
     P_RE = re.compile(r'</?p>', re.I)
@@ -14,6 +14,7 @@ def cleantags(value): #split on newline
     value = SPAN_RE.sub('', value)
     return value
 
+@register.filter(name='fixtags')
 def fixtags(value): #split on p tag
     BR_RE = re.compile(r'<br(.*?)>', re.I)
     P_RE = re.compile(r'</?p>', re.I)

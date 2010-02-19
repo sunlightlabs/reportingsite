@@ -61,9 +61,7 @@ jQuery('#togglefilters').toggle(function() {
 			if(!cont[c]) cont[c] = [];
 			var num = cell.filter(":eq(0)").html();
 			var formatnum = addCommas(num);
-			//if(cell.length>2) 
             var row = ['<a href="#" onclick="acton(\''+cell.filter(':eq(1)').html()+'\', \''+c2+'\');">'+cell.filter(':eq(2)').html()+'<small> '+formatnum+'</small></a>',num];
-            //        else var row = [cell.filter(":eq(2)").html()+"<small> ("+formatnum+")</small>",num];
 			cont[c].push(row);
 		});
 		jQuery.each(cont,function(i,n){
@@ -74,6 +72,11 @@ jQuery('#togglefilters').toggle(function() {
 	}
 
     function acton(t,t2) {
+        {%ifequal xyused.0 'recipient_namee'%}
+           window.location = 'recipient?name='+t;
+        {%else%}{%ifequal xyused.1 'recipient_namee'%}
+           window.location = 'recipient?name='+t2;
+        {%else%}
         sl = "sliceby="+Sortable.sequence('group1');
         q = "{{xyused.0}}="+t+"&{{xyused.1}}="+t2;
         document.forms[0].elements['sliceby'].value = Sortable.sequence('group1');
@@ -81,6 +84,7 @@ jQuery('#togglefilters').toggle(function() {
         document.forms[0].elements['{{xyused.1}}'].value = t2;
         //window.open("detail?"+q,"detail");
         document.forms[0].submit();
+    {%endifequal%}   {%endifequal%}
     }
 
     function gotodetail() {
@@ -88,7 +92,7 @@ jQuery('#togglefilters').toggle(function() {
         jQuery("select",this).each(function(){
             s+= '&'+this.name+'='+this.value;
         });
-        window.open("recip?"+s,"detail");
+        window.location = "detail?"+s;
     }
 
 
@@ -127,9 +131,19 @@ jQuery('#togglefilters').toggle(function() {
     function greyxyfromfilter(n) {
         jQuery("#group1").children().each(function(){          
             if (jQuery(this).html().match(n.name)) {
-                if(n.value.length==0 || n.value==null || n.value=="") { jQuery(this).fadeTo("slow",1); jQuery(this).children().filter("span").fadeTo("slow",0);  } else { jQuery(this).fadeTo("slow", 0.3); jQuery(this).children().filter("span").fadeTo("slow",1); } 
+                if(n.value.length==0 || n.value==null || n.value=="") { 
+                    jQuery(this).fadeTo("slow",1); 
+                    jQuery(this).children().filter("span").fadeTo("slow",0);  
+                } else { 
+                    jQuery(this).fadeTo("slow", 0.3); 
+                    jQuery(this).children().filter("span").fadeTo("slow",1); 
+                } 
             }                
         });
+
+        constrictions = 0;
+        jQuery("select",this).each(function(){   if (jQuery(this).val()!=null && jQuery(this).val()!='') constrictions++; });  
+        if(constrictions>1) document.forms[0].detailbtn.disabled=false; else document.forms[0].detailbtn.disabled=true;
     }
 
     function clearfilter(n) {
@@ -175,7 +189,7 @@ legend { font-weight:bold;}
 #sumlist li {list-style:none; margin:0 40px 0px 30px;}
 </style> 	
 </head> 
-<body> xy: {{xy}} selectedxy: {{selectedxy}} xyused: {{xyused}}
+<body>
 {%load tags%}
 <div id="the_form"> 
  
@@ -185,7 +199,7 @@ legend { font-weight:bold;}
  
 <ul id="options_1"> 
 {%for f in filterparams%}
-<li>{{f}}<br/><select name="{{f}}" onchange="greyxyfromfilter(this)">
+<li>{{f|cleankey}}<br/><select name="{{f}}" onchange="greyxyfromfilter(this)">
 {%isfilterselected f %}
 {%for tt in ttlist%}<option value="{{tt.name}}"{%if tt.selected%} selected{%endif%}>{{tt.name}}</option>{%endfor%}
 </select>
@@ -199,13 +213,13 @@ legend { font-weight:bold;}
 	  <legend>Drill down in this order (drag to order)</legend>	
 <div id="group1" class="section">
 {%getxylist%}
-{%for x in orderedxy|slice:":-2"%}
+{%for x in orderedxy%}
 		<div id="xy_{{x.id}}" class="lineitem">{{x.name}} <span><a href="#" onclick="clearfilter('{{x.name}}');">X</a></span></div> 
 {%endfor%}
 </div>  
 <div id="group2" class="section">
-{%for x in orderedxy|slice:"-2:"%}
-		<div id="xy_{{x.id}}" class="lineitem">{{x.name}}</div> 
+{%for x in xyfinal%}
+		<div id="xy_{{x}}" class="lineitem">{{x|cleankey}}</div> 
 {%endfor%}
 </div>  
 </fieldset>
@@ -216,14 +230,14 @@ legend { font-weight:bold;}
 	<ul id="sumlist"> 
 
 {%for s in sumon%}
-<li><input type="radio" name="sumon" value="{{s}}" {%ifequal s sumonselected%}checked{%endifequal%}/>{{s}}</li> 
+<li><input type="radio" name="sumon" value="{{s}}" {%ifequal s sumonselected%}checked{%endifequal%}/>{{s|cleankey}}</li> 
 {%endfor%}
 </ul> 
 </fieldset> 
 </div> 
 
 <input type="hidden" name="sliceby" id="sliceby" value=""/>
-<input type="submit"/><input type="button" onclick="gotodetail()" value="View detail"/>
+<input type="submit"/><input type="button" onclick="gotodetail()" value="View detail" name="detailbtn"/>
 </form>
 <div id="clearfix">&nbsp;</div> 
 

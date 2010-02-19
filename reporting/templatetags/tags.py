@@ -59,3 +59,15 @@ class getbykeyNode(template.Node):
         context['recsforkey'] =  Record.objects.filter(version_flag='F').exclude(status='x').filter(award_key=context[self.fn]['award_key']).order_by('recipient_role')
         return '' 
 
+
+
+from django.template.defaultfilters import stringfilter
+@register.filter(name='cleankey')
+@stringfilter
+def cleankey(k):
+    c = {'award_type':'Award type', 'awarding_agency_name': 'Awarding agency', 'project_activity_desc': 'Description of project', 'recipient_state': 'Recipient state', 'pop_state_cd': 'Place of performance', 'award_amount': 'Award Amount', 'total_fed_arra_exp': 'Amount Spent', 'number_of_jobs': 'Jobs Created 4th quarter', 'project_description': 'Project description', 'recipient_namee': 'Recipient'}
+    if k in c:
+        return c[k]
+    else:
+        return k
+

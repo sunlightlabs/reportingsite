@@ -27,7 +27,7 @@ class Record(models.Model):
     recipient_namee = models.CharField(max_length=255)
     recipient_zip_code = models.CharField(max_length=10)
     recipient_state = models.CharField(max_length=2, db_column='recipient_statee')
-    award_numbere = models.CharField(max_length=30)
+    award_number = models.CharField(max_length=30, db_column='award_numbere')
     order_number = models.CharField(max_length=30)
     sub_award_number = models.CharField(max_length=30)
     cfda_number = models.CharField(max_length=30)
