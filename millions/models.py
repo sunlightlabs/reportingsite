@@ -37,7 +37,7 @@ class Record(models.Model):
     input_type = models.CharField(max_length=4)
     input_version = models.CharField(max_length=5)
     award_type = models.CharField(max_length=2)
-    award_date = models.CharField(max_length=40)
+    award_date = models.DateField()
     award_description  = models.TextField()
     award_amount = models.FloatField()
     project_name = models.CharField(max_length=255)
