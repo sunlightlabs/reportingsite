@@ -38,7 +38,7 @@
 <div id="group1" class="section">
 {%getxylist%}
 {%for x in orderedxy%}
-		<div id="xy_{{x.id}}" class="lineitem">{{x.name}} <span><a href="#" onclick="clearfilter('{{x.name}}');">X</a></span></div> 
+		<div id="xy_{{x.id}}" class="lineitem">{{x.name|cleankey}} <span><a href="#" onclick="clearfilter('{{x.name}}');">X</a></span></div> 
 {%endfor%}
 </div>  
 <div id="group2" class="section">
@@ -79,7 +79,7 @@
 
 jQuery(function(){
 		var data = getData();
-		var tree = jQuery("#treemap").treemap(950,750,{getData:function(){return data;}});
+		var tree = jQuery("#treemap").treemap(750,550,{getData:function(){return data;}});
 		enhanceTreemap(tree,data);
         jQuery("select",this).each(function(){   greyxyfromfilter(this); });  
 	});
@@ -90,7 +90,7 @@ jQuery(function(){
 			var cell = jQuery(this);
 			var transferComplete = function() {
 				var tree = jQuery("<div>").
-				treemap(950,750,{getData:function(){
+				treemap(750,550,{getData:function(){
 					var branch = cell.html();
 					for(var i=0,dl=data.length;i<dl;i++)
 						if(data[i][0]==branch) return data[i][1];
@@ -184,10 +184,13 @@ jQuery(function(){
         document.forms[0].elements['sliceby'].value = seq;
         return true;
 	}
-
+    var clean = Array(); {%for x in xy%}clean["{{x}}"] = "{{x|cleankey}}"; {%endfor%}    
+    
     function greyxyfromfilter(n) {
-        jQuery("#group1").children().each(function(){          
-            if (jQuery(this).html().match(n.name)) {
+        itemtext = clean[n.name];
+        jQuery("#group1").children().each(function(){   
+            //alert(n.name + ' ' + itemtext +    ' ' + jQuery(this).html());
+            if (jQuery(this).html().match(itemtext)) {
                 if(n.value.length==0 || n.value==null || n.value=="") { 
                     jQuery(this).fadeTo("slow",1); 
                     jQuery(this).children().filter("span").fadeTo("slow",0);  
@@ -205,7 +208,7 @@ jQuery(function(){
 
     function clearfilter(n) {
         jQuery("#group1").children().each(function(){          
-            if (jQuery(this).html().match(n)) {
+            if (jQuery(this).html().match(clean[n])) {
                 document.forms[0].elements[n].selectedIndex=0;
                 jQuery(this).fadeTo("slow",1); 
                 jQuery(this).children().filter("span").fadeTo("slow",0);     

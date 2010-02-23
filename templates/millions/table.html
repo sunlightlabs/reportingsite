@@ -60,7 +60,7 @@ background-color: #8dbdd8;
 {%load tags%}
 
 {%if award_key%}
-Viewing recipients, subrecipients and vendors for award # {{award_key}}
+Recipients, subrecipients and vendors for award # {{award_key}}
 {%else%}
 
 <form method="get" action="/recovery/detail/" name="recoveryform"> 
@@ -84,7 +84,7 @@ Viewing recipients, subrecipients and vendors for award # {{award_key}}
 
 
 
-<table id="tablesorter" class="tablesorter">
+<table id="tablesorter" class="tablesorter" style="clear:both">
 <thead><tr>
 <th>    Prime/Sub/Vendor</th>
 <th>    Awarding agency  </th>
@@ -129,7 +129,7 @@ Viewing recipients, subrecipients and vendors for award # {{award_key}}
 <td>{{    r.pop_state_cd  }}</td>
 <td>{{    r.pop_city }}</td>
 <td>{{    r.project_activity_desc }}</td>
-<td>Award #: {{    r.award_numbere  }}
+<td>Award #: {{    r.award_number  }}
 <br/>Subaward #: {{    r.sub_award_number  }}
 <br/>Recipient DUNS: {{    r.recipient_duns_number }}
 <br/>Subrecipient DUNS: {{    r.sub_duns_number  }}
