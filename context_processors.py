@@ -1,9 +1,9 @@
 from reporting.models import Post
-from feedinator import Feed
+from feedinator import Feed, FeedEntry
  
 def latest_by_site(request):
     FLIT = Post.objects.filter(is_published=True, whichsite='FLIT')[:5] 
-    PT = Feed.objects.get(codename='partytime').entries.all()[:5]
+    PT = FeedEntry.objects.filter(feed__codename='partytime')[:5]
     SS = Post.objects.filter(is_published=True, whichsite='SS')[:5] 
     SLRG = Post.objects.filter(is_favorite=True, is_published=True, whichsite='SLRG')[:5] 
 

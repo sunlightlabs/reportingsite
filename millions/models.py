@@ -36,8 +36,8 @@ class Record(models.Model):
     final_report = models.CharField(max_length=1)
     input_type = models.CharField(max_length=4)
     input_version = models.CharField(max_length=5)
-    award_type = models.CharField(max_length=2)
-    award_date = models.DateField()
+    award_type = models.CharField(max_length=10)
+    award_date = models.CharField(max_length=20)
     award_description  = models.TextField()
     award_amount = models.FloatField()
     project_name = models.CharField(max_length=255)
@@ -100,6 +100,7 @@ class Record(models.Model):
     late_submission_justification  = models.TextField()
     tmsp_last_updt = models.CharField(max_length=255)
     tmsp_created = models.CharField(max_length=255)
+    award_date_new = models.DateField()
 
     def __unicode__(self):
         return self.project_name
