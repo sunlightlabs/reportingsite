@@ -17,7 +17,7 @@ from django.db.models import *
 
 
 def detail(request):
-    filterparams = ['awarding_agency_name', 'award_type', 'pop_state_cd', 'project_activity_desc', 'recipient_state', ]
+    filterparams = ['awarding_agency_name', 'award_type', 'pop_state_cd', 'recipient_state', 'project_activity_desc' ]
     selectedf = []
     for p in filterparams:
         selectedf.append([p, None]) 
@@ -116,23 +116,22 @@ def reciptree(request):
         #    sumonselected = request.GET['sumon']
 
     sub = []
-    qs = Record.objects.filter(version_flag='F', recipient_role='P').exclude(status='x').filter(recipient_namee=recipient_namee)
+    qs = Record.objects.filter(version_flag='F', recipient_role='P', recipient_namee=recipient_namee).exclude(status='x')
     for q in qs:
-        subawards = []
-        qsc = Record.objects.filter(version_flag='F').exclude(status='x',recipient_role='P').filter(award_key=q.award_key)
         if q.project_name:
             awardtext = q.project_name
         else:
             awardtext = q.project_description
         awardtext +=  ' (#' + str(q.award_key) + ')' 
+        totaltosubs = 0
+        subawards = []
+        qsc = Record.objects.filter(version_flag='F').filter(award_key=q.award_key).exclude(status='x',recipient_role='P')
         for c in qsc:
             subawards.append( [ c.award_amount, awardtext, c.recipient_namee, q.award_key ] )
-            totaltosubs = 0
-            for s in subawards:
-                if s[0]:
-                    totaltosubs+=int(s[0])
-            if q.award_amount - totaltosubs > 0:
-                subawards.append( [ c.award_amount, awardtext, '(prime)', q.award_key ] )
+            if c.award_amount:
+                totaltosubs+=int(c.award_amount)
+        if totaltosubs > 0 and q.award_amount - totaltosubs > 0:
+            subawards.append( [ c.award_amount, awardtext, '(prime)', q.award_key ] )
         for s in subawards:
             sub.append(s)
                          

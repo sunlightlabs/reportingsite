@@ -1,15 +1,26 @@
-<html>
-<head>{%load smart_if%}
+{%extends 'resource.html'%}
+{%load smart_if%}{%load tags%}{%load humanize%}
+{%block title%}Sunlight's Recovery Explorer{%endblock%}
+{%block head%}
 		<style type="text/css" title="currentStyle"> 			
 			@import "http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/millions/dataTables-1.6/media/css/demo_table.css";
-		</style> 
-		<script type="text/javascript" language="javascript" src="http://www.datatables.net/release-datatables/media/js/jquery.js"></script> 
+		</style>
+<script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
 		<script type="text/javascript" language="javascript" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/millions/jquery.dataTables.js"></script> 
 		<script type="text/javascript" language="javascript" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/millions/jquery.tablesorter.pager.js"></script> 
+<link rel="stylesheet" href="http://assets.sunlightfoundation.com/external/reporting/recovery/reporting_recovery.css" type="text/css" media="screen, projection">
 <script type="text/javascript">
 $(document).ready(function() {
 	$('#tablesorter').dataTable();
 } );
+
+function gotodetail() {
+    s = "";
+    $("select").each(function(){
+        s+= this.name+'='+this.value+'&';
+    });
+    window.location = "/recovery?"+s;
+}
 </script>
 <style>
 /* tables */
@@ -52,13 +63,9 @@ table.tablesorter thead tr .headerSortDown, table.tablesorter thead tr .headerSo
 background-color: #8dbdd8;
 }
 </style>
-<title>Sunlight Foundation's Recovery Explorer Alpha</title>
-</head>
+{%endblock%}
 
-
-<body>
-{%load tags%}
-
+{%block content%}
 {%if award_key%}
 Recipients, subrecipients and vendors for award # {{award_key}}
 {%else%}
@@ -78,7 +85,7 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 </li>
 {%endfor%}
 </ul>
-<input type="submit"/>
+<input type="submit" value="View items"/><input type="button" onclick="gotodetail()" value="Back to chart" name="detailbtn"/>
 </fieldset></form>
 {% endif %}
 
@@ -86,7 +93,7 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 
 <table id="tablesorter" class="tablesorter" style="clear:both">
 <thead><tr>
-<th>    Prime/Sub/Vendor</th>
+<th>    Prime<br/>/Sub</th>
 <th>    Awarding agency  </th>
 <th>    Recipient  </th>
 <th>State/dist.</th>
@@ -100,9 +107,9 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 <th>    # of jobs </th>
 <th>    Total received </th>
 <th>    Total spent </th>
-<th>    Infrastructure $ spent </th>
+<th>    Infrastructure spent </th>
 <th>    Infra. rationale </th>
-<th>    Performance state</th>
+<th>    Perf. state</th>
 <th>    Performance city </th>
 <th>    Description</th>
 <th> Other info</th>
@@ -110,21 +117,21 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 
 {%for r in recs%}
 <tr>
-<td>{{    r.recipient_role }}</td>
+<td>{%if award_key%}{{    r.recipient_role }}{%else%}<a href="?award_key={{r.award_key}}">{{r.recipient_role}}</a>{%endif%}</td>
 <td>{{    r.awarding_agency_name  }}</td>
 <td>{{    r.recipient_namee  }}</td>
 <td><a href="http://www.opensecrets.org/races/summary.php?id={{r.recipient_state}}{%if r.recipient_cong_dist < 10%}0{%endif%}{{r.recipient_cong_dist}}&cycle=2010">{{r.recipient_state}}{{r.recipient_cong_dist}}</a></td>
 <td>{{    r.award_type  }}</td>
 <td>{{    r.award_date|slice:":10"  }}</td>
 <td>{{    r.award_description   }}</td>
-<td>${{    r.award_amount  }}</td>
+<td>${{    r.award_amount|floatformat:0|intcomma  }}</td>
 <td>{{    r.project_name  }}</td>
 <td>{{    r.project_description  }}</td>
 <td>{{    r.job_creation   }}</td>
 <td>{{    r.number_of_jobs }}</td>
-<td>${{    r.total_fed_arra_received }}</td>
-<td>${{    r.total_fed_arra_exp  }}</td>
-<td>${{    r.total_infrastructure_exp  }}</td>
+<td>${{    r.total_fed_arra_received|floatformat:0|intcomma  }}</td>
+<td>${{    r.total_fed_arra_exp|floatformat:0|intcomma   }}</td>
+<td>${{    r.total_infrastructure_exp|floatformat:0|intcomma   }}</td>
 <td>{{    r.infrastrucutre_rationale  }}</td>
 <td>{{    r.pop_state_cd  }}</td>
 <td>{{    r.pop_city }}</td>
@@ -136,11 +143,9 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 <br/>Recipient account #: {{    r.recipient_account_number }}
 <br/>Activity code: {{    r.activity_code  }}
 <br/>Status: {{    r.project_status }}
-<br/>High compensation? {{    r.prime_recipient_highcomp_rpt_app_flag  }}
 </tr>
 {%endfor%}
 
 </table>
 
-
-</body></html>
+{%endblock%}
