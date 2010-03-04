@@ -113,6 +113,9 @@ class Backup(models.Model):
     time = models.IntegerField()
   
 
-
+class Wedget(models.Model):
+    user = models.ForeignKey(User)
+    budget = models.TextField()
+    status = models.TextField()
 
 
