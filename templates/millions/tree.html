@@ -190,13 +190,13 @@ jQuery(function(){
         jQuery("#group1").children().each(function(){   
             if (jQuery(this).html().match(itemtext)) {
                 if(n.value.length==0 || n.value==null || n.value=="") { 
-                    //jQuery(this).fadeTo("slow",1); 
-                    //jQuery(this).children().filter("span").fadeTo("slow",0);  
-alert ('matched '+n.name + ' fading in');
+                    jQuery(this).fadeTo("slow",1); 
+                    jQuery(this).children().filter("span").fadeTo("slow",0);  
+//alert ('matched '+n.name + ' fading in');
                 } else { 
-                    //jQuery(this).fadeTo("slow", 0.3); 
-                    //jQuery(this).children().filter("span").fadeTo("slow",1); 
-alert ('matched '+n.name + ' fading out');
+                    jQuery(this).fadeTo("slow", 0.3); 
+                    jQuery(this).children().filter("span").fadeTo("slow",1); 
+//alert ('matched '+n.name + ' fading out');
                 } 
             }                
         });
@@ -212,7 +212,7 @@ alert ('matched '+n.name + ' fading out');
                 document.forms[0].elements[n].selectedIndex=0;
                 jQuery(this).fadeTo("slow",1); 
                 jQuery(this).children().filter("span").fadeTo("slow",0);     
-                alert('clearing '+n);
+                //alert('clearing '+n);
             }                
         });
     }
