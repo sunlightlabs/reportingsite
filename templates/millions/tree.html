@@ -184,22 +184,18 @@ jQuery(function(){
         return true;
 	}
     var clean = Array(); {%for x in xy%}clean["{{x}}"] = "{{x|cleankey}}"; {%endfor%}    
+    var divids = Array();   {%for x in orderedxy%} divids["{{x.name}}"] = 'xy_{{x.id}}';  {%endfor%}   
+
     
     function greyxyfromfilter(n) {
-        itemtext = clean[n.name];
-        jQuery("#group1").children().each(function(){   
-            if (jQuery(this).html().match(itemtext)) {
-                if(n.value.length==0 || n.value==null || n.value=="") { 
-                    jQuery(this).fadeTo("slow",1); 
-                    jQuery(this).children().filter("span").fadeTo("slow",0);  
-//alert ('matched '+n.name + ' fading in');
-                } else { 
-                    jQuery(this).fadeTo("slow", 0.3); 
-                    jQuery(this).children().filter("span").fadeTo("slow",1); 
-//alert ('matched '+n.name + ' fading out');
-                } 
-            }                
-        });
+        item = jQuery('#'+divids[n.name]);
+        if(n.value.length==0 || n.value==null || n.value=="") { 
+            item.fadeTo("slow",1); 
+            item.children().filter("span").fadeTo("fast",0);  
+        } else { 
+            item.fadeTo("slow", 0.3); 
+            item.children().filter("span").fadeTo("slow",1); 
+        } 
 
         constrictions = 0;
         jQuery("select",this).each(function(){   if (jQuery(this).val()!=null && jQuery(this).val()!='') constrictions++; });  
@@ -207,14 +203,10 @@ jQuery(function(){
     }
 
     function clearfilter(n) {
-        jQuery("#group1").children().each(function(){          
-            if (jQuery(this).html().match(clean[n])) {
-                document.forms[0].elements[n].selectedIndex=0;
-                jQuery(this).fadeTo("slow",1); 
-                jQuery(this).children().filter("span").fadeTo("slow",0);     
-                //alert('clearing '+n);
-            }                
-        });
+        item = jQuery('#'+divids[n]);    
+        document.forms[0].elements[n].selectedIndex=0;
+        jQuery('#'+divids[n]).fadeTo("slow",1); 
+        jQuery('#'+divids[n]).children().filter("span").fadeTo("slow",0);                   
     }
     
 
