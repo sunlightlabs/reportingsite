@@ -44,6 +44,8 @@ def detail(request):
 
 
 def tree(request):
+    import datetime
+
     sumon = ['award_amount', 'total_fed_arra_exp', 'number_of_jobs']
     sumonselected = 'award_amount'
     xyorder=[]
@@ -77,8 +79,8 @@ def tree(request):
     
     qs = Record.objects.filter(version_flag='F').exclude(status='x')
     if sumonselected!='number_of_jobs':
-    #    qs = qs.filter(award_date__month=8)
-    #else:
+        qs = qs.filter(award_date__gt=datetime.datetime(2009, 8, 31))
+    else:
         qs = qs.filter(recipient_role='P')
     if selectedfilters['award_type']:
         qs = qs.filter(award_type=selectedfilters['award_type'])

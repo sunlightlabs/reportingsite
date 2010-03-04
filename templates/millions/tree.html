@@ -199,7 +199,7 @@ jQuery(function(){
 
         constrictions = 0;
         jQuery("select",this).each(function(){   if (jQuery(this).val()!=null && jQuery(this).val()!='') constrictions++; });  
-        if(constrictions>2) document.forms[0].detailbtn.disabled=false; else document.forms[0].detailbtn.disabled=true;
+        if(constrictions>1) document.forms[0].detailbtn.disabled=false; else document.forms[0].detailbtn.disabled=true;
     }
 
     function clearfilter(n) {
