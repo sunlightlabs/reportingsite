@@ -78,8 +78,8 @@ def tree(request):
             xyused.append(x)
     
     qs = Record.objects.filter(version_flag='F').exclude(status='x')
-    if sumonselected!='number_of_jobs':
-        qs = qs.filter(award_date__gt=datetime.datetime(2009, 8, 31))
+    if sumonselected=='number_of_jobs':
+        qs = qs.filter(award_date_new__gt=datetime.datetime(2009, 8, 31))
     else:
         qs = qs.filter(recipient_role='P')
     if selectedfilters['award_type']:
@@ -114,9 +114,6 @@ def reciptree(request):
     if request.GET:
         if 'name' in request.GET:
             recipient_namee = request.GET['name']
-        #if 'sumon' in request.GET and request.GET['sumon']:
-        #    sumonselected = request.GET['sumon']
-
     sub = []
     qs = Record.objects.filter(version_flag='F', recipient_role='P', recipient_namee=recipient_namee).exclude(status='x')
     for q in qs:
@@ -131,7 +128,7 @@ def reciptree(request):
         for c in qsc:
             subawards.append( [ c.award_amount, awardtext, c.recipient_namee, q.award_key ] )
             if c.award_amount:
-                totaltosubs+=int(c.award_amount)
+                totaltosubs+=c.award_amount
         if totaltosubs > 0 and q.award_amount - totaltosubs > 0:
             subawards.append( [ c.award_amount, awardtext, '(prime)', q.award_key ] )
         for s in subawards:

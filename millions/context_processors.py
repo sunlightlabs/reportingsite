@@ -10,8 +10,5 @@ def filters(request):
 
     filters = {'recipient_state': recipient_state, 'awarding_agency_name': awarding_agency_name, 'pop_state_cd': pop_state_cd, 'infrastructure_state_cd': infrastructure_state_cd, 'award_type': award_type }
 
-    xyvar = ['awarding_agency_name', 'award_type', 'project_activity_desc']
-
-
-    return { 'filters': filters, 'xyvar': xyvar }
+    return { 'filters': filters }
 

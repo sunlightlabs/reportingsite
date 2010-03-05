@@ -55,7 +55,7 @@ class Record(models.Model):
     pop_country_cd = models.CharField(max_length=10)
     pop_city= models.CharField(max_length=255)
     pop_postal_cd = models.CharField(max_length=10)
-    pop_cong_dist = models.CharField(max_length=2)
+    pop_cong_dist = models.CharField(max_length=4)
     prime_recipient_highcomp_rpt_app_flag = models.CharField(max_length=255)
     recipient_officer_1 = models.CharField(max_length=255)
     recipient_officer_2 = models.CharField(max_length=255)

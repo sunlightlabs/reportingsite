@@ -99,10 +99,10 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 <th>State/dist.</th>
 <th>    Type  </th>
 <th>    Date  </th>
-<th>    Description  </th>
+<th>    Award Descrip  </th>
 <th>    Amount  </th>
 <th>    Name  </th>
-<th>    Description  </th>
+<th>    Project Descrip  </th>
 <th>    Job creation  </th>
 <th>    # of jobs </th>
 <th>    Total received </th>
@@ -119,7 +119,7 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 <tr>
 <td>{%if award_key%}{{    r.recipient_role }}{%else%}<a href="?award_key={{r.award_key}}">{{r.recipient_role}}</a>{%endif%}</td>
 <td>{{    r.awarding_agency_name  }}</td>
-<td>{%ifequal r.recipient_role 'P'%}<a href="http://127.0.0.1:8000/recovery/recipient/?name={{ r.recipient_namee  }}">{{r.recipient_namee}}</a>{%else%}{{r.recipient_namee}}{%endifequal%}</td>
+<td>{%ifequal r.recipient_role 'P'%}<a href="/recovery/recipient/?name={{ r.recipient_namee  }}">{{r.recipient_namee}}</a>{%else%}{{r.recipient_namee}}{%endifequal%}</td>
 <td><a href="http://www.opensecrets.org/races/summary.php?id={{r.recipient_state}}{%if r.recipient_cong_dist < 10%}0{%endif%}{{r.recipient_cong_dist}}&cycle=2010">{{r.recipient_state}}{{r.recipient_cong_dist}}</a></td>
 <td>{{    r.award_type  }}</td>
 <td>{{    r.award_date|slice:":10"  }}</td>

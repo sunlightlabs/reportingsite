@@ -66,7 +66,7 @@
 <div style="padding-left:80px">
 <table id="treemap">
 {%for r in recs%}
-<tr><td>{{    r.0 }}</td><td>{{    r.1  }}</td><td>{{    r.2  }}</td>{%if r.3%}<td>{{    r.3  }}</td>{%endif%}{%if r.4%}<td>{{    r.4  }}</td>{%endif%}</tr>
+<tr><td>{{    r.0 }}</td><td>{{    r.1  }}</td><td>{%ifequal r.2 ''%}(not specified){%else%}{{    r.2  }}{%endifequal%}</td>{%if r.3%}<td>{{    r.3  }}</td>{%endif%}</tr>
 {%endfor%}
 </table>
 </div>
