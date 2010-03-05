@@ -63,10 +63,10 @@
 <div id="clearfix">&nbsp;</div> 
 
 
-<div style="padding-left:80px">
+<div>
 <table id="treemap">
 {%for r in recs%}
-<tr><td>{{    r.0 }}</td><td>{{    r.1  }}</td><td>{%ifequal r.2 ''%}(not specified){%else%}{{    r.2  }}{%endifequal%}</td>{%if r.3%}<td>{{    r.3  }}</td>{%endif%}</tr>
+<tr><td>{{    r.0 }}</td><td>{{    r.1  }}</td><td>{%ifequal r.2 ''%}(not specified){%else%}{{    r.2  }}{%endifequal%}</td></tr>
 {%endfor%}
 </table>
 </div>
@@ -78,7 +78,7 @@
 
 jQuery(function(){
 		var data = getData();
-		var tree = jQuery("#treemap").treemap(750,550,{getData:function(){return data;}});
+		var tree = jQuery("#treemap").treemap(1000,550,{getData:function(){return data;}});
 		enhanceTreemap(tree,data);
         jQuery("select",this).each(function(){   greyxyfromfilter(this); });  
 	});
@@ -89,7 +89,7 @@ jQuery(function(){
 			var cell = jQuery(this);
 			var transferComplete = function() {
 				var tree = jQuery("<div>").
-				treemap(750,550,{getData:function(){
+				treemap(1000,550,{getData:function(){
 					var branch = cell.html();
 					for(var i=0,dl=data.length;i<dl;i++)
 						if(data[i][0]==branch) return data[i][1];
