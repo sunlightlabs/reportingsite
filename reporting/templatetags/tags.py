@@ -14,14 +14,18 @@ class IsSelectedNode(template.Node):
     def render(self, context):
         whichattr = context[self.fn]
         options = context['filters'][whichattr]
-        selected = context['selectedfilters'][whichattr]
-        
-        ttlist = []
+        try:
+            selected = context['selectedfilters'][whichattr]
+        except:
+            selected = ''    
+    
+        ttlist = ['']
         for o in options:
-            if o==selected:
-                ttlist.append({'name': o,'selected': True})
-            else:
-                ttlist.append({'name': o,'selected': False})
+            if o!='':
+                if o==selected:
+                    ttlist.append({'name': o,'selected': True})
+                else:
+                    ttlist.append({'name': o,'selected': False})
         context['ttlist'] = ttlist
         return '' 
 
@@ -60,12 +64,20 @@ class getbykeyNode(template.Node):
         return '' 
 
 
+from django.template.defaultfilters import stringfilter
+@register.filter(name='longtype')
+@stringfilter
+def longtype(s):
+    types = {'L': 'Loan', 'C': 'Contract', 'G': 'Grant' }
+    if s in types:
+        return types[s]
+    return s
 
 from django.template.defaultfilters import stringfilter
 @register.filter(name='cleankey')
 @stringfilter
 def cleankey(k):
-    c = {'award_type':'Award type', 'awarding_agency_name': 'Awarding agency', 'project_activity_desc': 'Type of project', 'recipient_state': 'Recipient state', 'pop_state_cd': 'Place of performance', 'award_amount': 'Award Amount', 'total_fed_arra_exp': 'Amount Spent', 'number_of_jobs': 'Jobs Created 4th quarter', 'project_description': 'Project description', 'recipient_namee': 'Recipient'}
+    c = {'award_type':'Award type', 'awarding_agency_name': 'Awarding agency', 'project_activity_desc': 'Type of project', 'recipient_state': 'Recipient state', 'pop_state_cd': 'Place of performance', 'award_amount': 'Award Amount', 'total_fed_arra_exp': 'Amount Spent', 'number_of_jobs': 'Jobs Created 4th quarter', 'project_description': 'Project description', 'recipient_namee': 'Recipient', 'pop_cong_dist': 'Congresisonal dist' }
     if k in c:
         return c[k]
     else:

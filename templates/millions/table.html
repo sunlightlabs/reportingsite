@@ -90,7 +90,7 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 {% endif %}
 
 
-
+{{primes}}
 <table id="tablesorter" class="tablesorter" style="clear:both">
 <thead><tr>
 <th>    Prime<br/>/Sub</th>
@@ -107,7 +107,7 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 <th>    # of jobs </th>
 <th>    Total received </th>
 <th>    Total spent </th>
-<th>    Infrastructure spent </th>
+<th>    Infra. spent </th>
 <th>    Infra. rationale </th>
 <th>    Perf. state</th>
 <th>    Performance city </th>
@@ -138,8 +138,6 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 <td>{{    r.project_activity_desc }}</td>
 <td>Award #: {{    r.award_number  }}
 <br/>Subaward #: {{    r.sub_award_number  }}
-<br/>Recipient DUNS: {{    r.recipient_duns_number }}
-<br/>Subrecipient DUNS: {{    r.sub_duns_number  }}
 <br/>Recipient account #: {{    r.recipient_account_number }}
 <br/>Activity code: {{    r.activity_code  }}
 <br/>Status: {{    r.project_status }}

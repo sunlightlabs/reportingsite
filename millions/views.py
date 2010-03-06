@@ -17,6 +17,7 @@ from django.db.models import *
 
 
 def detail(request):
+    from django.db.models import Q
     filterparams = ['awarding_agency_name', 'award_type', 'pop_state_cd', 'recipient_state', 'project_activity_desc' ]
     selectedf = []
     for p in filterparams:
@@ -26,8 +27,17 @@ def detail(request):
         for p in filterparams:
             if p in request.GET:
                 selectedfilters[p] = request.GET[p]
+
+    baseqs = Record.objects.filter(version_flag='F').exclude(status='x')
+    qs = baseqs
+
+    award_key = ''
+    if 'award_key' in request.GET:
+        award_key = request.GET['award_key']
+        qs = qs.filter(award_key=award_key)
+        return render_to_response('millions/table.html', {"recs":qs, "selectedfilters": selectedfilters, 'filterparams': filterparams, 'award_key': award_key }, context_instance=RequestContext(request))
+
       
-    qs = Record.objects.filter(version_flag='F').exclude(status='x')
     if selectedfilters['award_type']:
         qs = qs.filter(award_type=selectedfilters['award_type'])
     if selectedfilters['awarding_agency_name']:
@@ -36,11 +46,15 @@ def detail(request):
         qs = qs.filter(pop_state_cd=selectedfilters['pop_state_cd'])
     if selectedfilters['project_activity_desc']:
         qs = qs.filter(project_activity_desc=selectedfilters['project_activity_desc'])
-    award_key = ''
-    if 'award_key' in request.GET:
-        award_key = request.GET['award_key']
-        qs = qs.filter(award_key=award_key)
-    return render_to_response('millions/table.html', {"recs":qs, "selectedfilters": selectedfilters, 'filterparams': filterparams, 'award_key': award_key }, context_instance=RequestContext(request))
+    primes = qs.filter(recipient_role='P').values_list('award_key')
+
+    myQ = Q()
+    for prime in primes:
+        myQ = myQ | Q(award_key=prime[0])
+    
+    allqs = baseqs.filter(myQ)
+
+    return render_to_response('millions/table.html', {"recs":allqs, 'primes': primes, "selectedfilters": selectedfilters, 'filterparams': filterparams, 'award_key': award_key }, context_instance=RequestContext(request))
 
 
 def tree(request):
@@ -51,7 +65,7 @@ def tree(request):
     xyorder=[]
     filterparams = ['awarding_agency_name', 'award_type', 'pop_state_cd', 'project_activity_desc', 'recipient_state', 'recipient_namee' ]
     selectedf = []
-    xychoices = ['award_type', 'awarding_agency_name', 'project_activity_desc', 'pop_state_cd',]
+    xychoices = ['award_type', 'awarding_agency_name', 'pop_state_cd', 'project_activity_desc',  ]
     xyfinal = ['recipient_namee', 'project_description']
     for p in filterparams:
         selectedf.append([p, None]) 
@@ -92,6 +106,8 @@ def tree(request):
         qs = qs.filter(project_activity_desc=selectedfilters['project_activity_desc'])
     if selectedfilters['recipient_namee']:
         qs = qs.filter(recipient_namee=selectedfilters['recipient_namee'])
+    #if selectedfilters['pop_cong_dist']:
+    #    qs = qs.filter(pop_cong_dist=selectedfilters['pop_cong_dist'])
 
 
     if len(xyused)==0:

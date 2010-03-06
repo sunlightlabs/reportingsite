@@ -16,7 +16,7 @@
 
 {%block content%}
 <div id="the_form"> 
- 
+
 <form method="get" action="./" name="recoveryform" onsubmit="javascript: return getGroupOrder();"> 
 	<fieldset> 
 	 <legend id="togglefilters">Criteria</legend>
@@ -26,7 +26,7 @@
 {%if f not in xyfinal%}
 <li>{{f|cleankey}}<br/><select name="{{f}}" onchange="greyxyfromfilter(this)" {%ifequal f 'project_activity_desc'%}class="limitedwidth"{%endifequal%}>
 {%isfilterselected f %}
-{%for tt in ttlist%}<option value="{{tt.name}}"{%if tt.selected%} selected{%endif%}>{{tt.name}}</option>{%endfor%}
+{%for tt in ttlist%}<option value="{{tt.name}}"{%if tt.selected%} selected{%endif%}>{{tt.name|longtype}}</option>{%endfor%}
 </select>
 </li>
 {%endif%}
@@ -66,11 +66,11 @@
 <div>
 <table id="treemap">
 {%for r in recs%}
-<tr><td>{{    r.0 }}</td><td>{{    r.1  }}</td><td>{%ifequal r.2 ''%}(not specified){%else%}{{    r.2  }}{%endifequal%}</td></tr>
+<tr><td>{{    r.0 }}</td><td>{{    r.1|longtype  }}</td><td>{%ifequal r.2 ''%}(not specified){%else%}{{    r.2|longtype  }}{%endifequal%}</td></tr>
 {%endfor%}
 </table>
 </div>
-
+<br/><br/>
 
 
  
