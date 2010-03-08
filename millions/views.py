@@ -39,7 +39,7 @@ def detail(request):
 
       
     if selectedfilters['award_type']:
-        qs = qs.filter(award_type=selectedfilters['award_type'])
+        qs = qs.filter(award_type=selectedfilters['award_type'][:1])
     if selectedfilters['awarding_agency_name']:
         qs = qs.filter(awarding_agency_name=selectedfilters['awarding_agency_name'])
     if selectedfilters['pop_state_cd']:
@@ -97,7 +97,7 @@ def tree(request):
     else:
         qs = qs.filter(recipient_role='P')
     if selectedfilters['award_type']:
-        qs = qs.filter(award_type=selectedfilters['award_type'])
+        qs = qs.filter(award_type=selectedfilters['award_type'][:1])
     if selectedfilters['awarding_agency_name']:
         qs = qs.filter(awarding_agency_name=selectedfilters['awarding_agency_name'])
     if selectedfilters['pop_state_cd']:
