@@ -93,7 +93,7 @@ def tree(request):
     
     qs = Record.objects.filter(version_flag='F').exclude(status='x')
     if sumonselected=='number_of_jobs':
-        qs = qs.filter(award_date_new__gt=datetime.datetime(2009, 8, 31))
+        qs = qs.filter(fiscal_qtr=4)
     else:
         qs = qs.filter(recipient_role='P')
     if selectedfilters['award_type']:
@@ -106,9 +106,6 @@ def tree(request):
         qs = qs.filter(project_activity_desc=selectedfilters['project_activity_desc'])
     if selectedfilters['recipient_namee']:
         qs = qs.filter(recipient_namee=selectedfilters['recipient_namee'])
-    #if selectedfilters['pop_cong_dist']:
-    #    qs = qs.filter(pop_cong_dist=selectedfilters['pop_cong_dist'])
-
 
     if len(xyused)==0:
         return detail(request)
