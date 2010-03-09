@@ -10,14 +10,73 @@
 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/prototype/1.6.1.0/prototype.js"></script> 
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/scriptaculous/1.8.3/scriptaculous.js"></script> 
-<style type="text/css">.limitedwidth { width: 600px } </style>
+<style type="text/css">.limitedwidth { width: 600px }
+#instructions {width:1000px;}
+#recovery {margin-left: 453px;} </style>
+
+
 {%endblock%}
 
 
 {%block content%}
-<div id="the_form"> 
 
+ <div id="page" style="padding: 30px">
+<b>How to use this  site</b> <a href="#" id="toggleinstructions">(hide/show)</a>
+
+<div id="instructions" style="display:none"><p>We've developed a tool to explore roughly 240,000 raw records from Recovery.gov that lets you see how American Recovery and Reinvestment Act funds and jobs are distributed across federal agencies that are spending money, states that are receiving it or types of projects. You can also use the tool to focus on individual recipients of stimulus funds, and find their subrecipients and vendors.</p>  
+ 
+<p>There are three different ways to use the tool, all of which work fine on their own or can be combined. The simplest way is to click on any of the bars at the top of the boxes in the Recovery Explorer visualization--that's the big graphic element immediately below--to drill down into the data. Click on Grants, for example, to make the visualization show only grants (stimulus funds distributed through contracts and loans disappear). The largest agency awarding Recovery funds through grants is the Office of Elementary and Secondary Education (part of the Department of Education); click on that box to show how funds from the are distributed by state and type of project.  Each click takes the user deeper into the data.</p>  
+
+<p>Immediately below the visualization, on the left, is the <i>Display</i> box which lets you change the way Recovery Explorer slices up the data. In the default (which we saw above), "Grant/Contract/Loan" is the first field by the which the data is organized, and Recovery Explorer divides information first into those three groups; then by the second field--"Awarding agency" in the default. To change the display, drag one of the other fields to the top of the list and click Submit. For example, bringing "Place of performance" to the top and clicking submit will display Recovery data first by state; clicking on California would then show the breakdown of Awards (contracts, grants and loans) in the Golden State.</p>
+ 
+<p>The boxes in Recovery Explorer can be sized by the total dollars awarded for Recovery projects, the amount that has been spent as of the end of 2009, and the number of jobs funded by the stimulus (the White House changed the methodology from counting "saved or created jobs" to counting "jobs funded"). Use the radio buttons in the <i>Box sizes represent</i> control next to the Display box.</p>
+
+<p>The <i>Criteria</i> box allows you to filter records--by the Agency awarding the money and so on (for a complete explanation of all the fields and what they correspond to in raw data from Recovery.gov, click <a href="http://reporting.sunlightfoundation.com/RecoveryExplorerCodeSheet">here</a>). A user who chooses the "Department of Homeland Security" from the Awarding agency pull down menu, then Grants from the Award type menu, and FL (Florida) for Recipient state--then clicks the "Submit"  button--will see a display of recovery funds distributed by grant to  recipients in the state of Florida. Return the Recipient state box to a blank  (just scoll up to the top of the pull down menu), press Submit, and Recovery Explorer shows the distribution of all Homeland Security grants issued under  the Recovery Act.</p>
+ 
+<p>The Criteria  and Display boxes can be used  together. If you select the Department of Energy in the Criteria box, then drag  "place of performance" to the top of the Display box and click Submit, you'll see Energy's Recovery awards displayed by state.</p> 
+
+<p>Users can view  individual Recovery records--including prime recipients, subrecipients and  vendors--by choosing two Criteria (say, National Science Foundation and Grants, or Florida and Contracts), clicking "Submit" and then clicking the  "View Detail" button. The data in Recovery Explorer comes from Recovery.gov's cumulative file, and was downloaded on March 7, 2010. We'll update it as Recovery.gov updates its data.</p>
+</div>
+
+<div>
+<table id="treemap">
+{%for r in recs%}
+<tr><td>{{    r.0 }}</td><td>{{    r.1|longtype  }}</td><td>{%ifequal r.2 ''%}(not specified){%else%}{{    r.2|longtype  }}{%endifequal%}</td></tr>
+{%endfor%}
+</table>
+</div>
+
+
+
+ </div>
+
+<div id="the_form"> 
 <form method="get" action="./" name="recoveryform" onsubmit="javascript: return getGroupOrder();"> 
+	<fieldset style="float:left"> 
+	  <legend>Display in this order (drag to order)</legend>	
+<div id="group1" class="section">
+{%getxylist%}
+{%for x in orderedxy%}
+		<div id="xy_{{x.id}}" class="lineitem">{{x.name|cleankey}} <span><a href="#" onclick="clearfilter('{{x.name}}');">X</a></span></div> 
+{%endfor%}
+</div>  
+</fieldset>
+ 
+<div id="sumby"> 
+<fieldset> 
+  <legend>Box size represents:</legend> 
+	<ul id="sumlist"> 
+{%for s in sumon%}
+<li><input type="radio" name="sumon" value="{{s}}" {%ifequal s sumonselected%}checked{%endifequal%}/>{{s|cleankey}}</li> 
+{%endfor%}
+</ul> 
+</fieldset> 
+</div> 
+
+<input type="hidden" name="sliceby" id="sliceby" value=""/>
+<input type="submit"/><input type="button" onclick="gotodetail()" value="View detail" name="detailbtn"/>
+
+<div id="clearfix">&nbsp;</div> 
 	<fieldset> 
 	 <legend id="togglefilters">Criteria</legend>
  
@@ -32,48 +91,9 @@
 {%endif%}
 {%endfor%}
 </ul></fieldset>
-<div id="clearfix">&nbsp;</div> 
- 
-<div id="page"> 
-	<fieldset> 
-	  <legend>Drill down in this order (drag to order)</legend>	
-<div id="group1" class="section">
-{%getxylist%}
-{%for x in orderedxy%}
-		<div id="xy_{{x.id}}" class="lineitem">{{x.name|cleankey}} <span><a href="#" onclick="clearfilter('{{x.name}}');">X</a></span></div> 
-{%endfor%}
-</div>  
-</fieldset>
- </div>
-<div id="sumby"> 
-<fieldset> 
-  <legend>Box size represents:</legend> 
-	<ul id="sumlist"> 
 
-{%for s in sumon%}
-<li><input type="radio" name="sumon" value="{{s}}" {%ifequal s sumonselected%}checked{%endifequal%}/>{{s|cleankey}}</li> 
-{%endfor%}
-</ul> 
-</fieldset> 
-</div> 
-
-<input type="hidden" name="sliceby" id="sliceby" value=""/>
-<input type="submit"/><input type="button" onclick="gotodetail()" value="View detail" name="detailbtn"/>
-</form>
-<div id="clearfix">&nbsp;</div> 
-
-
-<div>
-<table id="treemap">
-{%for r in recs%}
-<tr><td>{{    r.0 }}</td><td>{{    r.1|longtype  }}</td><td>{%ifequal r.2 ''%}(not specified){%else%}{{    r.2|longtype  }}{%endifequal%}</td></tr>
-{%endfor%}
-</table>
 </div>
-<br/><br/>
-
-
- 
+ </form>
 <script type="text/javascript"> 
 
 jQuery(function(){
@@ -209,7 +229,11 @@ jQuery(function(){
         jQuery('#'+divids[n]).children().filter("span").fadeTo("slow",0);                   
     }
     
-
+jQuery('#toggleinstructions').toggle(function() {
+    jQuery('#instructions').show();
+}, function() {
+    jQuery('#instructions').hide();
+});
 
 	</script> 
 

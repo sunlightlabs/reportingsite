@@ -14,12 +14,18 @@ $(document).ready(function() {
 	$('#tablesorter').dataTable();
 } );
 
-function gotodetail() {
+function gotochart() {
     s = "";
     $("select").each(function(){
         s+= this.name+'='+this.value+'&';
     });
     window.location = "/recovery?"+s;
+}
+
+function requireconstraints() {
+    constrictions = 0;
+    jQuery("select",this).each(function(){   if (jQuery(this).val()!=null && jQuery(this).val()!='') constrictions++; });  
+    if(constrictions>1) document.forms[0].detailbtn.disabled=false; else document.forms[0].detailbtn.disabled=true;
 }
 </script>
 <style>
@@ -76,7 +82,7 @@ Recipients, subrecipients and vendors for award # {{award_key}}
  
 <ul id="options_1"> 
 {%for f in filterparams%}
-<li>{{f|cleankey}}<br/><select name="{{f}}">
+<li>{{f|cleankey}}<br/><select name="{{f}}" onchange="requireconstraints()">
 {%isfilterselected f %}
 {%for tt in ttlist%}
 <option value="{{tt.name}}"{%if tt.selected%} selected{%endif%}>{{tt.name}}</option>
@@ -85,7 +91,7 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 </li>
 {%endfor%}
 </ul>
-<input type="submit" value="View items"/><input type="button" onclick="gotodetail()" value="Back to chart" name="detailbtn"/>
+<input type="submit" value="View items" name="detailbtn"/><input type="button" onclick="gotochart()" value="Back to chart"/>
 </fieldset></form>
 {% endif %}
 
@@ -123,7 +129,7 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 <td>{{    r.award_type  }}</td>
 <td>{{    r.award_date|slice:":10"  }}</td>
 <td>{{    r.award_description   }}</td>
-<td>${{    r.award_amount|floatformat:0|intcomma  }}</td>
+<td>${%ifequal r.recipient_role 'P'%}{{    r.award_amount|floatformat:0|intcomma  }}{%else%}{{    r.local_amount|floatformat:0|intcomma  }}{%endifequal%}</td>
 <td>{{    r.project_name  }}</td>
 <td>{{    r.project_description  }}</td>
 <td>{{    r.job_creation   }}</td>
@@ -137,9 +143,6 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 <td>{{    r.project_activity_desc }}</td>
 <td>Award #: {{    r.award_number  }}
 <br/>Subaward #: {{    r.sub_award_number  }}
-<br/>Recipient account #: {{    r.recipient_account_number }}
-<br/>Activity code: {{    r.activity_code  }}
-<br/>Status: {{    r.project_status }}
 </tr>
 {%endfor%}
 

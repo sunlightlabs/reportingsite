@@ -40,6 +40,7 @@ class Record(models.Model):
     award_date = models.CharField(max_length=20)
     award_description  = models.TextField()
     award_amount = models.FloatField()
+    local_amount = models.FloatField()
     project_name = models.CharField(max_length=255)
     project_description  = models.TextField()
     project_status = models.CharField(max_length=255)
