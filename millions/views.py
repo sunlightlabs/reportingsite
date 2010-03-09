@@ -132,10 +132,10 @@ def reciptree(request):
             awardtext = q.project_name
         else:
             awardtext = q.project_description
-        qsc = Record.objects.filter(version_flag='F').filter(award_key=q.award_key).exclude(status='x',recipient_role='P')
+        qsc = Record.objects.filter(version_flag='F').filter(award_key=q.award_key).exclude(status='x').exclude(recipient_role='P')
         for c in qsc:
             sub.append( [ c.local_amount, awardtext, c.recipient_namee, q.award_key ] )
-        sub.append( [ q.local_amount, awardtext, '(prime)', q.award_key ] )
+        sub.append( [ q.local_amount, awardtext, q.recipient_namee, q.award_key ] )
 
                          
 

@@ -4,6 +4,7 @@
 {%block head%}
 		<style type="text/css" title="currentStyle"> 			
 			@import "http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/millions/dataTables-1.6/media/css/demo_table.css";
+#recovery {margin-left: 453px;}
 		</style>
 <script type="text/javascript" language="javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.2/jquery.min.js"></script> 
 		<script type="text/javascript" language="javascript" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/millions/jquery.dataTables.js"></script> 
@@ -116,7 +117,7 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 <th>    Infra. rationale </th>
 <th>    Perf. state</th>
 <th>    Performance city </th>
-<th>    Project Type</th>
+<th>    Type of Project</th>
 <th> Other info</th>
 </tr></thead>
 
@@ -141,8 +142,8 @@ Recipients, subrecipients and vendors for award # {{award_key}}
 <td>{{    r.pop_state_cd  }}</td>
 <td>{{    r.pop_city }}</td>
 <td>{{    r.project_activity_desc }}</td>
-<td>Award #: {{    r.award_number  }}
-<br/>Subaward #: {{    r.sub_award_number  }}
+<td>{%if r.award_number %}Award #: {{    r.award_number  }}{%endif%}
+<br/>{%if r.sub_award_number %}Subaward #: {{    r.sub_award_number  }}{%endif%}
 </tr>
 {%endfor%}
 
