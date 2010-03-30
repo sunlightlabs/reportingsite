@@ -20,6 +20,16 @@
 <script type="text/javascript" src="{% media_url %}/adminfiles/model.js"></script>
 <script type="text/javascript" src="{% media_url %}/adminfiles/adminfiles.js"></script>
 
+
+{%ifequal opts.verbose_name "flat page" %}
+<script type="text/javascript" src="{% media_url %}/rte/jquery.rte.js"></script>
+<script type="text/javascript">
+$(document).ready(function(){ 
+    $('textarea#id_content').rte('{%media_url%}/rte/rte.css', '{%media_url%}/rte/');
+})
+</script>
+{%endifequal%}
+
 {%ifequal opts.verbose_name "post" %}
 <script type="text/javascript" src="{% media_url %}/rte/jquery.rte.js"></script>
 <script type="text/javascript">

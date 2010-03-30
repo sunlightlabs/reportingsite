@@ -4,6 +4,12 @@ import datetime
 import re
 from django.contrib import admin
 
+"""Recovery Explorer by Luke Rosiak for the Sunlight Foundation March 2010. To update with the latest data from Recovery.gov's download center:
+http://www.recovery.gov/FAQ/Pages/DownloadCenter.aspx National Cumulative Summary
+1) copy the millions_record table's structure and drop the primary key and award_date_new fields
+2) import the raw CSV
+3) add the primary key and the award_date_new field, updating the latter from award_date"""
+
 class Record(models.Model):
 
     award_key = models.IntegerField()

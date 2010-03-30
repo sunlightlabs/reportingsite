@@ -65,7 +65,7 @@ def body(post):
     for g in grafs:
         if g.strip():
             newg.append('<p>'+g+'</p>')
-            if len(newg)==2 and post.pullquote:
+            if len(newg)==4 and post.pullquote:
                 newg.append('<div class="pullquote">'+post.pullquote+'</div>')
     lede = ''.join(newg) 
     return lede
@@ -95,5 +95,3 @@ def twitter_link(s):
     return re.sub(r2,r'<a rel="nofollow" target="_blank" href="http://\1">\1</a>',re.sub(r1,r'<a target="_blank" href="\1">\1</a>',s))
 
 
-
-    return s.encode('UTF-8').replace("&amp;",'').replace('&#','')

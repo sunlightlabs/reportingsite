@@ -15,8 +15,8 @@ from django.db.models import *
 #
 
 
-
 def detail(request):
+    #table of line-item recovery act awards
     from django.db.models import Q
     filterparams = ['awarding_agency_name', 'award_type', 'pop_state_cd', 'recipient_state', 'project_activity_desc' ]
     selectedf = []
@@ -46,6 +46,8 @@ def detail(request):
         qs = qs.filter(pop_state_cd=selectedfilters['pop_state_cd'])
     if selectedfilters['project_activity_desc']:
         qs = qs.filter(project_activity_desc=selectedfilters['project_activity_desc'])
+    if selectedfilters['recipient_state']:
+        qs = qs.filter(recipient_namee=selectedfilters['recipient_state'])
     primes = qs.filter(recipient_role='P').values_list('award_key')
 
     myQ = Q()
@@ -58,6 +60,7 @@ def detail(request):
 
 
 def tree(request):
+    #main treemap view. xychoices and xyfinal determine what you're grouping on. filterparams limit criteria. 
     import datetime
 
     sumon = ['award_amount', 'total_fed_arra_exp', 'number_of_jobs']
@@ -106,6 +109,8 @@ def tree(request):
         qs = qs.filter(project_activity_desc=selectedfilters['project_activity_desc'])
     if selectedfilters['recipient_namee']:
         qs = qs.filter(recipient_namee=selectedfilters['recipient_namee'])
+    if selectedfilters['recipient_state']:
+        qs = qs.filter(recipient_namee=selectedfilters['recipient_state'])
 
     if len(xyused)==0:
         return detail(request)
@@ -122,6 +127,7 @@ def tree(request):
 
 
 def reciptree(request):
+    #the modified treemap that shows you money going to a particular recipient for each award, and demonstrates the sub-awards that they make 
     if request.GET:
         if 'name' in request.GET:
             recipient_namee = request.GET['name']
