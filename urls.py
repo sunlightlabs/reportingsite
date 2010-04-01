@@ -42,7 +42,7 @@ urlpatterns = patterns(
     #page by topic: flit, ss, slrg pages    
     url(r'^(?P<site>\w{1,4})/$', 'bysite'),
 
-    url(r'^adminfiles/', include('adminfiles.urls')),
+    url(r'^adminfiles/', 'adminfiles'),
 
     url(r'^adminajax/(?P<user_id>\d+)/(?P<post_id>\d+)/$', 'admin_currentedit', name='admin_currentedit'),
 
