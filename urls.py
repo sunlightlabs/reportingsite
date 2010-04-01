@@ -46,8 +46,7 @@ urlpatterns = patterns(
 
     url(r'^adminajax/(?P<user_id>\d+)/(?P<post_id>\d+)/$', 'admin_currentedit', name='admin_currentedit'),
 
-    url(r'^recovery/', include('millions.urls')),
-    url(r'^migration/', include('migration.urls')),
+    url(r'^recovery/', include('millions.urls'))
 
 )
 
