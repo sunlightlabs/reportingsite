@@ -21,7 +21,7 @@ DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysq
 DATABASE_NAME = 'reporting'             # Or path to database file if using sqlite3.
 DATABASE_USER = 'reporting'             # Not used with sqlite3.
 DATABASE_PASSWORD = '***REMOVED***'         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
+DATABASE_HOST = 'belushi.sunlightlabs.org'             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
 
 # Local time zone for this installation. Choices can be found here:
@@ -91,10 +91,9 @@ INSTALLED_APPS = (
     'feedparser',
     'reporting',
     'django.contrib.humanize',
-    'adminfiles',
-    'sorl.thumbnail',
     'mediasync',
-    'reportingsite.millions', 'reportingsite.migration'
+    'reportingsite.millions', 
+    'storages'
 )
 
 
@@ -122,12 +121,21 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "context_processors.filters",
 )
 
-ADMINFILES_MEDIA_URL = 'http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/'
-ADMINFILES_USE_SIGNALS = True
-ADMINFILES_REF_START = '[{['
-ADMINFILES_REF_END = ']}]'
-FLICKR_USER = None
-YOUTUBE_USER = None
+
+
+MEDIASYNC_AWS_KEY = "***REMOVED***"
+MEDIASYNC_AWS_SECRET = "***REMOVED***"
+MEDIASYNC_AWS_BUCKET = "assets.sunlightfoundation.com" #"bucket_name"  
+MEDIASYNC_AWS_PREFIX = "reporting/1.0"
+
+
+
+DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
+AWS_ACCESS_KEY_ID  = MEDIASYNC_AWS_KEY 
+AWS_SECRET_ACCESS_KEY = MEDIASYNC_AWS_SECRET
+AWS_STORAGE_BUCKET_NAME = MEDIASYNC_AWS_BUCKET
+from S3 import CallingFormat
+AWS_CALLING_FORMAT = CallingFormat.SUBDOMAIN
 
 
 try:
