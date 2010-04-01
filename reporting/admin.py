@@ -77,7 +77,7 @@ class PostAdmin(FilePickerAdmin):
 
 
 admin.site.register(Post, PostAdmin)
-
+admin.site.register(Upload)
 
 class BackupAdmin(admin.ModelAdmin):
     list_display = ('post', 'user', 'time' )

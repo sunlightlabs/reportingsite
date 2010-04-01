@@ -104,7 +104,7 @@ class Post(models.Model):
 
 
 
-moderator.register(Post, BlogdorModerator)
+#moderator.register(Post, BlogdorModerator)
 
 
 class Backup(models.Model):
@@ -113,9 +113,30 @@ class Backup(models.Model):
     time = models.IntegerField()
   
 
-class Wedget(models.Model):
-    user = models.ForeignKey(User)
-    budget = models.TextField()
-    status = models.TextField()
+
+from django.core.files.base import ContentFile
+from django.core.files.storage import default_storage as s3_storage
+from django.core.cache import cache
+from storages.backends.s3 import *
+
+class Upload(models.Model):
+    myfile = models.FileField(storage=s3_storage, upload_to='uploads')
+    name = models.CharField(max_length=50)
+
+    def __unicode__(self):
+        if self.name:
+            return self.name
+        else:
+            return self.myfile._name
+
+    def link(self):
+        return self.myfile.storage.url('')[:-1] + self.myfile.file._name
+    def short(self):
+        f = self.myfile.file._name
+        fs = f.split('/')
+        if(len(fs)>1):
+            return fs[1]
+        else:
+            return f
 
 

@@ -248,7 +248,7 @@ def searchredirect(request):
   
 def search(request, terms):
 
-    stories = Post.objects.published().filter(Q(title__icontains=terms) | Q(content__icontains=terms)) #change to __search on mysql  
+    stories = Post.objects.published().filter(Q(title__search=terms) | Q(content__search=terms)) 
 
     return list_detail.object_list(request,
                     queryset=stories,
@@ -256,6 +256,11 @@ def search(request, terms):
                     template_name='posts_lede.html',
                     template_object_name='post', allow_empty=True
                     )
+
+
+def adminfiles(request):
+    uploads = Upload.objects.all().order_by('-pk')  
+    return render_to_response('uploads.html', {'uploads': uploads})
 
 
 def handler404(request):

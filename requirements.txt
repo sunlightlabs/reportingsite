@@ -7,6 +7,8 @@ django-tagging
 feedparser
 -e git://github.com/sunlightlabs/django-gatekeeper.git#egg=gatekeeper
 
+-e hg+http://code.welldev.org/django-storages/#egg=storages
+
 django-adminfiles
 sorl-thumbnail
 boto

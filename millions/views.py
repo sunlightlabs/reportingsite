@@ -47,7 +47,7 @@ def detail(request):
     if selectedfilters['project_activity_desc']:
         qs = qs.filter(project_activity_desc=selectedfilters['project_activity_desc'])
     if selectedfilters['recipient_state']:
-        qs = qs.filter(recipient_namee=selectedfilters['recipient_state'])
+        qs = qs.filter(recipient_state=selectedfilters['recipient_state'])
     primes = qs.filter(recipient_role='P').values_list('award_key')
 
     myQ = Q()
@@ -110,7 +110,7 @@ def tree(request):
     if selectedfilters['recipient_namee']:
         qs = qs.filter(recipient_namee=selectedfilters['recipient_namee'])
     if selectedfilters['recipient_state']:
-        qs = qs.filter(recipient_namee=selectedfilters['recipient_state'])
+        qs = qs.filter(recipient_state=selectedfilters['recipient_state'])
 
     if len(xyused)==0:
         return detail(request)
