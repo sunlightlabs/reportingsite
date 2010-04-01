@@ -4,13 +4,12 @@ from django.contrib import admin
 from tagging.fields import TagField
 from forms import PostAdminModelForm
 import settings
-from adminfiles.admin import FilePickerAdmin
 
 
 AUTHOR_GROUP = getattr(settings, 'BLOGDOR_AUTHOR_GROUP', None)
 
 
-class PostAdmin(FilePickerAdmin):
+class PostAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
             'fields': ('title', 'slug', 'author', 'content', 'excerpt', 'pullquote', 'whichsite', 'date_published', 'override_byline', 'is_published', 'is_favorite', 'comments_enabled', 'tags')

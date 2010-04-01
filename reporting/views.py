@@ -138,7 +138,6 @@ def admin_currentedit(request, user_id, post_id):
     twominago = t-150
     u = User.objects.get(id=user_id)
     p = Post.objects.get(id=post_id)
-    #c = request.POST['content']
     deleteyou = Backup.objects.filter(post=p,user=u).delete()
     check = Backup.objects.filter(post=p,time__gt=twominago)
     listusers = []
@@ -185,6 +184,9 @@ def index(request):
             elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
         return elist
 
+    return render_to_response('index.html', {'blogs': {}, 'featured': {}, 'bodyclass': 'home' }, context_instance=RequestContext(request) )
+
+
     featured = Post.objects.published().filter(is_favorite=True)[:4] 
     f1 = featured[0].pk
     f2 = featured[1].pk
@@ -193,24 +195,6 @@ def index(request):
     blogs = mergetweets( Post.objects.published().exclude(pk=f1).exclude(pk=f2).exclude(pk=f3).exclude(pk=f4), FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-')[:4], Feed.objects.get(codename='partytime')  )
 
     return render_to_response('index.html', {'blogs': blogs, 'featured': featured, 'bodyclass': 'home' }, context_instance=RequestContext(request) )
-    """def mergetweets(posts, ptentries):
-        elist = []
-        for p in posts:
-            elist.append(p) 
-        for p in ptentries.entries.all():
-            elist.append(p) 
-        for t in tweetsfeed:
-            elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
-        return elist
-
-    featured = Post.objects.published().filter(is_favorite=True)[:4] 
-    f1 = featured[0].pk
-    f2 = featured[1].pk
-    f3 = featured[2].pk
-    f4 = featured[3].pk
-    blogs = mergetweets( Post.objects.published().exclude(pk=f1).exclude(pk=f2).exclude(pk=f3).exclude(pk=f4), Feed.objects.get(codename='partytime')  )
-    tweets = FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-')
-    return render_to_response('index.html', {'blogs': blogs, 'featured': featured, 'bodyclass': 'home', 'tweets': tweets }, context_instance=RequestContext(request) )"""
 
 
 
