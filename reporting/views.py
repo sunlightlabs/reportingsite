@@ -196,9 +196,6 @@ def index(request):
             elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
         return elist
 
-    return render_to_response('index.html', {'blogs': {}, 'featured': {}, 'bodyclass': 'home' }, context_instance=RequestContext(request) )
-
-
     featured = Post.objects.published().filter(is_favorite=True)[:4] 
     f1 = featured[0].pk
     f2 = featured[1].pk
