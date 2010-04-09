@@ -1,14 +1,6 @@
-from django.conf import settings
-from django.core import serializers
-from django.http import HttpResponse, HttpResponseRedirect
 from django.shortcuts import render_to_response
 from millions.models import *
-import random
-import simplejson
-import time
-import datetime
 from django.template import RequestContext
-from django.db.models.query import QuerySet
 from django.db.models import *
 #
 # view methods
@@ -61,7 +53,6 @@ def detail(request):
 
 def tree(request):
     #main treemap view. xychoices and xyfinal determine what you're grouping on. filterparams limit criteria. 
-    import datetime
 
     sumon = ['award_amount', 'total_fed_arra_exp', 'number_of_jobs']
     sumonselected = 'award_amount'
