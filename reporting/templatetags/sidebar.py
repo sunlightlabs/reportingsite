@@ -62,7 +62,7 @@ get_calendar = register.tag(get_calendar)
 
 class ResourceFeed(Node):
     def render(self, context):
-        f = FeedEntry.objects.filter(feed__codename__startswith='Resource-').select_related()
+        f = FeedEntry.objects.filter(feed__codename__startswith='Resource-').select_related()[:10]
         usedfeed = []        
         l = []
         for ff in f:
