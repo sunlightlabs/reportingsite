@@ -8,7 +8,7 @@ register = Library()
 
 class OutsideArticles(Node):
     def render(self, context):
-        context['entries'] = FeedEntry.objects.filter(feed__codename__startswith='News-')[:8]
+        context['entries'] = FeedEntry.objects.filter(feed__codename__startswith='News-').select_related()[:8]
         return ''
     
 def get_outside_articles(parser, token):
@@ -40,7 +40,7 @@ class Calendar(Node):
     def render(self, context):    
         import time, datetime
         from operator import itemgetter 
-        cal = FeedEntry.objects.filter(feed__codename__startswith='Calendar-')  
+        cal = FeedEntry.objects.filter(feed__codename__startswith='Calendar-').select_related()
         cl = []
         today = datetime.datetime.now().date()
         for e in cal:
@@ -62,7 +62,7 @@ get_calendar = register.tag(get_calendar)
 
 class ResourceFeed(Node):
     def render(self, context):
-        f = FeedEntry.objects.filter(feed__codename__startswith='Resource-')
+        f = FeedEntry.objects.filter(feed__codename__startswith='Resource-').select_related()
         usedfeed = []        
         l = []
         for ff in f:
