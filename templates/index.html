@@ -37,7 +37,6 @@
             {{entry.shortbyline|safe}}
             <span class="postdate">{{entry.date_published|date:"M j, Y"}}</span>
             <span class="posttime">{{entry.date_published|date:"P"}}</span>
-      {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
           </span>
           {{ entry|lede|safe }}
         </div>
@@ -53,7 +52,6 @@
 {% block sidebar %}
   <div class="mainModule features">
     {% for entry in featured %}
-    {% get_comment_count for entry as comment_count %}
     <div class="module">
       {% autoescape off %}
       <h2><a href="{% url blogdor_post entry.date_published.year entry.slug %}">{{ entry.title|safe }}</a></h2>
@@ -61,7 +59,6 @@
         {{entry.shortbyline}}
         <span class="postdate">{{entry.date_published|date:"M j, Y"}}</span>
         <span class="posttime">{{entry.date_published|date:"P"}}</span>
-        {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post entry.date_published.year entry.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
       </span>
       {{ entry|grafs:3 }}
       {% endautoescape %}
