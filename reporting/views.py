@@ -202,7 +202,7 @@ def index(request):
     f3 = featured[2].pk
     f4 = featured[3].pk
     ptentries = list(Feed.objects.get(codename='partytime').entries.all().select_related())
-    blogs = mergetweets( Post.objects.published().exclude(pk=f1).exclude(pk=f2).exclude(pk=f3).exclude(pk=f4), FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-')[:4], ptentries)
+    blogs = mergetweets( Post.objects.published().exclude(pk__in=[f1,f2,f3,f4])[:10], FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-')[:4], ptentries)
 
     return render_to_response('index.html', {'blogs': blogs, 'featured': featured, 'bodyclass': 'home' }, context_instance=RequestContext(request) )
 
