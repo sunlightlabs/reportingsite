@@ -196,7 +196,7 @@ def index(request):
             elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
         return elist
 
-    featured = list(Post.objects.published().filter(is_favorite=True)[:4])
+    featured = list(Post.objects.published().filter(is_favorite=True).select_related()[:4])
     f1 = featured[0].pk
     f2 = featured[1].pk
     f3 = featured[2].pk
