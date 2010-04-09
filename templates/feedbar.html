@@ -19,7 +19,7 @@ if (box.value=='Search posts') { box.value=''; }
   </form>
 </div>
 
-
+{% comment %}
 {% if widget %}
 <div class="mainModule recentPosts">
 <h3>SLRG Tool:</h3>
@@ -33,6 +33,8 @@ if (box.value=='Search posts') { box.value=''; }
 {%endfor%}
 </div>
 {%endif%}
+{% endcomment %}
+
 
             {% if tags %}
             <div class="mainModule categories">
@@ -49,6 +51,7 @@ if (box.value=='Search posts') { box.value=''; }
             </div>
             {%endif%}
 
+    {% comment %}
            <div class="mainModule categories">
              <h3>Real Time Ticker</h3>
              {%get_resources%}
@@ -58,8 +61,10 @@ if (box.value=='Search posts') { box.value=''; }
                {%endfor%}
              </ul>             
            </div>
+    {% endcomment %}
 
 
+{% comment %}
 {%if post%}
            <div class="mainModule categories">
              <h3>Recent Posts</h3>
@@ -82,6 +87,7 @@ if (box.value=='Search posts') { box.value=''; }
                {%endfor%}
              </ul>
            </div>
+
            <div class="mainModule recentPosts">
              <h3>Popular tags</h3>         
              {% load tagging_tags %}
@@ -90,3 +96,4 @@ if (box.value=='Search posts') { box.value=''; }
             <a class="tag{{ tag.font_size }}" a href="/tag/{{tag}}">{{ tag }}</a>
             {% endfor %}
           </div>
+{% endcomment %}

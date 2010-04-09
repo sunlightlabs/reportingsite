@@ -18,7 +18,7 @@ if (box.value=='Search posts') { box.value=''; }
     </button>
   </form>
 </div>
-
+{% comment %}
 
 {% if widget %}
 <div class="mainModule recentPosts">
@@ -74,3 +74,4 @@ if (box.value=='Search posts') { box.value=''; }
             <a class="tag{{ tag.font_size }}" a href="/tag/{{tag}}">{{ tag }}</a>
             {% endfor %}
           </div>
+{% endcomment %}
