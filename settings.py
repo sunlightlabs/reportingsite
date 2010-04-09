@@ -1,7 +1,8 @@
 # Django settings for reportingsite project.
 
-DEBUG = True
+DEBUG = False
 TEMPLATE_DEBUG = DEBUG
+
 
 ADMINS = (
      ('Luke', 'lrosiak@sunlightfoundation.com'),
@@ -9,6 +10,12 @@ ADMINS = (
 
 
 MANAGERS = ADMINS
+
+if DEBUG:
+    CACHE_BACKEND = 'memcached:///127.0.0.1:11211'
+else:
+    CACHE_BACKEND = 'dummy:///'
+
 
 """DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = 'reporting.sql'             # Or path to database file if using sqlite3.

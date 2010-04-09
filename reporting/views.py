@@ -1,4 +1,6 @@
 from feedinator.models import Feed, FeedEntry
+from django.core.cache import cache
+from django.views.decorators.cache import cache_page
 from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.db.models import Q
 import urllib
@@ -22,18 +24,22 @@ POSTS_PER_PAGE = getattr(settings, "BLOGDOR_POSTS_PER_PAGE", 10)
 YEAR_POST_LIST = getattr(settings, "BLOGDOR_YEAR_POST_LIST", False)
 WP_PERMALINKS = False
 WHICHSITE_CHOICES = getattr(settings, "WHICHSITE_CHOICES", False)
-                            
+
+@cache_page(60 * 60)                            
 def post(request, year, slug):
     return _post(request, year, slug)
 
+@cache_page(60 * 60)
 def post_wpcompat(request, year, month, day, slug):
     post = get_object_or_404(Post, date_published__year=year, date_published__month=month, slug__startswith=slug[:56], is_published=True)
     return  _post_by_id(request, post.id)
 
+@cache_page(60 * 60)
 def _post(request, year, slug):
     post = get_object_or_404(Post, date_published__year=year, slug=slug, is_published=True)
     return _post_by_id(request, post.id)
 
+@cache_page(60 * 60)
 def _post_by_id(request, id):
     post = get_object_or_404(Post, pk=id)
 
@@ -43,6 +49,7 @@ def _post_by_id(request, id):
 #
 # Preview view
 #
+@cache_page(60*60)
 def preview(request, object_id):
     from django.contrib.auth.decorators import login_required
     login_required(preview)
@@ -60,7 +67,7 @@ def preview(request, object_id):
 #
 # Post archive views
 #
-                  
+@cache_page(60 * 60)                  
 def archive(request):
     return list_detail.object_list(
                     request,
@@ -70,6 +77,7 @@ def archive(request):
                     template_object_name='post',
                     allow_empty=True)
 
+@cache_page(60 * 60)
 def archive_month(request, year, month):
     return date_based.archive_month(
                     request,
@@ -82,6 +90,7 @@ def archive_month(request, year, month):
                     template_object_name='post',
                     allow_empty=False)
 
+@cache_page(60 * 60)
 def archive_year(request, year):
     return date_based.archive_year(
                     request,
@@ -97,6 +106,7 @@ def archive_year(request, year):
 # Post tag views
 #
 
+@cache_page(60*60)
 def tag(request, tag):
     return tagged_object_list(
                     request,
@@ -108,6 +118,7 @@ def tag(request, tag):
                     extra_context={'tag': tag},
                     allow_empty=True)
 
+@cache_page(60*60)
 def tag_list(request):
     ct = ContentType.objects.get_for_model(Post)
     return list_detail.object_list(
@@ -155,6 +166,7 @@ def admin_currentedit(request, user_id, post_id):
 # Author views
 #
 
+@cache_page(60 * 60)
 def author(request, username):
     try:
         author = User.objects.get(username=username)
@@ -171,7 +183,7 @@ def author(request, username):
         return HttpResponseRedirect(reverse('blogdor_archive'))
 
 
-
+@cache_page(60 * 60)
 def index(request):
    
     def mergetweets(posts, tweetsfeed, ptentries):
@@ -197,7 +209,7 @@ def index(request):
     return render_to_response('index.html', {'blogs': blogs, 'featured': featured, 'bodyclass': 'home' }, context_instance=RequestContext(request) )
 
 
-
+@cache_page(60 * 60)
 def bysite(request, site):
     topinfo=''
     if site=='features':
@@ -220,7 +232,7 @@ def bysite(request, site):
                     extra_context={'topinfo': topinfo},
                     )
 
-
+@cache_page(60 * 60)
 def searchredirect(request):
 
     if request.GET['terms']:
@@ -229,7 +241,7 @@ def searchredirect(request):
     else:
         return HttpResponseRedirect(reverse('blogdor_archive'))
 
-  
+@cache_page(60 * 60)  
 def search(request, terms):
 
     stories = Post.objects.published().filter(Q(title__search=terms) | Q(content__search=terms)) 
@@ -246,7 +258,7 @@ def adminfiles(request):
     uploads = Upload.objects.all().order_by('-pk')  
     return render_to_response('uploads.html', {'uploads': uploads})
 
-
+@cache_page(60 * 60)
 def handler404(request):
     return archive(request)
 

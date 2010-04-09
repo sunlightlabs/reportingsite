@@ -6,7 +6,7 @@ django-tagging
 -e git://github.com/sunlightlabs/django-feedinator.git#egg=feedinator
 feedparser
 -e git://github.com/sunlightlabs/django-gatekeeper.git#egg=gatekeeper
--e git://github.com/AdamN/python-s3.git#egg=S3
+#-e git://github.com/AdamN/python-s3.git#egg=S3
 -e hg+http://code.welldev.org/django-storages/#egg=storages
 
 boto
