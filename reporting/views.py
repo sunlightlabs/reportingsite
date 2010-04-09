@@ -190,18 +190,19 @@ def index(request):
         elist = []
         for p in posts:
             elist.append(p) 
-        for p in ptentries.entries.all():
+        for p in ptentries:
             elist.append(p) 
         for t in tweetsfeed:
             elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
         return elist
 
-    featured = Post.objects.published().filter(is_favorite=True)[:4] 
+    featured = list(Post.objects.published().filter(is_favorite=True)[:4])
     f1 = featured[0].pk
     f2 = featured[1].pk
     f3 = featured[2].pk
     f4 = featured[3].pk
-    blogs = mergetweets( Post.objects.published().exclude(pk=f1).exclude(pk=f2).exclude(pk=f3).exclude(pk=f4), FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-')[:4], Feed.objects.get(codename='partytime')  )
+    ptentries = list(Feed.object.get(codename='partytime').entries.all())
+    blogs = mergetweets( Post.objects.published().exclude(pk=f1).exclude(pk=f2).exclude(pk=f3).exclude(pk=f4), FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-')[:4], ptentries)
 
     return render_to_response('index.html', {'blogs': blogs, 'featured': featured, 'bodyclass': 'home' }, context_instance=RequestContext(request) )
 
