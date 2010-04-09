@@ -76,7 +76,9 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'gatekeeper.middleware.GatekeeperMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware'
+    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'debug_toolbar.middleware.DebugToolbarMiddleware',
+
 )
 
 ROOT_URLCONF = 'reportingsite.urls'
@@ -100,9 +102,13 @@ INSTALLED_APPS = (
     'django.contrib.humanize',
     'mediasync',
     'reportingsite.millions', 
-    'storages'
+    'storages',
+    'debug_toolbar',
 )
 
+DEBUG_TOOLBAR_CONFIG = {
+    'SHOW_TOOLBAR_CALLBACK': lambda r: True,
+}
 
 DEFAULT_MARKUP = 'plain'
 BLOGDOR_POSTS_PER_PAGE = 14
@@ -124,7 +130,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "context_processors.latest_by_site",
-
     "context_processors.filters",
 )
 
