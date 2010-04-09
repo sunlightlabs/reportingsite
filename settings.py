@@ -77,7 +77,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'gatekeeper.middleware.GatekeeperMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-    'debug_toolbar.middleware.DebugToolbarMiddleware',
+#    'debug_toolbar.middleware.DebugToolbarMiddleware',
 
 )
 
@@ -103,7 +103,7 @@ INSTALLED_APPS = (
     'mediasync',
     'reportingsite.millions', 
     'storages',
-    'debug_toolbar',
+#    'debug_toolbar',
 )
 
 DEBUG_TOOLBAR_CONFIG = {
