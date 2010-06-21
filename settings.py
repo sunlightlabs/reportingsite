@@ -3,11 +3,9 @@
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-
 ADMINS = (
      ('Luke', 'lrosiak@sunlightfoundation.com'),
 )
-
 
 MANAGERS = ADMINS
 
@@ -15,14 +13,6 @@ if DEBUG:
     CACHE_BACKEND = 'memcached:///127.0.0.1:11211'
 else:
     CACHE_BACKEND = 'dummy:///'
-
-
-"""DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'reporting.sql'             # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3."""
 
 DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = 'reporting'             # Or path to database file if using sqlite3.
@@ -77,7 +67,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'gatekeeper.middleware.GatekeeperMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
-#    'debug_toolbar.middleware.DebugToolbarMiddleware',
+    # 'debug_toolbar.middleware.DebugToolbarMiddleware',
 
 )
 
@@ -103,12 +93,12 @@ INSTALLED_APPS = (
     'mediasync',
     'reportingsite.millions', 
     'storages',
-#    'debug_toolbar',
+    # 'debug_toolbar',
 )
-
-DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': lambda r: True,
-}
+# INTERNAL_IPS = ('127.0.0.1','localhost')
+# DEBUG_TOOLBAR_CONFIG = {
+#     'SHOW_TOOLBAR_CALLBACK': lambda r: True,
+# }
 
 DEFAULT_MARKUP = 'plain'
 BLOGDOR_POSTS_PER_PAGE = 14
@@ -119,11 +109,6 @@ AKISMET_KEY = '***REMOVED***'
 WHICHSITE_CHOICES = [('SLRG', 'Sunlight Reporting Group'), ('SS', 'SubsidyScope'), ('FLIT', 'FLIT')]
 ENTRY_TYPES = [('B', 'Blog'), ('R','Report')]
 
-MEDIASYNC_AWS_KEY = "***REMOVED***"
-MEDIASYNC_AWS_SECRET = "***REMOVED***"
-MEDIASYNC_AWS_BUCKET = "assets.sunlightfoundation.com" #"bucket_name"  
-MEDIASYNC_AWS_PREFIX = "reporting/1.0"
-
 TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.auth",
     "django.core.context_processors.debug",
@@ -133,22 +118,17 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "context_processors.filters",
 )
 
-
-
 MEDIASYNC_AWS_KEY = "***REMOVED***"
 MEDIASYNC_AWS_SECRET = "***REMOVED***"
 MEDIASYNC_AWS_BUCKET = "assets.sunlightfoundation.com" #"bucket_name"  
 MEDIASYNC_AWS_PREFIX = "reporting/1.0"
 
-
-
-DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3BotoStorage'
 AWS_ACCESS_KEY_ID  = MEDIASYNC_AWS_KEY 
 AWS_SECRET_ACCESS_KEY = MEDIASYNC_AWS_SECRET
 AWS_STORAGE_BUCKET_NAME = MEDIASYNC_AWS_BUCKET
 from S3 import CallingFormat
 AWS_CALLING_FORMAT = CallingFormat.SUBDOMAIN
-
 
 try:
     from local_settings import *
