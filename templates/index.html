@@ -21,7 +21,13 @@
             <span class="postdate">{{entry.date_published|date:"M j, Y"}}</span>
             <span class="posttime">{{entry.date_published|date:"P"}}</span>     
           </span>
-    <p>{%if entry.summary%}{{entry.summary}}{%else%}{{entry.content|striptags}}{%endif%}</p>
+    		<p>
+				{% if entry.summary %}
+					{{ entry.summary }}
+				{% else %}
+					{{ entry.content|striptags }}
+				{% endif %}
+			</p>
         </div>
         {%else%}
         {%if entry.twit%}
@@ -60,7 +66,11 @@
         <span class="postdate">{{entry.date_published|date:"M j, Y"}}</span>
         <span class="posttime">{{entry.date_published|date:"P"}}</span>
       </span>
-      {{ entry|grafs:3 }}
+		{% if entry.excerpt %}
+			{{ entry.excerpt|safe }}
+		{% else %}
+			{{ entry|grafs:3 }}
+		{% endif %}
       {% endautoescape %}
     </div>
     {%endfor%}       
