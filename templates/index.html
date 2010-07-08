@@ -68,6 +68,7 @@
       </span>
 		{% if entry.excerpt %}
 			{{ entry.excerpt|safe }}
+			<a class="readMoreFeature" href="{% url blogdor_post entry.date_published.year entry.slug %}">Read all about it</a>
 		{% else %}
 			{{ entry|grafs:3 }}
 		{% endif %}
