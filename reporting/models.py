@@ -104,7 +104,7 @@ class Post(models.Model):
 
 
 
-#moderator.register(Post, BlogdorModerator)
+moderator.register(Post, BlogdorModerator)
 
 
 class Backup(models.Model):
