@@ -43,6 +43,7 @@
           {% for comment in comment_list %}
             <li id="c{{ comment.pk }}">
               <span class="commentMetaAuthor">
+              <a name="{{ comment.pk }}" href="#{{ comment.pk }}">#</a>
                 {% if comment.user_url %}
                   <a href="{{ comment.user_url }}">{{ comment.user_name }}</a>
                 {% else %}
