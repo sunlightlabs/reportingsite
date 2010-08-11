@@ -2,6 +2,7 @@
 {% load comments %}{% load lede %} {%load sidebar%}
 {% load markup %}
 {% load reporting_tags %}
+{% load cache %}
 
 
 {% block body %}home{% endblock %}
@@ -77,6 +78,8 @@
     {%endfor%}       
  
   </div>
+
+{% cache 43200 reporting_calendar %}
 <div class="mainModule calendar lastItem">      
   <h3>Dates we're watching</h3>
     <ol>{%get_calendar%}
@@ -91,5 +94,6 @@
       {%endfor%}              
     </ol>  
 </div>
+{% endcache %}
 
 {% endblock %}

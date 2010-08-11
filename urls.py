@@ -30,8 +30,9 @@ urlpatterns = patterns(
     url(r'^blog/$', 'archive', name='blogdor_archive'),
     
     # post
-    url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[\w-]+)/$', 'post_wpcompat', name='blogdor_post_wpcompat'),  
-    url(r'^(?P<year>\d{4})/(?P<slug>[\w-]+)/$', 'post', name='blogdor_post'),
+    #url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[\w-]+)/$', 'post_wpcompat', name='blogdor_post_wpcompat'),  
+    url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[\w-]+)/$', 'post_detail', name='blogdor_post_wpcompat'),  
+    url(r'^(?P<year>\d{4})/(?P<slug>[\w-]+)/$', 'post_detail', name='blogdor_post'),
     
     # author
     url(r'^author/(?P<username>[\w\s]+)/$', 'author', name='blogdor_author'),
@@ -46,7 +47,7 @@ urlpatterns = patterns(
 
     url(r'^adminajax/(?P<user_id>\d+)/(?P<post_id>\d+)/$', 'admin_currentedit', name='admin_currentedit'),
 
-    url(r'^recovery/', include('millions.urls'))
+    url(r'^recovery/', include('millions.urls')),
 
 )
 

@@ -1,3 +1,4 @@
+from django.template.defaultfilters import dictsortreversed
 from feedinator.models import Feed, FeedEntry
 from django.core.cache import cache
 from django.views.decorators.cache import cache_page
@@ -20,11 +21,27 @@ import datetime, time
 from django.contrib.comments.models import Comment
 from django.template import RequestContext
 
+
 POSTS_PER_PAGE = getattr(settings, "BLOGDOR_POSTS_PER_PAGE", 10)
 YEAR_POST_LIST = getattr(settings, "BLOGDOR_YEAR_POST_LIST", False)
 WP_PERMALINKS = False
 WHICHSITE_CHOICES = getattr(settings, "WHICHSITE_CHOICES", False)
 
+
+#@cache_page(60*15)
+def post_detail(request, year, slug, month=None, day=None):
+    key = 'reporting:%s:%s' % (year, slug)
+    post = cache.get(key)
+    if not post:
+        post = get_object_or_404(Post, date_published__year=year, slug=slug)
+        cache.set(key, post, 60*60)
+
+    return render_to_response('post_detail.html', 
+                              {'post': post, 
+                               'bodyclass': 'blog', },
+                              context_instance=RequestContext(request))
+
+"""
 @cache_page(60 * 60)                            
 def post(request, year, slug):
     return _post(request, year, slug)
@@ -44,6 +61,7 @@ def _post_by_id(request, id):
     post = get_object_or_404(Post, pk=id)
 
     return render_to_response('post_detail.html', {'post': post, 'bodyclass': 'blog'   }, context_instance=RequestContext(request))
+"""
 
 
 #
@@ -183,28 +201,39 @@ def author(request, username):
         return HttpResponseRedirect(reverse('blogdor_archive'))
 
 
-@cache_page(60 * 60)
+def mergetweets(posts, tweetsfeed, ptentries):
+    elist = []
+    for p in posts:
+        elist.append(p) 
+    for p in ptentries:
+        elist.append(p) 
+    for t in tweetsfeed:
+        elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
+    elist = dictsortreversed(elist, 'date_published')
+    return elist
+
+
+#@cache_page(60 * 60)
 def index(request):
-   
-    def mergetweets(posts, tweetsfeed, ptentries):
-        elist = []
-        for p in posts:
-            elist.append(p) 
-        for p in ptentries:
-            elist.append(p) 
-        for t in tweetsfeed:
-            elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
-        return elist
 
-    featured = list(Post.objects.published().filter(is_favorite=True).select_related()[:4])
-    f1 = featured[0].pk
-    f2 = featured[1].pk
-    f3 = featured[2].pk
-    f4 = featured[3].pk
-    ptentries = list(Feed.objects.get(codename='partytime').entries.all().select_related())
-    blogs = mergetweets( Post.objects.published().exclude(pk__in=[f1,f2,f3,f4])[:10], FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-')[:4], ptentries)
+    key = 'reporting_featured_posts'
+    featured = cache.get(key)
+    if not featured:
+        featured = Post.objects.favorites().select_related()[:4]
+        cache.set(key, featured, 60*60)
 
-    return render_to_response('index.html', {'blogs': blogs, 'featured': featured, 'bodyclass': 'home' }, context_instance=RequestContext(request) )
+    key = 'reporting_homepage_bloglist'
+    blogs = cache.get(key)
+    if not blogs:
+        blogs = mergetweets(
+                    Post.objects.published().filter(is_favorite=False).select_related()[:10],
+                    FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-').select_related()[:4],
+                    Feed.objects.get(codename='partytime').entries.all().select_related()[:15])
+        cache.set(key, blogs, 60*15)
+
+    return render_to_response('index.html', 
+                              {'blogs': blogs, 'featured': featured, 'bodyclass': 'home'},
+                              context_instance=RequestContext(request))
 
 
 @cache_page(60 * 60)
@@ -260,3 +289,6 @@ def adminfiles(request):
 def handler404(request):
     return archive(request)
 
+
+def testpage(request):
+    return render_to_response('testpage.html', {}, context_instance=RequestContext(request))

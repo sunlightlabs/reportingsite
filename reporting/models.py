@@ -5,6 +5,7 @@ from django.db import models
 from tagging.fields import TagField
 import datetime
 from django.contrib.sites.models import Site
+from django.db.models import signals
 
 from comments import BlogdorModerator
 from django.contrib.comments.moderation import moderator
@@ -15,6 +16,7 @@ from django.template.loader import render_to_string
 COMMENT_FILTERS = getattr(settings, "BLOGDOR_COMMENT_FILTERS", [])
 WP_PERMALINKS = getattr(settings, "BLOGDOR_WP_PERMALINKS", False)
 WHICHSITE_CHOICES = getattr(settings, "WHICHSITE_CHOICES", False)
+
 
 class PostQuerySet(models.query.QuerySet):
     
@@ -27,15 +29,20 @@ class PostQuerySet(models.query.QuerySet):
     def recall(self):
         return self.update(is_published=False)
 
+
 class PostManager(models.Manager):
     
     use_for_related_fields = True
     
     def published(self):
         return Post.objects.filter(is_published=True)
+
+    def favorites(self):
+        return Post.objects.filter(is_published=True, is_favorite=True)
         
     def get_query_set(self):
         return PostQuerySet(self.model)
+
 
 class Post(models.Model):
     objects = PostManager()
@@ -102,6 +109,23 @@ class Post(models.Model):
         self.save()
 
 
+def cache_updater(sender, **kwargs):
+    instance = kwargs['instance']
+    key = 'reporting:%s:%s' % (instance.date_published.year, instance.slug)
+    cache.set(key, instance, 60*60)
+    cache.delete('reporting_featured_posts')
+
+def cache_deleter(sender, **kwargs):
+    instance = kwargs['instance']
+    key = 'reporting:%s:%s' % (instance.date_published.year, instance.slug)
+    cache.delete(key)
+
+    if instance.is_favorite:
+        cache.delete('reporting_featured_posts')
+
+
+signals.post_save.connect(cache_updater, sender=Post)
+signals.pre_delete.connect(cache_deleter, sender=Post)
 
 
 moderator.register(Post, BlogdorModerator)
@@ -117,7 +141,7 @@ class Backup(models.Model):
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage as s3_storage
 from django.core.cache import cache
-from storages.backends.s3 import *
+#from storages.backends.s3 import *
 
 class Upload(models.Model):
     myfile = models.FileField(storage=s3_storage, upload_to='uploads')
