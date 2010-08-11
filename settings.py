@@ -23,14 +23,6 @@ DATABASES = {
             }
         }
 
-"""
-DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'reporting'             # Or path to database file if using sqlite3.
-DATABASE_USER = 'reporting'             # Not used with sqlite3.
-DATABASE_PASSWORD = '***REMOVED***'         # Not used with sqlite3.
-DATABASE_HOST = 'belushi.sunlightlabs.org'             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
-"""
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -145,6 +137,13 @@ AWS_SECRET_ACCESS_KEY = MEDIASYNC_AWS_SECRET
 AWS_STORAGE_BUCKET_NAME = MEDIASYNC_AWS_BUCKET
 from S3 import CallingFormat
 AWS_CALLING_FORMAT = CallingFormat.SUBDOMAIN
+
+
+HAYSTACK_SEARCH_ENGINE = 'solr'
+HAYSTACK_SOLR_URL = 'http://morgan.sunlightlabs.org:8080/solr/core_reporting'
+HAYSTACK_SITECONF = 'search_sites'
+
+
 
 try:
     from local_settings import *
