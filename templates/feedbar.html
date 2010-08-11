@@ -1,6 +1,7 @@
 {% load smart_if %}
 {% load sidebar %}
 {% load tagging_tags %}
+{% load cache %}
 {% tags_for_object post as tags %}
 
 <script type="text/javascript">
@@ -18,6 +19,8 @@ if (box.value=='Search posts') { box.value=''; }
     </button>
   </form>
 </div>
+
+{% cache 3600 feedbar %}
 
 {% if widget %}
 <div class="mainModule recentPosts">
@@ -91,3 +94,5 @@ if (box.value=='Search posts') { box.value=''; }
             <a class="tag{{ tag.font_size }}" a href="/tag/{{tag}}">{{ tag }}</a>
             {% endfor %}
           </div>
+
+{% endcache %}
