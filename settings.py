@@ -3,33 +3,34 @@
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-
 ADMINS = (
-     ('Luke', 'lrosiak@sunlightfoundation.com'),
+     ('Aaron Bycoffe', 'abycoffe@sunlightfoundation.com'),
 )
-
 
 MANAGERS = ADMINS
 
-if DEBUG:
-    CACHE_BACKEND = 'memcached:///127.0.0.1:11211'
-else:
-    CACHE_BACKEND = 'dummy:///'
+CACHE_BACKEND = 'memcached://127.0.0.1:11211'
 
 
-"""DATABASE_ENGINE = 'sqlite3'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
-DATABASE_NAME = 'reporting.sql'             # Or path to database file if using sqlite3.
-DATABASE_USER = ''             # Not used with sqlite3.
-DATABASE_PASSWORD = ''         # Not used with sqlite3.
-DATABASE_HOST = ''             # Set to empty string for localhost. Not used with sqlite3.
-DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3."""
+DATABASES = {
+        'default': {
+            'NAME': 'reporting',
+            'USER': 'reporting',
+            'PASSWORD': '***REMOVED***',
+            'ENGINE': 'django.db.backends.mysql',
+            'HOST': 'belushi.sunlightlabs.org',
+            'PORT': '',
+            }
+        }
 
+"""
 DATABASE_ENGINE = 'mysql'           # 'postgresql_psycopg2', 'postgresql', 'mysql', 'sqlite3' or 'oracle'.
 DATABASE_NAME = 'reporting'             # Or path to database file if using sqlite3.
 DATABASE_USER = 'reporting'             # Not used with sqlite3.
 DATABASE_PASSWORD = '***REMOVED***'         # Not used with sqlite3.
 DATABASE_HOST = 'belushi.sunlightlabs.org'             # Set to empty string for localhost. Not used with sqlite3.
 DATABASE_PORT = ''             # Set to empty string for default. Not used with sqlite3.
+"""
 
 # Local time zone for this installation. Choices can be found here:
 # http://en.wikipedia.org/wiki/List_of_tz_zones_by_name
@@ -74,9 +75,10 @@ TEMPLATE_LOADERS = (
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
+    'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
-    'gatekeeper.middleware.GatekeeperMiddleware',
-    'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    #'gatekeeper.middleware.GatekeeperMiddleware',
+    #'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 
 )
@@ -97,18 +99,22 @@ INSTALLED_APPS = (
     'django.contrib.admin',
     'django.contrib.flatpages',
     'feedinator',
-    'feedparser',
+    #'feedparser', # Feedparser is a single python file, not a module. This isn't allowed as of http://code.djangoproject.com/changeset/12950
     'reporting',
     'django.contrib.humanize',
     'mediasync',
     'reportingsite.millions', 
     'storages',
     'debug_toolbar',
+    'haystack',
 )
 
+INTERNAL_IPS = ('127.0.0.1','localhost')
+
 DEBUG_TOOLBAR_CONFIG = {
-    'SHOW_TOOLBAR_CALLBACK': lambda r: True,
+    'INTERCEPT_REDIRECTS': False,
 }
+
 
 DEFAULT_MARKUP = 'plain'
 BLOGDOR_POSTS_PER_PAGE = 14
@@ -119,36 +125,26 @@ AKISMET_KEY = '***REMOVED***'
 WHICHSITE_CHOICES = [('SLRG', 'Sunlight Reporting Group'), ('SS', 'SubsidyScope'), ('FLIT', 'FLIT')]
 ENTRY_TYPES = [('B', 'Blog'), ('R','Report')]
 
-MEDIASYNC_AWS_KEY = "***REMOVED***"
-MEDIASYNC_AWS_SECRET = "***REMOVED***"
-MEDIASYNC_AWS_BUCKET = "assets.sunlightfoundation.com" #"bucket_name"  
-MEDIASYNC_AWS_PREFIX = "reporting/1.0"
-
 TEMPLATE_CONTEXT_PROCESSORS = (
-    "django.core.context_processors.auth",
+    "django.contrib.auth.context_processors.auth",
     "django.core.context_processors.debug",
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "context_processors.latest_by_site",
-    "context_processors.filters",
+    #"context_processors.filters",
 )
-
-
 
 MEDIASYNC_AWS_KEY = "***REMOVED***"
 MEDIASYNC_AWS_SECRET = "***REMOVED***"
 MEDIASYNC_AWS_BUCKET = "assets.sunlightfoundation.com" #"bucket_name"  
 MEDIASYNC_AWS_PREFIX = "reporting/1.0"
 
-
-
-DEFAULT_FILE_STORAGE = 'storages.backends.s3.S3Storage'
+DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 AWS_ACCESS_KEY_ID  = MEDIASYNC_AWS_KEY 
 AWS_SECRET_ACCESS_KEY = MEDIASYNC_AWS_SECRET
 AWS_STORAGE_BUCKET_NAME = MEDIASYNC_AWS_BUCKET
 from S3 import CallingFormat
 AWS_CALLING_FORMAT = CallingFormat.SUBDOMAIN
-
 
 try:
     from local_settings import *

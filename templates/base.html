@@ -52,6 +52,9 @@
         </div> 
       </div>
     </div>
+    {% load cache %}
+
+    {% cache 1800 footer %}
     <div id="footer">
       <div id="fullWidth">
         <div id="otherPosts">
@@ -95,6 +98,8 @@
         </div>
       </div>
     </div>
+    {% endcache %}
+
     <div class="clear"></div>
     <div id="copyrightWrapper">
       <div id="copyright">

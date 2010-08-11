@@ -43,6 +43,7 @@ class BlogdorModerator(CommentModerator):
         }
 
         is_spam = a.comment_check(comment.comment.encode('ascii','ignore'), akismet_data)
+        return is_spam
 
         #if is_spam==False:
            #email()
