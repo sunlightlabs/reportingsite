@@ -1,5 +1,5 @@
 <form name="search" id="search" method="get" action="{% url reporting_search %}">
-    <input id="searchbox" type="text" name="q" value="{{ query }}" />
+    <input id="searchbox" type="text" name="q" value="{% if query %}{{ query }}{% endif %}" />
     <button class="searchBtn" type="submit"> 
         <span>Search</span>
      </button>
