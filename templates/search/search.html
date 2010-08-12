@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+
+{% load lede %}
+{% load highlight %}
+{% load humanize %}
+{% load repeat %}
+
+{% block content %}
+    <h2>Search{% if query %} Results{% endif %}</h2>
+    {% include "search/searchform.html" %}
+
+    {% if query %}
+        {% if not page.object_list %}
+            <p style="font-weight: bold;">No results found</p>
+        {% else %}
+            <p>
+            {% with results.count as num_results %}
+            <span style="font-weight: bold;">{{ num_results|intcomma|apnumber|title }} result{{ num_results|pluralize }} found</span>
+            {% endwith %}
+
+            {% if results.count > 1 %}
+                {% repeat 5 %}&nbsp;{% endrepeat %}
+                Sort by: 
+                {% if order == 'date' %}
+                Date{% repeat 2 %}&nbsp;{% endrepeat %}|{% repeat 2 %}&nbsp;{% endrepeat %}<a href="?q={{ query }}&order=rel">Relevance</a>
+                {% else %}
+                <a href="?q={{ query }}">Date</a>{% repeat 2 %}&nbsp;{% endrepeat %}|{% repeat 2 %}&nbsp;{% endrepeat %}Relevance
+                {% endif %}
+            {% endif %}
+            </p>
+
+        {% endif %}
+    {% endif %}
+
+
+    <ol class="moduleLists">
+        {% for result in page.object_list %}
+            {% with result.object as post %}
+            <li class="module posts">
+            <h2><a href="{% url blogdor_post post.date_published.year post.slug %}">{{ post.title }}</a></h2>
+                <span class="postMeta">
+                    {{ post.shortbyline|safe }}
+                    <span class="postdate">{{ post.date_published|date:"M j, Y" }}</span>
+                    <span class="posttime">{{ post.date_published|date:"P" }}</span>
+                </span>
+                {{ post|lede|safe }}
+            </li>
+            {% endwith %}
+        {% endfor %}
+    </ol>
+
+{% if page.has_other_pages %}
+<div id="paginator" style="text-align: center;">
+    {% if page.has_previous %} <a href="?q={{ query }}&page={{ page.previous_page_number }}">&lt;&lt;&nbsp;Previous</a>{% repeat 4 %}&nbsp;{% endrepeat %}{% endif %}
+    Page {{ page.number }} of {{ page.paginator.num_pages }}{% repeat 4 %}&nbsp;{% endrepeat %}
+  {% if page.has_next %} <a href="?q={{ query }}&page={{ page.next_page_number }}">Next&nbsp;&gt;&gt;</a>{% endif %}
+</div>
+{% endif %}
+
+{% endblock %}
+
+
+{%block sidebar%}
+<h3>{{topinfo|safe}}</h3>
+
+{% include "feedbar2.html" %}
+{% block searchbox %}{% endblock %}
+{%endblock%}

@@ -99,6 +99,7 @@ INSTALLED_APPS = (
     'storages',
     'debug_toolbar',
     'haystack',
+    'django.contrib.humanize',
 )
 
 INTERNAL_IPS = ('127.0.0.1','localhost')
@@ -142,7 +143,7 @@ AWS_CALLING_FORMAT = CallingFormat.SUBDOMAIN
 HAYSTACK_SEARCH_ENGINE = 'solr'
 HAYSTACK_SOLR_URL = 'http://morgan.sunlightlabs.org:8080/solr/core_reporting'
 HAYSTACK_SITECONF = 'search_sites'
-
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 20
 
 
 try:
