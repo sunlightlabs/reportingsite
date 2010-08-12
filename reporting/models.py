@@ -115,6 +115,7 @@ def cache_updater(sender, **kwargs):
     cache.set(key, instance, 60*60)
     cache.delete('reporting_featured_posts')
 
+
 def cache_deleter(sender, **kwargs):
     instance = kwargs['instance']
     key = 'reporting:%s:%s' % (instance.date_published.year, instance.slug)

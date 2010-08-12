@@ -37,27 +37,16 @@ def post_detail(request, year, slug, month=None, day=None):
         post = get_object_or_404(Post, date_published__year=year, slug=slug)
         cache.set(key, post, 60*60)
 
+    # Check whether the post is published. If so, show it.
+    # If not, check whether the user requesting the page
+    # is a staff member. Show unpublished posts only to staff.
+    if not post.is_published and not request.user.is_staff:
+        raise Http404
+
     return render_to_response('post_detail.html', 
                               {'post': post, 
                                'bodyclass': 'blog', },
                               context_instance=RequestContext(request))
-
-
-#
-# Preview view
-#
-def preview(request, object_id):
-    from django.contrib.auth.decorators import login_required
-    login_required(preview)
-    try:
-        post = Post.objects.get(pk=object_id)
-        if post.is_published:
-            return HttpResponsePermanentRedirect(post.get_absolute_url())
-        else:
-            return render_to_response('post_detail.html', {'post': post, 'bodyclass': 'blog'   }, context_instance=RequestContext(request))
-    except Post.DoesNotExist:
-        return HttpResponseRedirect(reverse('blogdor_archive'))
-
 
 
 #
@@ -268,7 +257,7 @@ def search(request):
                                                   'page': page,
                                                   'results': results, # So we can access things like results.count()
                                                   'order': order,
-						  'hide_sidebar_search': True,
+                                                  'hide_sidebar_search': True,
                                                  }
                                    )
 

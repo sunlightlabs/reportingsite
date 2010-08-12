@@ -10,8 +10,11 @@
 
   {% get_comment_list for post as comment_list %}
 
-  {% autoescape off %}	
+  {% autoescape off %}
     <div class="module posts">
+        {% if not post.is_published %}
+        <span style="font-weight: bold; color: red;">Note: This post is not yet published</span>
+        {% endif %}
       <h2>{{post.title}}</h2>
       <span class="postMeta">
         {{post.shortbyline}}
@@ -23,17 +26,17 @@
 
 
 
-    <!-- AddThis Button BEGIN --> 
-    <div class="addthis_toolbox addthis_default_style"> 
-    <a href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4b882c151409ed59" class="addthis_button_compact">Share</a> 
-    <span class="addthis_separator">|</span> 
-    <a class="addthis_button_twitter"></a> 
-    <a class="addthis_button_reddit"></a> 
-    <a class="addthis_button_facebook"></a> 
-    <a class="addthis_button_google"></a> 
-    </div> 
-    <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4b882c151409ed59"></script> 
-    <!-- AddThis Button END --> 
+    <!-- AddThis Button BEGIN -->
+    <div class="addthis_toolbox addthis_default_style">
+    <a href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4b882c151409ed59" class="addthis_button_compact">Share</a>
+    <span class="addthis_separator">|</span>
+    <a class="addthis_button_twitter"></a>
+    <a class="addthis_button_reddit"></a>
+    <a class="addthis_button_facebook"></a>
+    <a class="addthis_button_google"></a>
+    </div>
+    <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4b882c151409ed59"></script>
+    <!-- AddThis Button END -->
 
     </div>
     <div class="module commentSection">
@@ -68,15 +71,15 @@
         <ul>
           <li><label for="id_name">Name</label> <input id="id_name" class="full" type="text" name="name" maxlength="50" /></li>
           <li><label for="id_email">Email address</label> <input type="text" class="full" name="email" id="id_email" /></li>
-          <li><label for="id_url">URL</label> <input type="text" name="url" class="full" id="id_url" /></li>		
-          <li><label for="id_comment">Comment</label> <textarea id="id_comment" class="textarea full" rows="5" cols="32" name="comment"></textarea></li>		
+          <li><label for="id_url">URL</label> <input type="text" name="url" class="full" id="id_url" /></li>
+          <li><label for="id_comment">Comment</label> <textarea id="id_comment" class="textarea full" rows="5" cols="32" name="comment"></textarea></li>
           <li>
             <button class="submitBtn" type="submit">
               <span>Submit</span>
             </button>
           </li>
         </ul>
-      </form>  
+      </form>
   </div>
   {%endautoescape%}
 {%endblock%}
