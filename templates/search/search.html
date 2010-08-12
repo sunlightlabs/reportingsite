@@ -1,7 +1,6 @@
 {% extends "base.html" %}
 
 {% load lede %}
-{% load highlight %}
 {% load humanize %}
 {% load repeat %}
 
@@ -59,10 +58,7 @@
 
 {% endblock %}
 
-
-{%block sidebar%}
-<h3>{{topinfo|safe}}</h3>
-
+{% block sidebar %}
 {% include "feedbar2.html" %}
 {% block searchbox %}{% endblock %}
-{%endblock%}
+{% endblock %}
