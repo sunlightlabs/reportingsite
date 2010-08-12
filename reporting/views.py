@@ -30,7 +30,6 @@ WP_PERMALINKS = False
 WHICHSITE_CHOICES = getattr(settings, "WHICHSITE_CHOICES", False)
 
 
-#@cache_page(60*15)
 def post_detail(request, year, slug, month=None, day=None):
     key = 'reporting:%s:%s' % (year, slug)
     post = cache.get(key)
@@ -43,33 +42,10 @@ def post_detail(request, year, slug, month=None, day=None):
                                'bodyclass': 'blog', },
                               context_instance=RequestContext(request))
 
-"""
-@cache_page(60 * 60)                            
-def post(request, year, slug):
-    return _post(request, year, slug)
-
-@cache_page(60 * 60)
-def post_wpcompat(request, year, month, day, slug):
-    post = get_object_or_404(Post, date_published__year=year, date_published__month=month, slug__startswith=slug[:56], is_published=True)
-    return  _post_by_id(request, post.id)
-
-@cache_page(60 * 60)
-def _post(request, year, slug):
-    post = get_object_or_404(Post, date_published__year=year, slug=slug, is_published=True)
-    return render_to_response('post_detail.html', {'post': post, 'bodyclass': 'blog'   }, context_instance=RequestContext(request))
-
-@cache_page(60 * 60)
-def _post_by_id(request, id):
-    post = get_object_or_404(Post, pk=id)
-
-    return render_to_response('post_detail.html', {'post': post, 'bodyclass': 'blog'   }, context_instance=RequestContext(request))
-"""
-
 
 #
 # Preview view
 #
-@cache_page(60*60)
 def preview(request, object_id):
     from django.contrib.auth.decorators import login_required
     login_required(preview)
@@ -87,7 +63,7 @@ def preview(request, object_id):
 #
 # Post archive views
 #
-@cache_page(60 * 60)                  
+@cache_page(60 * 10)                  
 def archive(request):
     return list_detail.object_list(
                     request,
@@ -97,7 +73,7 @@ def archive(request):
                     template_object_name='post',
                     allow_empty=True)
 
-@cache_page(60 * 60)
+@cache_page(60 * 10)
 def archive_month(request, year, month):
     return date_based.archive_month(
                     request,
@@ -110,7 +86,7 @@ def archive_month(request, year, month):
                     template_object_name='post',
                     allow_empty=False)
 
-@cache_page(60 * 60)
+@cache_page(60 * 10)
 def archive_year(request, year):
     return date_based.archive_year(
                     request,
@@ -126,7 +102,7 @@ def archive_year(request, year):
 # Post tag views
 #
 
-@cache_page(60*60)
+@cache_page(60*10)
 def tag(request, tag):
     return tagged_object_list(
                     request,
@@ -138,7 +114,7 @@ def tag(request, tag):
                     extra_context={'tag': tag},
                     allow_empty=True)
 
-@cache_page(60*60)
+@cache_page(60*10)
 def tag_list(request):
     ct = ContentType.objects.get_for_model(Post)
     return list_detail.object_list(
@@ -186,7 +162,7 @@ def admin_currentedit(request, user_id, post_id):
 # Author views
 #
 
-@cache_page(60 * 60)
+@cache_page(60 * 10)
 def author(request, username):
     try:
         author = User.objects.get(username=username)
@@ -215,7 +191,6 @@ def mergetweets(posts, tweetsfeed, ptentries):
     return elist
 
 
-#@cache_page(60 * 60)
 def index(request):
 
     key = 'reporting_featured_posts'
@@ -238,7 +213,7 @@ def index(request):
                               context_instance=RequestContext(request))
 
 
-@cache_page(60 * 60)
+@cache_page(60 * 10)
 def bysite(request, site):
     topinfo=''
     if site=='features':
