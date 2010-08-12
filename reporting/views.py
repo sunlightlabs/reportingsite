@@ -268,6 +268,7 @@ def search(request):
                                                   'page': page,
                                                   'results': results, # So we can access things like results.count()
                                                   'order': order,
+						  'hide_sidebar_search': True,
                                                  }
                                    )
 

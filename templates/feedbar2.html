@@ -4,6 +4,7 @@
 
 
 {% block searchbox %}
+{% if not hide_sidebar_search %}
 <script type="text/javascript">
 function cleardefault(box)
 {
@@ -19,6 +20,7 @@ if (box.value=='Search posts') { box.value=''; }
     </button>
   </form>
 </div>
+{% endif %}
 {% endblock %}
 
 {% if widget %}
