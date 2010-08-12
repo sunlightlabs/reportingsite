@@ -13,8 +13,6 @@ urlpatterns = patterns(
     url(r'^$', 'index'),
     url(r'^admin/r/21/(?P<object_id>[0-9]+)/$', 'preview'),
     (r'^admin/', include(admin.site.urls)),
-    url(r'^search/(?P<terms>.+)/$', 'search'),
-    url(r'^search/$', 'searchredirect'),
 
     # comment urls
     url(r'^comment/', include('django.contrib.comments.urls')),
@@ -49,12 +47,10 @@ urlpatterns = patterns(
 
     url(r'^recovery/', include('millions.urls')),
 
+    url(r'^search/', 'search', name='reporting_search'),
 )
 
 
-
-
-    
 from reporting.feeds import *
 default_feeds = {
         'latest': LatestPosts,
@@ -76,5 +72,4 @@ if (settings.DEBUG):
     urlpatterns += patterns('',  
         url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),  
     )  
-
 

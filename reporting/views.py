@@ -20,6 +20,8 @@ from models import *
 import datetime, time
 from django.contrib.comments.models import Comment
 from django.template import RequestContext
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
+from haystack.query import SearchQuerySet
 
 
 POSTS_PER_PAGE = getattr(settings, "BLOGDOR_POSTS_PER_PAGE", 10)
@@ -259,26 +261,40 @@ def bysite(request, site):
                     extra_context={'topinfo': topinfo},
                     )
 
-@cache_page(60 * 60)
-def searchredirect(request):
 
-    if request.GET['terms']:
-        terms = request.GET['terms']
-        return HttpResponseRedirect('/search/'+terms)
-    else:
-        return HttpResponseRedirect(reverse('blogdor_archive'))
+def search(request):
+    results = None
+    page = None
+    query = request.GET.get('q')
+    order = request.GET.get('order', 'date')
 
-@cache_page(60 * 60)  
-def search(request, terms):
+    if query:
+        if order == 'rel': # Sort by relevance
+            results = SearchQuerySet().filter(content=query)
+        else: # Default: sort by date
+            order = 'date'
+            results = SearchQuerySet().filter(content=query).order_by('-date_published')
 
-    stories = Post.objects.published().filter(Q(title__search=terms) | Q(content__search=terms)) 
+        paginator = Paginator(results, 20, orphans=5)
+
+        pagenum = request.GET.get('page', 1)
+        try:
+            page = paginator.page(pagenum)
+        except (EmptyPage, InvalidPage):
+            raise Http404
 
     return list_detail.object_list(request,
-                    queryset=stories,
-                    paginate_by=POSTS_PER_PAGE,
-                    template_name='posts_lede.html',
-                    template_object_name='post', allow_empty=True
-                    )
+                                   queryset=Post.objects.all(),
+                                   paginate_by=20,
+                                   template_name='search/search.html',
+                                   template_object_name='posts',
+                                   allow_empty=True,
+                                   extra_context={'query': query,
+                                                  'page': page,
+                                                  'results': results, # So we can access things like results.count()
+                                                  'order': order,
+                                                 }
+                                   )
 
 
 def adminfiles(request):
