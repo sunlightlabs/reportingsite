@@ -17,7 +17,8 @@ CKEDITOR.replace('id_content', {
                         'HorizontalRule']
                     ],
             width: 800,
-            height: 400
+            height: 400,
+            removePlugins: 'elementspath'
 });
 
 $("#id_content").before('<br /><br />');
