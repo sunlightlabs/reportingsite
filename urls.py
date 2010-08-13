@@ -40,11 +40,11 @@ urlpatterns = patterns(
 
     url(r'^adminfiles/', 'adminfiles'),
 
-    url(r'^adminajax/(?P<user_id>\d+)/(?P<post_id>\d+)/$', 'admin_currentedit', name='admin_currentedit'),
-
     url(r'^recovery/', include('millions.urls')),
 
     url(r'^search/', 'search', name='reporting_search'),
+
+    url(r'^editing/', 'admin_editing', name='admin_editing'),
 )
 
 
@@ -68,5 +68,5 @@ from django.conf import settings
 if (settings.DEBUG):  
     urlpatterns += patterns('',  
         url(r'^media/(?P<path>.*)$', 'django.views.static.serve', {'document_root': settings.MEDIA_ROOT}),  
-    )  
+    )
 

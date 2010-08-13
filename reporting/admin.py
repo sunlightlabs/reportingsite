@@ -1,5 +1,6 @@
 from models import *
 from django.contrib import admin
+from django import forms
 
 from tagging.fields import TagField
 from forms import PostAdminModelForm
@@ -8,11 +9,34 @@ import settings
 
 AUTHOR_GROUP = getattr(settings, 'BLOGDOR_AUTHOR_GROUP', None)
 
+class CkeditorContentField(forms.Textarea):
+
+    def render(self, name, value, attrs=None):
+        if name == 'content':
+            attrs.setdefault('class', 'ckeditor')
+        return super(CkeditorContentField, self).render(name, value, attrs)
+
 
 class PostAdmin(admin.ModelAdmin):
     fieldsets = (
         (None, {
-            'fields': ('title', 'slug', 'author', 'content', 'excerpt', 'pullquote', 'whichsite', 'date_published', 'override_byline', 'is_published', 'is_favorite', 'comments_enabled', 'tags')
+            'fields': ('title', 
+                       'slug', 
+                       'author', ),
+        }),
+        (None, {
+            'fields': ('content',
+                       'excerpt',
+                       'pullquote', ),
+        }),
+        (None, {
+            'fields': ('whichsite', 
+                       'date_published', 
+                       'override_byline', 
+                       'is_published', 
+                       'is_favorite', 
+                       'comments_enabled', 
+                       'tags', ),
         }),
     )
 
@@ -20,26 +44,29 @@ class PostAdmin(admin.ModelAdmin):
     list_filter = ('whichsite', 'is_published', 'author')
     list_display_links = ('title',)
     prepopulated_fields = {'slug': ('title',)}
-    search_fields = ('author__username','author__first_name','title','content')
-    actions = ('publish_posts','recall_posts','enable_comments','disable_comments')
-
+    search_fields = ('author__username', 'author__first_name', 'title', 'content')
+    actions = ('publish_posts', 'recall_posts', 'enable_comments', 'disable_comments')
+    
     adminfiles_fields = ('content',)
-
 
     form = PostAdminModelForm
 
+    formfield_overrides = {
+            models.TextField: {'widget': CkeditorContentField, },
+            models.CharField: {'widget': forms.TextInput(attrs={'size': '75'}) },
+            }
+
+    class Media:
+        js = ('js/ckeditor/ckeditor.js', 
+                )
+
     
     # return filtered author field
-    
+
     def formfield_for_foreignkey(self, db_field, request=None, **kwargs):
         formfield = super(PostAdmin, self).formfield_for_foreignkey(db_field, request, **kwargs)
-        if AUTHOR_GROUP and db_field.name == 'author':
-            try:
-                group = Group.objects.get(name=AUTHOR_GROUP)
-                authors = User.objects.filter(groups=group).order_by('username')
-                formfield.choices = ((author.id, author.username) for author in authors)
-            except Group.DoesNotExist:
-                pass
+        formfield.choices = ((author.id, author.username) 
+                                for author in User.objects.filter(is_active=True).order_by('username'))
         return formfield
     
     # post publishing actions

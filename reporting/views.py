@@ -23,6 +23,11 @@ from django.template import RequestContext
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from haystack.query import SearchQuerySet
 
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 
 POSTS_PER_PAGE = getattr(settings, "BLOGDOR_POSTS_PER_PAGE", 10)
 YEAR_POST_LIST = getattr(settings, "BLOGDOR_YEAR_POST_LIST", False)
@@ -124,28 +129,33 @@ def tag_list_admin(request):
                     template_object_name='tag',
                     allow_empty=True)
 
-def admin_currentedit(request, user_id, post_id):
-    from django.contrib.auth.decorators import login_required
-    from time import time
 
-    login_required(admin_currentedit)
+def admin_editing(request):
+    if not request.user.is_staff:
+        raise Http404
+    uid = request.GET.get('uid', None)
+    object_id = request.GET.get('objid', None)
+    if not uid or not object_id:
+        raise Http404
 
-    t = time()
-    twominago = t-150
-    u = User.objects.get(id=user_id)
-    p = Post.objects.get(id=post_id)
-    deleteyou = Backup.objects.filter(post=p,user=u).delete()
-    check = Backup.objects.filter(post=p,time__gt=twominago)
-    listusers = []
-    for c in check:
-        listusers.append( c.user.username )
-    Backup(post=p,user=u,time=t).save()
-    if len(listusers)>0:
-         s = "Also editing: " + ", ".join(listusers)
-    else:
-        s=''
-    return HttpResponse(s )
+    user = get_object_or_404(User, id=uid)
+    post = get_object_or_404(Post, id=object_id)
 
+
+    user_editing_post, created = UserEditingPost.objects.get_or_create(user=user,
+                                                                       post=post)
+    if request.GET.get('closing', None) == '1':
+        user_editing_post.delete()
+        return HttpResponse('')
+
+    user_editing_post.save() # To update timestamp
+
+    other_users_editing = UserEditingPost.objects.exclude(user=user, post=post)
+    if other_users_editing:
+        users = [editor.user.username for editor in other_users_editing]
+        return HttpResponse(json.dumps(users))
+
+    return HttpResponse('[]')
 
 #
 # Author views

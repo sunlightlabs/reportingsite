@@ -44,10 +44,11 @@ class PostManager(models.Manager):
         return PostQuerySet(self.model)
 
 
+
 class Post(models.Model):
     objects = PostManager()
    
-    title = models.CharField(max_length=255)
+    title = models.CharField('Headline', max_length=255)
     slug = models.SlugField(max_length=64, db_index=True)
     author = models.ForeignKey(User, related_name='posts')
     
@@ -73,14 +74,14 @@ class Post(models.Model):
 
     image = models.FileField(upload_to='images', max_length=500)
 
+    users_editing = models.ManyToManyField(User, through='UserEditingPost')
+
 
     def shortbyline(self):
         if self.override_byline:
             return "By " + self.override_byline
         return 'By <a href="/author/' + self.author.username + '">' + self.author.first_name + " " + self.author.last_name + '</a>'
 
-
- 
     class Meta:
         ordering = ['-date_published','-timestamp']
         
@@ -130,6 +131,16 @@ signals.pre_delete.connect(cache_deleter, sender=Post)
 
 
 moderator.register(Post, BlogdorModerator)
+
+
+class UserEditingPost(models.Model):
+    user = models.ForeignKey(User)
+    post = models.ForeignKey(Post)
+    timestamp = models.DateTimeField(auto_now=True)
+
+    class Meta:
+        unique_together = (('user', 'post'), )
+
 
 
 class Backup(models.Model):
