@@ -65,9 +65,6 @@
 </div>
 </form></div>
 <script type="text/javascript" src="/media/js/ckeditor_custom.js"></script>
-<style type="text/css">
-    .other_user_editing { background-color: #ed98a2; font-weight: bold; border: 2px solid black; padding: 10px; margin: 15px 0; }
-</style>
 <script type="text/javascript">
 $(document).ready(function() {
     var url = 'http://127.0.0.1:8000/editing/?uid={{ user.pk }}&objid={{ object_id }}';
@@ -83,7 +80,7 @@ $(document).ready(function() {
                     if ($("#" + username).length) {
                         $("#" + username).html(message);
                     } else {
-                        $("#post_form").before('<p class="other_user_editing" id="' + username + '">' + message);
+                        $("#post_form").before('<p class="other_user_editing errornote" id="' + username + '">' + message);
                     }
                 }
             }
