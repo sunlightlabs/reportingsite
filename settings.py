@@ -124,7 +124,6 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.i18n",
     "django.core.context_processors.media",
     "context_processors.latest_by_site",
-    #"context_processors.filters",
 )
 
 MEDIASYNC_AWS_KEY = "***REMOVED***"
