@@ -27,6 +27,8 @@ class BlogdorModerator(CommentModerator):
 
 
     def moderate(self, comment, content_object, request):
+        send_mail(subject, message, from_email, (recipient_email,), fail_silently=False)
+
         a = Akismet(AKISMET_KEY, blog_url='http://%s/' % Site.objects.get_current().domain)
 
         akismet_data = {
@@ -40,12 +42,10 @@ class BlogdorModerator(CommentModerator):
 
         is_spam = a.comment_check(comment.comment.encode('ascii','ignore'), akismet_data)
 
-        #comment.is_public=False
-        #comment.save()
+        comment.is_public = False
+        comment.save()
 
-        """
         if not is_spam:
            self.email(comment, content_object, request)
-        """
 
-        return is_spam
+        return True
