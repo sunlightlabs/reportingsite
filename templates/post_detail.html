@@ -60,26 +60,30 @@
         </ol>
       {% endif %}
 
-      {% get_comment_form for post as form %}
-      <h3>Leave Us a Comment</h3>
-      <form id="comment" method="post" action="{% comment_form_target %}">{% csrf_token %}
-        {{form.content_type}}
-        {{form.object_pk}}
-        {{form.timestamp}}
-        {{form.security_hash}}
-        <input id="id_honeypot" name="honeypot" style="display:none">
-        <ul>
-          <li><label for="id_name">Name</label> <input id="id_name" class="full" type="text" name="name" maxlength="50" /></li>
-          <li><label for="id_email">Email address</label> <input type="text" class="full" name="email" id="id_email" /></li>
-          <li><label for="id_url">URL</label> <input type="text" name="url" class="full" id="id_url" /></li>
-          <li><label for="id_comment">Comment</label> <textarea id="id_comment" class="textarea full" rows="5" cols="32" name="comment"></textarea></li>
-          <li>
-            <button class="submitBtn" type="submit">
-              <span>Submit</span>
-            </button>
-          </li>
-        </ul>
-      </form>
+      {% if post.days_old <= 30 %}
+          {% get_comment_form for post as form %}
+          <h3>Leave Us a Comment</h3>
+          <form id="comment" method="post" action="{% comment_form_target %}">{% csrf_token %}
+            {{form.content_type}}
+            {{form.object_pk}}
+            {{form.timestamp}}
+            {{form.security_hash}}
+            <input id="id_honeypot" name="honeypot" style="display:none">
+            <ul>
+              <li><label for="id_name">Name</label> <input id="id_name" class="full" type="text" name="name" maxlength="50" /></li>
+              <li><label for="id_email">Email address</label> <input type="text" class="full" name="email" id="id_email" /></li>
+              <li><label for="id_url">URL</label> <input type="text" name="url" class="full" id="id_url" /></li>
+              <li><label for="id_comment">Comment</label> <textarea id="id_comment" class="textarea full" rows="5" cols="32" name="comment"></textarea></li>
+              <li>
+                <button class="submitBtn" type="submit">
+                  <span>Submit</span>
+                </button>
+              </li>
+            </ul>
+          </form>
+        {% else %}
+            <em>Comments are closed.</em>
+        {% endif %}
   </div>
   {%endautoescape%}
 {%endblock%}

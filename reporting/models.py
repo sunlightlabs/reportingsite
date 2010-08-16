@@ -109,6 +109,9 @@ class Post(models.Model):
         self.is_published = False
         self.save()
 
+    def days_old(self):
+        return (datetime.datetime.now() - self.date_published).days
+
 
 def cache_updater(sender, **kwargs):
     instance = kwargs['instance']
