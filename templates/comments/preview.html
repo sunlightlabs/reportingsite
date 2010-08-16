@@ -4,7 +4,7 @@
 {% load markup %}
 
 {% block content %}
-    <form action="{% comment_form_target %}" method="post">
+    <form action="{% comment_form_target %}" method="post">{% csrf_token %}
         {% if form.errors %}
             <div class="errors">
 				{% blocktrans count form.errors|length as counter %}

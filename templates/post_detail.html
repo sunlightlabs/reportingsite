@@ -62,7 +62,7 @@
 
       {% get_comment_form for post as form %}
       <h3>Leave Us a Comment</h3>
-      <form id="comment" method="post" action="{% comment_form_target %}">
+      <form id="comment" method="post" action="{% comment_form_target %}">{% csrf_token %}
         {{form.content_type}}
         {{form.object_pk}}
         {{form.timestamp}}

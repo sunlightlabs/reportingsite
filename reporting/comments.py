@@ -1,7 +1,10 @@
 from django.core import urlresolvers
+from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.comments.moderation import CommentModerator, moderator
 from django.contrib.sites.models import Site
+
+from akismet import Akismet
 
 
 AKISMET_KEY = getattr(settings, "AKISMET_KEY", None)
@@ -13,8 +16,6 @@ class BlogdorModerator(CommentModerator):
 
     def email(self, comment, content_object, request):
 
-        from django.core.mail import send_mail
-
         from_email = "bounce@%s" % Site.objects.get_current().domain
 
         subject = "Comment on %s pending your approval" % content_object.title
@@ -22,15 +23,10 @@ class BlogdorModerator(CommentModerator):
         message = '\n\n'.join((comment.get_as_text(), appr_link))
         recipient_email = content_object.author.email
 
-        send_mail(subject, message, from_email, (recipient_email,), fail_silently=True)
-
-
+        send_mail(subject, message, from_email, (recipient_email,), fail_silently=False)
 
 
     def moderate(self, comment, content_object, request):
-
-        from akismet import Akismet
-
         a = Akismet(AKISMET_KEY, blog_url='http://%s/' % Site.objects.get_current().domain)
 
         akismet_data = {
@@ -43,10 +39,13 @@ class BlogdorModerator(CommentModerator):
         }
 
         is_spam = a.comment_check(comment.comment.encode('ascii','ignore'), akismet_data)
+
+        #comment.is_public=False
+        #comment.save()
+
+        """
+        if not is_spam:
+           self.email(comment, content_object, request)
+        """
+
         return is_spam
-
-        #if is_spam==False:
-           #email()
-
-        return True
-

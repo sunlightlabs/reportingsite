@@ -12,7 +12,7 @@ from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
 from django.core.urlresolvers import reverse
 from django.http import *
-from django.shortcuts import render_to_response, get_object_or_404
+from django.shortcuts import render_to_response, get_object_or_404, get_list_or_404
 from django.views.generic import date_based, list_detail
 from tagging.models import Tag
 from tagging.views import tagged_object_list
@@ -141,7 +141,6 @@ def admin_editing(request):
     user = get_object_or_404(User, id=uid)
     post = get_object_or_404(Post, id=object_id)
 
-
     user_editing_post, created = UserEditingPost.objects.get_or_create(user=user,
                                                                        post=post)
     if request.GET.get('closing', None) == '1':
@@ -150,7 +149,7 @@ def admin_editing(request):
 
     user_editing_post.save() # To update timestamp
 
-    other_users_editing = UserEditingPost.objects.exclude(user=user, post=post)
+    other_users_editing = UserEditingPost.objects.exclude(user=user).filter(post=post)
     if other_users_editing:
         users = [editor.user.username for editor in other_users_editing]
         return HttpResponse(json.dumps(users))
@@ -279,7 +278,3 @@ def adminfiles(request):
 @cache_page(60 * 60)
 def handler404(request):
     return archive(request)
-
-
-def testpage(request):
-    return render_to_response('testpage.html', {}, context_instance=RequestContext(request))
