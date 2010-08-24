@@ -100,6 +100,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'haystack',
     'django.contrib.humanize',
+    'ie',
 )
 
 INTERNAL_IPS = ('127.0.0.1','localhost')

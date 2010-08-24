@@ -45,6 +45,8 @@ urlpatterns = patterns(
     url(r'^search/', 'search', name='reporting_search'),
 
     url(r'^editing/', 'admin_editing', name='admin_editing'),
+
+    url(r'^independent-expenditures/', include('ie.urls')),
 )
 
 
