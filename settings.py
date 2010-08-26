@@ -48,7 +48,9 @@ MEDIA_ROOT = '/media/'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/media/'
+#MEDIA_URL = '/media/'
+#http://assets.sunlightfoundation.com.s3.amazonaws.com/
+MEDIA_URL = 'http://reporting.sunlightlabs.com/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.

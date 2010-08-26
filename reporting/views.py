@@ -39,7 +39,7 @@ def post_detail(request, year, slug, month=None, day=None):
     key = 'reporting:%s:%s' % (year, slug)
     post = cache.get(key)
     if not post:
-        post = get_object_or_404(Post, date_published__year=year, slug=slug)
+        post = get_object_or_404(Post, date_published__year=year, slug=slug, is_published=True)
         cache.set(key, post, 60*60)
 
     # Check whether the post is published. If so, show it.
@@ -197,14 +197,14 @@ def index(request):
         featured = Post.objects.favorites().select_related()[:4]
         cache.set(key, featured, 60*60)
 
-    key = 'reporting_homepage_bloglist'
-    blogs = cache.get(key)
-    if not blogs:
-        blogs = mergetweets(
-                    Post.objects.published().filter(is_favorite=False).select_related()[:10],
-                    FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-').select_related()[:4],
-                    Feed.objects.get(codename='partytime').entries.all().select_related()[:15])
-        cache.set(key, blogs, 60*15)
+    #key = 'reporting_homepage_bloglist'
+    #blogs = cache.get(key)
+    #if not blogs:
+    blogs = mergetweets(
+                Post.objects.published().filter(is_favorite=False).select_related()[:10],
+                FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-').select_related()[:4],
+                Feed.objects.get(codename='partytime').entries.all().select_related()[:15])
+    #    cache.set(key, blogs, 60*15)
 
     return render_to_response('index.html', 
                               {'blogs': blogs, 'featured': featured, 'bodyclass': 'home'},
