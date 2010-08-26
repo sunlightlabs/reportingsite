@@ -44,10 +44,16 @@ urlpatterns = patterns('',
 #        name='ie_payee_list'
 #        ),
 
+    url(r'^feed/csv', 
+        'ie.views.new_committees_csv',
+        name='ie_new_committees_csv'
+        ),
+
     url(r'^feed',
         CommitteeFeed(),
         name='ie_new_committee_feed'
         ),
+
 
 #    url(r'^',
 #        'ie.views.index',

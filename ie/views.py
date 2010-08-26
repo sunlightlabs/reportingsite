@@ -1,10 +1,15 @@
-from operator import itemgetter
 from collections import defaultdict
+from operator import itemgetter
+import csv
+import datetime
+from cStringIO import StringIO
 
 from django.http import HttpResponse, Http404
 from django.shortcuts import get_object_or_404, get_list_or_404, render_to_response
 from django.views.generic import list_detail
 from django.conf import settings
+
+from ie.models import Committee
 
 from pymongo import Connection
 from pymongo.code import Code
@@ -327,3 +332,16 @@ def expenditures_by_committee_for_candidate(request, candidate_slug, committee_s
     return render_to_response('ie/expenditures_by_committee_for_candidate.html',
                               {'expenditures': clean_expends, }
                              )
+
+
+def new_committees_csv(request):
+    items = Committee.objects.filter(date_of_organization__gte=datetime.date(2010, 07, 01)).order_by('-date_of_organization')
+    if not items:
+        return Http404
+
+    headers = [x.name for x in items[0]._meta.fields]
+    data = list(reversed(list(reversed(items.values_list())) + [[x.name for x in items[0]._meta.fields]]))
+    output = StringIO()
+    csv.writer(output).writerows(data)
+    return HttpResponse(output.getvalue(), content_type='text/plain')
+

@@ -1,5 +1,6 @@
 """Get a list of independent expenditure committees
-and when they submitted their statement of organization.
+and when they submitted their statement of organization 
+or first filing.
 """
 import csv
 from collections import deque
@@ -34,6 +35,7 @@ class Command(NoArgsCommand):
 
 def get_committee_data(committee_id):
     url = 'http://query.nictusa.com/cgi-bin/fecimg/?%s' % committee_id
+    print url
     page = urllib2.urlopen(url).read()
 
     name_m = re.search(r'<FONT SIZE=5><B>(.*?)<', page)
@@ -50,14 +52,28 @@ def get_committee_data(committee_id):
 
     org_lines = re.findall(r'STATEMENT OF ORGANIZATION.*?<\/TR', page, re.S)
     dates = []
-    for line in org_lines:
-        date = re.search(r'(?P<month>\d\d)\/(?P<day>\d\d)\/(?P<year>\d\d\d\d)', line, re.S)
-        if not date:
-            continue
-        date = deque(date.groups())
-        date.rotate()
-        date = [int(x) for x in date]
-        dates.append(datetime.date(*date))
+    if not org_lines:
+        table = re.findall(r'<TABLE BORDER=1 CELLSPACING=1 CELLPADDING=2>.*?<\/TABLE>', page, re.I | re.S)
+        if table:
+            rows = re.findall(r'<TR>(.*?)<\/TR>', table[0], re.S)
+            if rows:
+                for row in rows[3:]:
+                    cells = re.findall(r'<TD>(.*?)<\/TD>', row)
+                    if not cells:
+                        continue
+                    month, day, year = cells[1].strip('&nbsp;').split('/')
+                    dates.append(datetime.date(int(year), int(month), int(day)))
+                print dates
+
+    else:
+        for line in org_lines:
+            date = re.search(r'(?P<month>\d\d)\/(?P<day>\d\d)\/(?P<year>\d\d\d\d)', line, re.S)
+            if not date:
+                continue
+            date = deque(date.groups())
+            date.rotate()
+            date = [int(x) for x in date]
+            dates.append(datetime.date(*date))
 
     if dates:
         create_date = sorted(dates)[0]
