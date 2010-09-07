@@ -41,17 +41,19 @@
         </div>
       </div>
       <div id="mainContent">
+      {% block main_content %}
         <div id="columns">
           <div id="ltColumn">
-            {% block content %}{% endblock %}
+            {% block content %}{% endblock content %}
           </div>
           <div id="rtColumn">
             {% block sidebar %}
               
-            {% endblock %}
+            {% endblock sidebar %}
           </div>  
           <div class="clear"></div> 
         </div> 
+      {% endblock main_content %}
       </div>
     </div>
     {% load cache %}
