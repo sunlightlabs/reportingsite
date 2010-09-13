@@ -1,0 +1,46 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+{% load media %}
+<html xmlns="http://www.w3.org/1999/xhtml" >
+  <head>
+    <meta name="keywords" content="" />
+    <meta name="description" content="" />
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+ <link rel="shortcut icon" href="http://assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
+<link rel="alternate" type="application/rss+xml" title="Sunlight Foundation Transparency Ecosystem" href="http://feeds.feedburner.com/SunlightFoundationReportingGroup" />
+ <link rel="icon" href="http://assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
+    {%css "css/main.css"%}
+  <!--[if IE 6]>{%css "css/buggy.css"%}<![endif]-->
+  <!--[if IE 7]>{%css "css/buggy7.css"%}<![endif]-->
+
+  <style type="text/css">
+      body { width: 320px; background: none; margin-top: -20px;}
+      ul { list-style-type: disc; !important }
+      li { margin-bottom: 10px; line-height: 15px; margin-left: 20px; }
+      h3 { margin-top: 20px; margin-bottom: 10px; font-size: 95%; }
+  </style>
+
+  </head>
+
+  <body>
+
+{% load humanize %}
+
+{% regroup object_list by date as spending_list %}
+
+<div id="ltcolumn">
+{% for date in spending_list %}
+<h3>{{ date.grouper|date:"F j, Y" }}</h3>
+<ul>
+{% for spending in date.list %}
+<li><a target="_top" href="{{ spending.committee.get_absolute_url }}">{{ spending.committee.name }}</a> spent&nbsp;${{ spending.amount|intcomma }}<br />in {{ spending.support_oppose }} <a target="_top" href="{{ spending.candidate.get_absolute_url }}">{{ spending.candidate }}</a>{% if spending.candidate.party %} ({{ spending.candidate.party }}){% if spending.candidate.race %} in the <a target="_top" href="{% url buckley_race_detail race=spending.candidate.race %}">{{ spending.candidate.race }}</a> race{% endif %}{% endif %}</li>
+{% endfor %}
+</ul>
+{% endfor %}
+</div>
+
+<br>
+<strong><a target="_top" href="{% url buckley_index %}">View all independent expenditures</a></strong>
+
+    </body>
+
+</html>

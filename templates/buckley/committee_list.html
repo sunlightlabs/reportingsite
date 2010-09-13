@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block main_content %}
+
+<h1>Committees</h1>
+
+{% for committee in object_list %}
+<li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a>, ${{ committee.total|intcomma }}</li>
+{% endfor %}
+
+{% endblock main_content %}

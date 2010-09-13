@@ -1,0 +1,18 @@
+{% extends "base.html" %}
+
+{% block main_content %}
+
+<div style="font-weight: bold; margin-top: 15px;"><a href="{% url buckley_index %}">&lt;&lt;&nbsp;Independent expenditures home</a></div>
+
+<style type="text/css">
+    table#expenditures { width: 100%; border-collapse: collapse; border: 0; }
+    table#expenditures th { font-weight: bold; text-align: center;}
+    table#expenditures tbody { border: none }
+    table#expenditures tr { border-bottom: 1px solid gray; }
+</style>
+
+<div style="background: none; padding: 25px;">
+    {% block content %}
+    {% endblock content %}
+</div>
+{% endblock main_content%}

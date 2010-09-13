@@ -1,0 +1,31 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% load humanize %}
+
+{% block content %}
+
+<h2>{{ object }}</h2>
+<h3>{{ object.race }}</h3>
+
+<li>Independent expenditure money supporting: ${{ object.total_supporting|intcomma }}</li>
+<li>Independent expenditure money opposing: ${{ object.total_opposing|intcomma }}</li>
+
+<br>
+
+{% if object.committees_supporting %}
+<strong>Committees supporting</strong>
+{% for committee in object.committees_supporting %}
+    <li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a> (<a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">expenditure details</a>)</li>
+{% endfor %}
+{% endif %}
+
+<br>
+
+{% if object.committees_opposing %}
+<strong>Committees opposing</strong>
+{% for committee in object.committees_opposing %}
+    <li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a> (<a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">expenditure details</a>)</li>
+{% endfor %}
+{% endif %}
+
+{% endblock content %}

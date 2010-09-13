@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block main_content %}
+
+{{ object }}
+<br>
+{{ object.committee }}, ${{ object.expenditure_amount|intcomma }}, {{ object.expenditure_date }}, {{ object.support_oppose }}, {{ object.candidate }} (running for {{ object.candidate.seat }} in {{ object.candidate.state }})
+
+{% endblock main_content %}

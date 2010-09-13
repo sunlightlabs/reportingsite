@@ -1,0 +1,34 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% load humanize %}
+
+{% block content %}
+
+<h2>Candidates</h2>
+<br>
+<table id="expenditures">
+    <thead>
+        <tr>
+            <th>Candidate</th>
+            <th>Party</th>
+            <th>State</th>
+            <th>Race</th>
+            <th>Total independent expenditures</th>
+            <th>Independent expenditures supporting</th>
+            <th>Independent expenditures opposing</th>
+        </tr>
+
+{% for candidate in object_list %}
+<tr>
+    <td><a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a></td>
+    <td>{{ candidate.party }}</td>
+    <td>{{ candidate.state }}</td>
+    <td>{{ candidate.district }}</td>
+    <td>${{ candidate.total|intcomma }}</td>
+    <td>${{ candidate.total_supporting|intcomma }}</td>
+    <td>${{ candidate.total_opposing|intcomma }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% endblock content %}

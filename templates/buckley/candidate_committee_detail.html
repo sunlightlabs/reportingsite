@@ -1,0 +1,32 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% load humanize %}
+
+{% block content %}
+
+<h2>Independent expenditures by {{ committee }}<br>for/against {{ candidate }}</h2>
+<br>
+<table id="expenditures">
+    <thead>
+        <tr>
+            <th>Expenditure date</th>
+            <th>Support/Oppose</th>
+            <th>Amount</th>
+            <th>Purpose</th>
+            <th>Payee</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for expenditure in object_list %}
+        <tr>
+            <td>{{ expenditure.expenditure_date }}</td>
+            <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
+            <td>${{ expenditure.expenditure_amount|intcomma }}</td>
+            <td>{{ expenditure.expenditure_purpose }}</td>
+            <td>{{ expenditure.payee }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock content %}
