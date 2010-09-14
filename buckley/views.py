@@ -25,7 +25,7 @@ def race_expenditures(request, race):
     except ValueError:
         raise Http404
 
-    if district == 'Senate':
+    if district.lower() == 'senate':
         candidates = get_list_or_404(Candidate, office='S', state=state)
     else:
         if int(district) < 10:
@@ -33,10 +33,13 @@ def race_expenditures(request, race):
         candidates = get_list_or_404(Candidate, office='H', state=state, district=district)
 
     expenditures = Expenditure.objects.filter(candidate__in=candidates).order_by('-expenditure_date')
+    total_spent = sum([x.expenditure_amount for x in expenditures])
 
-    return render_to_response('buckley/race_detail.html', 
+    return render_to_response('buckley/race_detail.html',
                               {'object_list': expenditures,
                                'race': race,
+                               'candidates': candidates,
+                               'total_spent': total_spent,
                               })
 
 def candidate_committee_detail(request, candidate_slug, committee_slug):

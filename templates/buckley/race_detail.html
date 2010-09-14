@@ -6,6 +6,14 @@
 
 <h2>Independent expenditures in {{ race }} race</h2>
 <br>
+<strong>Candidates</strong><br>
+{% for candidate in candidates %}
+<a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>: ${{ candidate.total_supporting|intcomma }} independent expenditures in support; ${{ candidate.total_opposing|intcomma }} independent expenditures in opposition<br>
+{% endfor %}
+<br>
+<strong>Total independent expenditures in race:</strong> ${{ total_spent|intcomma }}
+<br>
+<br>
 
 <table id="expenditures">
     <thead>
