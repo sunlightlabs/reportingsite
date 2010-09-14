@@ -4,6 +4,7 @@ import datetime
 from decimal import Decimal
 import logging
 import re
+import socket
 import sys
 import time
 import urllib
@@ -23,6 +24,9 @@ from dateutil.parser import parse as dateparse
 import MySQLdb
 import name_tools
 
+
+# So our HTTP requests don't timeout as quickly
+socket.setdefaulttimeout(25)
 
 logging.basicConfig(filename='ie_import_errors.log', level=logging.DEBUG)
 
@@ -206,7 +210,7 @@ class Command(NoArgsCommand):
                         fec_committee_id=row['SPE_ID'],
                         committee=committee)
 
-            print committee
+            #print committee
 
             row['CAND_NAM'] = re.sub(r'\s*,\s*$', '', row['CAND_NAM']) # Remove trailing comma + whitespace
             row['CAND_NAM'] = re.sub(r'\(\w\w\)', '', row['CAND_NAM']) # Remove parenthesized state
@@ -306,7 +310,7 @@ class Command(NoArgsCommand):
                                 slug=slugify(candidate_name)[:50]
                             )
 
-            print candidate
+            #print candidate
 
             try:
                 payee = Payee.objects.get(slug=slugify(row['PAY'])[:50])
@@ -315,7 +319,7 @@ class Command(NoArgsCommand):
                         name=row['PAY'],
                         slug=slugify(row['PAY'])[:50])
 
-            print payee
+            #print payee
 
             row['IMAGE_NUM'] = row['IMAGE_NUM'].replace(',', '')
 
@@ -335,6 +339,8 @@ class Command(NoArgsCommand):
                 expenditure.candidate=candidate
                 expenditure.receipt_date=dateparse(row['RECEIPT_DT']).date()
                 expenditure.election_type=row['ELE_TYP']
+                expenditure.filing_number = row['FILE_NUM'].replace(',', '')
+                expenditure.amendment = row['AMNDT_IND']
                 expenditure.race = expenditure.candidate.race()
                 expenditure.save()
 
@@ -350,10 +356,22 @@ class Command(NoArgsCommand):
                         election_type=row['ELE_TYP'],
                         candidate=candidate,
                         transaction_id=row['TRAN_ID'],
+                        filing_number=row['FILE_NUM'].replace(',', ''),
+                        amendment=row['AMNDT_IND'],
                         receipt_date=dateparse(row['RECEIPT_DT']).date(),
                         race=candidate.race()
                         )
 
-            print expenditure
+            print expenditure.id
 
-        #Candidate.objects.get(fec_name='HALTER, WILLIAM A').expenditure_set.all().update(candidate=Candidate.objects.get(crp_name='Bill Halter'))
+        # Remove amendmended filings
+        removed = 0
+        for amendment in Expenditure.objects.exclude(amendment='N'):
+            removed += 1
+            Expenditure.objects.filter(amendment='N', 
+                                       transaction_id=amendment.transaction_id, 
+                                       committee=amendment.committee, 
+                                       candidate=amendment.candidate).delete()
+
+        print
+        print 'Removed %s records' % str(removed)

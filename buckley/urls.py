@@ -83,6 +83,11 @@ urlpatterns = patterns('',
             {},
             name='buckley_widget'),
 
+        url(r'about\/?$',
+            'django.views.generic.simple.direct_to_template',
+            {'template': 'buckley/about.html', },
+            name='buckley_about'),
+
         url(r'^\/?$',
             'django.views.generic.list_detail.object_list',
             {'queryset': Expenditure.objects.all(), 

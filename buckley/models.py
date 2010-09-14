@@ -182,6 +182,8 @@ class Expenditure(models.Model):
     #memo_code = models.CharField(max_length=1, blank=True)
     #memo_text = models.CharField(max_length=255)
     receipt_date = models.DateField()
+    filing_number = models.IntegerField()
+    amendment = models.CharField(max_length=2)
     #election_type = models.CharField(max_length=5)
     #election_year = models.CharField(max_length=4)
 

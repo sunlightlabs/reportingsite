@@ -12,22 +12,27 @@
   <!--[if IE 6]>{%css "css/buggy.css"%}<![endif]-->
   <!--[if IE 7]>{%css "css/buggy7.css"%}<![endif]-->
 
+ <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+
   <style type="text/css">
-      body { width: 320px; background: none; margin-top: -20px;}
+      body { width: 320px; background: none; }
       ul { list-style-type: disc; !important }
       li { margin-bottom: 15px; line-height: 15px; margin-left: 20px; }
       h3 { margin-top: 20px; margin-bottom: 10px; font-size: 95%; }
+      /*div#about { display: none; }*/
   </style>
 
   </head>
 
   <body>
+<div id="ltcolumn">
+<strong><a target="new" href="{% url buckley_about %}">About this project</a></strong>
 
 {% load humanize %}
 
 {% regroup object_list by date as spending_list %}
 
-<div id="ltcolumn">
+
 {% for date in spending_list %}
 <h3>{{ date.grouper|date:"F j, Y" }}</h3>
 <ul>

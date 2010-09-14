@@ -1,0 +1,37 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% load humanize %}
+{% load media %}
+
+{% block content %}
+
+<h2>Races</h2>
+<p>Select a race to see details.
+<br>
+<table id="expenditures" class="tablesorter">
+    <thead>
+        <tr>
+            <th>Race</th>
+            <th>Amount spent on independent expenditures</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for race, full_race, total in races %}
+    <tr>
+        <td><a href="{% url buckley_race_detail race=race %}">{{ full_race }}</a></td>
+        <td>${{ total|intcomma }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% js "js/jquery.tablesorter.min.js" %}
+<script type="text/javascript">
+$(document).ready(function()
+    {
+        $("#expenditures").tablesorter();
+    }
+);
+</script>
+
+{% endblock content %}
