@@ -1,11 +1,18 @@
 {% extends "buckley/buckley_base.html" %}
 
 {% load humanize %}
+{% load media %}
 
 {% block content %}
 
 <h2>Independent expenditures by {{ committee }}<br>for/against {{ candidate }}</h2>
 <br>
+<strong><a href="{% url buckley_candidate_detail slug=candidate.slug %}">All independent expenditures for/against {{ candidate }}</a></strong>
+<br>
+<strong><a href="{% url buckley_committee_detail slug=committee.slug %}">All independent expenditures by {{ committee }}</a></strong>
+<br>
+<br>
+
 <table id="expenditures">
     <thead>
         <tr>
@@ -28,5 +35,14 @@
         {% endfor %}
     </tbody>
 </table>
+
+{% js "js/jquery.tablesorter.min.js" %}
+<script type="text/javascript">
+$(document).ready(function()
+    {
+        $("#expenditures").tablesorter();
+    }
+);
+</script>
 
 {% endblock content %}

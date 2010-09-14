@@ -1,34 +1,46 @@
 {% extends "buckley/buckley_base.html" %}
 
 {% load humanize %}
+{% load media %}
 
 {% block content %}
 
 <h2>Candidates</h2>
+<p>Select a candidate to see details.
 <br>
 <table id="expenditures">
     <thead>
         <tr>
             <th>Candidate</th>
             <th>Party</th>
-            <th>State</th>
             <th>Race</th>
             <th>Total independent expenditures</th>
             <th>Independent expenditures supporting</th>
             <th>Independent expenditures opposing</th>
         </tr>
+    </thead>
+    <tbody>
 
 {% for candidate in object_list %}
 <tr>
-    <td><a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a></td>
+    <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.last_first }}</a></td>
     <td>{{ candidate.party }}</td>
-    <td>{{ candidate.state }}</td>
-    <td>{{ candidate.district }}</td>
+    <td>{{ candidate.full_race_name }}</td>
     <td>${{ candidate.total|intcomma }}</td>
     <td>${{ candidate.total_supporting|intcomma }}</td>
     <td>${{ candidate.total_opposing|intcomma }}</td>
 </tr>
 {% endfor %}
+</tbody>
 </table>
+
+{% js "js/jquery.tablesorter.min.js" %}
+<script type="text/javascript">
+$(document).ready(function()
+    {
+        $("#expenditures").tablesorter();
+    }
+);
+</script>
 
 {% endblock content %}

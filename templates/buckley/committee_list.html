@@ -1,13 +1,40 @@
-{% extends "base.html" %}
+{% extends "buckley/buckley_base.html" %}
 
 {% load humanize %}
+{% load media %}
 
-{% block main_content %}
+{% block content %}
+<h2>Committees</h2>
+<p>Select a committee to see details.</p>
+<br>
+<table id="expenditures">
+    <thead>
+        <tr>
+            <th>Committee</th>
+            <th>Total spent on independent expenditures</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for committee in object_list %}
+            {% if committee.total %}
+                <tr>
+                    <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
+                    <td>${{ committee.total|intcomma }}</td>
+                    <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
 
-<h1>Committees</h1>
+{% js "js/jquery.tablesorter.min.js" %}
+<script type="text/javascript">
+$(document).ready(function()
+    {
+        $("#expenditures").tablesorter();
+    }
+);
+</script>
 
-{% for committee in object_list %}
-<li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a>, ${{ committee.total|intcomma }}</li>
-{% endfor %}
-
-{% endblock main_content %}
+{% endblock content %}

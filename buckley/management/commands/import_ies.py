@@ -29,6 +29,27 @@ logging.basicConfig(filename='ie_import_errors.log', level=logging.DEBUG)
 
 cursor = MySQLdb.Connection('localhost', 'campfin', 'campfin', 'campfin').cursor()
 
+# Some names we know are missing FEC IDs.
+NAME_LOOKUP = {
+    'Altmire, Jason': 'H6PA04110',
+    'Boozman, John': 'S0AR00150',
+    'BOXER, BARBARA': 'S2CA00286',
+    'BUCHANAN, JOAN': 'H0CA10099',
+    'CHU, BETTY': 'H0CA32218',
+    'Edwards, Chet': 'H8TX06035',
+    'FIORINA, CARLY': 'S0CA00330',
+    'HALTER, WILLIAM A': 'S0AR00168',
+    'HAWKINS, B LEE': 'H0GA09089',
+    'Kelly, Jesse': 'H0AZ08015',
+    'KIRKLAND, RONALD': 'H0TN08261',
+    'Kirkpatrick, Ann': 'H8AZ01104',
+    'LASSA, JULIE': 'H0WI07069',
+    'LINCOLN, BLANCHE': 'S8AR00112',
+    'LINCOLN, BLANCHE L': 'S8AR00112',
+    'Paton, Jonathan': 'H0AZ08056',
+    'Portman, Rob': 'S0OH00133',
+    'ROMANOFF, ANDREW': 'S0CO00286',
+}
 
 def generic_querier(query, params, multirows=False):
     cursor.execute(query, params)
@@ -59,6 +80,7 @@ def candidate_lookup_by_name(name):
 def td_candidate_lookup(name):
     """Look up a candidate by name in Transparency Data
     """
+    time.sleep(.5)
     body = urllib.urlencode({'apikey': '***REMOVED***', 'search': name})
     url = 'http://transparencydata.com/api/1.0/entities.json?%s' % body
     data = urllib2.urlopen(url).read()
@@ -125,10 +147,10 @@ class Command(NoArgsCommand):
         image_num - image number for the transaction (i.e. location where the entry can be viewed)
         receipt_dt - receipt date for the submission
         """
-        #Committee.objects.all().delete()
-        #Candidate.objects.all().delete()
-        #Payee.objects.all().delete()
-        #Expenditure.objects.all().delete()
+        Committee.objects.all().delete()
+        Candidate.objects.all().delete()
+        Payee.objects.all().delete()
+        Expenditure.objects.all().delete()
 
         url = 'ftp://ftp.fec.gov/FEC/ind_exp_2010.csv'
         reader = list(csv.DictReader(StringIO(urllib2.urlopen(url).read())))
@@ -152,6 +174,17 @@ class Command(NoArgsCommand):
             if not row['CAND_NAM'] and not row['CAN_ID']:
                 continue
 
+            # If the candidate ID is missing but the name is in
+            # our lookup dict, use the ID from there.
+            if not row['CAN_ID'] and row['CAND_NAM'] in NAME_LOOKUP:
+                row['CAN_ID'] = NAME_LOOKUP[row['CAND_NAM']]
+
+            # We know that this candidate ID is wrong in the CSV
+            if row['CAND_NAM'] == 'BUCHANAN, JOAN':
+                row['CAN_ID'] = NAME_LOOKUP[row['CAND_NAM']]
+            if row['CAND_NAM'] == 'Edwards, Chet':
+                row['CAN_ID'] = NAME_LOOKUP[row['CAND_NAM']]
+
             try:
                 committee_id = CommitteeId.objects.get(fec_committee_id=row['SPE_ID'])
                 if committee_id:
@@ -159,7 +192,12 @@ class Command(NoArgsCommand):
             except CommitteeId.DoesNotExist:
                 committee = committee_lookup(row['SPE_ID'])
                 row.update(committee)
-                committee_name = row['PACShort'].strip() if row.has_key('PACShort') else row['SPE_NAM'].strip().title()
+                #committee_name = row['PACShort'].strip() if row.has_key('PACShort') else row['SPE_NAM'].strip().title()
+                if row.get('PACShort', '').strip():
+                    committee_name = row['PACShort'].strip()
+                else:
+                    committee_name = row['SPE_NAM'].strip().title()
+
                 committee, created = Committee.objects.get_or_create(
                         name=committee_name,
                         slug=slugify(committee_name)[:50]
@@ -297,6 +335,7 @@ class Command(NoArgsCommand):
                 expenditure.candidate=candidate
                 expenditure.receipt_date=dateparse(row['RECEIPT_DT']).date()
                 expenditure.election_type=row['ELE_TYP']
+                expenditure.race = expenditure.candidate.race()
                 expenditure.save()
 
             except Expenditure.DoesNotExist:
@@ -311,7 +350,10 @@ class Command(NoArgsCommand):
                         election_type=row['ELE_TYP'],
                         candidate=candidate,
                         transaction_id=row['TRAN_ID'],
-                        receipt_date=dateparse(row['RECEIPT_DT']).date()
+                        receipt_date=dateparse(row['RECEIPT_DT']).date(),
+                        race=candidate.race()
                         )
 
             print expenditure
+
+        #Candidate.objects.get(fec_name='HALTER, WILLIAM A').expenditure_set.all().update(candidate=Candidate.objects.get(crp_name='Bill Halter'))

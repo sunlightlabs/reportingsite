@@ -1,10 +1,15 @@
 from collections import defaultdict
 from operator import itemgetter
 
-from django.contrib.humanize.templatetags.humanize import intcomma
+from django.contrib.humanize.templatetags.humanize import intcomma, ordinal
 from django.contrib.sites.models import Site
+from django.db.models import Sum
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
+from django.contrib.localflavor.us.us_states import STATE_CHOICES
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
+
+STATE_CHOICES = dict(STATE_CHOICES)
 
 from buckley.models import *
 
@@ -19,6 +24,43 @@ def expenditure_detail(request, committee_slug, object_id):
     return render_to_response('buckley/expenditure_detail.html', {'object': expenditure, })
 
 
+def race_list(request):
+
+    order = request.GET.get('order', 'amt')
+    direction = request.GET.get('sort', None)
+    if order != 'amt' and not direction:
+        direction = 'asc'
+    elif order == 'amt' and not direction:
+        direction = 'desc'
+
+    races = set([x.race() for x in Candidate.objects.all()])
+    race_amts = []
+    for race in races:
+        state, district = race.split('-')
+        if district.lower() == 'senate':
+            total = sum([x.total() for x in Candidate.objects.filter(office='S', state=state)])
+            full_race = '%s Senate' % STATE_CHOICES[state]
+        else:
+            try:
+                if int(district) < 10:
+                    district = '0%s' % district
+            except ValueError:
+                continue
+            full_race = '%s %s' % (STATE_CHOICES[state], ordinal(district))
+            total = sum([x.total() for x in Candidate.objects.filter(office='H', state=state, district=district)])
+        race_amts.append((race, full_race, total))
+
+    rev = direction == 'desc'
+    sort_item = 2 if order == 'amt' else 1
+
+    race_amts.sort(key=itemgetter(sort_item), reverse=rev)
+
+    return render_to_response('buckley/race_list.html',
+                              {'races': race_amts,
+                               'sort': 'asc' if direction == 'desc' else 'desc'
+                               })
+
+
 def race_expenditures(request, race):
     try:
         state, district = race.split('-')
@@ -27,19 +69,34 @@ def race_expenditures(request, race):
 
     if district.lower() == 'senate':
         candidates = get_list_or_404(Candidate, office='S', state=state)
+        full_race = '%s Senate' % STATE_CHOICES[state]
     else:
         if int(district) < 10:
             district = '0%s' % district
         candidates = get_list_or_404(Candidate, office='H', state=state, district=district)
+        full_race = '%s %s' % (STATE_CHOICES[state], ordinal(district))
 
-    expenditures = Expenditure.objects.filter(candidate__in=candidates).order_by('-expenditure_date')
-    total_spent = sum([x.expenditure_amount for x in expenditures])
+    #expenditures = Expenditure.objects.filter(candidate__in=candidates).order_by('-expenditure_date')
+    expenditures = Expenditure.objects.filter(race=race).order_by('-expenditure_date')
+    if not expenditures:
+        raise Http404
+
+    paginator = Paginator(expenditures, 50, orphans=5)
+    pagenum = request.GET.get('page', 1)
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
+    #total_spent = sum([x.expenditure_amount for x in expenditures])
+    total_spent = expenditures.aggregate(total=Sum('expenditure_amount'))['total']
 
     return render_to_response('buckley/race_detail.html',
-                              {'object_list': expenditures,
-                               'race': race,
+                              {'object_list': page.object_list,
+                               'race': full_race,
                                'candidates': candidates,
                                'total_spent': total_spent,
+                               'page_obj': page,
                               })
 
 def candidate_committee_detail(request, candidate_slug, committee_slug):

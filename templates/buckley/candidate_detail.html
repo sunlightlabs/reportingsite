@@ -15,7 +15,9 @@
 {% if object.committees_supporting %}
 <strong>Committees supporting</strong>
 {% for committee in object.committees_supporting %}
+    {% if committee.slug %}
     <li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a> (<a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">expenditure details</a>)</li>
+    {% endif %}
 {% endfor %}
 {% endif %}
 
@@ -24,7 +26,9 @@
 {% if object.committees_opposing %}
 <strong>Committees opposing</strong>
 {% for committee in object.committees_opposing %}
-    <li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a> (<a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">expenditure details</a>)</li>
+    {% if committee.slug %}
+        <li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a> (<a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">expenditure details</a>)</li>
+    {% endif %}
 {% endfor %}
 {% endif %}
 

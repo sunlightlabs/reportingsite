@@ -40,5 +40,14 @@
 {% endfor %}
 </table>
 
+{% if page_obj.has_other_pages %}
+<div id="paginator" style="width: 250px; margin-left: auto; margin-right: auto; margin-top: 20px; margin-bottom: 20px;">
+  {% if page_obj.has_previous %} <a style="margin-right: 20px;" class="paginatorPrevious" href="?page={{ page_obj.previous_page_number }}">&lt;&lt;Previous</a>{% endif %}
+  {% if page_obj.has_next %} 
+<a class="paginatorNext" href="?page={{ page_obj.next_page_number }}">Next &gt;&gt;</a>{% endif %}
+</div>
+<br />
+{% endif %}
+
 
 {% endblock content %}

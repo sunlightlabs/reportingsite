@@ -1,6 +1,12 @@
 import re
 
 from django.db import models
+from django.contrib.localflavor.us.us_states import STATE_CHOICES
+from django.contrib.humanize.templatetags.humanize import ordinal
+
+import name_tools
+
+STATE_CHOICES = dict(STATE_CHOICES)
 
 import MySQLdb
 
@@ -46,6 +52,9 @@ class Committee(models.Model):
             filter.update({'support_oppose': support_oppose})
 
         return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+
+    def fec_id(self):
+        return CommitteeId.objects.filter(committee=self)[0].fec_committee_id
 
 
 class CommitteeId(models.Model):
@@ -100,15 +109,25 @@ class Candidate(models.Model):
     def __unicode__(self):
         return self.crp_name or self.fec_name
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('buckley_candidate_detail', [self.slug, ])
+
     def race(self):
         if self.office == 'S':
             return '%s-Senate' % self.state
         else:
             return '%s-%s' % (self.state, self.district.lstrip('0'))
 
-    @models.permalink
-    def get_absolute_url(self):
-        return ('buckley_candidate_detail', [self.slug, ])
+    def full_race_name(self):
+        if self.office == 'S':
+            return '%s Senate' % STATE_CHOICES[self.state]
+        else:
+            return '%s %s' % (STATE_CHOICES[self.state], ordinal(self.district))
+
+    def last_first(self):
+        prefix, first, last, suffix = name_tools.split(self.__unicode__())
+        return re.sub(r'\s+([^\w])', r'\1', '%s %s, %s' % (last, suffix, first))
 
     def seat(self):
         try:
@@ -118,22 +137,6 @@ class Candidate(models.Model):
                 return ''
         except KeyError:
             return None
-
-    def lookup_crp_name(self):
-        cursor = MySQLdb.Connection('localhost', 'campfin', 'campfin', 'campfin').cursor()
-        cursor.execute("SELECT * FROM candidates WHERE feccandid = %s AND cycle = 2010", self.fec_id)
-        if cursor.rowcount:
-            return dict(zip([x[0] for x in cursor.description], cursor.fetchone()))
-        """
-        if not cursor.rowcount:
-            wildcard_id = re.sub(r'(H)\d(\w\w)\d\d(\d+)', r'\1%\2%\3', self.fec_id)
-            cursor.execute("SELECT * FROM candidates WHERE feccandid LIKE %s AND cycle = 2010 AND firstlastp LIKE %s", [wildcard_id, '%'+self.fec_name.split(',')[0]+'%'])
-
-        if cursor.rowcount:
-            return dict(zip([x[0] for x in cursor.description], cursor.fetchone()))
-
-        return None
-        """
 
     def committees(self, support_oppose):
         committee_ids = self.expenditure_set.filter(support_oppose=support_oppose).values_list('committee', flat=True).distinct()
@@ -181,6 +184,8 @@ class Expenditure(models.Model):
     receipt_date = models.DateField()
     #election_type = models.CharField(max_length=5)
     #election_year = models.CharField(max_length=4)
+
+    race = models.CharField(max_length=16) # denormalizing
 
     class Meta:
         ordering = ('-expenditure_date', )
