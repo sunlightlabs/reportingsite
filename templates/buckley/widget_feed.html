@@ -15,7 +15,7 @@
   <style type="text/css">
       body { width: 320px; background: none; margin-top: -20px;}
       ul { list-style-type: disc; !important }
-      li { margin-bottom: 10px; line-height: 15px; margin-left: 20px; }
+      li { margin-bottom: 15px; line-height: 15px; margin-left: 20px; }
       h3 { margin-top: 20px; margin-bottom: 10px; font-size: 95%; }
   </style>
 
@@ -32,7 +32,7 @@
 <h3>{{ date.grouper|date:"F j, Y" }}</h3>
 <ul>
 {% for spending in date.list %}
-<li><a target="_top" href="{{ spending.committee.get_absolute_url }}">{{ spending.committee.name }}</a> spent&nbsp;${{ spending.amount|intcomma }}<br />in {{ spending.support_oppose }} <a target="_top" href="{{ spending.candidate.get_absolute_url }}">{{ spending.candidate }}</a>{% if spending.candidate.party %} ({{ spending.candidate.party }}){% if spending.candidate.race %} in the <a target="_top" href="{% url buckley_race_detail race=spending.candidate.race %}">{{ spending.candidate.race }}</a> race{% endif %}{% endif %}</li>
+<li><a target="_top" href="{{ spending.committee.get_absolute_url }}">{{ spending.committee.name }}</a> spent&nbsp;${{ spending.amount|intcomma }}<br />in {{ spending.support_oppose }} <a target="_top" href="{{ spending.candidate.get_absolute_url }}">{{ spending.candidate }}</a>{% if spending.candidate.party %} ({{ spending.candidate.party }}){% if spending.candidate.race %} in the <a target="_top" href="{% url buckley_race_detail race=spending.candidate.race %}">{{ spending.candidate.full_race_name }}{% ifequal spending.candidate.office 'H' %} House{% endifequal %}</a> race{% endif %}{% endif %}</li>
 {% endfor %}
 </ul>
 {% endfor %}
