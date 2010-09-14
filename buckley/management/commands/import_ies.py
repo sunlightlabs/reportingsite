@@ -125,10 +125,10 @@ class Command(NoArgsCommand):
         image_num - image number for the transaction (i.e. location where the entry can be viewed)
         receipt_dt - receipt date for the submission
         """
-        Committee.objects.all().delete()
-        Candidate.objects.all().delete()
-        Payee.objects.all().delete()
-        Expenditure.objects.all().delete()
+        #Committee.objects.all().delete()
+        #Candidate.objects.all().delete()
+        #Payee.objects.all().delete()
+        #Expenditure.objects.all().delete()
 
         url = 'ftp://ftp.fec.gov/FEC/ind_exp_2010.csv'
         reader = list(csv.DictReader(StringIO(urllib2.urlopen(url).read())))
