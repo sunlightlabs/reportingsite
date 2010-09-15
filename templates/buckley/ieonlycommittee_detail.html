@@ -1,0 +1,23 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% block breadcrumb %}
+{{ block.super }}
+&nbsp;&nbsp;<a href="{% url buckley_letter_list %}">&lt;&lt; Committees intending to accept unlimited contributions</a>
+{% endblock breadcrumb %}
+
+{% block content %}
+<h2>{{ object }} - intent to accept unlimited contributions</h2>
+<br>
+<!--<a href="{% url buckley_letter_list %}">View all committees that have stated their intent to accept contributions of unlimited amounts</a>//-->
+<br>
+<div id="doc-viewer"></div>
+<script src="http://s3.documentcloud.org/viewer/loader.js"></script>
+<script>
+  DV.load('http://www.documentcloud.org/documents/{{ object.doc_id }}.js', {
+    width: 900,
+    height: 900,
+    sidebar: false,
+    container: "#doc-viewer"
+  });
+</script>
+{% endblock %}

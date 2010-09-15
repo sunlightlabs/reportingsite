@@ -14,7 +14,7 @@
 
 <div style="padding: 25px; background: url(http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/column_ltFull.png) repeat 0% 0%;">
 
-<div style="font-weight: bold; margin-bottom: 20px;"><a href="{% url buckley_index %}">&lt;&lt;&nbsp;Independent expenditures home</a></div>
+<div style="font-weight: bold; margin-bottom: 20px;">{% block breadcrumb %}<a href="{% url buckley_index %}">&lt;&lt;&nbsp;Independent expenditures home</a>{% endblock breadcrumb %}</div>
     {% block content %}
     {% endblock content %}
 

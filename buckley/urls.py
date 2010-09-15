@@ -102,7 +102,7 @@ urlpatterns = patterns('',
             CommitteeLetterFeed(),
             name='buckley_letter_feed'),
 
-        url(r'letters\/(?P<id>C\d+)\/?$',
+        url(r'letters\/(?P<object_id>C\d+)\/?$',
             'django.views.generic.list_detail.object_detail',
             {'queryset': IEOnlyCommittee.objects.all(), },
             name='buckley_letter_detail'),

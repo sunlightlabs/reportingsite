@@ -1,14 +1,16 @@
 import re
 
 from django.db import models
+from django.db.models import signals
 from django.contrib.localflavor.us.us_states import STATE_CHOICES
 from django.contrib.humanize.templatetags.humanize import ordinal
-
-import name_tools
 
 STATE_CHOICES = dict(STATE_CHOICES)
 
 import MySQLdb
+
+import name_tools
+from doccloud_uploader import doccloud_upload
 
 """
 class CommitteeManager(models.Manager):
@@ -25,6 +27,7 @@ class IEOnlyCommittee(models.Model):
     name = models.CharField(max_length=100)
     date_letter_submitted = models.DateField()
     pdf_url = models.URLField(verify_exists=False)
+    doc_id = models.CharField(max_length=255) # For DocumentCloud id
 
     class Meta:
         ordering = ('-date_letter_submitted', )
@@ -35,6 +38,14 @@ class IEOnlyCommittee(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('buckley_letter_detail', [self.id, ])
+
+    def has_expenditures(self):
+        committees = CommitteeId.objects.filter(fec_committee_id=self.id)
+        if committees:
+            return committees[0].committee
+        return None
+
+signals.post_save.connect(doccloud_upload, sender=IEOnlyCommittee, dispatch_uid='reporting.buckley')
 
 
 class Committee(models.Model):
