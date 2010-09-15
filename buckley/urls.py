@@ -74,7 +74,7 @@ urlpatterns = patterns('',
             {},
             name='buckley_race_list'),
 
-        url(r'rss\/?$',
+        url(r'^rss\/?$',
             ExpenditureFeed(),
             name='buckley_expenditures_feed'),
 
@@ -92,6 +92,20 @@ urlpatterns = patterns('',
             'django.views.generic.simple.direct_to_template',
             {'template': 'buckley/about.html', },
             name='buckley_about'),
+
+        url(r'letters\/?$',
+            'django.views.generic.list_detail.object_list',
+            {'queryset': IEOnlyCommittee.objects.all(), },
+            name='buckley_letter_list'),
+
+        url(r'letters\/rss\/?$',
+            CommitteeLetterFeed(),
+            name='buckley_letter_feed'),
+
+        url(r'letters\/(?P<id>C\d+)\/?$',
+            'django.views.generic.list_detail.object_detail',
+            {'queryset': IEOnlyCommittee.objects.all(), },
+            name='buckley_letter_detail'),
 
         url(r'^\/?$',
             'django.views.generic.list_detail.object_list',

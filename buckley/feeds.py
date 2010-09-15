@@ -85,3 +85,24 @@ class PayeeFeed(Feed):
     def items(self, obj):
         return Expenditure.objects.filter(payee=obj)[:15]
 
+
+class CommitteeLetterFeed(Feed):
+
+    title = 'Committees raising unlimited amounts'
+    link = '/independent-expenditures/letters/rss'
+    description = 'A feed of committees that have file letters with the FEC stating their intent to raise unlimited amounts'
+
+    def items(self):
+        return IEOnlyCommittee.objects.all()[:25]
+
+    def item_link(self, item):
+        return item.get_absolute_url()
+
+    def item_title(self, item):
+        return item.name
+
+    def item_description(self, item):
+        monthday = item.date_letter_submitted.strftime('%d').lstrip('0')
+        date = item.date_letter_submitted.strftime('%A, %B %%s, %Y') % monthday
+        return '%s filed a letter with the FEC on %s stating its intent to raise unlimited amounts for independent expenditures' % (item.name,
+               date)

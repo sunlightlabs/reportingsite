@@ -32,6 +32,10 @@ class IEOnlyCommittee(models.Model):
     def __unicode__(self):
         return self.name
 
+    @models.permalink
+    def get_absolute_url(self):
+        return ('buckley_letter_detail', [self.id, ])
+
 
 class Committee(models.Model):
     #id = models.CharField(max_length=9, primary_key=True)
