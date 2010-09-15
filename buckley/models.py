@@ -17,6 +17,22 @@ class CommitteeManager(models.Manager):
         return super(CommitteeManager, self).get_query_set().exclude(expenditure__candidate__slug='')
 """
 
+class IEOnlyCommittee(models.Model):
+    """For committees that have submitted a letter saying
+    they'll be accepting unlimited donations.
+    """
+    id = models.CharField(max_length=9, primary_key=True)
+    name = models.CharField(max_length=100)
+    date_letter_submitted = models.DateField()
+    pdf_url = models.URLField(verify_exists=False)
+
+    class Meta:
+        ordering = ('-date_letter_submitted', )
+
+    def __unicode__(self):
+        return self.name
+
+
 class Committee(models.Model):
     #id = models.CharField(max_length=9, primary_key=True)
     name = models.CharField(max_length=255)
