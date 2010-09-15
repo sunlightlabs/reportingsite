@@ -9,9 +9,6 @@ import urllib2
 
 import MultipartPostHandler
 
-"""
-{u'description': None, u'title': u'CONSERVATIVES FOR TRUTH', u'id': u'8454-conservatives-for-truth', u'canonical_url': u'http://www.documentcloud.org/documents/8454-conservatives-for-truth.html', u'annotations': [], u'sections': [], u'pages': 0, u'resources': {u'pdf': u'https://www.documentcloud.org/documents/8454/conservatives-for-truth.pdf', u'search': u'https://www.documentcloud.org/documents/8454/search.json?q={query}', u'page': {u'text': u'https://www.documentcloud.org/documents/8454/pages/conservatives-for-truth-p{page}.txt', u'image': u'https://www.documentcloud.org/documents/8454/pages/conservatives-for-truth-p{page}-{size}.gif'}, u'thumbnail': u'https://s3.amazonaws.com:443/s3.documentcloud.org/documents%2F8454%2Fpages%2Fconservatives-for-truth-p1-thumbnail.gif?Signature=XG%2BPwY4DvTdhB%2BDLCf5mPwSjvzY%3D&Expires=1284582520&AWSAccessKeyId=AKIAILH45M5OFUTSFEZQ', u'text': u'https://www.documentcloud.org/documents/8454/conservatives-for-truth.txt'}
-"""
 
 socket.setdefaulttimeout(25)
 
@@ -30,7 +27,7 @@ def doccloud_upload(sender, **kwargs):
     tf.write(urllib2.urlopen(committee.pdf_url).read())
     tf.close()
 
-    params = {'title': str(committee.name),
+    params = {'title': str(committee.name).title(),
               'source': 'FEC',
               'file': open(filename, 'rb'),
               'access': 'public',
@@ -50,3 +47,19 @@ def doccloud_upload(sender, **kwargs):
         pass
 
     time.sleep(1)
+
+
+def doccloud_update(sender, **kwargs):
+    import urllib
+    committee = kwargs['instance']
+
+    params = {'title': str(committee.name).title(),
+              '_method': 'put', }
+    url = 'https://www.documentcloud.org/api/documents/%s.json' % committee.doc_id
+    opener = urllib2.build_opener()
+    request = urllib2.Request(url, urllib.urlencode(params))
+    auth = base64.encodestring('%s:%s' % (USERNAME, PASSWORD))[:-1]
+    request.add_header('Authorization', 'Basic %s' % auth)
+
+    ret = opener.open(request).read()
+    print ret
