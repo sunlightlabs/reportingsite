@@ -20,7 +20,7 @@ class ExpenditureFeed(Feed):
     description = "The latest independent expenditures"
 
     def items(self):
-        return Expenditure.objects.all()[:15]
+        return Expenditure.objects.all()[:50]
 
     def item_link(self, item):
         return item.get_absolute_url()

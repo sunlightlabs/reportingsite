@@ -178,3 +178,9 @@ def widget(request):
     return render_to_response('buckley/widget_feed.html',
                               {'object_list': spending_list, 
                                   })
+
+
+def embed(request):
+    return render_to_response('buckley/widget.js',
+            {'host': request.META['HTTP_HOST'], },
+            mimetype='text/javascript')

@@ -8,25 +8,30 @@
  <link rel="shortcut icon" href="http://assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
 <link rel="alternate" type="application/rss+xml" title="Sunlight Foundation Transparency Ecosystem" href="http://feeds.feedburner.com/SunlightFoundationReportingGroup" />
  <link rel="icon" href="http://assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
-    {%css "css/main.css"%}
+    {% css "css/main.css" %}
   <!--[if IE 6]>{%css "css/buggy.css"%}<![endif]-->
   <!--[if IE 7]>{%css "css/buggy7.css"%}<![endif]-->
 
- <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
 
   <style type="text/css">
       body { width: 320px; background: none; }
       ul { list-style-type: disc; !important }
       li { margin-bottom: 15px; line-height: 15px; margin-left: 20px; }
       h3 { margin-top: 20px; margin-bottom: 10px; font-size: 95%; }
-      /*div#about { display: none; }*/
   </style>
 
   </head>
 
   <body>
+      <div id="widgetHeader"></div>
+
 <div id="ltcolumn">
-<strong><a target="new" href="{% url buckley_about %}">About this project</a></strong>
+    <h3 style="font-size: 110%;margin-top:15px;">Latest independent expenditures</h3>
+    <strong><a target="new" href="{% url buckley_about %}">About</a> | <a target="_top" href="{% url buckley_index %}">View All</a> | <a id="toggleEmbed" href="javascript:null">Embed code</a></strong>
+<a href="{% url buckley_expenditures_feed %}"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/feed-icon-14x14.png" style="border:none; display: block; float: right; margin-top: 4px;"/></a>
+
+<input type="text" size="50" value="<script type='text/javascript' src='http://127.0.0.1:8000/independent-expenditures/embed'></script>" id="embedCode" style="display: none;" />
 
 {% load humanize %}
 
@@ -34,7 +39,7 @@
 
 
 {% for date in spending_list %}
-<h3>{{ date.grouper|date:"F j, Y" }}</h3>
+<h3{% ifequal forloop.counter0 0 %} style="margin-top:10px;"{% endifequal %}>{{ date.grouper|date:"F j, Y" }}</h3>
 <ul>
 {% for spending in date.list %}
 <li><a target="_top" href="{{ spending.committee.get_absolute_url }}">{{ spending.committee.name }}</a> spent&nbsp;${{ spending.amount|intcomma }}<br />in {{ spending.support_oppose }} <a target="_top" href="{{ spending.candidate.get_absolute_url }}">{{ spending.candidate }}</a>{% if spending.candidate.party %} ({{ spending.candidate.party }}){% if spending.candidate.race %} in the <a target="_top" href="{% url buckley_race_detail race=spending.candidate.race %}">{{ spending.candidate.full_race_name }}{% ifequal spending.candidate.office 'H' %} House{% endifequal %}</a> race{% endif %}{% endif %}</li>
@@ -45,6 +50,31 @@
 
 <br>
 <strong><a target="_top" href="{% url buckley_index %}">View all independent expenditures</a></strong>
+
+<script type="text/javascript"> 
+var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script> 
+<script type="text/javascript"> 
+try {
+var pageTracker = _gat._getTracker("UA-1265484-45");
+pageTracker._trackPageview();
+} catch(err) {}</script>
+
+<script type="text/javascript">
+if (location.hostname.match(/reporting\.sunlight/) === null) {
+    pageTracker._setReferrerOverride(encodeURIComponent(location.href));
+
+    var html = '<div style="background: url(http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/bg_3.png) repeat 0% 0%;margin-bottom; 15px;"><a href="http://reporting.sunlightfoundation.com" target="new"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_reporting_color.png" style="border: none; margin-left: 10px;"/></a></div>';
+    document.getElementById('widgetHeader').innerHTML = html;
+}
+$(document).ready(function () {
+        //$("#embedCode").val('<iframe src="' + location.href + '" width="350" height="400" frameborder="0" style="margin-bottom: 40px;"></iframe>');
+        $("#toggleEmbed").click(function () {
+            $("#embedCode").toggle().focus().select();
+        });
+});
+</script>
 
     </body>
 

@@ -83,6 +83,11 @@ urlpatterns = patterns('',
             {},
             name='buckley_widget'),
 
+        url(r'embed\/?$',
+            'buckley.views.embed',
+            {},
+            name='buckley_embed'),
+
         url(r'about\/?$',
             'django.views.generic.simple.direct_to_template',
             {'template': 'buckley/about.html', },

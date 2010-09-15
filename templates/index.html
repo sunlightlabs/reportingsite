@@ -11,7 +11,10 @@
   <div class="mainModule lastItem">
 
       <h3 class="linkedTitle"><a href="{% url buckley_index %}">Latest independent expenditures</a></h3>
-      <iframe src="{% url buckley_widget %}" width="350" height="400" frameborder="0" style="margin-bottom: 40px;"></iframe>
+      {# <iframe src="{% url buckley_widget %}" width="350" height="400" frameborder="0" style="margin-bottom: 40px;"></iframe> #}
+      <script type='text/javascript' src='http://127.0.0.1:8000/independent-expenditures/embed'></script>
+      <br>
+      <br>
 
     <h3 class="linkedTitle"><a href="/blog">Real Time Investigations</a></h3>
     <ol class="moduleLists"> 
