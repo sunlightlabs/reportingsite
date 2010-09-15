@@ -2,7 +2,6 @@
 
 {% block main_content %}
 
-<div style="font-weight: bold; margin-top: 15px;"><a href="{% url buckley_index %}">&lt;&lt;&nbsp;Independent expenditures home</a></div>
 
 <style type="text/css">
     table#expenditures { width: 100%; border-collapse: collapse; border: 0; }
@@ -13,10 +12,15 @@
     table.tablesorter th:hover { text-decoration: underline; }
 </style>
 
-<div style="background: none; padding: 25px;">
+<div style="padding: 25px; background: url(http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/column_ltFull.png) repeat 0% 0%;">
+
+<div style="font-weight: bold; margin-bottom: 20px;"><a href="{% url buckley_index %}">&lt;&lt;&nbsp;Independent expenditures home</a></div>
     {% block content %}
     {% endblock content %}
+
+    <br><br><br>
+<p>Data source: <a href="http://www.fec.gov/blog/disclosure/entry/update_on_new_spending_data">Federal Election Commission</a> | <a href="ftp://ftp.fec.gov/FEC/ind_exp_2010.csv">Download this data from the FEC</a></p>
+
 </div>
 
-<p>Data source: <a href="http://www.fec.gov/blog/disclosure/entry/update_on_new_spending_data">Federal Election Commission</a> | <a href="ftp://ftp.fec.gov/FEC/ind_exp_2010.csv">Download this data from the FEC</a></p>
 {% endblock main_content %}
