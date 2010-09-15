@@ -177,6 +177,7 @@ def widget(request):
 
     return render_to_response('buckley/widget_feed.html',
                               {'object_list': spending_list, 
+                               'host': request.META['HTTP_HOST'],
                                   })
 
 

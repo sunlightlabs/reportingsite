@@ -31,7 +31,7 @@
     <strong><a target="new" href="{% url buckley_about %}">About</a> | <a target="_top" href="{% url buckley_index %}">View All</a> | <a id="toggleEmbed" href="javascript:null">Embed code</a></strong>
 <a href="{% url buckley_expenditures_feed %}"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/feed-icon-14x14.png" style="border:none; display: block; float: right; margin-top: 4px;"/></a>
 
-<input type="text" size="50" value="<script type='text/javascript' src='http://127.0.0.1:8000/independent-expenditures/embed'></script>" id="embedCode" style="display: none;" />
+<input type="text" size="50" value="<script type='text/javascript' src='http://{{ host }}/independent-expenditures/embed'></script>" id="embedCode" style="display: none;" />
 
 {% load humanize %}
 
