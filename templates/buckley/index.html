@@ -29,7 +29,7 @@
     </thead>
 {% for expenditure in object_list %}
 <tr>
-    <td>{{ expenditure.expenditure_date }}</td>
+    <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
     <td><a href="{% url buckley_race_detail race=expenditure.candidate.race %}">{{ expenditure.candidate.race }}</a></td>
     <td><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a></td>
     <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>

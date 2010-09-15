@@ -5,7 +5,7 @@
 
 {% block content %}
 
-<h2>Independent expenditures by {{ committee }}<br>for/against {{ candidate }}</h2>
+<h2>Independent expenditures by {{ committee }}<br>for/against {{ candidate }}{% if candidate.party %} ({{ candidate.party }}){% endif %}</h2>
 <br>
 <strong><a href="{% url buckley_candidate_detail slug=candidate.slug %}">All independent expenditures for/against {{ candidate }}</a></strong>
 <br>
@@ -26,7 +26,7 @@
     <tbody>
         {% for expenditure in object_list %}
         <tr>
-            <td>{{ expenditure.expenditure_date }}</td>
+            <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
             <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
             <td>${{ expenditure.expenditure_amount|intcomma }}</td>
             <td>{{ expenditure.expenditure_purpose }}</td>
