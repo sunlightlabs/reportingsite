@@ -207,7 +207,9 @@ def index(request):
     #    cache.set(key, blogs, 60*15)
 
     return render_to_response('index.html', 
-                              {'blogs': blogs, 'featured': featured, 'bodyclass': 'home'},
+                              {'blogs': blogs, 'featured': featured, 'bodyclass': 'home',
+                               'host': request.META['HTTP_HOST'],
+                              },
                               context_instance=RequestContext(request))
 
 

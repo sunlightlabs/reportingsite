@@ -52,6 +52,18 @@
 <strong><a target="_top" href="{% url buckley_index %}">View all independent expenditures</a></strong>
 
 <script type="text/javascript"> 
+var embedder, embedder_host;
+
+var matches_embedder_host = location.search.match(/embedder_host=([^&\?]+)/);
+if (matches_embedder_host)
+embedder_host = unescape(matches_embedder_host[1]);
+
+var matches_embedder = location.search.match(/embedder=([^&\?]+)/);
+if (matches_embedder)
+embedder = unescape(matches_embedder[1]);
+</script> 
+
+<script type="text/javascript"> 
 var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
 document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
 </script> 
@@ -62,14 +74,14 @@ pageTracker._trackPageview();
 } catch(err) {}</script>
 
 <script type="text/javascript">
-if (location.hostname.match(/reporting\.sunlight/) === null) {
-    pageTracker._setReferrerOverride(encodeURIComponent(location.href));
+//if (location.hostname.match(/reporting\.sunlight/) === null) {
+if (embedder && (embedder_host != location.host)) {
+    pageTracker._setReferrerOverride(embedder);
 
     var html = '<div style="background: url(http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/bg_3.png) repeat 0% 0%;margin-bottom; 15px;"><a href="http://reporting.sunlightfoundation.com" target="new"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_reporting_color.png" style="border: none; margin-left: 10px;"/></a></div>';
     document.getElementById('widgetHeader').innerHTML = html;
 }
 $(document).ready(function () {
-        //$("#embedCode").val('<iframe src="' + location.href + '" width="350" height="400" frameborder="0" style="margin-bottom: 40px;"></iframe>');
         $("#toggleEmbed").click(function () {
             $("#embedCode").toggle().focus().select();
         });
