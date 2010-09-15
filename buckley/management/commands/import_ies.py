@@ -16,6 +16,7 @@ try:
 except ImportError:
     import simplejson as json
 
+from django.core.mail import send_mail
 from django.core.management.base import NoArgsCommand
 from django.template.defaultfilters import slugify
 
@@ -170,6 +171,11 @@ class Command(NoArgsCommand):
 
         # If data hasn't been updated in the past hour, don't do anything.
         if hours_diff > 1:
+            send_mail('[ IE data importer ] Data not updated',
+                      '',
+                      'abycoffe@sunlightfoundation.com',
+                      ['abycoffe@sunlightfoundation.com', ],
+                      fail_silently=True)
             return
 
 
@@ -391,3 +397,9 @@ class Command(NoArgsCommand):
 
         print
         print 'Removed %s records' % str(removed)
+
+        send_mail('[ IE data importer ] Data updated',
+                  'Database contains %s expenditure records' % str(Expenditure.objects.count()),
+                  'abycoffe@sunlightfoundation.com',
+                  ['abycoffe@sunlightfoundation.com', ],
+                  fail_silently=True)
