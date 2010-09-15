@@ -22,7 +22,7 @@ from buckley.models import *
 
 from dateutil.parser import parse as dateparse
 import MySQLdb
-import name_tools
+from buckley import name_tools
 
 
 # So our HTTP requests don't timeout as quickly
