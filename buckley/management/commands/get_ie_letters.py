@@ -1,6 +1,7 @@
 import datetime
 from cStringIO import StringIO
 import re
+import socket
 import time
 import urllib2
 
@@ -11,6 +12,8 @@ from buckley.models import IEOnlyCommittee
 from dateutil.parser import parse as dateparse
 import pyPdf
 
+# So our HTTP requests don't timeout as quickly
+socket.setdefaulttimeout(25)
 
 def get_already_submitted():
     """Create a list of committees that have submitted a letter
