@@ -3,6 +3,7 @@ import csv
 import datetime
 from decimal import Decimal
 import logging
+import os
 import re
 import socket
 import sys
@@ -21,6 +22,7 @@ from django.template.defaultfilters import slugify
 from buckley.models import *
 
 from dateutil.parser import parse as dateparse
+from dateutil.tz import tzutc
 import MySQLdb
 import name_tools
 
@@ -157,6 +159,20 @@ class Command(NoArgsCommand):
         #Expenditure.objects.all().delete()
 
         url = 'ftp://ftp.fec.gov/FEC/ind_exp_2010.csv'
+
+        # Check whether the FEC data has been updated in the past hour.
+        # Having trouble getting urllib2 or httplib2 headers
+        # to show last-modified time for a file on an FTP server,
+        # so using cURL.
+        headers = os.popen('curl -Is "%s"' % url).read().split('\n')
+        last_modified = dateparse(headers[0].replace('Last-Modified: ', '').strip())
+        hours_diff = (datetime.datetime.now(tzutc()) - last_modified).seconds / 60 / 60
+
+        # If data hasn't been updated in the past hour, don't do anything.
+        if hours_diff > 1:
+            return
+
+
         reader = list(csv.DictReader(StringIO(urllib2.urlopen(url).read())))
 
         committees = {}
