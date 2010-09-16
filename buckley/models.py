@@ -230,3 +230,10 @@ class Expenditure(models.Model):
     @models.permalink
     def get_absolute_url(self):
         return ('buckley_expenditure_detail', [self.committee.slug, self.pk, ])
+
+    def election_type_full(self):
+        if self.election_type == 'G':
+            return 'general election'
+        elif self.election_type == 'P':
+            return 'primary'
+        return ''

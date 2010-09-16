@@ -148,7 +148,7 @@ def widget(request):
             else:
                 continue
 
-            if d[expenditure.committee].has_key(expenditure.candidate.slug):
+            if d[expenditure.committee].has_key(expenditure.candidate):
                 d[expenditure.committee][expenditure.candidate] += expenditure.expenditure_amount
             else:
                 d[expenditure.committee][expenditure.candidate] = expenditure.expenditure_amount
@@ -162,12 +162,9 @@ def widget(request):
             for key, value in d.iteritems():
                 for candidate, amount in value.iteritems():
                     spending_list.append({'committee': key,
-                                          #'committee_url': '%s%s' % (base_url, key.get_absolute_url()),
                                           'candidate': candidate,
-                                          #'candidate_url': '%s%s' % (base_url, candidate.get_absolute_url()),
                                           'amount': amount,
                                           'support_oppose': support_oppose,
-                                          #'date': date.strftime('%Y-%m-%d'),
                                           'date': date,
                                          })
 

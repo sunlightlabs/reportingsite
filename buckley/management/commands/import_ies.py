@@ -172,17 +172,16 @@ class Command(NoArgsCommand):
         headers = os.popen('curl -Is "%s"' % url).read().split('\n')
         last_modified = dateparse(headers[0].replace('Last-Modified: ', '').strip())
         hours_diff = (datetime.datetime.now(tzutc()) - last_modified).seconds / 60 / 60
+        print hours_diff
 
         # If data hasn't been updated in the past hour, don't do anything.
-        """
-        if hours_diff > 1:
+        if hours_diff > 3:
             send_mail('[ IE data importer ] Data not updated',
                       '',
                       'abycoffe@sunlightfoundation.com',
                       ['abycoffe@sunlightfoundation.com', ],
                       fail_silently=True)
             return
-        """
 
         reader = list(csv.DictReader(StringIO(urllib2.urlopen(url).read())))
 

@@ -19,6 +19,7 @@
     <thead>
         <tr>
             <th>Date</th>
+            <th>Election type</th>
             <th>Committee</th>
             <th>Support/Oppose</th>
             <th>Candidate</th>
@@ -29,7 +30,8 @@
     </thead>
 {% for expenditure in object_list %}
 <tr>
-    <td>{{ expenditure.expenditure_date }}</td>
+    <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
+    <td>{{ expenditure.election_type }}</td>
     <td><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a></td>
     <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
     <td><a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a></td>

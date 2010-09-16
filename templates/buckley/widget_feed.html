@@ -42,7 +42,7 @@
 <h3{% ifequal forloop.counter0 0 %} style="margin-top:10px;"{% endifequal %}>{{ date.grouper|date:"F j, Y" }}</h3>
 <ul>
 {% for spending in date.list %}
-<li><a target="_top" href="{{ spending.committee.get_absolute_url }}">{{ spending.committee.name }}</a> spent&nbsp;${{ spending.amount|intcomma }}<br />in {{ spending.support_oppose }} <a target="_top" href="{{ spending.candidate.get_absolute_url }}">{{ spending.candidate }}</a>{% if spending.candidate.party %} ({{ spending.candidate.party }}){% if spending.candidate.race %} in the <a target="_top" href="{% url buckley_race_detail race=spending.candidate.race %}">{{ spending.candidate.full_race_name }}{% ifequal spending.candidate.office 'H' %} House{% endifequal %}</a> race{% endif %}{% endif %}</li>
+<li><a target="_top" href="{{ spending.committee.get_absolute_url }}">{{ spending.committee.name }}</a> spent&nbsp;${{ spending.amount|intcomma }}<br />in {{ spending.support_oppose }} <a target="_top" href="{{ spending.candidate.get_absolute_url }}">{{ spending.candidate }}</a>{% if spending.candidate.party %} ({{ spending.candidate.party }}){% if spending.candidate.race %} in the <a target="_top" href="{% url buckley_race_detail race=spending.candidate.race %}">{{ spending.candidate.full_race_name }}{% ifequal spending.candidate.office 'H' %} House{% endifequal %}</a> {% if spending.election_type %}{{ spending.election_type }} {% endif %}race{% endif %}{% endif %}</li>
 {% endfor %}
 </ul>
 {% endfor %}
