@@ -1,0 +1,76 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% load humanize %}
+
+{% block content %}
+<h2>Search</h2>
+
+<form action="{% url buckley_search %}" method="GET">
+<label style="margin-right: 75px; font-weight: bold;" for="q">Candidate&nbsp;or&nbsp;committee:</label>
+<input type="text" name="q" value="{{ terms }}" style="border: 2px inset; width: 200px; " />
+<input style="width: 50px;border: 1px outset buttonface" type="submit" value="Search" />
+</form>
+
+{% ifequal num_results 0 %}
+<br><br><br>
+<h3>No results found</h3>
+{% endifequal %}
+<br><br>
+{% if candidates %}
+<h3>Candidates</h3>
+<table id="expenditures" class="tablesorter">
+    <thead>
+        <tr>
+            <th>Candidate</th>
+            <th>Party</th>
+            <th>Race</th>
+            <th>Total independent expenditures</th>
+            <th>Independent expenditures supporting</th>
+            <th>Independent expenditures opposing</th>
+        </tr>
+    </thead>
+    <tbody>
+
+{% for candidate in candidates %}
+<tr>
+    <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.last_first }}</a></td>
+    <td>{{ candidate.party }}</td>
+    <td>{{ candidate.full_race_name }}</td>
+    <td>${{ candidate.total|intcomma }}</td>
+    <td>${{ candidate.total_supporting|intcomma }}</td>
+    <td>${{ candidate.total_opposing|intcomma }}</td>
+</tr>
+{% endfor %}
+</tbody>
+</table>
+{% endif %}
+
+<br><br>
+
+{% if committees %}
+<h3>Committees</h3>
+<table id="expenditures" class="tablesorter">
+    <thead>
+        <tr>
+            <th>Committee</th>
+            <th>Total spent on independent expenditures</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for committee in committees %}
+            {% if committee.total %}
+                <tr>
+                    <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
+                    <td>${{ committee.total|intcomma }}</td>
+                    <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</a></td>
+                </tr>
+            {% endif %}
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endif %}
+
+{% endblock %}
+
