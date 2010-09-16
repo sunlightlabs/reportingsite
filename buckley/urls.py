@@ -107,6 +107,11 @@ urlpatterns = patterns('',
             {'queryset': IEOnlyCommittee.objects.all(), },
             name='buckley_letter_detail'),
 
+        url(r'search\/?$',
+            'buckley.views.search',
+            {},
+            name='buckley_search'),
+
         url(r'^\/?$',
             'django.views.generic.list_detail.object_list',
             {'queryset': Expenditure.objects.all(), 

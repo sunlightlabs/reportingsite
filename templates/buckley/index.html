@@ -6,13 +6,20 @@
 
 <h2>Latest independent expenditures</h2>
 <br>
+<form action="{% url buckley_search %}" method="GET">
+<label style="font-weight: bold; width: 250px;" for="q">Search for a candidate or committee:</label>
+<input type="text" name="q" value="{{ terms }}" style="border: 2px inset; width: 200px; " />
+<input style="width: 50px;border: 1px outset buttonface" type="submit" value="Search" />
+</form>
+<br>
 <strong><a href="{% url buckley_candidate_list %}">Browse by candidate</a></strong>
 <br>
 <strong><a href="{% url buckley_race_list %}">Browse by race</a></strong>
 <br>
 <strong><a href="{% url buckley_committee_list %}">Browse by committee</a></strong>
 <br>
-<br>
+<strong><a href="{% url buckley_letter_list %}">Committees that intend to accept unlimited contributions</a></strong>
+<br><br>
 
 <table id="expenditures">
     <thead>

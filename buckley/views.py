@@ -185,3 +185,20 @@ def embed(request):
     return render_to_response('buckley/widget.js',
             {'host': request.META['HTTP_HOST'], },
             mimetype='text/javascript')
+
+
+def search(request):
+    terms = request.GET.get('q', None)
+
+    if terms:
+        candidates = Candidate.objects.filter(crp_name__icontains=terms)
+        committees = Committee.objects.filter(name__icontains=terms)
+    else:
+        candidates = None
+        committees = None
+
+    return render_to_response('buckley/search.html',
+                              {'candidates': candidates,
+                               'committees': committees,
+                               'num_results': candidates.count() + committees.count(),
+                               'terms': terms, })

@@ -21,7 +21,7 @@
                 <tr>
                     <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
                     <td>${{ committee.total|intcomma }}</td>
-                    <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</td>
+                    <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</a></td>
                 </tr>
             {% endif %}
         {% endfor %}
