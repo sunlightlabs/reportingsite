@@ -16,6 +16,7 @@ try:
 except ImportError:
     import simplejson as json
 
+from django.core.cache import cache
 from django.core.mail import send_mail
 from django.core.management.base import NoArgsCommand
 from django.template.defaultfilters import slugify
@@ -172,10 +173,9 @@ class Command(NoArgsCommand):
         headers = os.popen('curl -Is "%s"' % url).read().split('\n')
         last_modified = dateparse(headers[0].replace('Last-Modified: ', '').strip())
         hours_diff = (datetime.datetime.now(tzutc()) - last_modified).seconds / 60 / 60
-        print hours_diff
 
         # If data hasn't been updated in the past hour, don't do anything.
-        if hours_diff > 3:
+        if hours_diff > 1:
             send_mail('[ IE data importer ] Data not updated',
                       '',
                       'abycoffe@sunlightfoundation.com',
@@ -406,3 +406,6 @@ class Command(NoArgsCommand):
                   'abycoffe@sunlightfoundation.com',
                   ['abycoffe@sunlightfoundation.com', ],
                   fail_silently=True)
+
+        # Clear the cached widget
+        cache.delete('buckley:widget')
