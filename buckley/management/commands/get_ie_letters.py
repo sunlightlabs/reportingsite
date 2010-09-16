@@ -31,7 +31,11 @@ def get_committee_page(id):
     except urllib2.URLError:
         logging.debug('URLError on %s' % url)
         return None
-    return response.read()
+    try:
+        return response.read()
+    except socket.timeout:
+        logging.debug('socket timeout on %s' % url)
+        return None
 
 def get_pdf_urls(page):
     rows = re.findall(r'(?:statement of organization|miscellaneous report to fec).*?<\/tr>', page, re.S | re.I)
