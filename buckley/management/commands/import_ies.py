@@ -42,17 +42,21 @@ NAME_LOOKUP = {
     'Boozman, John': 'S0AR00150',
     'BOXER, BARBARA': 'S2CA00286',
     'BUCHANAN, JOAN': 'H0CA10099',
+    'Carnahan, Russ': 'H0MO00019',
+    'Chabot, Steve': 'H8OH01043',
     'CHU, BETTY': 'H0CA32218',
     'Edwards, Chet': 'H8TX06035',
     'FIORINA, CARLY': 'S0CA00330',
     'HALTER, WILLIAM A': 'S0AR00168',
     'HAWKINS, B LEE': 'H0GA09089',
+    'Hayworth, Nan': 'H0NY19139',
     'Kelly, Jesse': 'H0AZ08015',
     'KIRKLAND, RONALD': 'H0TN08261',
     'Kirkpatrick, Ann': 'H8AZ01104',
     'LASSA, JULIE': 'H0WI07069',
     'LINCOLN, BLANCHE': 'S8AR00112',
     'LINCOLN, BLANCHE L': 'S8AR00112',
+    'Martin, Edward': 'H0MO03112',
     'Paton, Jonathan': 'H0AZ08056',
     'Portman, Rob': 'S0OH00133',
     'ROMANOFF, ANDREW': 'S0CO00286',
@@ -170,6 +174,7 @@ class Command(NoArgsCommand):
         hours_diff = (datetime.datetime.now(tzutc()) - last_modified).seconds / 60 / 60
 
         # If data hasn't been updated in the past hour, don't do anything.
+        """
         if hours_diff > 1:
             send_mail('[ IE data importer ] Data not updated',
                       '',
@@ -177,7 +182,7 @@ class Command(NoArgsCommand):
                       ['abycoffe@sunlightfoundation.com', ],
                       fail_silently=True)
             return
-
+        """
 
         reader = list(csv.DictReader(StringIO(urllib2.urlopen(url).read())))
 
@@ -200,9 +205,8 @@ class Command(NoArgsCommand):
             if not row['CAND_NAM'] and not row['CAN_ID']:
                 continue
 
-            # If the candidate ID is missing but the name is in
-            # our lookup dict, use the ID from there.
-            if not row['CAN_ID'] and row['CAND_NAM'] in NAME_LOOKUP:
+            # If the name is in our lookup dict, use the ID from there.
+            if row['CAND_NAM'] in NAME_LOOKUP:
                 row['CAN_ID'] = NAME_LOOKUP[row['CAND_NAM']]
 
             # We know that this candidate ID is wrong in the CSV
