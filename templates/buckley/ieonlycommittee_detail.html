@@ -25,8 +25,7 @@
     }
 </style>
 <h2>{{ object }} - intent to accept unlimited contributions</h2>
-<br>
-<!--<a href="{% url buckley_letter_list %}">View all committees that have stated their intent to accept contributions of unlimited amounts</a>//-->
+{% if object.has_expenditures %}<p><a href="{{ object.has_expenditures.get_absolute_url }}">View this committee's expenditures</a></p>{% endif %}
 <br>
 <div id="doc-viewer"></div>
 <script src="http://s3.documentcloud.org/viewer/loader.js"></script>
