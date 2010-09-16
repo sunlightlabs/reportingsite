@@ -1,5 +1,7 @@
 from django.conf.urls.defaults import *
 from django.db.models import Sum
+from django.views.decorators.cache import cache_page
+from django.views.generic.list_detail import object_list, object_detail
 
 from buckley.models import *
 from buckley.feeds import *
@@ -22,12 +24,14 @@ urlpatterns = patterns('',
             name='buckley_committee_candidate_detail'),
 
         url(r'committee/(?P<slug>[-\w]+)\/?$', 
-            'django.views.generic.list_detail.object_detail', 
+            cache_page(object_detail, 60*15),
+            #'django.views.generic.list_detail.object_detail', 
             {'queryset': Committee.objects.all(), },
             name='buckley_committee_detail'),
 
         url(r'committee\/?$',
-            'django.views.generic.list_detail.object_list',
+            object_list,
+            #'django.views.generic.list_detail.object_list',
             {'queryset': Committee.objects.all(), },
             name='buckley_committee_list'),
 
@@ -41,12 +45,14 @@ urlpatterns = patterns('',
             name='buckley_candidate_committee_detail'),
 
         url(r'candidate\/(?P<slug>[-\w]+)\/?$',
-            'django.views.generic.list_detail.object_detail',
+            cache_page(object_detail, 60*15),
+            #'django.views.generic.list_detail.object_detail',
             {'queryset': Candidate.objects.all(), },
             name='buckley_candidate_detail'),
 
         url(r'candidate\/?$',
-            'django.views.generic.list_detail.object_list',
+            cache_page(object_list, 60*15),
+            #'django.views.generic.list_detail.object_list',
             {'queryset': Candidate.objects.all(), },
             name='buckley_candidate_list'),
 
@@ -94,7 +100,8 @@ urlpatterns = patterns('',
             name='buckley_about'),
 
         url(r'letters\/?$',
-            'django.views.generic.list_detail.object_list',
+            cache_page(object_list, 60*60),
+            #'django.views.generic.list_detail.object_list',
             {'queryset': IEOnlyCommittee.objects.all(), },
             name='buckley_letter_list'),
 
@@ -103,7 +110,8 @@ urlpatterns = patterns('',
             name='buckley_letter_feed'),
 
         url(r'letters\/(?P<object_id>C\d+)\/?$',
-            'django.views.generic.list_detail.object_detail',
+            object_detail,
+            #'django.views.generic.list_detail.object_detail',
             {'queryset': IEOnlyCommittee.objects.all(), },
             name='buckley_letter_detail'),
 
@@ -113,7 +121,8 @@ urlpatterns = patterns('',
             name='buckley_search'),
 
         url(r'^\/?$',
-            'django.views.generic.list_detail.object_list',
+            cache_page(object_list, 60*15),
+            #'django.views.generic.list_detail.object_list',
             {'queryset': Expenditure.objects.all(), 
              'template_name': 'buckley/index.html',
              'paginate_by': 25,
