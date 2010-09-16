@@ -1,8 +1,10 @@
 from collections import defaultdict
 from operator import itemgetter
 
+from django.views.decorators.cache import cache_page
 from django.contrib.humanize.templatetags.humanize import intcomma, ordinal
 from django.contrib.sites.models import Site
+from django.core.cache import cache
 from django.db.models import Sum
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
@@ -19,19 +21,14 @@ except ImportError:
     import simplejson as json
 
 
+@cache_page(60*60)
 def expenditure_detail(request, committee_slug, object_id):
     expenditure = get_object_or_404(Expenditure, committee__slug=committee_slug, pk=object_id)
     return render_to_response('buckley/expenditure_detail.html', {'object': expenditure, })
 
 
+@cache_page(60*15)
 def race_list(request):
-
-    order = request.GET.get('order', 'amt')
-    direction = request.GET.get('sort', None)
-    if order != 'amt' and not direction:
-        direction = 'asc'
-    elif order == 'amt' and not direction:
-        direction = 'desc'
 
     races = set([x.race() for x in Candidate.objects.all()])
     race_amts = []
@@ -50,10 +47,7 @@ def race_list(request):
             total = sum([x.total() for x in Candidate.objects.filter(office='H', state=state, district=district)])
         race_amts.append((race, full_race, total))
 
-    rev = direction == 'desc'
-    sort_item = 2 if order == 'amt' else 1
-
-    race_amts.sort(key=itemgetter(sort_item), reverse=rev)
+    race_amts.sort(key=itemgetter('amt', reverse=True))
 
     return render_to_response('buckley/race_list.html',
                               {'races': race_amts,
@@ -61,7 +55,9 @@ def race_list(request):
                                })
 
 
+@cache_page(60*15)
 def race_expenditures(request, race):
+
     try:
         state, district = race.split('-')
     except ValueError:
@@ -77,6 +73,7 @@ def race_expenditures(request, race):
         full_race = '%s %s' % (STATE_CHOICES[state], ordinal(district))
 
     #expenditures = Expenditure.objects.filter(candidate__in=candidates).order_by('-expenditure_date')
+
     expenditures = Expenditure.objects.filter(race=race).order_by('-expenditure_date')
     if not expenditures:
         raise Http404
@@ -99,11 +96,13 @@ def race_expenditures(request, race):
                                'page_obj': page,
                               })
 
+@cache_page(60*15)
 def candidate_committee_detail(request, candidate_slug, committee_slug):
     if candidate_slug == 'no-candidate-listed':
         raise Http404
     candidate = get_object_or_404(Candidate, slug=candidate_slug)
     committee = get_object_or_404(Committee, slug=committee_slug)
+
     expenditures = Expenditure.objects.filter(candidate=candidate,
                                                 committee=committee
                                                 ).order_by('-expenditure_date')
@@ -117,65 +116,58 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
 
 def widget(request):
 
-    max_limit = 25
+    cache_key = 'buckley:widget'
+    spending_list = cache.get(cache_key)
 
-    limit = request.GET.get('limit', max_limit)
-    try:
-        limit = int(limit)
-    except ValueError:
-        limit = max_limit
+    if not spending_list:
+        limit = 25
+        spending_list = []
 
-    if limit > max_limit:
-        limit = max_limit
+        dates = Expenditure.objects.values_list('expenditure_date', flat=True).order_by('-expenditure_date').distinct()
+        for date in dates:
+            if len(spending_list) >= limit:
+                break
 
-    spending_list = []
+            expenditures = Expenditure.objects.filter(expenditure_date=date)
 
-    dates = Expenditure.objects.values_list('expenditure_date', flat=True).order_by('-expenditure_date').distinct()
-    for date in dates:
-        if len(spending_list) >= limit:
-            break
+            pro = defaultdict(dict)
+            con = defaultdict(dict)
 
-        expenditures = Expenditure.objects.filter(expenditure_date=date)
+            for expenditure in expenditures:
+                if expenditure.support_oppose == 'S':
+                    d = pro
+                elif expenditure.support_oppose == 'O':
+                    d = con
+                else:
+                    continue
 
-        pro = defaultdict(dict)
-        con = defaultdict(dict)
+                if d[expenditure.committee].has_key(expenditure.candidate):
+                    d[expenditure.committee][expenditure.candidate] += expenditure.expenditure_amount
+                else:
+                    d[expenditure.committee][expenditure.candidate] = expenditure.expenditure_amount
 
-        for expenditure in expenditures:
-            if expenditure.support_oppose == 'S':
-                d = pro
-            elif expenditure.support_oppose == 'O':
-                d = con
-            else:
-                continue
+            site = Site.objects.get_current()
+            base_url = 'http://%s' % site.domain
 
-            if d[expenditure.committee].has_key(expenditure.candidate):
-                d[expenditure.committee][expenditure.candidate] += expenditure.expenditure_amount
-            else:
-                d[expenditure.committee][expenditure.candidate] = expenditure.expenditure_amount
+            data = []
+            dicts = [('support of', pro), ('opposition to', con), ]
+            for support_oppose, d in dicts:
+                for key, value in d.iteritems():
+                    for candidate, amount in value.iteritems():
+                        spending_list.append({'committee': key,
+                                              'candidate': candidate,
+                                              'amount': amount,
+                                              'support_oppose': support_oppose,
+                                              'date': date,
+                                             })
 
-        site = Site.objects.get_current()
-        base_url = 'http://%s' % site.domain
+        spending_list.sort(key=itemgetter('date', 'committee', 'candidate', 'support_oppose'), reverse=True)
+        cache.set(cache_key, spending_list, 60*60)
 
-        data = []
-        dicts = [('support of', pro), ('opposition to', con), ]
-        for support_oppose, d in dicts:
-            for key, value in d.iteritems():
-                for candidate, amount in value.iteritems():
-                    spending_list.append({'committee': key,
-                                          'candidate': candidate,
-                                          'amount': amount,
-                                          'support_oppose': support_oppose,
-                                          'date': date,
-                                         })
-
-    spending_list.sort(key=itemgetter('date', 'committee', 'candidate', 'support_oppose'), reverse=True)
-
-    #return HttpResponse(json.dumps(spending_list), mimetype='application/json')
-
-    return render_to_response('buckley/widget_feed.html',
+    return render_to_response('buckley/widget.html',
                               {'object_list': spending_list, 
                                'host': request.META['HTTP_HOST'],
-                                  })
+                               })
 
 
 def embed(request):
