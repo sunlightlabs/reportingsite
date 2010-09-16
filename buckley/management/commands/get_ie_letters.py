@@ -32,7 +32,7 @@ def get_pdf_urls(page):
         filed = re.search(r'\d\d\/\d\d\/\d\d\d\d', row)
         if filed:
             date = dateparse(filed.group()).date()
-            if date > datetime.date.today() - datetime.timedelta(365):
+            if date > datetime.date.today() - datetime.timedelta(15):
                 match = re.search(r'\/pdf.*?\.pdf', row)
                 if match:
                     yield 'http://images.nictusa.com%s' % match.group(), date
@@ -68,7 +68,7 @@ class Command(NoArgsCommand):
 
         for id in committee_ids:
 
-            time.sleep(.15)
+            time.sleep(.25)
             page = get_committee_page(id)
 
             for url, date in get_pdf_urls(page):
