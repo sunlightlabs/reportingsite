@@ -47,11 +47,10 @@ def race_list(request):
             total = sum([x.total() for x in Candidate.objects.filter(office='H', state=state, district=district)])
         race_amts.append((race, full_race, total))
 
-    race_amts.sort(key=itemgetter('amt', reverse=True))
+    race_amts.sort(key=itemgetter(2), reverse=True)
 
     return render_to_response('buckley/race_list.html',
                               {'races': race_amts,
-                               'sort': 'asc' if direction == 'desc' else 'desc'
                                })
 
 
