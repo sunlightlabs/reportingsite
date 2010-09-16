@@ -1,5 +1,6 @@
 import datetime
 from cStringIO import StringIO
+import logging
 import re
 import socket
 import time
@@ -13,7 +14,9 @@ from dateutil.parser import parse as dateparse
 import pyPdf
 
 # So our HTTP requests don't timeout as quickly
-socket.setdefaulttimeout(25)
+socket.setdefaulttimeout(60)
+
+logging.basicConfig(filename='ie_letter_errors.log', level=logging.DEBUG)
 
 def get_already_submitted():
     """Create a list of committees that have submitted a letter
@@ -23,7 +26,11 @@ def get_already_submitted():
 
 def get_committee_page(id):
     url = 'http://images.nictusa.com/cgi-bin/fecimg/?%s' % id
-    response = urllib2.urlopen(url)
+    try:
+        response = urllib2.urlopen(url)
+    except urllib2.URLError:
+        logging.debug('URLError on %s' % url)
+        return None
     return response.read()
 
 def get_pdf_urls(page):
@@ -70,6 +77,9 @@ class Command(NoArgsCommand):
 
             time.sleep(.25)
             page = get_committee_page(id)
+
+            if not page:
+                continue
 
             for url, date in get_pdf_urls(page):
                 mentions_speechnow = parse_pdf(url)
