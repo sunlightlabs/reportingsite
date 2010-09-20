@@ -251,3 +251,11 @@ class Expenditure(models.Model):
         elif self.election_type == 'P':
             return 'primary'
         return ''
+
+    def election_type_for_detail_page(self):
+        if self.election_type == 'G':
+            return 'General'
+        elif self.election_type == 'P':
+            return 'Primary'
+        else:
+            return 'Other'
