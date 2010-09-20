@@ -1,11 +1,11 @@
-from collections import defaultdict
+from collections import defaultdict, deque
 from operator import itemgetter
 
 from django.views.decorators.cache import cache_page
 from django.contrib.humanize.templatetags.humanize import intcomma, ordinal
 from django.contrib.sites.models import Site
 from django.core.cache import cache
-from django.db.models import Sum
+from django.db.models import Sum, Q
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
 from django.contrib.localflavor.us.us_states import STATE_CHOICES
@@ -67,12 +67,21 @@ def race_list(request):
 
 
 @cache_page(60*15)
-def race_expenditures(request, race):
+def race_expenditures(request, race, election_type=None):
 
     try:
         state, district = race.split('-')
     except ValueError:
         raise Http404
+
+    filter = {}
+    exclude = Q()
+    election_types = {'primary': 'P', 'general': 'G', }
+    if election_type:
+        if election_type in election_types:
+            filter = {'election_type': election_types[election_type]}
+        else:
+            exclude = Q(election_type='G') | Q(election_type='P')
 
     if district.lower() == 'senate':
         candidates = get_list_or_404(Candidate, office='S', state=state)
@@ -83,11 +92,21 @@ def race_expenditures(request, race):
         candidates = get_list_or_404(Candidate, office='H', state=state, district=district)
         full_race = '%s %s' % (STATE_CHOICES[state], ordinal(district))
 
-    #expenditures = Expenditure.objects.filter(candidate__in=candidates).order_by('-expenditure_date')
-
-    expenditures = Expenditure.objects.filter(race=race).order_by('-expenditure_date')
+    expenditures = Expenditure.objects.filter(race=race).filter(**filter).exclude(exclude).order_by('-expenditure_date')
     if not expenditures:
         raise Http404
+
+    election_types = []
+    if not election_type:
+        types = deque(expenditures.order_by('election_type').values_list('election_type', flat=True).distinct())
+        if 'G' in types:
+            election_types.append({'election_type': 'General', 'slug': 'general'})
+            types.remove('G')
+        if 'P' in types:
+            election_types.append({'election_type': 'Primary', 'slug': 'primary'})
+            types.remove('P')
+        if types:
+            election_types.append({'election_type': 'Other', 'slug': 'other'})
 
     paginator = Paginator(expenditures, 50, orphans=5)
     pagenum = request.GET.get('page', 1)
@@ -102,9 +121,12 @@ def race_expenditures(request, race):
     return render_to_response('buckley/race_detail.html',
                               {'object_list': page.object_list,
                                'race': full_race,
+                               'short_race': race,
                                'candidates': candidates,
                                'total_spent': total_spent,
                                'page_obj': page,
+                               'election_types': election_types,
+                               'election_type': election_type,
                               })
 
 @cache_page(60*15)

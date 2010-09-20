@@ -2,9 +2,16 @@
 
 {% load humanize %}
 
+{% block breadcrumb %}{{ block.super }}
+&nbsp;&nbsp;<a href="{% url buckley_race_list %}">&lt;&lt; Races</a>
+{% if election_type %}
+&nbsp;&nbsp;<a href="{% url buckley_race_detail race=short_race %}">&lt;&lt; {{ race }}</a>
+{% endif %}
+{% endblock breadcrumb %}
+
 {% block content %}
 
-<h2>Independent expenditures in {{ race }} race</h2>
+<h2>Independent expenditures - {{ race }}{% if election_type %} ({{ election_type }}){% endif %}</h2>
 <br>
 <strong>Candidates</strong><br>
 {% for candidate in candidates %}
@@ -13,6 +20,11 @@
 <br>
 <strong>Total independent expenditures in race:</strong> ${{ total_spent|intcomma }}
 <br>
+{% if election_types %}
+<br>
+<strong>Elections:</strong> {% for e in election_types %}<a href="{% url buckley_race_election_type_detail race=short_race, election_type=e.slug %}">{{ e.election_type }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+<br>
+{% endif %}
 <br>
 
 <table id="expenditures">

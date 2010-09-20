@@ -3,6 +3,11 @@
 {% load humanize %}
 {% load media %}
 
+{% block breadcrumb %}{{ block.super }}
+&nbsp;&nbsp;<a href="{% url buckley_candidate_list %}">&lt;&lt; Candidates</a>
+&nbsp;&nbsp;<a href="{% url buckley_candidate_detail slug=candidate.slug %}">&lt;&lt; {{ candidate }}</a>
+{% endblock breadcrumb %}
+
 {% block content %}
 
 <h2>Independent expenditures by {{ committee }}<br>for/against {{ candidate }}{% if candidate.party %} ({{ candidate.party }}){% endif %}</h2>

@@ -2,6 +2,10 @@
 
 {% load humanize %}
 
+{% block breadcrumb %}{{ block.super }}
+&nbsp;&nbsp;<a href="{% url buckley_candidate_list %}">&lt;&lt; Candidates</a>
+{% endblock breadcrumb %}
+
 {% block content %}
 
 <h2>{{ object }}{% if object.party %} ({{ object.party }}){% endif %}</h2>
