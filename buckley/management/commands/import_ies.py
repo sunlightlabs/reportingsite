@@ -350,7 +350,7 @@ class Command(NoArgsCommand):
 
             try:
                 expenditure = Expenditure.objects.get(
-                        image_number=row['IMAGE_NUM'],
+                        image_number=int(Decimal(row['IMAGE_NUM'])),
                         transaction_id=row['TRAN_ID']
                         )
 
@@ -364,14 +364,14 @@ class Command(NoArgsCommand):
                 expenditure.candidate=candidate
                 expenditure.receipt_date=dateparse(row['RECEIPT_DT']).date()
                 expenditure.election_type=row['ELE_TYP']
-                expenditure.filing_number = row['FILE_NUM'].replace(',', '')
+                expenditure.filing_number = int(Decimal(row['FILE_NUM'].replace(',', '')))
                 expenditure.amendment = row['AMNDT_IND']
                 expenditure.race = expenditure.candidate.race()
                 expenditure.save()
 
             except Expenditure.DoesNotExist:
                 expenditure = Expenditure.objects.create(
-                        image_number=row['IMAGE_NUM'],
+                        image_number=int(Decimal(row['IMAGE_NUM'])),
                         committee=committee,
                         payee=payee,
                         expenditure_purpose=row['PUR'],
@@ -381,7 +381,7 @@ class Command(NoArgsCommand):
                         election_type=row['ELE_TYP'],
                         candidate=candidate,
                         transaction_id=row['TRAN_ID'],
-                        filing_number=row['FILE_NUM'].replace(',', ''),
+                        filing_number=int(Decimal(row['FILE_NUM'].replace(',', ''))),
                         amendment=row['AMNDT_IND'],
                         receipt_date=dateparse(row['RECEIPT_DT']).date(),
                         race=candidate.race()
