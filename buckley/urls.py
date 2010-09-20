@@ -25,13 +25,11 @@ urlpatterns = patterns('',
 
         url(r'committee/(?P<slug>[-\w]+)\/?$', 
             cache_page(object_detail, 60*15),
-            #'django.views.generic.list_detail.object_detail', 
             {'queryset': Committee.objects.all(), },
             name='buckley_committee_detail'),
 
         url(r'committee\/?$',
             object_list,
-            #'django.views.generic.list_detail.object_list',
             {'queryset': Committee.objects.all(), },
             name='buckley_committee_list'),
 
@@ -46,29 +44,13 @@ urlpatterns = patterns('',
 
         url(r'candidate\/(?P<slug>[-\w]+)\/?$',
             cache_page(object_detail, 60*15),
-            #'django.views.generic.list_detail.object_detail',
             {'queryset': Candidate.objects.all(), },
             name='buckley_candidate_detail'),
 
         url(r'candidate\/?$',
             cache_page(object_list, 60*15),
-            #'django.views.generic.list_detail.object_list',
             {'queryset': Candidate.objects.all(), },
             name='buckley_candidate_list'),
-
-#        url(r'payee\/(?P<slug>[-\w]+)\/rss\/?$',
-#            PayeeFeed(),
-#            name='buckley_payee_detail_feed'),
-#
-#        url(r'payee\/(?P<slug>[-\w]+)\/?$',
-#            'django.views.generic.list_detail.object_detail',
-#            {'queryset': Payee.objects.all(), },
-#            name='buckley_payee_detail'),
-#
-#        url(r'payee\/?$',
-#            'django.views.generic.list_detail.object_list',
-#            {'queryset': Payee.objects.annotate(total=Sum('expenditure__expenditure_amount')), },
-#            name='buckley_payee_list'),
 
         url(r'race\/(?P<race>[-\w]+)\/?$',
             'buckley.views.race_expenditures',
@@ -106,7 +88,6 @@ urlpatterns = patterns('',
 
         url(r'letters\/?$',
             cache_page(object_list, 60*60),
-            #'django.views.generic.list_detail.object_list',
             {'queryset': IEOnlyCommittee.objects.all(), },
             name='buckley_letter_list'),
 
@@ -116,7 +97,6 @@ urlpatterns = patterns('',
 
         url(r'letters\/(?P<object_id>C\d+)\/?$',
             object_detail,
-            #'django.views.generic.list_detail.object_detail',
             {'queryset': IEOnlyCommittee.objects.all(), },
             name='buckley_letter_detail'),
 
@@ -127,7 +107,6 @@ urlpatterns = patterns('',
 
         url(r'^\/?$',
             cache_page(object_list, 60*15),
-            #'django.views.generic.list_detail.object_list',
             {'queryset': Expenditure.objects.all(), 
              'template_name': 'buckley/index.html',
              'paginate_by': 25,
