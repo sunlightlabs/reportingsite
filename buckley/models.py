@@ -192,6 +192,20 @@ class Candidate(models.Model):
     def total_opposing(self):
         return self.total('O')
 
+    def total_by_election_type(self, election_type, support_oppose=None):
+        filter = {}
+        exclude = {}
+        if support_oppose:
+            filter.update({'support_oppose': support_oppose})
+
+        if election_type in ('P', 'G'):
+            filter.update({'election_type': election_type})
+        else:
+            exclude.update({'election_type__in': ['P', 'G',]})
+
+        return self.expenditure_set.filter(**filter).exclude(**exclude).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+
+
 
 class Expenditure(models.Model):
     image_number = models.BigIntegerField()

@@ -12,14 +12,21 @@
     <thead>
         <tr>
             <th>Race</th>
-            <th>Amount spent on independent expenditures</th>
+            {#<th>Amount spent on independent expenditures</th>#}
+            <th>General</th>
+            <th>Primary</th>
+            <th>Other</th>
+            <th>Total</th>
         </tr>
     </thead>
     <tbody>
-    {% for race, full_race, total in races %}
+    {% for race in races %}
     <tr>
-        <td><a href="{% url buckley_race_detail race=race %}">{{ full_race }}</a></td>
-        <td>${{ total|intcomma }}</td>
+        <td><a href="{% url buckley_race_detail race=race.race %}">{{ race.full_race }}</a></td>
+        <td>${{ race.amounts.G|intcomma }}</td>
+        <td>${{ race.amounts.P|intcomma }}</td>
+        <td>${{ race.amounts.other|intcomma }}</td>
+        <td>${{ race.total|intcomma }}</td>
     </tr>
     {% endfor %}
     </tbody>

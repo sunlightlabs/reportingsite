@@ -31,6 +31,7 @@ def get_committee_page(id):
     except urllib2.URLError:
         logging.debug('URLError on %s' % url)
         return None
+
     try:
         return response.read()
     except socket.timeout:
