@@ -43,12 +43,6 @@ def race_list(request):
         amounts['other'] = sum([v for k, v in amounts.iteritems() if k not in ('G', 'P')])
         amounts['total'] = sum([amounts['G'], amounts['P'], amounts['other']])
 
-        """
-        general = Expenditure.objects.filter(race=race, election_type='G').aggregate(sum=Sum('expenditure_amount'))['sum'] or 0
-        primary = Expenditure.objects.filter(race=race, election_type='P').aggregate(sum=Sum('expenditure_amount'))['sum'] or 0
-        other = Expenditure.objects.filter(race=race).exclude(election_type__in=['G', 'P']).aggregate(sum=Sum('expenditure_amount'))['sum'] or 0
-        total = general + primary + other
-        """
         if district.lower() == 'senate':
             full_race = '%s Senate' % STATE_CHOICES[state]
         else:
@@ -58,39 +52,12 @@ def race_list(request):
             except ValueError:
                 continue
             full_race = '%s %s' % (STATE_CHOICES[state], ordinal(district))
-
-        #total = Expenditure.objects.filter(race=race).values_list('expenditure_amount', flat=True)
-        """
-        state, district = race.split('-')
-        if district.lower() == 'senate':
-            total = sum([x.total() for x in Candidate.objects.filter(office='S', state=state)])
-            primary = sum([x.total_by_election_type(election_type='P') for x in Candidate.objects.filter(office='S', state=state)])
-            general = sum([x.total_by_election_type(election_type='G') for x in Candidate.objects.filter(office='S', state=state)])
-            other = sum([x.total_by_election_type(election_type='O') for x in Candidate.objects.filter(office='S', state=state)])
-            full_race = '%s Senate' % STATE_CHOICES[state]
-        else:
-            try:
-                if int(district) < 10:
-                    district = '0%s' % district
-            except ValueError:
-                continue
-            full_race = '%s %s' % (STATE_CHOICES[state], ordinal(district))
-            total = sum([x.total() for x in Candidate.objects.filter(office='H', state=state, district=district)])
-            primary = sum([x.total_by_election_type(election_type='P') for x in Candidate.objects.filter(office='H', state=state, district=district)])
-            general = sum([x.total_by_election_type(election_type='G') for x in Candidate.objects.filter(office='H', state=state, district=district)])
-            other = sum([x.total_by_election_type(election_type='O') for x in Candidate.objects.filter(office='H', state=state, district=district)])
-        """
 
         race_amts.append({'race': race,
                           'full_race': full_race,
                           'amounts': amounts,
                           'total': amounts['total'], # For easier sorting
-                          #'total': total,
-                          #'primary': primary,
-                          #'general': general,
-                          #'other': other, 
                           })
-        #race_amts.append((race, full_race, total))
 
     race_amts.sort(key=itemgetter('total'), reverse=True)
 
