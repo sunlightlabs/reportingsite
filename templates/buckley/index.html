@@ -10,23 +10,21 @@
 <h2>Latest independent expenditures</h2>
 <div id="filterExpenditures">
     <span>Browse by</span>
-    <form id="" action="#" method="GET">
         <ul>
             <li>
-                <a href="#">Candidate</a>
+                <a href="{% url buckley_candidate_list %}">Candidate</a>
             </li>
             <li>
-               <a href="#">Race</a>
+                <a href="{% url buckley_race_list %}">Race</a>
             </li>
             <li>
-                <a href="#">Committee</a>
+                <a href="{% url buckley_committee_list %}">Committee</a>
             </li>
             <li>
-                <a href="#">Committees that intend to accept unlimited contributions</a>
+                <a href="{% url buckley_letter_list %}">Committees that intend to accept unlimited contributions</a>
             </li>
         </ul> 
         <div class="clear"></div>
-    </form>
 </div>
 
 <table id="expenditures">
