@@ -8,29 +8,35 @@
 
 {% block content %}
     <h2>{{ object }}{% if object.party %} ({{ object.party }}){% endif %}</h2>
-    <h3><a href="{% url buckley_race_detail race=object.race %}">{{ object.full_race_name }}</a></h3>
+    <span class="raceDetail"><a href="{% url buckley_race_detail race=object.race %}">{{ object.full_race_name }}</a></span>
 
-    <li>Independent expenditure money supporting: ${{ object.total_supporting|intcomma }}</li>
-    <li>Independent expenditure money opposing: ${{ object.total_opposing|intcomma }}</li>
-
+    <div id="candidateAmountDetails">
+        <span class="amount">${{ object.total_supporting|intcomma }}</span> Independent expenditure money supporting
+        <span class="amount">${{ object.total_opposing|intcomma }}</span> Independent expenditure money opposing
+    </div>
 
     {% if object.committees_supporting %}
-    <h3>Committees supporting</h3>
-    {% for committee in object.committees_supporting %}
-        <ul>
-            {% if committee.slug %}
-            <li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a> (<a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">expenditure details</a>)</li>
-            {% endif %}
-        </ul>
-    {% endfor %}
+    <div class="fullWidth_columns">
+        <h3>Committees supporting</h3>
+        {% for committee in object.committees_supporting %}
+            <ul>
+                {% if committee.slug %}
+                <li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a> (<a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">expenditure details</a>)</li>
+                {% endif %}
+            </ul>
+        {% endfor %}
+    </div>
     {% endif %}
 
     {% if object.committees_opposing %}
-    <h3>Committees opposing</h3>
-    {% for committee in object.committees_opposing %}
-        {% if committee.slug %}
-            <li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a> (<a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">expenditure details</a>)</li>
-        {% endif %}
-    {% endfor %}
+    <div class="fullWidth_columns">
+        <h3>Committees opposing</h3>
+        {% for committee in object.committees_opposing %}
+            {% if committee.slug %}
+                <li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a> (<a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">expenditure details</a>)</li>
+            {% endif %}
+        {% endfor %}
+    </div>
     {% endif %}
+    <div class="clear"></div>
 {% endblock content %}

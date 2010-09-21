@@ -6,17 +6,29 @@
         <h2 id="featureHeader"><a href="/independent-expenditures/about">Follow the Unlimited Money</a></h2>
         <div id="featureMainNav">
             <ul>
-                <li><a href="/independent-expenditures/">View all the latest independent expenditures</a></li>
+                <li><a href="/independent-expenditures/">Latest Independent Expenditures</a></li>
                 <li><a href="/independent-expenditures/about">About</a></li>
                 <li class="last"><a href="#">Stories</a></li>
             </ul>  
+            <form id="expenditureSearch" action="{% url buckley_search %}" method="GET">
+                <input id="searchbox" value="Search for a candidate or committee" type="text" name="q" value="{{ terms }}" />
+                <button class="goBtn" type="submit" value="Search" >
+                  <span>Go</span>
+                </button>
+            </form>
             <div class="clear"></div>  
         </div>    
         <div>{% block breadcrumb %}<a href="{% url buckley_index %}">&lt;&lt;&nbsp;Independent expenditures home</a>{% endblock breadcrumb %}</div>
     {% block content %}
     {% endblock content %}
-
-        <p>Data source: <a href="http://www.fec.gov/blog/disclosure/entry/update_on_new_spending_data">Federal Election Commission</a> | <a href="ftp://ftp.fec.gov/FEC/ind_exp_2010.csv">Download this data from the FEC</a></p>
+        
+        <div id="expendituresSource" class="tip">
+            <span>Data source:</span>
+            <ul>
+                <li><a href="http://www.fec.gov/blog/disclosure/entry/update_on_new_spending_data">Federal Election Commission</a></li>
+                <li id="downloadFEC"><a href="ftp://ftp.fec.gov/FEC/ind_exp_2010.csv">Download this data from the FEC</a></li>
+            </ul>
+        </div>
     </div>
 </div>
 
