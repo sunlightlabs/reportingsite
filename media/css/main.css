@@ -63,6 +63,7 @@ div.lastItem, li.lastModule { background: none;}
 #featureBox { background: url(../img/bg_feature.png) top left no-repeat; height: 243px; margin-left: -5px; margin-top: -22px; padding: 30px 25px 0;}
 body.home div#pageMain #featureHeader { padding-top: 40px; margin-left: 25px; }
 div#pageMain #featureHeader { font-size: 300%;  margin-bottom: 0; color: #394701; }
+body.expendituresAbout #featureHeader { position: relative; z-index: 2;}
 #featureBox p { color: #e6e7e8; width: 675px;}
 .tip, #breadcrumbs li { font-style: oblique; font-size: 90%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 16px;}
 div#pageMain #featureBox h3 { background-color: #497c6c; border: 1px solid #3e6c58; padding: 5px 10px 3px; color: #fff; text-transform: none; margin-bottom: 10px; font-size: 120%; font-weight: normal;}
@@ -77,14 +78,14 @@ div#pageMain #featureBox h3 { background-color: #497c6c; border: 1px solid #3e6c
 #featureMainNav { background: url(../img/bg_secondaryNav.png) top left no-repeat; margin: -21px 0 0 -35px; height: 46px; padding: 30px 35px 0;}
 #featureMainNav a:link, #featureMainNav a:active, #featureMainNav a:visited { color: #394701; }
 #featureMainNav a:hover { color: #e6e7e8;}
-body.expendituresAbout #featureMainNav { position: relative; width: 960px;}
+body.expendituresAbout #featureMainNav { position: relative; width: 960px; margin-bottom: 40px;}
 body.expendituresAbout #rtColumn { padding-top: 160px;}
 
 .fullWidth_columns { float: left; width: 440px; }
 
 div.otherProperty { float: left; width: 208px; padding: 0 15px;}
-div.otherProperty h4, .h4 { font-size: 140%; font-weight: bold; }
-div.otherProperty h4 a { color: #424140; }
+h4, .h4 { font-size: 140%; font-weight: bold; margin-bottom: 10px;}
+h4 a { color: #424140; }
 div.otherProperty li { margin-bottom: 10px; line-height: 20px;}
 div.otherProperty li a { color: #020000;}
 div.otherProperty li a:hover { color: #457b80;}
@@ -118,6 +119,7 @@ a.title { font-size: 120%; color: #020000; display: block; }
 a.title:hover { color: #457b80;}
 h3.linkedTitle a { color: #020000;}
 h3.linkedTitle a:hover { color: #457b80;}
+h5, .h5 { font-size: 120%; font-weight: bold; margin-bottom: 10px;}
 
 span.title { margin-bottom: 10px; display: block;}
 
@@ -199,6 +201,7 @@ div.features ol, div.about ol, div.posts ol{ list-style-type: decimal; padding-l
 
 div#pageMain #expenditureSearch label { width: 240px;}
 #expenditureSearch { float: right; margin-top: -5px; padding-right: 70px; }
+body.expendituresAbout #expenditureSearch { padding-right: 170px;}
 #filterExpenditures { border-bottom: 1px solid #c5d8da; margin: 25px 0; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-bottom: 1px solid #81a7aa;}
 #filterExpenditures li { background-color: #c5d8da; border-top: 1px solid #81a7aa; border-left: 1px solid #81a7aa; border-right: 1px solid #81a7aa; padding: 5px 10px 3px; float: left; margin-bottom: 0; -moz-border-radius-topleft: 5px; 
 -moz-border-radius-topright: 5px;
@@ -230,6 +233,8 @@ div#pageMain #featureMainNav input#searchbox { width: 220px; }
 .amount { font-weight: bold; color: #668c1e;}
 
 .raceDetail { font-size: 160%; display: block; padding-top: 8px;}
+
+.sideExpenditures li{ margin-bottom: 20px;}
 
 .tag1 {
     font-size: 6pt;
