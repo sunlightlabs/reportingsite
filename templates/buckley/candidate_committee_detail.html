@@ -10,12 +10,9 @@
 
 {% block content %}
     <h2>Independent expenditures by {{ committee }}<br>for/against {{ candidate }}{% if candidate.party %} ({{ candidate.party }}){% endif %}</h2>
-    <br>
     <strong><a href="{% url buckley_candidate_detail slug=candidate.slug %}">All independent expenditures for/against {{ candidate }}</a></strong>
-    <br>
+
     <strong><a href="{% url buckley_committee_detail slug=committee.slug %}">All independent expenditures by {{ committee }}</a></strong>
-    <br>
-    <br>
 
     <table id="expenditures" class="tablesorter">
         <thead>
@@ -29,7 +26,7 @@
         </thead>
         <tbody>
             {% for expenditure in object_list %}
-            <tr>
+            <tr class="{% cycle 'odd' 'even' %}">
                 <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
                 <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
                 <td>${{ expenditure.expenditure_amount|intcomma }}</td>

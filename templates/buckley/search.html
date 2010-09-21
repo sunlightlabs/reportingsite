@@ -5,14 +5,6 @@
 {% block content %}
 <h2>Search Results for &#8220;{{ terms }}&#8221;</h2>
 
-<form id="expenditureSearch" action="{% url buckley_search %}" method="GET">
-    <label for="q">Search for another candidate or committee</label>
-    <input id="searchbox" type="text" name="q" value="{{ terms }}" />
-    <button class="searchBtn" type="submit" value="Search" >
-      <span>Search</span>
-    </button>
-</form>
-
 {% ifequal num_results 0 %}
 <h3>No results found</h3>
 {% endifequal %}
@@ -59,7 +51,7 @@
     <tbody>
         {% for committee in committees %}
             {% if committee.total %}
-                <tr>
+                <tr class="{% cycle 'odd' 'even' %}">
                     <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
                     <td>${{ committee.total|intcomma }}</td>
                     <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</a></td>
