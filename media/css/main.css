@@ -280,3 +280,5 @@ div#pageMain #featureMainNav input#searchbox { width: 220px; }
     text-align: center;
     margin-bottom: 20px;
 }
+
+.tablesorter thead th { cursor: pointer; }

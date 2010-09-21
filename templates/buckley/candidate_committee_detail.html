@@ -15,7 +15,7 @@
     <div class="amountLine">
         Total indepdent expenditures: <span class="amount">${{ committee|committee_candidate_money:candidate|intcomma }}</span>
     </div>
-    <table id="expenditures" class="tablesorter">
+    <table id="expendituresData" class="tablesorter">
         <thead>
             <tr>
                 <th>Expenditure date</th>
@@ -30,20 +30,12 @@
             <tr class="{% cycle 'odd' 'even' %}">
                 <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
                 <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
-                <td>${{ expenditure.expenditure_amount|intcomma }}</td>
+                <td>{% if expenditure.expenditure_amount < 0 %}-&nbsp;{% endif %}${{ expenditure.expenditure_amount|absolute_value|intcomma }}</td>
                 <td>{{ expenditure.expenditure_purpose }}</td>
                 <td>{{ expenditure.payee }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
-
-    {% js "js/jquery.tablesorter.min.js" %}
-    <script type="text/javascript">
-    $(document).ready(function()
-        {
-            $("#expenditures").tablesorter();
-        }
-    );
-    </script>
+    {% include "buckley/tablesorter.html" %}
 {% endblock content %}

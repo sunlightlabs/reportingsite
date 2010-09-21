@@ -42,7 +42,7 @@
 <div class="clear"></div>
 
 
-<table id="expenditures">
+<table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
             <th>Race</th>
@@ -73,5 +73,7 @@
         {% endfor %}
     </tbody>
 </table>
+
+{% include "buckley/tablesorter.html" %}
 
 {% endblock content %}

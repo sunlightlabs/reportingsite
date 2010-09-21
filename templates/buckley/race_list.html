@@ -12,7 +12,7 @@
 <h2>Races</h2>
 <p class="tip">Select a race to see details.</p>
 
-<table id="expenditures" class="tablesorter">
+<table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
             <th>Race</th>
@@ -36,13 +36,6 @@
     </tbody>
 </table>
 
-{% js "js/jquery.tablesorter.min.js" %}
-<script type="text/javascript">
-$(document).ready(function()
-    {
-        $("#expenditures").tablesorter();
-    }
-);
-</script>
+{% include "buckley/tablesorter.html" %}
 
 {% endblock content %}
