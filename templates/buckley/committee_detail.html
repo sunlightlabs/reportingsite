@@ -1,5 +1,8 @@
 {% extends "buckley/buckley_base.html" %}
 
+{% load buckley %}
+{% load humanize %}
+
 {% block breadcrumb %}{{ block.super }}
 &nbsp;&nbsp;<a href="{% url buckley_committee_list %}">&lt;&lt; Committees</a>
 {% endblock breadcrumb %}
@@ -12,7 +15,7 @@
     <h3 class="h4">Candidates Supported</h3>
     <ul>
         {% for candidate in object.candidates_supported %}
-        <li><a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}) {% endif %} - <a href="{% url buckley_candidate_committee_detail candidate_slug=candidate.slug committee_slug=object.slug %}">view expenditures</a></li>
+        <li><a href="{% url buckley_candidate_committee_detail candidate_slug=candidate.slug committee_slug=object.slug %}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}) {% endif %}</li> 
         {% endfor %}
     </ul>
 </div>
@@ -23,11 +26,43 @@
     <h3 class="h4">Candidates Opposed</h3>
     <ul>
         {% for candidate in object.candidates_opposed %}
-        <li><a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}) {% endif %} - <a class="" href="{% url buckley_candidate_committee_detail candidate_slug=candidate.slug committee_slug=object.slug %}">view expenditures</a></li>
+        <li><a href="{% url buckley_candidate_committee_detail candidate_slug=candidate.slug committee_slug=object.slug %}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}) {% endif %}</li>
         {% endfor %}
     </ul>
 </div>
 {% endif %}
 <div class="clear"></div>
+
+<table id="expenditures">
+    <thead>
+        <tr>
+            <th>Race</th>
+            <th>Candidate</th>
+            <th>Party</th>
+            <th>Support/oppose</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for candidate in object.candidates_supported %}
+        <tr>
+            <td>{{ candidate.race }}</td>
+            <td><a href="{% url buckley_candidate_committee_detail candidate_slug=candidate.slug committee_slug=object.slug %}">{{ candidate }}</a></td>
+            <td>{{ candidate.party }}</td>
+            <td>Support</td>
+            <td>${{ object|committee_candidate_money:candidate|intcomma }}</td>
+        </tr>
+        {% endfor %}
+        {% for candidate in object.candidates_opposed %}
+        <tr>
+            <td>{{ candidate.race }}</td>
+            <td><a href="{% url buckley_candidate_committee_detail candidate_slug=candidate.slug committee_slug=object.slug %}">{{ candidate }}</a></td>
+            <td>{{ candidate.party }}</td>
+            <td>Oppose</td>
+            <td>${{ object|committee_candidate_money:candidate|intcomma }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
 
 {% endblock content %}
