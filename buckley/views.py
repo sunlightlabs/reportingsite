@@ -13,6 +13,11 @@ from django.shortcuts import get_list_or_404, get_object_or_404, render_to_respo
 from django.contrib.localflavor.us.us_states import STATE_CHOICES
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 STATE_CHOICES = dict(STATE_CHOICES)
 
 from buckley.models import *
@@ -270,3 +275,63 @@ def generic_csv(filename, fields, rows):
         writer.writerow(row)
 
     return response
+
+
+def json_committee_list(request):
+    committees = []
+    for committee in Committee.objects.order_by('name'):
+        committees.append(['<a href="%s">%s</a>' % (committee.get_absolute_url(), committee.name),
+                           intcomma(committee.total()),
+                           '<a href="http://query.nictusa.com/cgi-bin/fecimg/?%s">FEC Filings</a>' % committee.fec_id(), ])
+    headers = ['Committee', 'Total spent on independent expenditures', '', ]
+    data = {'headers': headers, 'data': committees, }
+    return HttpResponse(json.dumps(data), mimetype='application/json')
+
+
+def json_candidate_list(request):
+    candidates = []
+    for candidate in Candidate.objects.order_by('fec_name'):
+        candidates.append(['<a href="%s">%s</a>' % (candidate.get_absolute_url(), candidate.last_first()),
+                           candidate.party,
+                           candidate.full_race_name(),
+                           intcomma(candidate.total()),
+                           intcomma(candidate.total_supporting()),
+                           intcomma(candidate.total_opposing()), ])
+    headers = ['Candidate', 'Party', 'Race', 
+                'Total independent expenditures',
+                'Independent expenditures supporting',
+                'Independent expenditures opposing', ]
+    data = {'headers': headers, 'data': candidates, }
+    return HttpResponse(json.dumps(data), mimetype='application/json')
+
+
+def json_race_list(request):
+    race_list = []
+    for race in races():
+        race_list.append([race['full_race'],
+                        intcomma(race['amounts']['G']),
+                        intcomma(race['amounts']['P']),
+                        intcomma(race['amounts']['other']),
+                        intcomma(race['total']), ])
+    headers = ['Race', 'General', 'Primary', 'Other', 'Total', ]
+    data = {'headers': headers, 'data': race_list, }
+    return HttpResponse(json.dumps(data), mimetype='application/json')
+
+
+def json_ieletter_list(request):
+    committees = []
+    for committee in IEOnlyCommittee.objects.all():
+        if committee.has_expenditures():
+            expenditures_link = '<a href="%s">View expenditures</a>' % committee.has_expenditures().get_absolute_url()
+        else:
+            expenditures_link = 'No expenditures reported'
+        committees.append(['<a href="%s">%s</a>' % (committee.get_absolute_url(),
+                                                    committee.name),
+                           committee.date_letter_submitted.strftime('%m/%d/%y'),
+                           expenditures_link,
+                           '<a href="http://images.nictusa.com/cgi-bin/fecimg/?%s" target="new">View all FEC filings</a>' % (committee.pk),
+                           ])
+    headers = ['Committee', 'Date letter filed', '', '', ]
+    data = {'headers': headers, 'data': committees, }
+    return HttpResponse(json.dumps(data), mimetype='application/json')
+

@@ -61,6 +61,17 @@ NAME_LOOKUP = {
     'Paton, Jonathan': 'H0AZ08056',
     'Portman, Rob': 'S0OH00133',
     'ROMANOFF, ANDREW': 'S0CO00286',
+    'SESTAK, JOE': 'S0PA00434',
+    'Sestak, Joe': 'S0PA00434',
+    'STUTZMAN, MARLIN': 'S0IN00095',
+    'SIMPSON, MIKE': 'H4FL01122',
+    'COEHRING, BRAD': 'H0CA11303',
+    'POMBO, RICHARD W.': 'H2CA11051',
+    'CAMPBELL FOR US SENATE': 'S2CA00351',
+    'PORGESON, CHUCK': 'S0MO00191',
+    'HUIZENGA, BILL': 'H0MI02094',
+    'Peter, Gary': 'H8MI09068',
+    'Herseth Sandlin, Stephanie': 'H2SD00092',
 }
 
 def generic_querier(query, params, multirows=False):
@@ -175,7 +186,7 @@ class Command(NoArgsCommand):
         hours_diff = (datetime.datetime.now(tzutc()) - last_modified).seconds / 60 / 60
 
         # If data hasn't been updated in the past hour, don't do anything.
-        if hours_diff > 1:
+        if hours_diff > 1 and True is False:
             send_mail('[ IE data importer ] Data not updated',
                       '',
                       'abycoffe@sunlightfoundation.com',
@@ -262,7 +273,8 @@ class Command(NoArgsCommand):
                                 # Look up by last name and race
                                 name = candidate_lookup_by_race(row)
                                 if not name:
-                                    logging.debug('Could not find candidate for image number %s transaction id %s' % (row['IMAGE_NUM'], row['TRAN_ID']))
+                                    #logging.debug('Could not find candidate for image number %s transaction id %s' % (row['IMAGE_NUM'], row['TRAN_ID']))
+                                    logging.debug(row)
                                     continue 
                                 else:
                                     candidates_by_name[row['CAND_NAM']] = name
