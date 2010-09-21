@@ -3,6 +3,10 @@
 {% load humanize %}
 {% load media %}
 
+{% block breadcrumb %}{{ block.super }}
+<li>Races</li>
+{% endblock %}
+
 {% block content %}
 
 <h2>Races</h2>

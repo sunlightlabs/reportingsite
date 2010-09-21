@@ -3,6 +3,10 @@
 {% load humanize %}
 {% load media %}
 
+{% block breadcrumb %}{{ block.super }}
+<li>Candidates</li>
+{% endblock breadcrumb %}
+
 {% block content %}
     <h2>Candidates</h2>
     <p>Select a candidate to see details.

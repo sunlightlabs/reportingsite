@@ -2,6 +2,10 @@
 
 {% load humanize %}
 
+{% block breadcrumb %}{{ block.super }}
+<li>Search</li>
+{% endblock %}
+
 {% block content %}
 <h2>Search Results for &#8220;{{ terms }}&#8221;</h2>
 
