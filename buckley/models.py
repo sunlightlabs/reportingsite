@@ -92,6 +92,12 @@ class Committee(models.Model):
     def fec_id(self):
         return CommitteeId.objects.filter(committee=self)[0].fec_committee_id
 
+    def ieonly_url(self):
+        ieonly = IEOnlyCommittee.objects.filter(id=self.fec_id())
+        if ieonly:
+            return ieonly[0].get_absolute_url()
+        return ''
+
 
 class CommitteeId(models.Model):
     # Because some committees have more than one ID

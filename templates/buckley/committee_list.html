@@ -31,13 +31,6 @@
     </tbody>
 </table>
 
-{% js "js/jquery.tablesorter.min.js" %}
-<script type="text/javascript">
-$(document).ready(function()
-    {
-        $("#expendituresData").tablesorter();
-    }
-);
-</script>
+{% include "buckley/tablesorter.html" %}
 
 {% endblock content %}
