@@ -8,21 +8,26 @@
 <h2>{{ object }}</h2>
 
 {% if object.candidates_supported %}
-<h3 class="h4">Candidates supported</h3>
+<div class="fullWidth_columns">
+    <h3 class="h4">Candidates Supported</h3>
     <ul>
         {% for candidate in object.candidates_supported %}
         <li><a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}) {% endif %} - <a href="{% url buckley_candidate_committee_detail candidate_slug=candidate.slug committee_slug=object.slug %}">view expenditures</a></li>
         {% endfor %}
     </ul>
+</div>
 {% endif %}
 
 {% if object.candidates_opposed %}
-<h3 class="h4">Candidates opposed</h3>
+<div class="fullWidth_columns">
+    <h3 class="h4">Candidates Opposed</h3>
     <ul>
         {% for candidate in object.candidates_opposed %}
         <li><a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}) {% endif %} - <a class="" href="{% url buckley_candidate_committee_detail candidate_slug=candidate.slug committee_slug=object.slug %}">view expenditures</a></li>
         {% endfor %}
     </ul>
+</div>
 {% endif %}
+<div class="clear"></div>
 
 {% endblock content %}
