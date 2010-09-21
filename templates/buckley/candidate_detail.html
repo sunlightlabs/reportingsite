@@ -5,6 +5,7 @@
 
 {% block breadcrumb %}{{ block.super }}
 <li><a href="{% url buckley_candidate_list %}">Candidates</a></li>
+<li>{{ object }}</li>
 {% endblock breadcrumb %}
 
 {% block content %}
@@ -53,10 +54,22 @@
             </tr>
         </thead>
         <tbody>
+<<<<<<< HEAD
             {% for committee in object.committees_opposing %}
             <tr class="{% cycle 'odd' 'even' %}">
+=======
+            {% for committee in object.committees_supporting %}
+            <tr>
+>>>>>>> 5f56f41986ef255a18cfaccb9414d874db9d7310
                 <td><a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">{{ committee.name }}</a></td>
                 <td>Support</td>
+                <td>${{ committee|committee_candidate_money:object|intcomma }}</td>
+            </tr>
+            {% endfor %}
+            {% for committee in object.committees_opposing %}
+            <tr>
+                <td><a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">{{ committee.name }}</a></td>
+                <td>Oppose</td>
                 <td>${{ committee|committee_candidate_money:object|intcomma }}</td>
             </tr>
             {% endfor %}
