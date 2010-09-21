@@ -1,7 +1,7 @@
 {% extends "buckley/buckley_base.html" %}
 
 {% block breadcrumb %}{{ block.super }}
-&nbsp;&nbsp;<a href="{% url buckley_committee_list %}">&lt;&lt; Committees</a>
+<li><a href="{% url buckley_committee_list %}">Committees</a></li>
 {% endblock breadcrumb %}
 
 {% block content %}

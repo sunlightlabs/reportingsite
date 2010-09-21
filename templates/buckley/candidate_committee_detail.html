@@ -4,8 +4,8 @@
 {% load media %}
 
 {% block breadcrumb %}{{ block.super }}
-&nbsp;&nbsp;<a href="{% url buckley_candidate_list %}">&lt;&lt; Candidates</a>
-&nbsp;&nbsp;<a href="{% url buckley_candidate_detail slug=candidate.slug %}">&lt;&lt; {{ candidate }}</a>
+<li><a href="{% url buckley_candidate_list %}">Candidates</a></li>
+<li><a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a></li>
 {% endblock breadcrumb %}
 
 {% block content %}
