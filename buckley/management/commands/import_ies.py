@@ -106,6 +106,7 @@ def td_candidate_lookup(name):
     time.sleep(.5)
     body = urllib.urlencode({'apikey': '***REMOVED***', 'search': name})
     url = 'http://transparencydata.com/api/1.0/entities.json?%s' % body
+    print url
     data = urllib2.urlopen(url).read()
     try:
         j = json.loads(data)
@@ -195,6 +196,7 @@ class Command(NoArgsCommand):
             return
 
         reader = list(csv.DictReader(StringIO(urllib2.urlopen(url).read())))
+        #reader = csv.DictReader(open(r'/Users/bycoffe/testcsv.csv', 'r'))
 
         committees = {}
         candidates = {}
@@ -267,7 +269,6 @@ class Command(NoArgsCommand):
                         name = candidate_lookup_by_name(row['CAND_NAM'])
                         if not name:
                             # Look up name in Transparency Data
-                            name = td_candidate_lookup(row['CAND_NAM'])
                             if not name:
 
                                 # Look up by last name and race
