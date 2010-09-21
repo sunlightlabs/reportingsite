@@ -3,7 +3,7 @@
 {% load humanize %}
 
 {% block breadcrumb %}{{ block.super }}
-&nbsp;&nbsp;<a href="{% url buckley_candidate_list %}">&lt;&lt; Candidates</a>
+<li><a href="{% url buckley_candidate_list %}">Candidates</a></li>
 {% endblock breadcrumb %}
 
 {% block content %}

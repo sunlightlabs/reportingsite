@@ -3,9 +3,9 @@
 {% load humanize %}
 
 {% block breadcrumb %}{{ block.super }}
-&nbsp;&nbsp;<a href="{% url buckley_race_list %}">&lt;&lt; Races</a>
+<li><a href="{% url buckley_race_list %}">Races</a></li>
 {% if election_type %}
-&nbsp;&nbsp;<a href="{% url buckley_race_detail race=short_race %}">&lt;&lt; {{ race }}</a>
+<li><a href="{% url buckley_race_detail race=short_race %}">{{ race }}</a></li>
 {% endif %}
 {% endblock breadcrumb %}
 

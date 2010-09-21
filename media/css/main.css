@@ -64,16 +64,17 @@ div.lastItem, li.lastModule { background: none;}
 body.home div#pageMain #featureHeader { padding-top: 40px; margin-left: 25px; }
 div#pageMain #featureHeader { font-size: 300%;  margin-bottom: 0; color: #394701; }
 #featureBox p { color: #e6e7e8; width: 675px;}
-.tip { font-style: oblique; font-size: 90%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 16px;}
+.tip, #breadcrumbs a { font-style: oblique; font-size: 90%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 16px;}
 div#pageMain #featureBox h3 { background-color: #497c6c; border: 1px solid #3e6c58; padding: 5px 10px 3px; color: #fff; text-transform: none; margin-bottom: 10px; font-size: 120%; font-weight: normal;}
 #featureBox .featureModule li { color: #223c07; float: left; width: 250px; margin: 0 15px 0 5px; line-height: 20px; font-family: Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 95%; }
 .featureModule { float: left; margin-right: 5px; margin-bottom: 25px;}
 #featureBox a:link, #featureBox a:active, #featureBox a:visited { color: #142403; text-decoration: underline;}
-#featureBox a:hover { color: #fff; }
+#featureBox a:hover, body.expendituresHome #featureMainNav li#expenditures a, body.expendituresAbout #featureMainNav li#about a, body.expendituresStories #featureMainNav li#stories a  { color: #fff; }
 #featureNav li, #featureMainNav li { float: left; border-right: 1px solid #739935; margin-right: 20px; padding-right: 20px; font-size: 110%; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; line-height: 18px;}
 #featureNav li.last { border-right: none;}
 
-#featureMainNav { background: url(../img/bg_secondaryNav.png) top left no-repeat; margin: -21px 0 25px -35px; height: 46px; padding: 30px 35px 0;}
+
+#featureMainNav { background: url(../img/bg_secondaryNav.png) top left no-repeat; margin: -21px 0 0 -35px; height: 46px; padding: 30px 35px 0;}
 #featureMainNav a:link, #featureMainNav a:active, #featureMainNav a:visited { color: #394701; }
 #featureMainNav a:hover { color: #e6e7e8;}
 body.expendituresAbout #featureMainNav { position: relative; width: 960px;}
@@ -212,6 +213,10 @@ thead th { text-transform: uppercase; padding: 0 10px 15px; font-weight: bold;}
 #downloadFEC { border-left: 1px solid #BCBEC0; padding-left: 20px; margin-left: 20px;}
 
 div#pageMain #featureMainNav input#searchbox { width: 220px; }
+
+#breadcrumbs { margin-bottom: 30px;}
+#breadcrumbs li { float: left;}
+#breadcrumbs a { padding-left: 15px; background: url(../img/icon_breadcrumbs.png) left 3px no-repeat; margin-right: 15px;}
 
 .tag1 {
     font-size: 6pt;

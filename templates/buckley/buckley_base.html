@@ -6,9 +6,9 @@
         <h2 id="featureHeader"><a href="/independent-expenditures/about">Follow the Unlimited Money</a></h2>
         <div id="featureMainNav">
             <ul>
-                <li><a href="/independent-expenditures/">Latest Independent Expenditures</a></li>
-                <li><a href="/independent-expenditures/about">About</a></li>
-                <li class="last"><a href="#">Stories</a></li>
+                <li id="expenditures"><a href="/independent-expenditures/">Latest Independent Expenditures</a></li>
+                <li id="about"><a href="/independent-expenditures/about">About</a></li>
+                <li id="stories" class="last"><a href="#">Stories</a></li>
             </ul>  
             <form id="expenditureSearch" action="{% url buckley_search %}" method="GET">
                 <input id="searchbox" value="Search for a candidate or committee" type="text" name="q" value="{{ terms }}" />
@@ -17,8 +17,19 @@
                 </button>
             </form>
             <div class="clear"></div>  
-        </div>    
-        <div>{% block breadcrumb %}<a href="{% url buckley_index %}">&lt;&lt;&nbsp;Independent expenditures home</a>{% endblock breadcrumb %}</div>
+        </div>
+        
+        <div id="breadcrumbs">
+            <ul>
+                {% block breadcrumb %}
+                <li>
+                    <a href="{% url buckley_index %}">Independent expenditures home</a>
+                </li>
+                {% endblock breadcrumb %}
+            </ul>
+            <div class="clear"></div>
+        </div>
+        
     {% block content %}
     {% endblock content %}
         
