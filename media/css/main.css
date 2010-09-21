@@ -8,10 +8,10 @@ dl li{list-style: none;}
 
 a { text-decoration: none;}
 
-a:link{outline: none; color: #457b80;}
-a:visited{outline: none; color: #457b80;}
-a:hover{outline: none; color: #457b80;}
-a:active{outline: none; color: #457b80;}
+a:link { outline: none; color: #457b80; }
+a:visited { outline: none; color: #457b80; }
+a:hover { outline: none; color: #457b80; }
+a:active { outline: none; color: #457b80; }
 
 body{
     color: #020000;
@@ -48,6 +48,7 @@ body.home div#columns { background: url(../img/column_ltHome.png) top left repea
 body.home div#ltColumn { width: 340px; }
 div#ltColumn { float: left; padding-top: 40px; width: 580px; padding: 40px 30px 0; margin-right: 25px; }
 div#rtColumn{ float: left; padding-top: 40px; width: 285px;}
+div#fullColumn { padding: 40px 30px 0;}
 body.home div#rtColumn { width: 525px; }
 div#fullWidth h3 { padding-left: 15px;}
 
@@ -59,8 +60,25 @@ li.module, div.module{ background: url(../img/break_module.png) bottom left repe
 div.mainModule { background: url(../img/break_mainModule.png) bottom left repeat-x; margin-bottom: 40px; padding-bottom: 40px;}
 div.lastItem, li.lastModule { background: none;}
 
+#featureBox { background: url(../img/bg_feature.png) top left no-repeat; height: 243px; margin-left: -5px; margin-top: -22px; padding: 30px 25px 0;}
+body.home div#pageMain #featureHeader { padding-top: 40px; margin-left: 25px; }
+div#pageMain #featureHeader { font-size: 300%;  margin-bottom: 0; color: #394701; }
+#featureBox p { color: #e6e7e8; width: 675px;}
+.tip { font-style: oblique; font-size: 90%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 16px;}
+div#pageMain #featureBox h3 { background-color: #497c6c; border: 1px solid #3e6c58; padding: 5px 10px 3px; color: #fff; text-transform: none; margin-bottom: 10px; font-size: 120%; font-weight: normal;}
+#featureBox .featureModule li { color: #223c07; float: left; width: 250px; margin: 0 15px 0 5px; line-height: 20px; font-family: Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 95%; }
+.featureModule { float: left; margin-right: 5px; margin-bottom: 25px;}
+#featureBox a:link, #featureBox a:active, #featureBox a:visited { color: #142403; text-decoration: underline;}
+#featureBox a:hover { color: #fff; }
+#featureNav li, #featureMainNav li { float: left; border-right: 1px solid #739935; margin-right: 20px; padding-right: 20px; font-size: 110%; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; line-height: 18px;}
+#featureNav li.last { border-right: none;}
+
+#featureMainNav { background: url(../img/bg_secondaryNav.png) top left no-repeat; margin: -21px 0 25px -35px; height: 46px; padding: 30px 35px 0;}
+#featureMainNav a:link, #featureMainNav a:active, #featureMainNav a:visited { color: #394701; }
+#featureMainNav a:hover { color: #e6e7e8;}
+
 div.otherProperty { float: left; width: 208px; padding: 0 15px;}
-div.otherProperty h4 { font-size: 140%; font-weight: bold; }
+div.otherProperty h4, .h4 { font-size: 140%; font-weight: bold; }
 div.otherProperty h4 a { color: #424140; }
 div.otherProperty li { margin-bottom: 10px; line-height: 20px;}
 div.otherProperty li a { color: #020000;}
@@ -104,7 +122,7 @@ form li { margin-bottom: 15px;}
 div#pageMain label { width: 100px; display: block; float: left; }
 div#pageMain input { background: none; border: none; border-bottom: 1px solid #B8B9B9; width: 400px;}
 
-div#pageMain input#searchbox { width: 190px; float: left; margin-right: 20px; background: #FFFFFF; padding: 5px; border-bottom: none; -moz-border-radius: 3px; -webkit-border-radius: 3px; color: #a7a9ac;}
+div#pageMain input#searchbox { width: 190px; float: left; margin-right: 20px; background: #FFFFFF; padding: 5px; border: 1px solid #d2d2cc; -moz-border-radius: 3px; -webkit-border-radius: 3px; color: #a7a9ac;}
 textarea { background: url(../img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 100px; line-height: 24px;}
 
 
@@ -160,9 +178,6 @@ a.paginatorNext { text-align: right;}
 
 strong { font-weight: bold;}
 
-td { padding: 5px 10px;}
-tbody { border: 1px solid ;}
-
 body.home #brandingbar, body.theblog #brandingbar, body.about #brandingbar { border-bottom: 1px solid #bcbec0; padding:0.4em 0.9em 0.4em 0; }
 body.home #brandingbar a#sllink, body.theblog #brandingbar a#sllink, body.about #brandingbar a#sllink  { background:#F6F8FB url(http://assets.sunlightfoundation.com/images/project_of_sf.gif) 0 3px no-repeat;}
 
@@ -171,7 +186,16 @@ div.features ol, div.about ol, div.posts ol{ list-style-type: decimal; padding-l
 
 .clear { clear: both;}
 
+div#pageMain #expenditureSearch label { width: 240px;}
+#filterExpenditures { background-color: #c5d8da; padding: 10px 20px 15px; margin: 25px 0; -moz-border-radius: 3px; -webkit-border-radius: 3px; border: 1px solid #81a7aa;}
+#filterExpenditures span { font-weight: bold; text-transform: uppercase; font-size: 120%;}
+div#pageMain #filterExpenditures label { width: auto; margin-right: 25px; line-height: 16px;}
 
+div#pageMain input.radio { width: 15px; margin-right: 10px; float: left;}
+
+table .odd { background-color: #fafaf8;}
+tbody td { padding: 15px 10px; line-height: 16px;}
+thead th { text-transform: uppercase; padding: 0 10px 15px; font-weight: bold;}
 
 
 .tag1 {
