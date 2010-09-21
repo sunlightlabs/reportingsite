@@ -1,4 +1,5 @@
 import re
+import socket
 import urllib2
 
 from django.db import models
@@ -271,8 +272,12 @@ class Expenditure(models.Model):
             return others[0].pdf_url
 
         url = 'http://images.nictusa.com/cgi-bin/fecimg/?%s' % self.committee.fec_id()
+        socket.setdefaulttimeout(60)
         print url
-        page = urllib2.urlopen(url).read()
+        try:
+            page = urllib2.urlopen(url).read()
+        except urllib2.URLError:
+            return ''
         match = re.search(r'(\/pdf\/\d{3}\/%(imnum)s\/%(imnum)s\.pdf)' % {'imnum': self.image_number}, page)
         if match:
             pdf_path = match.group()
