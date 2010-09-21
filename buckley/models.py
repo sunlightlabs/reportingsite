@@ -1,4 +1,6 @@
 import re
+import socket
+import urllib2
 
 from django.db import models
 from django.db.models import signals
@@ -233,6 +235,7 @@ class Expenditure(models.Model):
     #election_year = models.CharField(max_length=4)
 
     race = models.CharField(max_length=16) # denormalizing
+    pdf_url = models.URLField(verify_exists=False)
 
     class Meta:
         ordering = ('-expenditure_date', )
@@ -259,3 +262,24 @@ class Expenditure(models.Model):
             return 'Primary'
         else:
             return 'Other'
+
+    def get_pdf_url(self):
+        # First see if there are any other expenditures
+        # with the same image number that already have
+        # the PDF's URL stored.
+        others = Expenditure.objects.filter(image_number=self.image_number).exclude(pdf_url='')
+        if others:
+            return others[0].pdf_url
+
+        url = 'http://images.nictusa.com/cgi-bin/fecimg/?%s' % self.committee.fec_id()
+        socket.setdefaulttimeout(60)
+        print url
+        try:
+            page = urllib2.urlopen(url).read()
+        except urllib2.URLError:
+            return ''
+        match = re.search(r'(\/pdf\/\d{3}\/%(imnum)s\/%(imnum)s\.pdf)' % {'imnum': self.image_number}, page)
+        if match:
+            pdf_path = match.group()
+            return 'http://images.nictusa.com%s' % pdf_path
+        return ''
