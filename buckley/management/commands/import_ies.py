@@ -201,6 +201,7 @@ class Command(NoArgsCommand):
         committees = {}
         candidates = {}
         candidates_by_name = {}
+        skipped = []
 
         for row in reader:
 
@@ -275,7 +276,8 @@ class Command(NoArgsCommand):
                                 name = candidate_lookup_by_race(row)
                                 if not name:
                                     #logging.debug('Could not find candidate for image number %s transaction id %s' % (row['IMAGE_NUM'], row['TRAN_ID']))
-                                    logging.debug(row)
+                                    #logging.debug(row)
+                                    skipped.append(row)
                                     continue 
                                 else:
                                     candidates_by_name[row['CAND_NAM']] = name
@@ -402,6 +404,78 @@ class Command(NoArgsCommand):
 
             print expenditure.id
 
+        for row in skipped:
+            if 'CID' in row: # A CRP ID had been found earlier
+                try:
+                    candidate = Candidate.objects.get(crp_id=row['CID'])
+                except Candidate.DoesNotExist:
+                    #logging.debug('Skipped record because candidate does not exist: ' + str(row))
+                    crp_name=re.sub(r'\s\([A-Z0-9]\)', '', row['FirstLastP']),
+                    candidate = Candidate.objects.create(
+                            fec_id=row['CAN_ID'],
+                            fec_name=row['CAND_NAM'],
+                            crp_id=row['CID'],
+                            crp_name=crp_name,
+                            party=row['Party'],
+                            office=row['CAN_OFF'],
+                            state=row['DistIDRunFor'][:2],
+                            district=row['DistIDRunFor'][2:],
+                            slug=slugify(crp_name)[:50]
+                            )
+
+                try:
+                    payee = Payee.objects.get(slug=slugify(row['PAY'])[:50])
+                except Payee.DoesNotExist:
+                    payee = Payee.objects.create(
+                            name=row['PAY'],
+                            slug=slugify(row['PAY'])[:50])
+
+                row['IMAGE_NUM'] = row['IMAGE_NUM'].replace(',', '')
+
+                try:
+                    expenditure = Expenditure.objects.get(
+                            image_number=int(Decimal(row['IMAGE_NUM'])),
+                            transaction_id=row['TRAN_ID']
+                            )
+
+                    """ This needs to go in a separate function to avoid duplication in this code """
+                    # In case the FEC has updated its data
+                    expenditure.committee = committee
+                    expenditure.payee = payee
+                    expenditure.expenditure_purpose = row['PUR']
+                    expenditure.expenditure_date = expenditure_date
+                    expenditure.expenditure_amount=Decimal(row['EXP_AMO'].replace(',', ''))
+                    expenditure.support_oppose=row['SUP_OPP']
+                    expenditure.candidate=candidate
+                    expenditure.receipt_date=dateparse(row['RECEIPT_DT']).date()
+                    expenditure.election_type=row['ELE_TYP']
+                    expenditure.filing_number = int(Decimal(row['FILE_NUM'].replace(',', '')))
+                    expenditure.amendment = row['AMNDT_IND']
+                    expenditure.race = expenditure.candidate.race()
+                    expenditure.save()
+
+                except Expenditure.DoesNotExist:
+                    expenditure = Expenditure.objects.create(
+                            image_number=int(Decimal(row['IMAGE_NUM'])),
+                            committee=committee,
+                            payee=payee,
+                            expenditure_purpose=row['PUR'],
+                            expenditure_date=expenditure_date,
+                            expenditure_amount=Decimal(row['EXP_AMO'].replace(',', '')) if row['EXP_AMO'] else 0,
+                            support_oppose=row['SUP_OPP'],
+                            election_type=row['ELE_TYP'],
+                            candidate=candidate,
+                            transaction_id=row['TRAN_ID'],
+                            filing_number=int(Decimal(row['FILE_NUM'].replace(',', ''))),
+                            amendment=row['AMNDT_IND'],
+                            receipt_date=dateparse(row['RECEIPT_DT']).date(),
+                            race=candidate.race()
+                            )
+
+            else:
+                logging.debug('Skipped record because no CID:' + str(row))
+
+            
         # Remove amendmended filings
         removed = 0
         for amendment in Expenditure.objects.exclude(amendment='N'):
