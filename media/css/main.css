@@ -64,7 +64,7 @@ div.lastItem, li.lastModule { background: none;}
 body.home div#pageMain #featureHeader { padding-top: 40px; margin-left: 25px; }
 div#pageMain #featureHeader { font-size: 300%;  margin-bottom: 0; color: #394701; }
 #featureBox p { color: #e6e7e8; width: 675px;}
-.tip, #breadcrumbs a { font-style: oblique; font-size: 90%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 16px;}
+.tip, #breadcrumbs li { font-style: oblique; font-size: 90%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 16px;}
 div#pageMain #featureBox h3 { background-color: #497c6c; border: 1px solid #3e6c58; padding: 5px 10px 3px; color: #fff; text-transform: none; margin-bottom: 10px; font-size: 120%; font-weight: normal;}
 #featureBox .featureModule li { color: #223c07; float: left; width: 250px; margin: 0 15px 0 5px; line-height: 20px; font-family: Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 95%; }
 .featureModule { float: left; margin-right: 5px; margin-bottom: 25px;}
@@ -224,9 +224,7 @@ thead th { text-transform: uppercase; padding: 0 10px 15px; font-weight: bold;}
 div#pageMain #featureMainNav input#searchbox { width: 220px; }
 
 #breadcrumbs { margin-bottom: 30px;}
-#breadcrumbs li { float: left;}
-#breadcrumbs a { padding-left: 15px; background: url(../img/icon_breadcrumbs.png) left 3px no-repeat; margin-right: 15px;}
-#breadcrumbs li:last-child { padding-left: 15px; background:url(../img/icon_breadcrumbs.png) left 3px no-repeat; }
+#breadcrumbs li { float: left; padding-left: 15px; background: url(../img/icon_breadcrumbs.png) left 3px no-repeat; margin-right: 15px;}
 
 .amountLine { font-size: 120%; margin-bottom: 40px; color: #5E5E5E;}
 .amount { font-weight: bold; color: #668c1e;}
