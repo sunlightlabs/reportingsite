@@ -90,7 +90,9 @@ div.otherProperty li a { color: #020000;}
 div.otherProperty li a:hover { color: #457b80;}
 
 div.features h2 { font-size: 240%; text-align: center; line-height: 37px;}
-h2 { font-size: 220%; font-weight: bold; margin-bottom: 5px; line-height:35px; }
+h2 { font-size: 220%; font-weight: bold; margin-bottom: 5px; line-height: 35px; }
+body.fullWidth h2 { margin-bottom: 10px;}
+h2.withDetail { float: left; margin-right: 20px;}
 div#pageMain div.features h2, div#pageMain h3, div#pageMain div.features h2 a, div#pageMain h3 a, div#pageMain h2, div#pageMain h2 a, div.features h2:visited, h3:visited, div.features h2 a:visited, h3 a:visited, h2:visited, h2 a:visited { color: #414042;}
 div#pageMain div.features h2 a:hover, div#pageMain h3 a:hover, div#pageMain h4 a:hover, div#pageMain h2 a:hover { color: #457b80;}
 h3 { text-transform: uppercase; margin-bottom: 25px; font-weight: bold; font-size: 170%;}
@@ -203,6 +205,7 @@ div#pageMain #filterExpenditures label { width: auto; margin-right: 25px; line-h
 
 div#pageMain input.radio { width: 15px; margin-right: 10px; float: left;}
 
+table { width: 100%;}
 table .odd { background-color: #fafaf8;}
 tbody td { padding: 15px 10px; line-height: 16px;}
 thead th { text-transform: uppercase; padding: 0 10px 15px; font-weight: bold;}
@@ -217,6 +220,11 @@ div#pageMain #featureMainNav input#searchbox { width: 220px; }
 #breadcrumbs { margin-bottom: 30px;}
 #breadcrumbs li { float: left;}
 #breadcrumbs a { padding-left: 15px; background: url(../img/icon_breadcrumbs.png) left 3px no-repeat; margin-right: 15px;}
+
+.amountLine { font-size: 120%; margin-bottom: 40px; color: #5E5E5E;}
+.amount { font-weight: bold; color: #668c1e;}
+
+.raceDetail { font-size: 160%; display: block; padding-top: 8px;}
 
 .tag1 {
     font-size: 6pt;
