@@ -19,6 +19,7 @@ except ImportError:
 from django.core.cache import cache
 from django.core.mail import send_mail
 from django.core.management.base import NoArgsCommand
+from django.db.models import Q
 from django.template.defaultfilters import slugify
 
 from buckley.models import *
@@ -479,11 +480,19 @@ class Command(NoArgsCommand):
         # Remove amendmended filings
         removed = 0
         for amendment in Expenditure.objects.exclude(amendment='N'):
-            removed += 1
-            Expenditure.objects.filter(amendment='N', 
-                                       transaction_id=amendment.transaction_id, 
-                                       committee=amendment.committee, 
-                                       candidate=amendment.candidate).delete()
+            # Check for A2 amendments
+            if amendment.amendment == 'A2':
+                Expenditure.objects.filter(Q(amendment='N') | Q(amendment='A1'),
+                                           transaction_id=amendment.transaction_id, 
+                                           committee=amendment.committee, 
+                                           candidate=amendment.candidate).delete()
+                removed += 1
+            else:
+                Expenditure.objects.filter(amendment='N', 
+                                           transaction_id=amendment.transaction_id, 
+                                           committee=amendment.committee, 
+                                           candidate=amendment.candidate).delete()
+                removed += 1
 
         print
         print 'Removed %s records' % str(removed)
