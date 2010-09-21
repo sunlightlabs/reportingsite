@@ -151,7 +151,7 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
                                                 committee=committee
                                                 ).order_by('-expenditure_date')
     if not expenditures:
-        return Http404
+        raise Http404
 
     return render_to_response('buckley/candidate_committee_detail.html',
                               {'object_list': expenditures, 
