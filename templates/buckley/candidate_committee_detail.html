@@ -15,7 +15,7 @@
     <div class="amountLine">
         Total indepdent expenditures: <span class="amount">${{ committee|committee_candidate_money:candidate|intcomma }}</span>
     </div>
-    <table id="expenditures" class="tablesorter">
+    <table id="expendituresData" class="tablesorter">
         <thead>
             <tr>
                 <th>Expenditure date</th>
@@ -37,13 +37,5 @@
             {% endfor %}
         </tbody>
     </table>
-
-    {% js "js/jquery.tablesorter.min.js" %}
-    <script type="text/javascript">
-    $(document).ready(function()
-        {
-            $("#expenditures").tablesorter();
-        }
-    );
-    </script>
+    {% include "buckley/tablesorter.html" %}
 {% endblock content %}

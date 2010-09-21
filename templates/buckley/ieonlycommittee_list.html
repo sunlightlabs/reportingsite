@@ -16,7 +16,7 @@
 <p>The following committees have filed letters with the FEC stating their intention to accept contributions of unlimited amounts.</p>
 <p>Click on a committee name to see its letter.</p>
 
-<table id="expenditures" class="tablesorter">
+<table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
             <th>Committee</th>
@@ -37,13 +37,6 @@
     </tbody>
 </table>
 
-{% js "js/jquery.tablesorter.min.js" %}
-<script type="text/javascript">
-$(document).ready(function()
-    {
-        $("#expenditures").tablesorter();
-    }
-);
-</script>
+{% include "buckley/tablesorter.html" %}
 
 {% endblock %}
