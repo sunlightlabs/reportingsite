@@ -271,6 +271,7 @@ class Expenditure(models.Model):
             return others[0].pdf_url
 
         url = 'http://images.nictusa.com/cgi-bin/fecimg/?%s' % self.committee.fec_id()
+        print url
         page = urllib2.urlopen(url).read()
         match = re.search(r'(\/pdf\/\d{3}\/%(imnum)s\/%(imnum)s\.pdf)' % {'imnum': self.image_number}, page)
         if match:
