@@ -1,4 +1,6 @@
 from collections import defaultdict, deque
+import csv
+import datetime
 from operator import itemgetter
 
 from django.views.decorators.cache import cache_page
@@ -27,9 +29,7 @@ def expenditure_detail(request, committee_slug, object_id):
     return render_to_response('buckley/expenditure_detail.html', {'object': expenditure, })
 
 
-@cache_page(60*15)
-def race_list(request):
-
+def races():
     races = set([x.race() for x in Candidate.objects.all()])
     race_amts = []
     for race in races:
@@ -61,6 +61,12 @@ def race_list(request):
 
     race_amts.sort(key=itemgetter('total'), reverse=True)
 
+    return race_amts
+
+
+@cache_page(60*15)
+def race_list(request, return_raw_data=False):
+    race_amts = races()
     return render_to_response('buckley/race_list.html',
                               {'races': race_amts,
                                })
@@ -224,3 +230,43 @@ def search(request):
                                'committees': committees,
                                'num_results': candidates.count() + committees.count(),
                                'terms': terms, })
+
+def committee_list_csv(request):
+    fields = ['ID', 'Committee', 'Total spent on independent expenditures', 'As of', ]
+    rows = []
+    for committee in Committee.objects.order_by('name'):
+        rows.append([committee.fec_id(), committee.name, committee.total(), datetime.date.today(), ])
+    return generic_csv('committee.csv', fields, rows)
+
+def candidate_list_csv(request):
+    fields = ['ID', 'Candidate', 'Party', 'Office', 'State', 'Total independent expenditures', 'Total independent expenditures supporting', 'Total independent expenditures opposing', 'As of', ]
+    rows = []
+    for candidate in Candidate.objects.order_by('fec_name'):
+        rows.append([candidate.fec_id, candidate.last_first(), candidate.party, candidate.office, candidate.state, candidate.total(), candidate.total_supporting(), candidate.total_opposing(), datetime.date.today(), ])
+    return generic_csv('candidate.csv', fields, rows)
+
+def race_list_csv(request):
+    fields = ['Office', 'State', 'General election independent expenditures', 'Primary election independent expenditures', 'Other election independent expenditures', 'Total independent expenditures', 'As of', ]
+    rows = []
+    #races = races() #race_list(request, True)
+    for race in races():
+        state, district = race['race'].split('-')
+        if district == 'Senate':
+            office = 'S'
+        else:
+            office = 'H'
+        rows.append([office, state, race['amounts']['G'], race['amounts']['P'], race['amounts']['other'], race['amounts']['total'], datetime.date.today()])
+
+    return generic_csv('race.csv', fields, rows)
+
+
+def generic_csv(filename, fields, rows):
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    writer = csv.writer(response)
+    writer.writerow(fields)
+    for row in rows:
+        writer.writerow(row)
+
+    return response
