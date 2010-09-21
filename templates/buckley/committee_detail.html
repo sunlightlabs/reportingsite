@@ -9,7 +9,10 @@
 
 {% block content %}
 <h2>{{ object }}</h2>
+Total amount spent on independent expenditures: ${{ object.total|intcomma }}
+<div class="clear"></div>
 
+{% comment %}
 {% if object.candidates_supported %}
 <div class="fullWidth_columns">
     <h3 class="h4">Candidates Supported</h3>
@@ -31,7 +34,9 @@
     </ul>
 </div>
 {% endif %}
+{% endcomment %}
 <div class="clear"></div>
+
 
 <table id="expenditures">
     <thead>
