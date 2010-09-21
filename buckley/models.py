@@ -1,4 +1,5 @@
 import re
+import urllib2
 
 from django.db import models
 from django.db.models import signals
@@ -233,6 +234,7 @@ class Expenditure(models.Model):
     #election_year = models.CharField(max_length=4)
 
     race = models.CharField(max_length=16) # denormalizing
+    pdf_url = models.URLField(verify_exists=False)
 
     class Meta:
         ordering = ('-expenditure_date', )
@@ -259,3 +261,12 @@ class Expenditure(models.Model):
             return 'Primary'
         else:
             return 'Other'
+
+    def get_pdf_url(self):
+        url = 'http://images.nictusa.com/cgi-bin/fecimg/?%s' % self.committee.fec_id()
+        page = urllib2.urlopen(url).read()
+        match = re.search(r'(\/pdf\/\d{3}\/%(imnum)s\/%(imnum)s\.pdf)' % {'imnum': self.image_number}, page)
+        if match:
+            pdf_path = match.group()
+            return 'http://images.nictusa.com%s' % pdf_path
+        return ''
