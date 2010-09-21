@@ -134,6 +134,15 @@ MEDIASYNC_AWS_SECRET = "***REMOVED***"
 MEDIASYNC_AWS_BUCKET = "assets.sunlightfoundation.com" #"bucket_name"  
 MEDIASYNC_AWS_PREFIX = "reporting/1.0"
 
+MEDIASYNC = {
+    'BACKEND': 'mediasync.backends.s3',
+    'AWS_KEY': MEDIASYNC_AWS_KEY,
+    'AWS_SECRET': MEDIASYNC_AWS_SECRET,
+    'AWS_BUCKET': MEDIASYNC_AWS_BUCKET,
+    'AWS_PREFIX': MEDIASYNC_AWS_PREFIX,
+    'MEDIA_URL': '/media/',
+}
+
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
 AWS_ACCESS_KEY_ID  = MEDIASYNC_AWS_KEY 
 AWS_SECRET_ACCESS_KEY = MEDIASYNC_AWS_SECRET

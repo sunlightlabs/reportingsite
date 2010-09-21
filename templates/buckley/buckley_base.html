@@ -1,26 +1,23 @@
 {% extends "base.html" %}
-
+{% block body %}fullWidth{% endblock %}
 {% block main_content %}
-
-
-<style type="text/css">
-    table#expenditures { width: 100%; border-collapse: collapse; border: 0; }
-    table#expenditures th { font-weight: bold; text-align: center;}
-    table#expenditures tbody { border: none }
-    table#expenditures tr { border-bottom: 1px solid gray; }
-    table.tablesorter th { cursor: pointer; }
-    table.tablesorter th:hover { text-decoration: underline; }
-</style>
-
-<div style="padding: 25px; background: url(http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/column_ltFull.png) repeat 0% 0%;">
-
-<div style="font-weight: bold; margin-bottom: 20px;">{% block breadcrumb %}<a href="{% url buckley_index %}">&lt;&lt;&nbsp;Independent expenditures home</a>{% endblock breadcrumb %}</div>
+<div id="columns">
+    <div id="fullColumn">
+        <h2 id="featureHeader"><a href="/independent-expenditures/about">Follow the Unlimited Money</a></h2>
+        <div id="featureMainNav">
+            <ul>
+                <li><a href="/independent-expenditures/">View all the latest independent expenditures</a></li>
+                <li><a href="/independent-expenditures/about">About</a></li>
+                <li class="last"><a href="#">Stories</a></li>
+            </ul>  
+            <div class="clear"></div>  
+        </div>    
+        <div>{% block breadcrumb %}<a href="{% url buckley_index %}">&lt;&lt;&nbsp;Independent expenditures home</a>{% endblock breadcrumb %}</div>
     {% block content %}
     {% endblock content %}
 
-    <br><br><br>
-<p>Data source: <a href="http://www.fec.gov/blog/disclosure/entry/update_on_new_spending_data">Federal Election Commission</a> | <a href="ftp://ftp.fec.gov/FEC/ind_exp_2010.csv">Download this data from the FEC</a></p>
-
+        <p>Data source: <a href="http://www.fec.gov/blog/disclosure/entry/update_on_new_spending_data">Federal Election Commission</a> | <a href="ftp://ftp.fec.gov/FEC/ind_exp_2010.csv">Download this data from the FEC</a></p>
+    </div>
 </div>
 
 {% endblock main_content %}

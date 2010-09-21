@@ -4,15 +4,37 @@
 {% load reporting_tags %}
 {% load cache %}
 
-
 {% block body %}home{% endblock %}
 
+{% block feature %}
+<h2 id="featureHeader"><a href="independent-expenditures/">Follow the Unlimited Money</a></h2>
+ <div id="featureBox">
+     <p class="tip">Below is a list of recent political spending done independently of any candidate or campaign. A great deal of the groups spending this money aren't subject to contribution or spending limits.</p>
+     <div class="featureModule">
+         <h3>September 20</h3>
+         <ul>
+             <li><a href="#">Service Employees International Union</a> spent $435,000.00 in opposition to James B. Renacci (R) in the Ohio 16th House race</li>
+             <li><a href="#">Service Employees International Union</a> spent $435,000.00 in opposition to James B. Renacci (R) in the Ohio 16th House race</li> 
+         </ul>
+     </div>
+     <div class="featureModule">
+         <h3>September 18</h3>
+          <ul>
+              <li><a href="#">Service Employees International Union</a> spent $435,000.00 in opposition to James B. Renacci (R) in the Ohio 16th House race</li>
+          </ul>
+    </div>
+    <div class="clear" id="featureNav">
+        <ul>
+            <li><a href="/independent-expenditures/">View all the latest independent expenditures</a></li>
+            <li><a href="/independent-expenditures/about">About</a></li>
+            <li class="last"><a href="#">Stories</a></li>
+        </ul>    
+    </div>    
+ </div>
+ {% endblock %}
+ 
 {% block content %}
   <div class="mainModule lastItem">
-
-      <script type='text/javascript' src='http://{{ host }}/independent-expenditures/embed'></script>
-      <br><br><br><br>
-
     <h3 class="linkedTitle"><a href="/blog">Real Time Investigations</a></h3>
     <ol class="moduleLists"> 
 {%autoescape off%}

@@ -9,45 +9,43 @@
 {% endblock breadcrumb %}
 
 {% block content %}
+    <h2>Independent expenditures by {{ committee }}<br>for/against {{ candidate }}{% if candidate.party %} ({{ candidate.party }}){% endif %}</h2>
+    <br>
+    <strong><a href="{% url buckley_candidate_detail slug=candidate.slug %}">All independent expenditures for/against {{ candidate }}</a></strong>
+    <br>
+    <strong><a href="{% url buckley_committee_detail slug=committee.slug %}">All independent expenditures by {{ committee }}</a></strong>
+    <br>
+    <br>
 
-<h2>Independent expenditures by {{ committee }}<br>for/against {{ candidate }}{% if candidate.party %} ({{ candidate.party }}){% endif %}</h2>
-<br>
-<strong><a href="{% url buckley_candidate_detail slug=candidate.slug %}">All independent expenditures for/against {{ candidate }}</a></strong>
-<br>
-<strong><a href="{% url buckley_committee_detail slug=committee.slug %}">All independent expenditures by {{ committee }}</a></strong>
-<br>
-<br>
+    <table id="expenditures" class="tablesorter">
+        <thead>
+            <tr>
+                <th>Expenditure date</th>
+                <th>Support/Oppose</th>
+                <th>Amount</th>
+                <th>Purpose</th>
+                <th>Payee</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expenditure in object_list %}
+            <tr>
+                <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
+                <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
+                <td>${{ expenditure.expenditure_amount|intcomma }}</td>
+                <td>{{ expenditure.expenditure_purpose }}</td>
+                <td>{{ expenditure.payee }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
 
-<table id="expenditures" class="tablesorter">
-    <thead>
-        <tr>
-            <th>Expenditure date</th>
-            <th>Support/Oppose</th>
-            <th>Amount</th>
-            <th>Purpose</th>
-            <th>Payee</th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for expenditure in object_list %}
-        <tr>
-            <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
-            <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
-            <td>${{ expenditure.expenditure_amount|intcomma }}</td>
-            <td>{{ expenditure.expenditure_purpose }}</td>
-            <td>{{ expenditure.payee }}</td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% js "js/jquery.tablesorter.min.js" %}
-<script type="text/javascript">
-$(document).ready(function()
-    {
-        $("#expenditures").tablesorter();
-    }
-);
-</script>
-
+    {% js "js/jquery.tablesorter.min.js" %}
+    <script type="text/javascript">
+    $(document).ready(function()
+        {
+            $("#expenditures").tablesorter();
+        }
+    );
+    </script>
 {% endblock content %}

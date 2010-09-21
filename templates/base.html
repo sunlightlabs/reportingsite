@@ -10,7 +10,7 @@
  <link rel="icon" href="http://assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
     <title>{%if post%}{{post}} - {%endif%}Sunlight Foundation Reporting Group</title>
-
+    
     {%css "css/main.css"%}
  {#   <link rel="stylesheet" href="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/css/main.css" type="text/css" media="screen, projection" /> #}
 
@@ -42,7 +42,10 @@
       </div>
       <div id="mainContent">
       {% block main_content %}
-        <div id="columns">
+        <div id="columns">   
+            {% block feature %}
+
+             {% endblock %}
           <div id="ltColumn">
             {% block content %}{% endblock content %}
           </div>
