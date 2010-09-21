@@ -10,8 +10,8 @@
 {% block content %}
 
 <h2>Races</h2>
-<p>Select a race to see details.
-<br>
+<p class="tip">Select a race to see details.</p>
+
 <table id="expenditures" class="tablesorter">
     <thead>
         <tr>
@@ -25,7 +25,7 @@
     </thead>
     <tbody>
     {% for race in races %}
-    <tr>
+    <tr class="{% cycle 'odd' 'even' %}">
         <td><a href="{% url buckley_race_detail race=race.race %}">{{ race.full_race }}</a></td>
         <td>${{ race.amounts.G|intcomma }}</td>
         <td>${{ race.amounts.P|intcomma }}</td>

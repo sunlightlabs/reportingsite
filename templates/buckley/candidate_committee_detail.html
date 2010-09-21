@@ -11,14 +11,10 @@
 {% endblock breadcrumb %}
 
 {% block content %}
-    <h2>Independent expenditures by {{ committee }}<br>for/against {{ candidate }}{% if candidate.party %} ({{ candidate.party }}){% endif %}</h2>
-    Total indepdent expenditures: ${{ committee|committee_candidate_money:candidate|intcomma }}
-    <div class="clear"></div>
-    <strong><a href="{% url buckley_candidate_detail slug=candidate.slug %}">All independent expenditures for/against {{ candidate }}</a></strong>
-
-    <strong><a href="{% url buckley_committee_detail slug=committee.slug %}">All independent expenditures by {{ committee }}</a></strong>
-    <div class="clear"></div>
-
+    <h2 id="searchTitle">Independent expenditures by <a href="{% url buckley_committee_detail slug=committee.slug %}">{{ committee }}</a> for/against <a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}</h2>
+    <div class="amountLine">
+        Total indepdent expenditures: <span class="amount">${{ committee|committee_candidate_money:candidate|intcomma }}</span>
+    </div>
     <table id="expenditures" class="tablesorter">
         <thead>
             <tr>

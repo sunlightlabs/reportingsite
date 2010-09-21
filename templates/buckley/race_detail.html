@@ -44,7 +44,7 @@
         </tr>
     </thead>
 {% for expenditure in object_list %}
-<tr>
+<tr class="{% cycle 'odd' 'even' %}">
     <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
     <td>{{ expenditure.election_type_for_detail_page }}</td>
     <td><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a></td>

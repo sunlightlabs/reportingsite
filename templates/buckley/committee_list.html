@@ -9,8 +9,7 @@
 
 {% block content %}
 <h2>Committees</h2>
-<p>Select a committee to see details.</p>
-<br>
+<p class="tip">Select a committee to see details.</p>
 <table id="expenditures" class="tablesorter">
     <thead>
         <tr>
@@ -22,7 +21,7 @@
     <tbody>
         {% for committee in object_list %}
             {% if committee.total %}
-                <tr>
+                <tr class="{% cycle 'odd' 'even' %}">
                     <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
                     <td>${{ committee.total|intcomma }}</td>
                     <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</a></td>

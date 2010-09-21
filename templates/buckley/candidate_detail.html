@@ -9,12 +9,13 @@
 {% endblock breadcrumb %}
 
 {% block content %}
-    <h2>{{ object }}{% if object.party %} ({{ object.party }}){% endif %}</h2>
+    <h2 class="withDetail">{{ object }}{% if object.party %} ({{ object.party }}){% endif %}</h2>
     <span class="raceDetail"><a href="{% url buckley_race_detail race=object.race %}">{{ object.full_race_name }}</a></span>
-
-    <div id="candidateAmountDetails">
-        <span class="amount">${{ object.total_supporting|intcomma }}</span> Independent expenditure money supporting
-        <span class="amount">${{ object.total_opposing|intcomma }}</span> Independent expenditure money opposing
+    <div class="amountLine clear">
+        <ul>
+            <li>Independent expenditure money supporting: <span class="amount">${{ object.total_supporting|intcomma }}</span> </li>
+            <li>Independent expenditure money opposing: <span class="amount">${{ object.total_opposing|intcomma }}</span> </li>
+        <ul>
     </div>
 
     {% comment %}
@@ -54,7 +55,7 @@
         </thead>
         <tbody>
             {% for committee in object.committees_supporting %}
-            <tr>
+            <tr  class="{% cycle 'odd' 'even' %}">
                 <td><a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">{{ committee.name }}</a></td>
                 <td>Support</td>
                 <td>${{ committee|committee_candidate_money:object|intcomma }}</td>
