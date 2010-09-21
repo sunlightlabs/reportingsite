@@ -263,6 +263,13 @@ class Expenditure(models.Model):
             return 'Other'
 
     def get_pdf_url(self):
+        # First see if there are any other expenditures
+        # with the same image number that already have
+        # the PDF's URL stored.
+        others = Expenditure.objects.filter(image_number=self.image_number).exclude(pdf_url='')
+        if others:
+            return others[0].pdf_url
+
         url = 'http://images.nictusa.com/cgi-bin/fecimg/?%s' % self.committee.fec_id()
         page = urllib2.urlopen(url).read()
         match = re.search(r'(\/pdf\/\d{3}\/%(imnum)s\/%(imnum)s\.pdf)' % {'imnum': self.image_number}, page)
