@@ -11,7 +11,7 @@
                 <li id="stories" class="last"><a href="#">Stories</a></li>
             </ul>  
             <form id="expenditureSearch" action="{% url buckley_search %}" method="GET">
-                <input id="searchbox" value="Search for a candidate or committee" type="text" name="q" value="{{ terms }}" />
+                <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Search for a candidate or committee"{% endif %} type="text" name="q" />
                 <button class="goBtn" type="submit" value="Search" >
                   <span>Go</span>
                 </button>
@@ -42,5 +42,15 @@
         </div>
     </div>
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
 
 {% endblock main_content %}

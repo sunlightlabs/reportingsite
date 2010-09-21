@@ -6,6 +6,9 @@
 <li><a href="{% url buckley_race_list %}">Races</a></li>
 {% if election_type %}
 <li><a href="{% url buckley_race_detail race=short_race %}">{{ race }}</a></li>
+<li>{{ election_type|capfirst }}</li>
+{% else %}
+<li>{{ race }}</li>
 {% endif %}
 {% endblock breadcrumb %}
 
