@@ -7,8 +7,8 @@
         <div id="featureMainNav">
             <ul>
                 <li id="expenditures"><a href="/independent-expenditures/">Latest Independent Expenditures</a></li>
-                <li id="about"><a href="/independent-expenditures/about">About</a></li>
-                <li id="stories" class="last"><a href="#">Stories</a></li>
+                <li id="about"><a href="/independent-expenditures/about/">About</a></li>
+                <li id="stories" class="last"><a href="/independent-expenditures/stories/">Stories</a></li>
             </ul>  
             <form id="expenditureSearch" action="{% url buckley_search %}" method="GET">
                 <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Search for a candidate or committee"{% endif %} type="text" name="q" />
