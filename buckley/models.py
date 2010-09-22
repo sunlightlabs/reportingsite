@@ -86,8 +86,11 @@ class Committee(models.Model):
 
         return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
-    def money_spent_on_candidate(self, candidate):
-        return self.expenditure_set.filter(candidate=candidate).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+    def money_spent_on_candidate(self, candidate, support_oppose=None):
+        filter = {'candidate': candidate}
+        if support_oppose:
+            filter['support_oppose'] = support_oppose
+        return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
     def fec_id(self):
         return CommitteeId.objects.filter(committee=self)[0].fec_committee_id
