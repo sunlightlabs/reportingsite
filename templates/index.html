@@ -3,34 +3,35 @@
 {% load markup %}
 {% load reporting_tags %}
 {% load cache %}
+{% load humanize %}
 
 {% block body %}home{% endblock %}
 
 {% block feature %}
+<!-- {{ host }} //-->
+{% if host != 'reporting.sunlightfoundation.com' %}
 <h2 id="featureHeader">Follow the Unlimited Money</h2>
  <div id="featureBox">
      <p class="tip">Below is a list of recent political spending done independently of any candidate or campaign. A great deal of the groups spending this money aren't subject to contribution or spending limits.</p>
+     {% for ie_date in ies %}
      <div class="featureModule">
-         <h3>September 20</h3>
+         <h3>{{ ie_date.0|date:"F j" }}</h3>
          <ul>
-             <li><a href="#">Service Employees International Union</a> spent $435,000.00 in opposition to James B. Renacci (R) in the Ohio 16th House race</li>
-             <li><a href="#">Service Employees International Union</a> spent $435,000.00 in opposition to James B. Renacci (R) in the Ohio 16th House race</li> 
+             {% for ie in ie_date.1 %}
+             <li><a href="{{ ie.committee.get_absolute_url }}">{{ ie.committee }}</a> spent <a href="{% url buckley_candidate_committee_detail candidate_slug=ie.candidate.slug committee_slug=ie.committee.slug %}">${{ ie.amount|intcomma }}</a> in {{ ie.support_oppose }} <a href="{{ ie.candidate.get_absolute_url }}">{{ ie.candidate }}</a> in the <a href="{% url buckley_race_detail race=ie.candidate.race %}">{{ ie.candidate.full_race_name }} race</a>.
+             {% endfor %}
          </ul>
      </div>
-     <div class="featureModule">
-         <h3>September 18</h3>
-          <ul>
-              <li><a href="#">Service Employees International Union</a> spent $435,000.00 in opposition to James B. Renacci (R) in the Ohio 16th House race</li>
-          </ul>
-    </div>
+     {% endfor %}
     <div class="clear" id="featureNav">
         <ul>
-            <li><a href="/independent-expenditures/">View all the latest independent expenditures</a></li>
-            <li><a href="/independent-expenditures/about">About</a></li>
-            <li class="last"><a href="#">Stories</a></li>
+            <li><a href="{% url buckley_index %}">View all the latest independent expenditures</a></li>
+            <li><a href="{% url buckley_about %}">About</a></li>
+            <li class="last"><a href="{% url buckley_stories %}">Stories</a></li>
         </ul>    
     </div>    
  </div>
+{% endif %}
  {% endblock %}
  
 {% block content %}

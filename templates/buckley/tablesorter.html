@@ -4,7 +4,12 @@
     $(document).ready(function()
         {
         $("#expendituresData").tablesorter({
-            widgets: ['zebra']
+widgets: ['zebra'],
+{% if sortdir %}
+sortList: [{{ sortdir }}]
+{% else %}
+sortList: [[0,0]]
+{% endif %}
             });
         }
     );

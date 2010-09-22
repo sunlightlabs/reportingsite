@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load humanize %}
+{% load lede %}
 
 {% block body %}expendituresAbout{% endblock %}
 
@@ -20,8 +21,13 @@
         </form>
         <div class="clear"></div>
     </div>
-    <h2>About this project</h2>
-    {{ about_text.content|safe }}
+    <h2>Stories</h2>
+    <div class="clear"></div>
+    {% for story in stories %}
+    <h3>{{ story.title }}</h3>
+    <p>{{ story|lede|safe }}</p>
+    <div class="clear"></div>
+    {% endfor %}
 {% endblock content %}
 
 {% block sidebar %}
@@ -32,18 +38,10 @@
             <h4>{{ date_expenditures.grouper|date:"N j" }}</h4>
             <ul>
                 {% for expenditure in date_expenditures.list %}
-                <li><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a> spent <a href="{{ expenditure.get_absolute_url }}">${{ expenditure.expenditure_amount|intcomma }}</a> in {% ifequal expenditure.support_oppose 'S' %}support of{% else %}opposition to{% endifequal %} <a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a> in the <a href="{% url buckley_race_detail race=expenditure.candidate.race  %}">{{ expenditure.candidate.full_race_name }} race</a>.</li>
+                <li><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a> spent <a href="{{ expenditure.get_absolute_url }}">${{ expenditure.expenditure_amount|intcomma }}</a> in {% ifequal expenditure.support_oppose 'S' %}support of{% else %}opposition to{% endifequal %} <a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a> in the <a href="{% url buckley_race_detail race=expenditure.candidate.race  %}">{{ expenditure.candidate.full_race_name }} race.</a></li>
                 {% endfor %}
             </ul>
         {% endfor %}
 
-    </div>
-    <div class="mainModule">
-        <h3>Latest Stories</h3>
-        <ul>
-        {% for story in stories %}
-            <li><a href="{{ story.get_absolute_url }}">{{ story.title }}</a></li>
-        {% endfor %}
-        </ul>
     </div>
 {% endblock sidebar %}

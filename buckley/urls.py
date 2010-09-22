@@ -1,10 +1,21 @@
+import datetime
+
 from django.conf.urls.defaults import *
 from django.db.models import Sum
 from django.views.decorators.cache import cache_page
 from django.views.generic.list_detail import object_list, object_detail
+from django.shortcuts import get_object_or_404
 
 from buckley.models import *
 from buckley.feeds import *
+from buckley.views import *
+from reporting.models import Post
+
+about_text = ''
+try:
+    about_text = Post.objects.get(slug='About-page')
+except Post.DoesNotExist:
+    pass
 
 
 urlpatterns = patterns('',
@@ -111,10 +122,24 @@ urlpatterns = patterns('',
             {},
             name='buckley_embed'),
 
-        url(r'about\/?$',
+        url(r'^about\/?$',
             'django.views.generic.simple.direct_to_template',
-            {'template': 'buckley/about.html', },
+            {'template': 'buckley/about.html', 
+             'extra_context': {'about_text': about_text,
+                               'latest_expenditures': Expenditure.objects.filter(expenditure_date__gte=datetime.date.today()-datetime.timedelta(days=3))[:5], 
+                               'stories': ie_stories()[:5], 
+                                }
+            },
             name='buckley_about'),
+
+        url(r'^stories\/?$',
+                'django.views.generic.simple.direct_to_template',
+                {'template': 'buckley/stories.html',
+                    'extra_context': {'latest_expenditures': Expenditure.objects.filter(expenditure_date__gte=datetime.date.today()-datetime.timedelta(days=3))[:5], 
+                        'stories': ie_stories(),
+                        }
+                    },
+                name='buckley_stories'),
 
         url(r'letters\/?$',
             cache_page(object_list, 60*60),
@@ -141,8 +166,7 @@ urlpatterns = patterns('',
             name='buckley_search'),
 
         url(r'^\/?$',
-            #cache_page(object_list, 60*15),
-            object_list,
+            cache_page(object_list, 60*15),
             {'queryset': Expenditure.objects.all(), 
              'template_name': 'buckley/index.html',
              'paginate_by': 25,

@@ -37,5 +37,7 @@
             {% endfor %}
         </tbody>
     </table>
+    {% with '[0,1]' as sortdir %}
     {% include "buckley/tablesorter.html" %}
+    {% endwith %}
 {% endblock content %}

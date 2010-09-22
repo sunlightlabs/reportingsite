@@ -18,7 +18,7 @@ except ImportError:
 
 from django.core.cache import cache
 from django.core.mail import send_mail
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import NoArgsCommand, BaseCommand, CommandError
 from django.db.models import Q
 from django.template.defaultfilters import slugify
 
@@ -148,11 +148,12 @@ def candidate_lookup_by_race(row):
     return generic_querier(query, params)
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
+    args = '<override>'
     help = "Save independent expenditures to the database."
     requires_model_validation = False
 
-    def handle_noargs(self, **options):
+    def handle(self, *args, **options):
         """
         can_id - ID number for the candidate referenced in the spending
         cand_nam - name of the candidate (as it was provided in the report)
@@ -180,22 +181,23 @@ class Command(NoArgsCommand):
 
         url = 'ftp://ftp.fec.gov/FEC/ind_exp_2010.csv'
 
-        # Check whether the FEC data has been updated in the past hour.
-        # Having trouble getting urllib2 or httplib2 headers
-        # to show last-modified time for a file on an FTP server,
-        # so using cURL.
-        headers = os.popen('curl -Is "%s"' % url).read().split('\n')
-        last_modified = dateparse(headers[0].replace('Last-Modified: ', '').strip())
-        hours_diff = (datetime.datetime.now(tzutc()) - last_modified).seconds / 60 / 60
+        if not args:
+            # Check whether the FEC data has been updated in the past hour.
+            # Having trouble getting urllib2 or httplib2 headers
+            # to show last-modified time for a file on an FTP server,
+            # so using cURL.
+            headers = os.popen('curl -Is "%s"' % url).read().split('\n')
+            last_modified = dateparse(headers[0].replace('Last-Modified: ', '').strip())
+            hours_diff = (datetime.datetime.now(tzutc()) - last_modified).seconds / 60 / 60
 
-        # If data hasn't been updated in the past hour, don't do anything.
-        if hours_diff > 1 and True is False:
-            send_mail('[ IE data importer ] Data not updated',
-                      '',
-                      'abycoffe@sunlightfoundation.com',
-                      ['abycoffe@sunlightfoundation.com', ],
-                      fail_silently=True)
-            return
+            # If data hasn't been updated in the past hour, don't do anything.
+            if hours_diff > 1:
+                send_mail('[ IE data importer ] Data not updated',
+                          '',
+                          'abycoffe@sunlightfoundation.com',
+                          ['abycoffe@sunlightfoundation.com', ],
+                          fail_silently=True)
+                return
 
         reader = list(csv.DictReader(StringIO(urllib2.urlopen(url).read())))
         #reader = csv.DictReader(open(r'/Users/bycoffe/testcsv.csv', 'r'))
@@ -509,5 +511,16 @@ class Command(NoArgsCommand):
         # Remove clear errors
         Expenditure.objects.filter(image_number=10930676766, candidate__slug='nick-rahall').delete()
 
+        # Fix support/oppose errors
+        Expenditure.objects.filter(image_number=10990630854, candidate__slug='blanche-lincoln').update(support_oppose='O')
+        Expenditure.objects.filter(image_number=10931242198, candidate__slug='ann-mclane-kuster').update(support_oppose='S')
+        Expenditure.objects.filter(image_number=10931249349, candidate__slug='macdonald-king-dalessandro').update(support_oppose='S')
+        Expenditure.objects.filter(image_number=10990639760, candidate__slug='sharron-e-angle').update(support_oppose='S')
+        Expenditure.objects.filter(image_number__in=[10990653705, 10990653694], candidate__slug='alan-b-mollohan').update(support_oppose='O')
+        Expenditure.objects.filter(image_number__in=[10991169349, 10991169350, 10991169350], candidate__slug='pat-toomey').update(support_oppose='O')
+        Expenditure.objects.filter(image_number__in=[10991180834, 10991180834, 10991180834, 10991180842, 10991180822, 10991180822, 10991180835], candidate__slug='joseph-a-sestak-jr').update(support_oppose='S')
+        Expenditure.objects.filter(image_number=10931278251, candidate__slug='tim-griffin').update(support_oppose='O')
+        Expenditure.objects.filter(image_number=10931278248, candidate__slug='joyce-elliott').update(support_oppose='S')
+
         # Clear the cached widget
-        cache.delete('buckley:widget')
+        cache.delete('buckley:widget2')

@@ -158,17 +158,19 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
                                'committee': committee,
                                'candidate': candidate, })
 
-def widget(request):
+def widget():
 
-    cache_key = 'buckley:widget'
-    spending_list = cache.get(cache_key)
+    cache_key = 'buckley:widget2'
+    dates = cache.get(cache_key)
 
-    if not spending_list:
-        limit = 25
+    if not dates:
+        limit = 3
         spending_list = []
 
         dates = Expenditure.objects.values_list('expenditure_date', flat=True).order_by('-expenditure_date').distinct()
+        date_dict = defaultdict(list)
         for date in dates:
+
             if len(spending_list) >= limit:
                 break
 
@@ -198,20 +200,36 @@ def widget(request):
             for support_oppose, d in dicts:
                 for key, value in d.iteritems():
                     for candidate, amount in value.iteritems():
+                        if len(spending_list) >= limit:
+                            break
+                        date_dict[date].append({'committee': key,
+                                              'candidate': candidate,
+                                              'amount': amount,
+                                              'support_oppose': support_oppose,
+                                              'date': date,
+                                             })
+                        spending_list.append(key)
+                        """
                         spending_list.append({'committee': key,
                                               'candidate': candidate,
                                               'amount': amount,
                                               'support_oppose': support_oppose,
                                               'date': date,
                                              })
+                        """
 
-        spending_list.sort(key=itemgetter('date', 'committee', 'candidate', 'support_oppose'), reverse=True)
-        cache.set(cache_key, spending_list, 60*60)
+        dates = [(k, v) for k, v in date_dict.iteritems()]
+        dates.sort(key=itemgetter(0))
+        #spending_list.sort(key=itemgetter('date', 'committee', 'candidate', 'support_oppose'), reverse=True)
+        cache.set(cache_key, dates, 60*60)
 
+    return dates
+    """
     return render_to_response('buckley/widget.html',
                               {'object_list': spending_list, 
                                'host': request.META['HTTP_HOST'],
                                })
+    """
 
 
 def embed(request):
@@ -334,4 +352,13 @@ def json_ieletter_list(request):
     headers = ['Committee', 'Date letter filed', '', '', ]
     data = {'headers': headers, 'data': committees, }
     return HttpResponse(json.dumps(data), mimetype='application/json')
+
+
+def ie_stories():
+    from tagging.models import TaggedItem
+    from tagging.utils import get_tag
+    from reporting.models import Post
+    tag = get_tag('Independent Expenditures')
+    posts = TaggedItem.objects.get_by_model(Post, tag)
+    return posts
 

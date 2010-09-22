@@ -284,3 +284,5 @@ div#pageMain #featureMainNav input#searchbox { width: 220px; }
 }
 
 .tablesorter thead th { cursor: pointer; }
+.tablesorter thead th.headerSortUp { }
+.tablesorter thead th.headerSortDown { }
