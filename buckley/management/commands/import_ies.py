@@ -512,4 +512,4 @@ class Command(BaseCommand):
         Expenditure.objects.filter(image_number=10930676766, candidate__slug='nick-rahall').delete()
 
         # Clear the cached widget
-        cache.delete('buckley:widget')
+        cache.delete('buckley:widget2')

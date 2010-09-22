@@ -160,7 +160,7 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
 
 def widget():
 
-    cache_key = 'buckley:widget'
+    cache_key = 'buckley:widget2'
     dates = cache.get(cache_key)
 
     if not dates:
@@ -221,7 +221,7 @@ def widget():
         dates = [(k, v) for k, v in date_dict.iteritems()]
         dates.sort(key=itemgetter(0))
         #spending_list.sort(key=itemgetter('date', 'committee', 'candidate', 'support_oppose'), reverse=True)
-        cache.set(cache_key, spending_list, 60*60)
+        cache.set(cache_key, dates, 60*60)
 
     return dates
     """
