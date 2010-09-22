@@ -284,5 +284,7 @@ div#pageMain #featureMainNav input#searchbox { width: 220px; }
 }
 
 .tablesorter thead th { cursor: pointer; }
-.tablesorter thead th.headerSortUp { }
-.tablesorter thead th.headerSortDown { }
+.tablesorter thead th.sort { background: url(../img/sortArrows.png) left 7px no-repeat; padding-left: 15px;}
+.tablesorter thead th.headerSortUp { background: url(../img/sortArrows_up.png) left 7px no-repeat; padding-left: 15px;}
+.tablesorter thead th.headerSortDown { background: url(../img/sortArrows_down.png) left 7px no-repeat; padding-left: 15px;}
+
