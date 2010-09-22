@@ -1,5 +1,6 @@
 import socket
 import time
+import urllib2
 
 from django.core.management.base import NoArgsCommand
 
