@@ -80,13 +80,13 @@ div#pageMain #featureBox h3 { background-color: #497c6c; border: 1px solid #3e6c
 #featureMainNav { background: url(../img/bg_secondaryNav.png) top left no-repeat; margin: -22px 0 0 -35px; height: 46px; padding: 30px 35px 0;}
 #featureMainNav a:link, #featureMainNav a:active, #featureMainNav a:visited { color: #394701; }
 #featureMainNav a:hover { color: #e6e7e8;}
-body.expendituresAbout #featureMainNav { position: relative; width: 960px; margin-bottom: 40px;}
-body.expendituresAbout #rtColumn { padding-top: 160px;}
+body.separateNav #featureMainNav { position: relative; width: 960px; margin-bottom: 40px;}
+body.separateNav #rtColumn { padding-top: 160px;}
 
 .fullWidth_columns { float: left; width: 440px; }
 
 div.otherProperty { float: left; width: 208px; padding: 0 15px;}
-h4, .h4 { font-size: 140%; font-weight: bold; margin-bottom: 10px;}
+h4, .h4 { font-size: 140%; font-weight: bold; margin-bottom: 10px; text-transform: capitalize;}
 h4 a { color: #424140; }
 div.otherProperty li { margin-bottom: 10px; line-height: 20px;}
 div.otherProperty li a { color: #020000;}
@@ -135,7 +135,7 @@ form li { margin-bottom: 15px;}
 div#pageMain label { width: 100px; display: block; float: left; }
 div#pageMain input { background: none; border: none; border-bottom: 1px solid #B8B9B9; width: 400px;}
 
-div#pageMain input#searchbox { width: 190px; float: left; margin-right: 20px; background: #FFFFFF; padding: 5px; border: 1px solid #d2d2cc; -moz-border-radius: 3px; -webkit-border-radius: 3px; color: #a7a9ac;}
+div#pageMain input#searchbox { width: 160px; float: left; margin-right: 20px; background: #FFFFFF; padding: 5px; border: 1px solid #d2d2cc; -moz-border-radius: 3px; -webkit-border-radius: 3px; color: #a7a9ac;}
 textarea { background: url(../img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 100px; line-height: 24px;}
 
 
@@ -155,7 +155,7 @@ span.commentMetaAuthor { font-size: 110%; font-weight: bold; margin-bottom: 5px;
 div.entry-content p { color:#58595B; font-size: 95%; line-height: 20px;}
 button { text-indent: -9999em; display: block; border: none; height: 42px; cursor: pointer;}
 button.submitBtn { background: url(../img/btn_submit.png) top left no-repeat; margin-top: 30px; margin-left: 100px; width: 108px;}
-button.searchBtn { background: url(../img/btn_search.png) top left no-repeat; margin-top: 20px; width: 108px; height: 27px;}
+button.searchBtn { background: url(../img/btn_search.png) top left no-repeat; margin-top: 20px; width: 87px; height: 27px;}
 button.searchBtn:hover { background: url(../img/btn_search.png) left -27px no-repeat; }
 
 button.goBtn { background: url(../img/btn_go.png) top left no-repeat; width: 51px; float: left; height: 27px;}
@@ -204,7 +204,7 @@ div.features ol, div.about ol, div.posts ol{ list-style-type: decimal; padding-l
 
 div#pageMain #expenditureSearch label { width: 240px;}
 #expenditureSearch { float: right; margin-top: -5px; padding-right: 70px; }
-body.expendituresAbout #expenditureSearch { padding-right: 170px;}
+body.separateNav #expenditureSearch { padding-right: 170px;}
 #filterExpenditures { border-bottom: 1px solid #c5d8da; margin: 25px 0; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-bottom: 1px solid #81a7aa;}
 #filterExpenditures li { background-color: #c5d8da; border-top: 1px solid #81a7aa; border-left: 1px solid #81a7aa; border-right: 1px solid #81a7aa; padding: 5px 10px 3px; float: left; margin-bottom: 0; -moz-border-radius-topleft: 5px; 
 -moz-border-radius-topright: 5px;

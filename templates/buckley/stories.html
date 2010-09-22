@@ -3,7 +3,7 @@
 {% load humanize %}
 {% load lede %}
 
-{% block body %}expendituresAbout{% endblock %}
+{% block body %}separateNav expendituresStories{% endblock %}
 
 {% block content %}
     <h2 id="featureHeader">Follow the Unlimited Money</h2>
@@ -22,11 +22,11 @@
         <div class="clear"></div>
     </div>
     
-    <h3>Stories</h3>
+    <h2>Stories</h2>
     <ul>
     {% for story in stories %}
         <li class="module">
-            <h4>{{ story.title }}</h4>
+            <h3 class="h4">{{ story.title }}</h3>
             <p>{{ story|lede|safe }}</p>
             <div class="clear"></div>
         </li>
