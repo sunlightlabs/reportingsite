@@ -409,12 +409,14 @@ class Command(BaseCommand):
             print expenditure.id
 
         for row in skipped:
+            committee = committee_lookup(row['SPE_ID'])
             if 'CID' in row: # A CRP ID had been found earlier
+                crp_name = re.sub(r'\s\([A-Z0-9]\)', '', row.get('FirstLastP', ''))
                 try:
                     candidate = Candidate.objects.get(crp_id=row['CID'])
                 except Candidate.DoesNotExist:
                     #logging.debug('Skipped record because candidate does not exist: ' + str(row))
-                    crp_name=re.sub(r'\s\([A-Z0-9]\)', '', row['FirstLastP']),
+                    crp_name=re.sub(r'\s\([A-Z0-9]\)', '', row['FirstLastP'])
                     candidate = Candidate.objects.create(
                             fec_id=row['CAN_ID'],
                             fec_name=row['CAND_NAM'],
@@ -447,7 +449,7 @@ class Command(BaseCommand):
                     expenditure.committee = committee
                     expenditure.payee = payee
                     expenditure.expenditure_purpose = row['PUR']
-                    expenditure.expenditure_date = expenditure_date
+                    expenditure.expenditure_date = dateparse(row['EXP_DAT'])
                     expenditure.expenditure_amount=Decimal(row['EXP_AMO'].replace(',', ''))
                     expenditure.support_oppose=row['SUP_OPP']
                     expenditure.candidate=candidate
@@ -464,7 +466,7 @@ class Command(BaseCommand):
                             committee=committee,
                             payee=payee,
                             expenditure_purpose=row['PUR'],
-                            expenditure_date=expenditure_date,
+                            expenditure_date=datepares(row['EXP_DAT']),
                             expenditure_amount=Decimal(row['EXP_AMO'].replace(',', '')) if row['EXP_AMO'] else 0,
                             support_oppose=row['SUP_OPP'],
                             election_type=row['ELE_TYP'],
@@ -500,7 +502,6 @@ class Command(BaseCommand):
             if e.count() > 1:
                 for to_delete in e[1:]:
                     to_delete.delete()
-
 
         send_mail('[ IE data importer ] Data updated',
                   'Database contains %s expenditure records' % str(Expenditure.objects.count()),
