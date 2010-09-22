@@ -237,7 +237,7 @@ div#pageMain #featureMainNav input#searchbox { width: 220px; }
 
 .raceDetail { font-size: 160%; display: block; padding-top: 8px;}
 
-.sideExpenditures li{ margin-bottom: 20px;}
+.sideExpenditures li, .sideStories li{ margin-bottom: 20px;}
 
 .tag1 {
     font-size: 6pt;
