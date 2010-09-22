@@ -21,7 +21,7 @@
         <div class="clear"></div>
     </div>
     <h2>About this project</h2>
-    {{ about_text.content }}
+    {{ about_text.content|safe }}
 {% endblock content %}
 
 {% block sidebar %}
