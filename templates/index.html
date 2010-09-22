@@ -9,6 +9,7 @@
 
 {% block feature %}
 <!-- {{ host }} //-->
+{% if host != 'reporting.sunlightfoundation.com' %}
 <h2 id="featureHeader">Follow the Unlimited Money</h2>
  <div id="featureBox">
      <p class="tip">Below is a list of recent political spending done independently of any candidate or campaign. A great deal of the groups spending this money aren't subject to contribution or spending limits.</p>
@@ -22,21 +23,6 @@
          </ul>
      </div>
      {% endfor %}
-     {% comment %}
-     <div class="featureModule">
-         <h3>September 20</h3>
-         <ul>
-             <li><a href="#">Service Employees International Union</a> spent $435,000.00 in opposition to James B. Renacci (R) in the Ohio 16th House race</li>
-             <li><a href="#">Service Employees International Union</a> spent $435,000.00 in opposition to James B. Renacci (R) in the Ohio 16th House race</li> 
-         </ul>
-     </div>
-     <div class="featureModule">
-         <h3>September 18</h3>
-          <ul>
-              <li><a href="#">Service Employees International Union</a> spent $435,000.00 in opposition to James B. Renacci (R) in the Ohio 16th House race</li>
-          </ul>
-    </div>
-    {% endcomment %}
     <div class="clear" id="featureNav">
         <ul>
             <li><a href="{% url buckley_index %}">View all the latest independent expenditures</a></li>
@@ -45,6 +31,7 @@
         </ul>    
     </div>    
  </div>
+{% endif %}
  {% endblock %}
  
 {% block content %}
