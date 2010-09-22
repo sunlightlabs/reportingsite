@@ -1,6 +1,7 @@
 {% extends "base.html" %}
 
 {% load humanize %}
+{% load lede %}
 
 {% block body %}expendituresAbout{% endblock %}
 
@@ -20,8 +21,13 @@
         </form>
         <div class="clear"></div>
     </div>
-    <h2>About this project</h2>
-    {{ about_text.content|safe }}
+    <h2>Stories</h2>
+    <div class="clear"></div>
+    {% for story in stories %}
+    <h3>{{ story.title }}</h3>
+    <p>{{ story|lede|safe }}</p>
+    <div class="clear"></div>
+    {% endfor %}
 {% endblock content %}
 
 {% block sidebar %}
@@ -37,13 +43,5 @@
             </ul>
         {% endfor %}
 
-    </div>
-    <div class="mainModule">
-        <h3>Latest Stories</h3>
-        <ul>
-        {% for story in stories %}
-            <li><a href="{{ story.get_absolute_url }}">{{ story.title }}</a></li>
-        {% endfor %}
-        </ul>
     </div>
 {% endblock sidebar %}
