@@ -119,8 +119,7 @@ urlpatterns = patterns('',
         url(r'about\/?$',
             'django.views.generic.simple.direct_to_template',
             {'template': 'buckley/about.html', 
-             'extra_context': { #'about_text': get_object_or_404(Post, slug='About-page')
-                               'about_text': 'about text here',
+             'extra_context': {'about_text': get_object_or_404(Post, slug='About-page'),
                                'latest_expenditures': Expenditure.objects.filter(expenditure_date__gte=datetime.date.today()-datetime.timedelta(days=3))[:5], 
                                'stories': ie_stories()[:5], 
                                 }
