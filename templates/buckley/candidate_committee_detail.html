@@ -1,5 +1,7 @@
 {% extends "buckley/buckley_base.html" %}
 
+{% block body %}{{ block.super }} expendituresCandidate{% endblock %}
+
 {% load humanize %}
 {% load media %}
 {% load buckley %}
@@ -11,6 +13,8 @@
 {% endblock breadcrumb %}
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
+
     <h2 id="searchTitle">Independent expenditures by <a href="{% url buckley_committee_detail slug=committee.slug %}">{{ committee }}</a> for/against <a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}</h2>
     <div class="amountLine">
         Total indepdent expenditures: <span class="amount">${{ committee|committee_candidate_money:candidate|intcomma }}</span>

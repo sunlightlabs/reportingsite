@@ -2,6 +2,8 @@
 
 {% load humanize %}
 
+{% block body %}{{ block.super }} expendituresRace{% endblock %}
+
 {% block breadcrumb %}{{ block.super }}
 <li><a href="{% url buckley_race_list %}">Races</a></li>
 {% if election_type %}
@@ -13,6 +15,7 @@
 {% endblock breadcrumb %}
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
 
 <h2>Independent expenditures - {{ race }}{% if election_type %} ({{ election_type }}){% endif %}</h2>
 

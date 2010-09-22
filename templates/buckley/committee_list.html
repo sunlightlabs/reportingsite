@@ -3,11 +3,15 @@
 {% load humanize %}
 {% load media %}
 
+{% block body %}{{ block.super }} expendituresCommittee{% endblock %}
+
 {% block breadcrumb %}{{ block.super }}
 <li>Committees</li>
 {% endblock %}
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
+
 <h2>Committees</h2>
 <p class="tip">Select a committee to see details.</p>
 <table id="expendituresData" class="tablesorter">

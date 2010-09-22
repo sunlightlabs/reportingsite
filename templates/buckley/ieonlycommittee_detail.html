@@ -1,5 +1,7 @@
 {% extends "buckley/buckley_base.html" %}
 
+{% block body %}{{ block.super }} expendituresLetters{% endblock %}
+
 {% block breadcrumb %}
 {{ block.super }}
 <li><a href="{% url buckley_letter_list %}">Committees intending to accept unlimited contributions</a></li>
@@ -7,6 +9,7 @@
 {% endblock breadcrumb %}
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
 
 <style type="text/css">
     .DV-docViewer input {
