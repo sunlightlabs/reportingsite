@@ -466,7 +466,7 @@ class Command(BaseCommand):
                             committee=committee,
                             payee=payee,
                             expenditure_purpose=row['PUR'],
-                            expenditure_date=datepares(row['EXP_DAT']),
+                            expenditure_date=dateparse(row['EXP_DAT']),
                             expenditure_amount=Decimal(row['EXP_AMO'].replace(',', '')) if row['EXP_AMO'] else 0,
                             support_oppose=row['SUP_OPP'],
                             election_type=row['ELE_TYP'],
