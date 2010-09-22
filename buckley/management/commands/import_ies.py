@@ -510,7 +510,7 @@ class Command(BaseCommand):
 
         # Remove clear errors
         Expenditure.objects.filter(image_number=10930676766, candidate__slug='nick-rahall').delete()
-        Expenditure.objects.filter(image_number=10990630854, candidate__slug='blanche-lincoln').delete()
+        Expenditure.objects.filter(image_number=10990630854, candidate__slug='blanche-lincoln').update(support_oppose='O')
 
         # Clear the cached widget
         cache.delete('buckley:widget2')
