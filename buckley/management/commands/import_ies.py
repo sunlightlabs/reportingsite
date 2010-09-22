@@ -18,7 +18,7 @@ except ImportError:
 
 from django.core.cache import cache
 from django.core.mail import send_mail
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import NoArgsCommand, BaseCommand, CommandError
 from django.db.models import Q
 from django.template.defaultfilters import slugify
 
@@ -148,11 +148,12 @@ def candidate_lookup_by_race(row):
     return generic_querier(query, params)
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
+    args = '<override>'
     help = "Save independent expenditures to the database."
     requires_model_validation = False
 
-    def handle_noargs(self, **options):
+    def handle(self, *args, **options):
         """
         can_id - ID number for the candidate referenced in the spending
         cand_nam - name of the candidate (as it was provided in the report)
@@ -180,7 +181,7 @@ class Command(NoArgsCommand):
 
         url = 'ftp://ftp.fec.gov/FEC/ind_exp_2010.csv'
 
-        if sys.argv[-1] != 'override':
+        if not args:
             # Check whether the FEC data has been updated in the past hour.
             # Having trouble getting urllib2 or httplib2 headers
             # to show last-modified time for a file on an FTP server,
