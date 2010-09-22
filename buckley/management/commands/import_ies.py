@@ -73,6 +73,7 @@ NAME_LOOKUP = {
     'HUIZENGA, BILL': 'H0MI02094',
     'Peter, Gary': 'H8MI09068',
     'Herseth Sandlin, Stephanie': 'H2SD00092',
+    'ROONEY, BRIAN': 'H0MI07077',
 }
 
 def generic_querier(query, params, multirows=False):
@@ -504,6 +505,9 @@ class Command(NoArgsCommand):
                   'abycoffe@sunlightfoundation.com',
                   ['abycoffe@sunlightfoundation.com', ],
                   fail_silently=True)
+
+        # Remove clear errors
+        Expenditure.objects.filter(image_number=10930676766, candidate__slug='nick-rahall').delete()
 
         # Clear the cached widget
         cache.delete('buckley:widget')
