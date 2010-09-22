@@ -180,22 +180,23 @@ class Command(NoArgsCommand):
 
         url = 'ftp://ftp.fec.gov/FEC/ind_exp_2010.csv'
 
-        # Check whether the FEC data has been updated in the past hour.
-        # Having trouble getting urllib2 or httplib2 headers
-        # to show last-modified time for a file on an FTP server,
-        # so using cURL.
-        headers = os.popen('curl -Is "%s"' % url).read().split('\n')
-        last_modified = dateparse(headers[0].replace('Last-Modified: ', '').strip())
-        hours_diff = (datetime.datetime.now(tzutc()) - last_modified).seconds / 60 / 60
+        if sys.argv[-1] != 'override':
+            # Check whether the FEC data has been updated in the past hour.
+            # Having trouble getting urllib2 or httplib2 headers
+            # to show last-modified time for a file on an FTP server,
+            # so using cURL.
+            headers = os.popen('curl -Is "%s"' % url).read().split('\n')
+            last_modified = dateparse(headers[0].replace('Last-Modified: ', '').strip())
+            hours_diff = (datetime.datetime.now(tzutc()) - last_modified).seconds / 60 / 60
 
-        # If data hasn't been updated in the past hour, don't do anything.
-        if hours_diff > 1 and True is False:
-            send_mail('[ IE data importer ] Data not updated',
-                      '',
-                      'abycoffe@sunlightfoundation.com',
-                      ['abycoffe@sunlightfoundation.com', ],
-                      fail_silently=True)
-            return
+            # If data hasn't been updated in the past hour, don't do anything.
+            if hours_diff > 1:
+                send_mail('[ IE data importer ] Data not updated',
+                          '',
+                          'abycoffe@sunlightfoundation.com',
+                          ['abycoffe@sunlightfoundation.com', ],
+                          fail_silently=True)
+                return
 
         reader = list(csv.DictReader(StringIO(urllib2.urlopen(url).read())))
         #reader = csv.DictReader(open(r'/Users/bycoffe/testcsv.csv', 'r'))
