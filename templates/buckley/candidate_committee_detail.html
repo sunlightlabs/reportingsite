@@ -31,7 +31,7 @@
         </thead>
         <tbody>
             {% for expenditure in object_list %}
-            <tr class="{% cycle 'odd' 'even' %}">
+            <tr class="{% cycle 'odd' 'even' %}" id="{{ expenditure.id }}">
                 <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
                 <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
                 <td>{% if expenditure.expenditure_amount < 0 %}-&nbsp;{% endif %}${{ expenditure.expenditure_amount|absolute_value|intcomma }}</td>

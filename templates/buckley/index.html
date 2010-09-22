@@ -32,7 +32,7 @@
             <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
             <td><a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a></td>
             <td>{{ expenditure.candidate.party }}</td>
-            <td><a href="{% url buckley_candidate_committee_detail candidate_slug=expenditure.candidate.slug committee_slug=expenditure.committee.slug %}">${{ expenditure.expenditure_amount|intcomma }}</a></td>
+            <td><a href="{% url buckley_candidate_committee_detail candidate_slug=expenditure.candidate.slug committee_slug=expenditure.committee.slug %}#{{ expenditure.id }}">${{ expenditure.expenditure_amount|intcomma }}</a></td>
             <td>{{ expenditure.expenditure_purpose }}</td>
         </tr>
     {% endfor %}
