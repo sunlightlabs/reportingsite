@@ -335,3 +335,12 @@ def json_ieletter_list(request):
     data = {'headers': headers, 'data': committees, }
     return HttpResponse(json.dumps(data), mimetype='application/json')
 
+
+def ie_stories():
+    from tagging.models import TaggedItem
+    from tagging.utils import get_tag
+    from reporting.models import Post
+    tag = get_tag('Independent Expenditures')
+    posts = TaggedItem.objects.get_by_model(Post, tag)
+    return posts
+

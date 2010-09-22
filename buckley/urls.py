@@ -1,10 +1,15 @@
+import datetime
+
 from django.conf.urls.defaults import *
 from django.db.models import Sum
 from django.views.decorators.cache import cache_page
 from django.views.generic.list_detail import object_list, object_detail
+from django.shortcuts import get_object_or_404
 
 from buckley.models import *
 from buckley.feeds import *
+from buckley.views import *
+from reporting.models import Post
 
 
 urlpatterns = patterns('',
@@ -113,7 +118,13 @@ urlpatterns = patterns('',
 
         url(r'about\/?$',
             'django.views.generic.simple.direct_to_template',
-            {'template': 'buckley/about.html', },
+            {'template': 'buckley/about.html', 
+             'extra_context': { #'about_text': get_object_or_404(Post, slug='About-page')
+                               'about_text': 'about text here',
+                               'latest_expenditures': Expenditure.objects.filter(expenditure_date__gte=datetime.date.today()-datetime.timedelta(days=3))[:5], 
+                               'stories': ie_stories()[:5], 
+                                }
+            },
             name='buckley_about'),
 
         url(r'letters\/?$',

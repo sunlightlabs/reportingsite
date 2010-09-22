@@ -1,5 +1,7 @@
 {% extends "base.html" %}
 
+{% load humanize %}
+
 {% block body %}expendituresAbout{% endblock %}
 
 {% block content %}
@@ -19,18 +21,23 @@
         <div class="clear"></div>
     </div>
     <h2>About this project</h2>
-    <p>The Sunlight Foundation Reporting Group has put together a database and widget tracking independent expenditure data from the Federal Elections Commission to show where money is being spent and who this unlimited type of spending is helping or hurting the most.</p>
-
-    <p>The information displayed below is made available as it is reported to the FEC, which is within 24 or 48 hours of the expenditure being made, or near real-time. The widget displays an itemized list of each independent expenditure with details regarding what the money is spent on and who is doing the spending. The widget also aggregates how much each group has spent on IEs or how much money has been spent to support or oppose individual candidates. It will even show how independent expenditure money is distributed in a single race.</p>
-
-    <p>The data housed in our widget is that of any group making independent expenditures and not only the newly-forming independent expenditure committees. If you'd like to find a list of IE-only committees, read here.</p>
-
-    <p>The Sunlight Foundation Reporting Group has been reporting on the new developments in campaign finance in the post-Citizens United world on the state level and the federal level. Citizens United opened the doors for corporations and labor unions to spend freely in support or opposition of any candidate or issue as long as the spending is done independently of a campaign. This led to political groups asking for permission from the FEC to receive unlimited comtributions from individuals, corporations and labor unions. The political groups were given the ability to receive unlimited contributions, thus creating groups with unprecedented abilities to influence elections.</p>
+    {{ about_text }}
 {% endblock content %}
 
 {% block sidebar %}
     <div class="mainModule sideExpenditures">
         <h3>Latest Independent Expenditures</h3>
+        {% regroup latest_expenditures by expenditure_date as date_list %}
+        {% for date_expenditures in date_list %}
+            <h4>{{ date_expenditures.grouper|date:"N j" }}</h4>
+            <ul>
+                {% for expenditure in date_expenditures.list %}
+                <li><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a> spent <a href="{{ expenditure.get_absolute_url }}">${{ expenditure.expenditure_amount|intcomma }}</a> in {% ifequal expenditure.support_oppose 'S' %}support of{% else %}opposition to{% endifequal %} <a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a> in the <a href="{% url buckley_race_detail race=expenditure.candidate.race  %}">{{ expenditure.candidate.full_race_name }} race.</a></li>
+                {% endfor %}
+            </ul>
+        {% endfor %}
+
+        {% comment %}
         <h4>Sept. 18</h4>
         <ul>
             <li>Service Employees International Union spent $250,000.00 in opposition to Tim Walberg (R) in the Michigan 7th House race</li>
@@ -41,8 +48,14 @@
         <ul>
             <li>Service Employees International Union spent $250,000.00 in opposition to Tim Walberg (R) in the Michigan 7th House race</li>
         </ul>  
+        {% endcomment %}
     </div>
     <div class="mainModule">
-        <h3>Stories</h3>
+        <h3>Latest Stories</h3>
+        <ul>
+        {% for story in stories %}
+            <li><a href="{{ story.get_absolute_url }}">{{ story.title }}</a></li>
+        {% endfor %}
+        </ul>
     </div>
 {% endblock sidebar %}
