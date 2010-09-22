@@ -18,7 +18,7 @@ body{
     background: url(../img/bg_3.png) top left repeat;
     font-size: 82%;
     line-height: 23px;
-    font-family: Georgia, Times New Roman, Times, serif;
+    font-family: Georgia, "Times New Roman", Times, serif;
 }
 
 div#pageMain{ width: 960px; margin: 0 auto; }
@@ -52,6 +52,8 @@ div#fullColumn { padding: 40px 30px 0;}
 body.home div#rtColumn { width: 525px; }
 div#fullWidth h3 { padding-left: 15px;}
 
+h2, h3 { font-family: "adobe-text-pro-1","adobe-text-pro-2", Georgia, "Times New Roman", Times, serif; }
+
 body.fullWidth div#header{ background: url(../img/header_full.png) left 154px no-repeat;}
 body.fullWidth div#columns { background: url(../img/column_ltFull.png) top left repeat-y;}
 body.fullWidth div#mainContent { padding: 0 0 0 3px;}
@@ -66,7 +68,7 @@ div#pageMain #featureHeader { font-size: 300%;  margin-bottom: 0; color: #394701
 body.expendituresAbout #featureHeader { position: relative; z-index: 2;}
 #featureBox p { color: #e6e7e8; width: 675px;}
 .tip, #breadcrumbs li { font-style: oblique; font-size: 90%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 16px;}
-div#pageMain #featureBox h3 { background-color: #497c6c; border: 1px solid #3e6c58; padding: 5px 10px 3px; color: #fff; text-transform: none; margin-bottom: 10px; font-size: 120%; font-weight: normal;}
+div#pageMain #featureBox h3 { background-color: #497c6c; border: 1px solid #3e6c58; padding: 5px 10px 2px; color: #fff; text-transform: none; margin-bottom: 10px; font-size: 120%; font-weight: normal;}
 #featureBox .featureModule li { color: #223c07; float: left; width: 250px; margin: 0 15px 0 5px; line-height: 20px; font-family: Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 95%; }
 .featureModule { float: left; margin-right: 5px; margin-bottom: 25px;}
 #featureBox a:link, #featureBox a:active, #featureBox a:visited { color: #142403; text-decoration: underline;}
@@ -75,7 +77,7 @@ div#pageMain #featureBox h3 { background-color: #497c6c; border: 1px solid #3e6c
 #featureNav li.last { border-right: none;}
 
 
-#featureMainNav { background: url(../img/bg_secondaryNav.png) top left no-repeat; margin: -21px 0 0 -35px; height: 46px; padding: 30px 35px 0;}
+#featureMainNav { background: url(../img/bg_secondaryNav.png) top left no-repeat; margin: -22px 0 0 -35px; height: 46px; padding: 30px 35px 0;}
 #featureMainNav a:link, #featureMainNav a:active, #featureMainNav a:visited { color: #394701; }
 #featureMainNav a:hover { color: #e6e7e8;}
 body.expendituresAbout #featureMainNav { position: relative; width: 960px; margin-bottom: 40px;}
