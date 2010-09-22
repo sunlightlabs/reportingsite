@@ -14,7 +14,7 @@ class Command(NoArgsCommand):
     requires_model_validation = False
 
     def handle_noargs(self, **options):
-        image_numbers = Expenditure.objects.order_by('-image_number').values_list('image_number', flat=True).distinct().filter(pdf_url='')
+        image_numbers = Expenditure.objects.order_by('-image_number').values_list('image_number', flat=True).distinct()
 
         for image_number in image_numbers:
             expenditures = Expenditure.objects.filter(image_number=image_number)
