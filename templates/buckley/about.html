@@ -8,9 +8,9 @@
     <h2 id="featureHeader">Follow the Unlimited Money</h2>
     <div id="featureMainNav">
         <ul>
-            <li id="expenditures"><a href="/independent-expenditures/">Latest Independent Expenditures</a></li>
-            <li id="about"><a href="/independent-expenditures/about/">About</a></li>
-            <li id="stories" class="last"><a href="/independent-expenditures/stories/">Stories</a></li>
+            <li id="expenditures"><a href="{% url buckley_index %}">Latest Independent Expenditures</a></li>
+            <li id="about"><a href="{% url buckley_about %}">About</a></li>
+            <li id="stories" class="last"><a href="{% url buckley_stories %}">Stories</a></li>
         </ul>  
         <form id="expenditureSearch" action="{% url buckley_search %}" method="GET">
             <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Search for a candidate or committee"{% endif %} type="text" name="q" />
@@ -32,7 +32,7 @@
             <h4>{{ date_expenditures.grouper|date:"N j" }}</h4>
             <ul>
                 {% for expenditure in date_expenditures.list %}
-                <li><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a> spent <a href="{{ expenditure.get_absolute_url }}">${{ expenditure.expenditure_amount|intcomma }}</a> in {% ifequal expenditure.support_oppose 'S' %}support of{% else %}opposition to{% endifequal %} <a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a> in the <a href="{% url buckley_race_detail race=expenditure.candidate.race  %}">{{ expenditure.candidate.full_race_name }} race.</a></li>
+                <li><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a> spent <a href="{{ expenditure.get_absolute_url }}">${{ expenditure.expenditure_amount|intcomma }}</a> in {% ifequal expenditure.support_oppose 'S' %}support of{% else %}opposition to{% endifequal %} <a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a> in the <a href="{% url buckley_race_detail race=expenditure.candidate.race  %}">{{ expenditure.candidate.full_race_name }} race</a>.</li>
                 {% endfor %}
             </ul>
         {% endfor %}

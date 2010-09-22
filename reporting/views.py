@@ -206,9 +206,12 @@ def index(request):
                 Feed.objects.get(codename='partytime').entries.all().select_related()[:15])
     #    cache.set(key, blogs, 60*15)
 
+    from buckley.views import widget
+
     return render_to_response('index.html', 
                               {'blogs': blogs, 'featured': featured, 'bodyclass': 'home',
                                'host': request.META['HTTP_HOST'],
+                               'ies': widget(),
                               },
                               context_instance=RequestContext(request))
 
