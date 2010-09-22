@@ -273,7 +273,7 @@ class Expenditure(models.Model):
             return 'Other'
 
     def get_pdf_url(self):
-        body = 'filerid=C00075820&name=&treas=&city=&img_num=10991135766&state=&party=&type=&submit=Send+Query'
+        body = 'filerid=%s&name=&treas=&city=&img_num=%s&state=&party=&type=&submit=Send+Query' % (self.committee.fec_id(), self.image_number)
         base_url = 'http://images.nictusa.com'
         search_url = '%s/cgi-bin/fecimg/' % base_url
         req = urllib2.Request(search_url, body)
