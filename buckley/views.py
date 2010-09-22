@@ -161,9 +161,9 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
 def widget():
 
     cache_key = 'buckley:widget'
-    spending_list = cache.get(cache_key)
+    dates = cache.get(cache_key)
 
-    if not spending_list:
+    if not dates:
         limit = 3
         spending_list = []
 
