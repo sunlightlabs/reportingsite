@@ -2,12 +2,15 @@
 
 {% load media %}
 
+{% block body %}{{ block.super }} expendituresLetters{% endblock %}
+
 {% block breadcrumb %}{{ block.super }}
 <li>Committees intending to accept unlimited amounts</li>
 {% endblock %}
 
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
 
 <h2>Committees intending to accept unlimited amounts</h2>
 <div id="rssIcon">

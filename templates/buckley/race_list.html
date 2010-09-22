@@ -5,11 +5,14 @@
 {% load humanize %}
 {% load media %}
 
+{% block body %}{{ block.super }} expendituresRace{% endblock %}
+
 {% block breadcrumb %}{{ block.super }}
 <li>Races</li>
 {% endblock %}
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
 
 <h2>Races</h2>
 <p class="tip">Select a race to see details.</p>

@@ -3,12 +3,16 @@
 {% load humanize %}
 {% load buckley %}
 
+{% block body %}{{ block.super }} expendituresCandidate{% endblock %}
+
 {% block breadcrumb %}{{ block.super }}
 <li><a href="{% url buckley_candidate_list %}">Candidates</a></li>
 <li>{{ object }}</li>
 {% endblock breadcrumb %}
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
+
     <h2 class="withDetail">{{ object }}{% if object.party %} ({{ object.party }}){% endif %}</h2>
     <span class="raceDetail"><a href="{% url buckley_race_detail race=object.race %}">{{ object.full_race_name }}</a></span>
     <div class="amountLine clear">
