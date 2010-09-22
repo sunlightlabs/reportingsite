@@ -478,7 +478,6 @@ class Command(NoArgsCommand):
 
             
         # Remove amendmended filings
-        removed = 0
         for amendment in Expenditure.objects.exclude(amendment='N'):
             # Check for A2 amendments
             if amendment.amendment == 'A2':
@@ -486,16 +485,19 @@ class Command(NoArgsCommand):
                                            transaction_id=amendment.transaction_id, 
                                            committee=amendment.committee, 
                                            candidate=amendment.candidate).delete()
-                removed += 1
             else:
                 Expenditure.objects.filter(amendment='N', 
                                            transaction_id=amendment.transaction_id, 
                                            committee=amendment.committee, 
                                            candidate=amendment.candidate).delete()
-                removed += 1
 
-        print
-        print 'Removed %s records' % str(removed)
+        # Remove apparent duplicates
+        for expenditure in Expenditure.objects.all():
+            e = Expenditure.objects.filter(candidate=expenditure.candidate, committee=expenditure.committee, expenditure_date=expenditure.expenditure_date, payee=expenditure.payee, expenditure_amount=expenditure.expenditure_amount).exclude(filing_number=expenditure.filing_number)
+            if e.count() > 1:
+                for to_delete in e[1:]:
+                    to_delete.delete()
+
 
         send_mail('[ IE data importer ] Data updated',
                   'Database contains %s expenditure records' % str(Expenditure.objects.count()),

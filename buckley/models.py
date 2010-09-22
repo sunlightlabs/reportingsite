@@ -273,22 +273,12 @@ class Expenditure(models.Model):
             return 'Other'
 
     def get_pdf_url(self):
-        # First see if there are any other expenditures
-        # with the same image number that already have
-        # the PDF's URL stored.
-        others = Expenditure.objects.filter(image_number=self.image_number).exclude(pdf_url='')
-        if others:
-            return others[0].pdf_url
-
-        url = 'http://images.nictusa.com/cgi-bin/fecimg/?%s' % self.committee.fec_id()
-        socket.setdefaulttimeout(60)
-        print url
-        try:
-            page = urllib2.urlopen(url).read()
-        except urllib2.URLError:
-            return ''
-        match = re.search(r'(\/pdf\/\d{3}\/%(imnum)s\/%(imnum)s\.pdf)' % {'imnum': self.image_number}, page)
+        body = 'filerid=C00075820&name=&treas=&city=&img_num=10991135766&state=&party=&type=&submit=Send+Query'
+        base_url = 'http://images.nictusa.com'
+        search_url = '%s/cgi-bin/fecimg/' % base_url
+        req = urllib2.Request(search_url, body)
+        page = urllib2.urlopen(req).read()
+        match = re.search("src='(\/pdf.*?)#", page)
         if match:
-            pdf_path = match.group()
-            return 'http://images.nictusa.com%s' % pdf_path
+            return '%s%s' % (base_url, match.groups()[0])
         return ''
