@@ -1,5 +1,7 @@
 {% extends "buckley/buckley_base.html" %}
 
+{% block body %}expendituresHome fullWidth{% endblock %}
+
 {% load humanize %}
 {% load media %}
 
@@ -18,12 +20,12 @@
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
-            <th>Race</th>
-            {#<th>Amount spent on independent expenditures</th>#}
-            <th>General</th>
-            <th>Primary</th>
-            <th>Other</th>
-            <th>Total</th>
+            <th class="sort">Race</th>
+            {#<th class="sort">Amount spent on independent expenditures</th>#}
+            <th class="sort">General</th>
+            <th class="sort">Primary</th>
+            <th class="sort">Other</th>
+            <th class="sort">Total</th>
         </tr>
     </thead>
     <tbody>
