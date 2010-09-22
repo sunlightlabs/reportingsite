@@ -510,7 +510,17 @@ class Command(BaseCommand):
 
         # Remove clear errors
         Expenditure.objects.filter(image_number=10930676766, candidate__slug='nick-rahall').delete()
+
+        # Fix support/oppose errors
         Expenditure.objects.filter(image_number=10990630854, candidate__slug='blanche-lincoln').update(support_oppose='O')
+        Expenditure.objects.filter(image_number=10931242198, candidate__slug='ann-mclane-kuster').update(support_oppose='S')
+        Expenditure.objects.filter(image_number=10931249349, candidate__slug='macdonald-king-dalessandro').update(support_oppose='S')
+        Expenditure.objects.filter(image_number=10990639760, candidate__slug='sharron-e-angle').update(support_oppose='S')
+        Expenditure.objects.filter(image_number__in=[10990653705, 10990653694], candidate__slug='alan-b-mollohan').update(support_oppose='O')
+        Expenditure.objects.filter(image_number__in=[10991169349, 10991169350, 10991169350], candidate__slug='pat-toomey').update(support_oppose='O')
+        Expenditure.objects.filter(image_number__in=[10991180834, 10991180834, 10991180834, 10991180842, 10991180822, 10991180822, 10991180835], candidate__slug='joseph-a-sestak-jr').update(support_oppose='S')
+        Expenditure.objects.filter(image_number=10931278251, candidate__slug='tim-griffin').update(support_oppose='O')
+        Expenditure.objects.filter(image_number=10931278248, candidate__slug='joyce-elliott').update(support_oppose='S')
 
         # Clear the cached widget
         cache.delete('buckley:widget2')
