@@ -72,7 +72,7 @@ div#pageMain #featureBox h3 { background-color: #497c6c; border: 1px solid #3e6c
 #featureBox .featureModule li { color: #223c07; float: left; width: 250px; margin: 0 15px 0 5px; line-height: 20px; font-family: Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 95%; }
 .featureModule { float: left; margin-right: 5px; margin-bottom: 25px;}
 #featureBox a:link, #featureBox a:active, #featureBox a:visited { color: #142403; text-decoration: underline;}
-#featureBox a:hover, body.expendituresHome #featureMainNav li#expenditures a, body.expendituresAbout #featureMainNav li#about a, body.expendituresStories #featureMainNav li#stories a  { color: #fff; }
+#featureBox a:hover, body.expendituresHome #featureMainNav li#expenditures a, body.expendituresAbout #featureMainNav li#about a, body.expendituresStories #featureMainNav li#stories a, body.expendituresCandidate li#expenditures a, body.expendituresRace li#expenditures a, body.expendituresCommittee li#expenditures a, body.expendituresLetters li#expenditures a { color: #fff; }
 #featureNav li, #featureMainNav li { float: left; border-right: 1px solid #739935; margin-right: 20px; padding-right: 20px; font-size: 110%; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; line-height: 18px;}
 #featureNav li.last { border-right: none;}
 
@@ -99,6 +99,8 @@ h2.withDetail { float: left; margin-right: 20px;}
 div#pageMain div.features h2, div#pageMain h3, div#pageMain div.features h2 a, div#pageMain h3 a, div#pageMain h2, div#pageMain h2 a, div.features h2:visited, h3:visited, div.features h2 a:visited, h3 a:visited, h2:visited, h2 a:visited { color: #414042;}
 div#pageMain div.features h2 a:hover, div#pageMain h3 a:hover, div#pageMain h4 a:hover, div#pageMain h2 a:hover { color: #457b80;}
 h3 { text-transform: uppercase; margin-bottom: 25px; font-weight: bold; font-size: 170%;}
+
+body.fullWidth div#pageMain h2 a, body.fullWidth div#pageMain h2 a:link, body.fullWidth div#pageMain h2 a:hover, body.fullWidth div#pageMain h2 a:active, body.fullWidth div#pageMain h2 a:visited { color: #457B80;}
 
 a.readMoreFeature { background: url(../img/arrow_feature.png) top left no-repeat; height: 36px; display: block; padding: 6px 0 0 20px; color: #fff; font-style: oblique; text-transform: lowercase}
 a.viewAll { text-align: center; display: block; font-size: 110%;}
@@ -135,7 +137,6 @@ div#pageMain input { background: none; border: none; border-bottom: 1px solid #B
 
 div#pageMain input#searchbox { width: 190px; float: left; margin-right: 20px; background: #FFFFFF; padding: 5px; border: 1px solid #d2d2cc; -moz-border-radius: 3px; -webkit-border-radius: 3px; color: #a7a9ac;}
 textarea { background: url(../img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 100px; line-height: 24px;}
-
 
 
 div#footer { background: url(../img/bar_bottom.png) top left no-repeat; padding: 60px 0 0; margin: -11px auto 40px auto; width: 960px;}
@@ -209,8 +210,8 @@ body.expendituresAbout #expenditureSearch { padding-right: 170px;}
 -moz-border-radius-topright: 5px;
 -webkit-border-top-left-radius: 5px; 
 -webkit-border-top-right-radius: 5px; margin-right: 2px;}
-#filterExpenditures li:hover { background-color: #2a5f65; border-top: 1px solid #134045; border-left: 1px solid #134045; border-right: 1px solid #134045; }
-#filterExpenditures li:hover a { color: #fff;}
+#filterExpenditures li:hover, body.expendituresCommittee li#filter_committee, body.expendituresCandidate li#filter_candidate, body.expendituresRace li#filter_race, body.expendituresLetters li#filter_letters { background-color: #2a5f65; border-top: 1px solid #134045; border-left: 1px solid #134045; border-right: 1px solid #134045; }
+#filterExpenditures li:hover a, body.expendituresCommittee li#filter_committee a, body.expendituresCandidate li#filter_candidate a, body.expendituresRace li#filter_race a, body.expendituresLetters li#filter_letters a { color: #fff;}
 #filterExpenditures span { font-weight: bold; text-transform: uppercase; font-size: 120%; margin-bottom: 15px; display: block;}
 div#pageMain #filterExpenditures label { width: auto; margin-right: 25px; line-height: 16px;}
 

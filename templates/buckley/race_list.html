@@ -1,11 +1,9 @@
 {% extends "buckley/buckley_base.html" %}
 
-{% block body %}expendituresHome fullWidth{% endblock %}
+{% block body %}expendituresHome fullWidth expendituresRace{% endblock %}
 
 {% load humanize %}
 {% load media %}
-
-{% block body %}{{ block.super }} expendituresRace{% endblock %}
 
 {% block breadcrumb %}{{ block.super }}
 <li>Races</li>
