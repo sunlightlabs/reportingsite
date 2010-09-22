@@ -409,7 +409,29 @@ class Command(BaseCommand):
             print expenditure.id
 
         for row in skipped:
-            committee = committee_lookup(row['SPE_ID'])
+
+            # Duplicated code
+            try:
+                committee_id = CommitteeId.objects.get(fec_committee_id=row['SPE_ID'])
+                if committee_id:
+                    committee = committee_id.committee
+            except CommitteeId.DoesNotExist:
+                committee = committee_lookup(row['SPE_ID'])
+                row.update(committee)
+                if row.get('PACShort', '').strip():
+                    committee_name = row['PACShort'].strip()
+                else:
+                    committee_name = row['SPE_NAM'].strip().title()
+
+                committee, created = Committee.objects.get_or_create(
+                        name=committee_name,
+                        slug=slugify(committee_name)[:50]
+                    )
+                committee_id = CommitteeId.objects.create(
+                        fec_committee_id=row['SPE_ID'],
+                        committee=committee)
+
+
             if 'CID' in row: # A CRP ID had been found earlier
                 crp_name = re.sub(r'\s\([A-Z0-9]\)', '', row.get('FirstLastP', ''))
                 try:
