@@ -20,7 +20,6 @@ if (box.value=='Search posts') { box.value=''; }
   </form>
 </div>
 
-{% cache 3600 feedbar %}
 
 {% if widget %}
 <div class="mainModule recentPosts">
@@ -52,6 +51,7 @@ if (box.value=='Search posts') { box.value=''; }
             </div>
             {%endif%}
 
+            {% cache 3600 realtimeticker %}
            <div class="mainModule categories">
              <h3>Real Time Ticker</h3>
              {%get_resources%}
@@ -61,6 +61,7 @@ if (box.value=='Search posts') { box.value=''; }
                {%endfor%}
              </ul>             
            </div>
+           {% endcache %}
 
 
 {%if post%}
@@ -95,4 +96,3 @@ if (box.value=='Search posts') { box.value=''; }
             {% endfor %}
           </div>
 
-{% endcache %}
