@@ -409,12 +409,36 @@ class Command(BaseCommand):
             print expenditure.id
 
         for row in skipped:
+
+            # Duplicated code
+            try:
+                committee_id = CommitteeId.objects.get(fec_committee_id=row['SPE_ID'])
+                if committee_id:
+                    committee = committee_id.committee
+            except CommitteeId.DoesNotExist:
+                committee = committee_lookup(row['SPE_ID'])
+                row.update(committee)
+                if row.get('PACShort', '').strip():
+                    committee_name = row['PACShort'].strip()
+                else:
+                    committee_name = row['SPE_NAM'].strip().title()
+
+                committee, created = Committee.objects.get_or_create(
+                        name=committee_name,
+                        slug=slugify(committee_name)[:50]
+                    )
+                committee_id = CommitteeId.objects.create(
+                        fec_committee_id=row['SPE_ID'],
+                        committee=committee)
+
+
             if 'CID' in row: # A CRP ID had been found earlier
+                crp_name = re.sub(r'\s\([A-Z0-9]\)', '', row.get('FirstLastP', ''))
                 try:
                     candidate = Candidate.objects.get(crp_id=row['CID'])
                 except Candidate.DoesNotExist:
                     #logging.debug('Skipped record because candidate does not exist: ' + str(row))
-                    crp_name=re.sub(r'\s\([A-Z0-9]\)', '', row['FirstLastP']),
+                    crp_name=re.sub(r'\s\([A-Z0-9]\)', '', row['FirstLastP'])
                     candidate = Candidate.objects.create(
                             fec_id=row['CAN_ID'],
                             fec_name=row['CAND_NAM'],
@@ -447,7 +471,7 @@ class Command(BaseCommand):
                     expenditure.committee = committee
                     expenditure.payee = payee
                     expenditure.expenditure_purpose = row['PUR']
-                    expenditure.expenditure_date = expenditure_date
+                    expenditure.expenditure_date = dateparse(row['EXP_DAT'])
                     expenditure.expenditure_amount=Decimal(row['EXP_AMO'].replace(',', ''))
                     expenditure.support_oppose=row['SUP_OPP']
                     expenditure.candidate=candidate
@@ -464,7 +488,7 @@ class Command(BaseCommand):
                             committee=committee,
                             payee=payee,
                             expenditure_purpose=row['PUR'],
-                            expenditure_date=expenditure_date,
+                            expenditure_date=dateparse(row['EXP_DAT']),
                             expenditure_amount=Decimal(row['EXP_AMO'].replace(',', '')) if row['EXP_AMO'] else 0,
                             support_oppose=row['SUP_OPP'],
                             election_type=row['ELE_TYP'],
@@ -501,7 +525,6 @@ class Command(BaseCommand):
                 for to_delete in e[1:]:
                     to_delete.delete()
 
-
         send_mail('[ IE data importer ] Data updated',
                   'Database contains %s expenditure records' % str(Expenditure.objects.count()),
                   'abycoffe@sunlightfoundation.com',
@@ -510,6 +533,28 @@ class Command(BaseCommand):
 
         # Remove clear errors
         Expenditure.objects.filter(image_number=10930676766, candidate__slug='nick-rahall').delete()
+        Expenditure.objects.filter(image_number=10931302159).delete()
+
+        # Fix support/oppose errors
+        Expenditure.objects.filter(image_number=10990630854, candidate__slug='blanche-lincoln').update(support_oppose='O')
+        Expenditure.objects.filter(image_number=10931242198, candidate__slug='ann-mclane-kuster').update(support_oppose='S')
+        Expenditure.objects.filter(image_number=10931249349, candidate__slug='macdonald-king-dalessandro').update(support_oppose='S')
+        Expenditure.objects.filter(image_number=10990639760, candidate__slug='sharron-e-angle').update(support_oppose='S')
+        Expenditure.objects.filter(image_number__in=[10990653705, 10990653694], candidate__slug='alan-b-mollohan').update(support_oppose='O')
+        Expenditure.objects.filter(image_number__in=[10991169349, 10991169350, 10991169350], candidate__slug='pat-toomey').update(support_oppose='O')
+        Expenditure.objects.filter(image_number__in=[10991180834, 10991180834, 10991180834, 10991180842, 10991180822, 10991180822, 10991180835], candidate__slug='joseph-a-sestak-jr').update(support_oppose='S')
+        Expenditure.objects.filter(image_number=10931278251, candidate__slug='tim-griffin').update(support_oppose='O')
+        Expenditure.objects.filter(image_number=10931278248, candidate__slug='joyce-elliott').update(support_oppose='S')
+
+        # Remove committees that have no expenditures
+        for committee in Committee.objects.all():
+            if committee.expenditure_set.count() == 0:
+                committee.delete()
+
+        # Remove candidates that have no expenditures
+        for candidate in Candidate.objects.all():
+            if candidate.expenditure_set.count() == 0:
+                candidate.delete()
 
         # Clear the cached widget
         cache.delete('buckley:widget2')

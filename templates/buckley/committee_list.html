@@ -3,18 +3,22 @@
 {% load humanize %}
 {% load media %}
 
+{% block body %}{{ block.super }} expendituresCommittee{% endblock %}
+
 {% block breadcrumb %}{{ block.super }}
 <li>Committees</li>
 {% endblock %}
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
+
 <h2>Committees</h2>
 <p class="tip">Select a committee to see details.</p>
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
-            <th>Committee</th>
-            <th>Total spent on independent expenditures</th>
+            <th class="sort">Committee</th>
+            <th class="sort">Total spent on independent expenditures</th>
             <th></th>
         </tr>
     </thead>
@@ -31,6 +35,8 @@
     </tbody>
 </table>
 
+{% with '[1,1]' as sortdir %}
 {% include "buckley/tablesorter.html" %}
+{% endwith %}
 
 {% endblock content %}

@@ -1,6 +1,9 @@
 {% extends "buckley/buckley_base.html" %}
 
 {% load humanize %}
+{% load buckley %}
+
+{% block body %}{{ block.super }} expendituresRace{% endblock %}
 
 {% block breadcrumb %}{{ block.super }}
 <li><a href="{% url buckley_race_list %}">Races</a></li>
@@ -13,6 +16,7 @@
 {% endblock breadcrumb %}
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
 
 <h2>Independent expenditures - {{ race }}{% if election_type %} ({{ election_type }}){% endif %}</h2>
 
@@ -22,8 +26,10 @@
 <a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>: 
 <div class="amountLine">
     <ul>
-    <li>Independent expenditures in support: <span class="amount">${{ candidate.total_supporting|intcomma }}</span></li>
-    <li>Independent expenditures in opposition: <span class="amount">${{ candidate.total_opposing|intcomma }}</span></li>
+        {#<li>Independent expenditures in support: <span class="amount">${{ candidate.total_supporting|intcomma }}</span></li>#}
+    <li>Independent expenditures in support: <span class="amount">${{ candidate|total_support_by_election_type:election_type|intcomma }}</span></li>
+    {#<li>Independent expenditures in opposition: <span class="amount">${{ candidate.total_opposing|intcomma }}</span></li>#}
+    <li>Independent expenditures in opposition: <span class="amount">${{ candidate|total_opposition_by_election_type:election_type|intcomma }}</span></li>
     </ul>
 </div>
 {% endfor %}
@@ -39,14 +45,14 @@
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
-            <th>Date</th>
-            <th>Election</th>
-            <th>Committee</th>
-            <th>Support/Oppose</th>
-            <th>Candidate</th>
-            <th>Party</th>
-            <th>Amount</th>
-            <th>Purpose</th>
+            <th class="sort">Date</th>
+            <th class="sort">Election</th>
+            <th class="sort">Committee</th>
+            <th class="sort">Support/Oppose</th>
+            <th class="sort">Candidate</th>
+            <th class="sort">Party</th>
+            <th class="sort">Amount</th>
+            <th class="sort">Purpose</th>
         </tr>
     </thead>
 {% for expenditure in object_list %}
@@ -72,7 +78,9 @@
 <br />
 {% endif %}
 
+{% with '[0,1]' as sortdir %}
 {% include "buckley/tablesorter.html" %}
+{% endwith %}
 
 
 {% endblock content %}

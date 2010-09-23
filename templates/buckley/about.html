@@ -2,7 +2,7 @@
 
 {% load humanize %}
 
-{% block body %}expendituresAbout{% endblock %}
+{% block body %}expendituresAbout separateNav{% endblock %}
 
 {% block content %}
     <h2 id="featureHeader">Follow the Unlimited Money</h2>
@@ -36,14 +36,16 @@
                 {% endfor %}
             </ul>
         {% endfor %}
+        <a class="viewAll" href="/independent-expenditures/">View All Expenditures</a>
 
     </div>
-    <div class="mainModule">
+    <div class="mainModule sideStories">
         <h3>Latest Stories</h3>
         <ul>
         {% for story in stories %}
             <li><a href="{{ story.get_absolute_url }}">{{ story.title }}</a></li>
         {% endfor %}
         </ul>
+        <a class="viewAll" href="/independent-expenditures/stories/">View All Stories</a>
     </div>
 {% endblock sidebar %}

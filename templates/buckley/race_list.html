@@ -1,5 +1,7 @@
 {% extends "buckley/buckley_base.html" %}
 
+{% block body %}expendituresHome fullWidth expendituresRace{% endblock %}
+
 {% load humanize %}
 {% load media %}
 
@@ -8,6 +10,7 @@
 {% endblock %}
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
 
 <h2>Races</h2>
 <p class="tip">Select a race to see details.</p>
@@ -15,12 +18,12 @@
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
-            <th>Race</th>
-            {#<th>Amount spent on independent expenditures</th>#}
-            <th>General</th>
-            <th>Primary</th>
-            <th>Other</th>
-            <th>Total</th>
+            <th class="sort">Race</th>
+            {#<th class="sort">Amount spent on independent expenditures</th>#}
+            <th class="sort">General</th>
+            <th class="sort">Primary</th>
+            <th class="sort">Other</th>
+            <th class="sort">Total</th>
         </tr>
     </thead>
     <tbody>
@@ -36,6 +39,8 @@
     </tbody>
 </table>
 
+{% with '[4,1]' as sortdir %}
 {% include "buckley/tablesorter.html" %}
+{% endwith %}
 
 {% endblock content %}

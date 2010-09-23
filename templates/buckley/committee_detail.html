@@ -3,12 +3,16 @@
 {% load buckley %}
 {% load humanize %}
 
+{% block body %}{{ block.super }} expendituresCommittee{% endblock %}
+
 {% block breadcrumb %}{{ block.super }}
 <li><a href="{% url buckley_committee_list %}">Committees</a></li>
 <li>{{ object }}</li>
 {% endblock breadcrumb %}
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
+
 <h2>{{ object }}</h2>
 
 {% if object.ieonly_url %}
@@ -25,11 +29,11 @@
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
-            <th>Race</th>
-            <th>Candidate</th>
-            <th>Party</th>
-            <th>Support/oppose</th>
-            <th>Amount</th>
+            <th class="sort">Race</th>
+            <th class="sort">Candidate</th>
+            <th class="sort">Party</th>
+            <th class="sort">Support/oppose</th>
+            <th class="sort">Amount</th>
         </tr>
     </thead>
     <tbody>

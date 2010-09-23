@@ -3,12 +3,16 @@
 {% load humanize %}
 {% load buckley %}
 
+{% block body %}{{ block.super }} expendituresCandidate{% endblock %}
+
 {% block breadcrumb %}{{ block.super }}
 <li><a href="{% url buckley_candidate_list %}">Candidates</a></li>
 <li>{{ object }}</li>
 {% endblock breadcrumb %}
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
+
     <h2 class="withDetail">{{ object }}{% if object.party %} ({{ object.party }}){% endif %}</h2>
     <span class="raceDetail"><a href="{% url buckley_race_detail race=object.race %}">{{ object.full_race_name }}</a></span>
     <div class="amountLine clear">
@@ -18,39 +22,14 @@
         <ul>
     </div>
 
-    {% comment %}
-    {% if object.committees_supporting %}
-    <div class="fullWidth_columns">
-        <h3>Committees supporting</h3>
-        {% for committee in object.committees_supporting %}
-            <ul>
-                {% if committee.slug %}
-                <li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a> (<a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">expenditure details</a>)</li>
-                {% endif %}
-            </ul>
-        {% endfor %}
-    </div>
-    {% endif %}
-
-    {% if object.committees_opposing %}
-    <div class="fullWidth_columns">
-        <h3>Committees opposing</h3>
-        {% for committee in object.committees_opposing %}
-            {% if committee.slug %}
-                <li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a> (<a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">expenditure details</a>)</li>
-            {% endif %}
-        {% endfor %}
-    </div>
-    {% endif %}
-    {% endcomment %}
     <div class="clear"></div>
 
     <table id="expendituresData" class="tablesorter">
         <thead>
             <tr>
-                <th>Committee</th>
-                <th>Support/oppose</th>
-                <th>Amount</th>
+                <th class="sort">Committee</th>
+                <th class="sort">Support/oppose</th>
+                <th class="sort">Amount</th>
             </tr>
         </thead>
         <tbody>
@@ -58,20 +37,22 @@
             <tr  class="{% cycle 'odd' 'even' %}">
                 <td><a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">{{ committee.name }}</a></td>
                 <td>Support</td>
-                <td>${{ committee|committee_candidate_money:object|intcomma }}</td>
+                <td>${{ committee|committee_candidate_support_money:object|intcomma }}</td>
             </tr>
             {% endfor %}
             {% for committee in object.committees_opposing %}
             <tr>
                 <td><a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=committee.slug %}">{{ committee.name }}</a></td>
                 <td>Oppose</td>
-                <td>${{ committee|committee_candidate_money:object|intcomma }}</td>
+                <td>${{ committee|committee_candidate_oppose_money:object|intcomma }}</td>
             </tr>
             {% endfor %}
         </tbody>
     </table>
 
+    {% with '[4,1]' as sortdir %}
     {% include "buckley/tablesorter.html" %}
+    {% endwith %}
 
 
 {% endblock content %}

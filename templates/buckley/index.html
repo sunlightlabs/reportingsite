@@ -8,24 +8,7 @@
 {% block content %}
 
 <h2>Latest independent expenditures</h2>
-<div id="filterExpenditures">
-    <span>Browse by</span>
-        <ul>
-            <li>
-                <a href="{% url buckley_candidate_list %}">Candidate</a>
-            </li>
-            <li>
-                <a href="{% url buckley_race_list %}">Race</a>
-            </li>
-            <li>
-                <a href="{% url buckley_committee_list %}">Committee</a>
-            </li>
-            <li>
-                <a href="{% url buckley_letter_list %}">Committees that intend to accept unlimited contributions</a>
-            </li>
-        </ul> 
-        <div class="clear"></div>
-</div>
+{% include "buckley/tabs.html" %}
 
 <table id="expenditures">
     <thead>
@@ -49,7 +32,7 @@
             <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
             <td><a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a></td>
             <td>{{ expenditure.candidate.party }}</td>
-            <td><a href="{% url buckley_candidate_committee_detail candidate_slug=expenditure.candidate.slug committee_slug=expenditure.committee.slug %}">${{ expenditure.expenditure_amount|intcomma }}</a></td>
+            <td><a href="{% url buckley_candidate_committee_detail candidate_slug=expenditure.candidate.slug committee_slug=expenditure.committee.slug %}#{{ expenditure.id }}">${{ expenditure.expenditure_amount|intcomma }}</a></td>
             <td>{{ expenditure.expenditure_purpose }}</td>
         </tr>
     {% endfor %}

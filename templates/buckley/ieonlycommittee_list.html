@@ -2,15 +2,18 @@
 
 {% load media %}
 
+{% block body %}{{ block.super }} expendituresLetters{% endblock %}
+
 {% block breadcrumb %}{{ block.super }}
 <li>Committees intending to accept unlimited amounts</li>
 {% endblock %}
 
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
 
 <h2>Committees intending to accept unlimited amounts</h2>
-<div id="rssIcon">
+<div class="rssBlock" id="rssIcon">
     <a href="{% url buckley_letter_feed %}">Subscribe to a feed of this data</a>
 </div>
 <p>The following committees have filed letters with the FEC stating their intention to accept contributions of unlimited amounts.</p>
@@ -19,8 +22,8 @@
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
-            <th>Committee</th>
-            <th>Date letter filed</th>
+            <th class="sort">Committee</th>
+            <th class="sort">Date letter filed</th>
             <th></th>
             <th></th>
         </tr>

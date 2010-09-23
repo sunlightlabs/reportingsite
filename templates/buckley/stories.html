@@ -3,7 +3,7 @@
 {% load humanize %}
 {% load lede %}
 
-{% block body %}expendituresAbout{% endblock %}
+{% block body %}separateNav expendituresStories{% endblock %}
 
 {% block content %}
     <h2 id="featureHeader">Follow the Unlimited Money</h2>
@@ -21,13 +21,17 @@
         </form>
         <div class="clear"></div>
     </div>
+    
     <h2>Stories</h2>
-    <div class="clear"></div>
+    <ul>
     {% for story in stories %}
-    <h3>{{ story.title }}</h3>
-    <p>{{ story|lede|safe }}</p>
-    <div class="clear"></div>
+        <li class="module">
+            <h3 class="h4">{{ story.title }}</h3>
+            <p>{{ story|lede|safe }}</p>
+            <div class="clear"></div>
+        </li>
     {% endfor %}
+    </ul>
 {% endblock content %}
 
 {% block sidebar %}
@@ -42,6 +46,6 @@
                 {% endfor %}
             </ul>
         {% endfor %}
-
+        <a class="viewAll" href="/independent-expenditures/">View All Expenditures</a>
     </div>
 {% endblock sidebar %}

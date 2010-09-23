@@ -1,5 +1,7 @@
 {% extends "buckley/buckley_base.html" %}
 
+{% block body %}{{ block.super }} expendituresCandidate{% endblock %}
+
 {% load humanize %}
 {% load media %}
 {% load buckley %}
@@ -11,6 +13,8 @@
 {% endblock breadcrumb %}
 
 {% block content %}
+    {% include "buckley/tabs.html" %}
+
     <h2 id="searchTitle">Independent expenditures by <a href="{% url buckley_committee_detail slug=committee.slug %}">{{ committee }}</a> for/against <a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}</h2>
     <div class="amountLine">
         Total indepdent expenditures: <span class="amount">${{ committee|committee_candidate_money:candidate|intcomma }}</span>
@@ -18,16 +22,16 @@
     <table id="expendituresData" class="tablesorter">
         <thead>
             <tr>
-                <th>Expenditure date</th>
-                <th>Support/Oppose</th>
-                <th>Amount</th>
-                <th>Purpose</th>
-                <th>Payee</th>
+                <th class="sort">Expenditure date</th>
+                <th class="sort">Support/Oppose</th>
+                <th class="sort">Amount</th>
+                <th class="sort">Purpose</th>
+                <th class="sort">Payee</th>
             </tr>
         </thead>
         <tbody>
             {% for expenditure in object_list %}
-            <tr class="{% cycle 'odd' 'even' %}">
+            <tr class="{% cycle 'odd' 'even' %}" id="{{ expenditure.id }}">
                 <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
                 <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
                 <td>{% if expenditure.expenditure_amount < 0 %}-&nbsp;{% endif %}${{ expenditure.expenditure_amount|absolute_value|intcomma }}</td>
@@ -37,5 +41,7 @@
             {% endfor %}
         </tbody>
     </table>
+    {% with '[0,1]' as sortdir %}
     {% include "buckley/tablesorter.html" %}
+    {% endwith %}
 {% endblock content %}
