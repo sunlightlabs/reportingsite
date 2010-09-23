@@ -38,7 +38,7 @@
     <ul>
     {% for story in stories %}
         <li class="module">
-            <h3 class="h4">{{ story.title }}</h3>
+            <h3 class="h4"><a href="{{ story.get_absolute_url }}">{{ story.title }}</a></h3>
             <p>{{ story|lede|safe }}</p>
             <div class="clear"></div>
         </li>
