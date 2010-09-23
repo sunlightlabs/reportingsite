@@ -244,14 +244,16 @@ def search(request):
     if terms:
         candidates = Candidate.objects.filter(crp_name__icontains=terms)
         committees = Committee.objects.filter(name__icontains=terms)
+        num_results = candidates.count() + committees.count()
     else:
         candidates = None
         committees = None
+        num_results = 0
 
     return render_to_response('buckley/search.html',
                               {'candidates': candidates,
                                'committees': committees,
-                               'num_results': candidates.count() + committees.count(),
+                               'num_results': num_results,
                                'terms': terms, })
 
 def committee_list_csv(request):
