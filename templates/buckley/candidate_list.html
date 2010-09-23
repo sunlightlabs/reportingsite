@@ -3,6 +3,8 @@
 {% load humanize %}
 {% load media %}
 
+{% block title %}{{ block.super }} - Candidates{% endblock %}
+
 {% block body %}{{ block.super }} expendituresCandidate{% endblock %}
 
 {% block breadcrumb %}{{ block.super }}

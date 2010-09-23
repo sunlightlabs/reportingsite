@@ -3,6 +3,8 @@
 {% load humanize %}
 {% load buckley %}
 
+{% block title %}{{ block.super }} - {{ object }}{% endblock %}
+
 {% block body %}{{ block.super }} expendituresCandidate{% endblock %}
 
 {% block breadcrumb %}{{ block.super }}

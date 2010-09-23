@@ -1,5 +1,7 @@
 {% extends "buckley/buckley_base.html" %}
 
+{% block title %}{{ block.super }} - {{ candidate }}{% endblock %}
+
 {% block body %}{{ block.super }} expendituresCandidate{% endblock %}
 
 {% load humanize %}

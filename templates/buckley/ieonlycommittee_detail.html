@@ -1,5 +1,7 @@
 {% extends "buckley/buckley_base.html" %}
 
+{% block title %}{{ block.super }} - {{ object }}{% endblock %}
+
 {% block body %}{{ block.super }} expendituresLetters{% endblock %}
 
 {% block breadcrumb %}

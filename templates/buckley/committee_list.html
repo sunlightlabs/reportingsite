@@ -3,6 +3,8 @@
 {% load humanize %}
 {% load media %}
 
+{% block title %}{{ block.super }} - Committees{% endblock %}
+
 {% block body %}{{ block.super }} expendituresCommittee{% endblock %}
 
 {% block breadcrumb %}{{ block.super }}
