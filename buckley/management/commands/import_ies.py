@@ -525,6 +525,20 @@ class Command(BaseCommand):
                 for to_delete in e[1:]:
                     to_delete.delete()
 
+        # Remove more apparent duplicates
+        dupes = {}
+        for expenditure in Expenditure.objects.all():
+            e = Expenditure.objects.filter(candidate=expenditure.candidate, committee=expenditure.committee, expenditure_date=expenditure.expenditure_date, payee=expenditure.payee, expenditure_amount=expenditure.expenditure_amount).exclude(filing_number=expenditure.filing_number)
+            if e:
+                dupes[expenditure] = e
+
+        for k, v in dupes.items():
+            if Expenditure.objects.filter(pk=k.pk):
+                for expenditure in v:
+                    expenditure.delete()
+
+        # End removing more apparent duplicates
+
         send_mail('[ IE data importer ] Data updated',
                   'Database contains %s expenditure records' % str(Expenditure.objects.count()),
                   'abycoffe@sunlightfoundation.com',
