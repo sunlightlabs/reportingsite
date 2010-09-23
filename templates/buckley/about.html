@@ -7,6 +7,17 @@
 {% block body %}expendituresAbout separateNav{% endblock %}
 
 {% block content %}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
     <h2 id="featureHeader">Follow the Unlimited Money</h2>
     <div id="featureMainNav">
         <ul>
