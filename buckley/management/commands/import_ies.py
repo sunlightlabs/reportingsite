@@ -192,11 +192,6 @@ class Command(BaseCommand):
 
             # If data hasn't been updated in the past hour, don't do anything.
             if hours_diff > 1:
-                send_mail('[ IE data importer ] Data not updated',
-                          '',
-                          'abycoffe@sunlightfoundation.com',
-                          ['abycoffe@sunlightfoundation.com', ],
-                          fail_silently=True)
                 return
 
         reader = list(csv.DictReader(StringIO(urllib2.urlopen(url).read())))
