@@ -49,7 +49,7 @@ def races():
         amounts['total'] = sum([amounts['G'], amounts['P'], amounts['other']])
 
         if district.lower() == 'senate':
-            full_race = '%s Senate' % STATE_CHOICES[state]
+            full_race = '%s Senate' % STATE_CHOICES[state.upper()]
         else:
             try:
                 if int(district) < 10:
@@ -96,12 +96,12 @@ def race_expenditures(request, race, election_type=None):
 
     if district.lower() == 'senate':
         candidates = get_list_or_404(Candidate, office='S', state=state)
-        full_race = '%s Senate' % STATE_CHOICES[state]
+        full_race = '%s Senate' % STATE_CHOICES[state.upper()]
     else:
         if int(district) < 10:
             district = '0%s' % district
         candidates = get_list_or_404(Candidate, office='H', state=state, district=district)
-        full_race = '%s %s' % (STATE_CHOICES[state], ordinal(district))
+        full_race = '%s %s' % (STATE_CHOICES[state.upper()], ordinal(district))
 
     expenditures = Expenditure.objects.filter(race=race).filter(**filter).exclude(exclude).order_by('-expenditure_date')
     if not expenditures:
