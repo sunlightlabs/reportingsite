@@ -62,7 +62,7 @@ div.mainModule { background: url(../img/break_mainModule.png) bottom left repeat
 div.lastItem, li.lastModule { background: none;}
 
 #featureBox { background: url(../img/bg_feature.png) top left no-repeat; height: 243px; margin-left: -5px; margin-top: -22px; padding: 30px 25px 0;}
-body.home div#pageMain #featureHeader { padding-top: 40px; margin-left: 25px; }
+body.home div#pageMain #featureHeader { padding-top: 40px; margin-left: 25px; text-indent: -9999em; display: block; width: 477px; height: 39px; background: url(../img/title_expenditure.png) left 41px no-repeat; position: relative; }
 div#pageMain #featureHeader { font-size: 300%;  margin-bottom: 0; color: #394701; }
 body.expendituresAbout #featureHeader { position: relative; z-index: 2;}
 #featureBox p { color: #e6e7e8; width: 675px;}
