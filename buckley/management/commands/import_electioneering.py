@@ -82,7 +82,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         url = 'ftp://ftp.fec.gov/FEC/ec_exp_2010.csv'
-        """
 
         if not args:
             # Check whether the FEC data has been updated in the past hour.
@@ -96,7 +95,6 @@ class Command(BaseCommand):
             # If data hasn't been updated in the past hour, don't do anything.
             if hours_diff > 1:
                 return
-        """
 
         reader = list(csv.DictReader(StringIO(urllib2.urlopen(url).read())))
         #reader = list(csv.DictReader(open(r'/Users/bycoffe/tmp/ec_exp_2010.csv', 'r')))
