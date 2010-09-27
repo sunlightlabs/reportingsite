@@ -36,8 +36,8 @@ socket.setdefaulttimeout(25)
 logging.basicConfig(filename='ie_import_errors.log', level=logging.DEBUG)
 
 
-#cursor = MySQLdb.Connection('reporting.sunlightfoundation.com', 'reporting', '***REMOVED***', 'reporting').cursor()
-cursor = MySQLdb.Connection('localhost', 'reporting', '***REMOVED***', 'reporting').cursor()
+cursor = MySQLdb.Connection('reporting.sunlightfoundation.com', 'reporting', '***REMOVED***', 'reporting').cursor()
+#cursor = MySQLdb.Connection('localhost', 'reporting', '***REMOVED***', 'reporting').cursor()
 
 # Some names we know are missing FEC IDs.
 NAME_LOOKUP = {
