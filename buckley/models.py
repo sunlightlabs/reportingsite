@@ -278,10 +278,21 @@ class Candidate(models.Model):
     def electioneering_total(self):
         return self.electioneering_expenditures.aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
+    def electioneering_total_by_election_type(self, election_type):
+        filter = {'electioneering_communication': True, }
+        exclude = {}
+        if election_type in ('P', 'G'):
+            filter.update({'election_type': election_type})
+        else:
+            exclude.udpate({'election_type__in': ['P', 'G', ]})
+
+        return self.electioneering_expenditures.filter(**filter).exclude(**exclude).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+
+
     def denormalize(self):
-        self.total_expenditures = self.total_including_electioneering()
-        self.expenditures_supporting = self.total_supporting()
-        self.expenditures_opposing = self.total_opposing()
+        self.total_expenditures = self.total_including_electioneering() or 0
+        self.expenditures_supporting = self.total_supporting() or 0
+        self.expenditures_opposing = self.total_opposing() or 0
         self.save()
         
 

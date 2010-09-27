@@ -30,8 +30,8 @@
     <ul>
     <li>Independent expenditures in support: <span class="amount">${{ candidate|total_support_by_election_type:election_type|intcomma }}</span></li>
     <li>Independent expenditures in opposition: <span class="amount">${{ candidate|total_opposition_by_election_type:election_type|intcomma }}</span></li>
-    {% if candidate.electioneering_total %}
-    <li>Electioneering communications: <span class="amount">${{ candidate.electioneering_total|intcomma }}</span> *</li>
+    {% if candidate|total_electioneering_by_election_type:election_type %}
+    <li>Electioneering communications: <span class="amount">${{ candidate|total_electioneering_by_election_type:election_type|intcomma }}</span> <a href="#asterisk">*</a></li>
     {% endif %}
     </ul>
 </div>
@@ -53,7 +53,7 @@
             <th class="sort">Committee</th>
             <th class="sort">Support/Oppose</th>
             <th class="sort">Candidate</th>
-            <th class="sort">Party</th>
+            {#<th class="sort">Party</th>#}
             <th class="sort">Amount</th>
             <th class="sort">Purpose</th>
         </tr>
@@ -63,9 +63,18 @@
     <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
     <td>{{ expenditure.election_type_for_detail_page }}</td>
     <td><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a></td>
-    <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
-    <td><a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a></td>
-    <td>{{ expenditure.candidate.party }}</td>
+    <td>{% if expenditure.electioneering_communication %}<a href="#asterisk">*</a>{% else %}{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}{% endif %}</td>
+    <td>{% spaceless %}
+        {% if expenditure.electioneering_communication %}
+        {% for candidate in expenditure.electioneering_candidates.all %}
+        <a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}
+        {% if not forloop.last %},{% endif %}
+        {% endfor %}
+        {% else %}
+        <a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a>{% if expenditure.candidate.party %} ({{ expenditure.candidate.party }}){% endif %}
+        {% endif %}
+        {% endspaceless %}
+    </td>
     <td>${{ expenditure.expenditure_amount|intcomma }}</td>
     <td>{{ expenditure.expenditure_purpose }}</td>
 </tr>
@@ -85,5 +94,6 @@
 {% include "buckley/tablesorter.html" %}
 {% endwith %}
 
+    {% include "buckley/electioneering_asterisk.html" %}
 
 {% endblock content %}

@@ -37,7 +37,7 @@
                 <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
                 <td>{% spaceless %}
                     {% if expenditure.electioneering_communication %}
-                        *
+                    <a href="#asterisk">*</a>
                     {% else %}
                         {% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}
                     {% endif %}
@@ -52,4 +52,6 @@
     {% with '[0,1]' as sortdir %}
     {% include "buckley/tablesorter.html" %}
     {% endwith %}
+
+    {% include "buckley/electioneering_asterisk.html" %}
 {% endblock content %}
