@@ -284,7 +284,7 @@ class Candidate(models.Model):
         if election_type in ('P', 'G'):
             filter.update({'election_type': election_type})
         else:
-            exclude.udpate({'election_type__in': ['P', 'G', ]})
+            exclude.update({'election_type__in': ['P', 'G', ]})
 
         return self.electioneering_expenditures.filter(**filter).exclude(**exclude).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
