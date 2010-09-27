@@ -13,6 +13,7 @@ import urllib
 import urllib2
 
 from django.core.management.base import NoArgsCommand, BaseCommand, CommandError
+from django.core.cache import cache
 from django.db.models import Q
 
 from buckley.models import *
