@@ -90,7 +90,11 @@ class Committee(models.Model):
         filter = {'candidate': candidate}
         if support_oppose:
             filter['support_oppose'] = support_oppose
-        return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+        amount = self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+        if not support_oppose:
+            # Include electioneering communications
+            amount += candidate.electioneering_expenditures.filter(committee=self).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+        return amount
 
     def fec_id(self):
         return CommitteeId.objects.filter(committee=self)[0].fec_committee_id
@@ -100,6 +104,29 @@ class Committee(models.Model):
         if ieonly:
             return ieonly[0].get_absolute_url()
         return ''
+
+    def all_candidates_with_amounts(self):
+        ie_candidates = self.expenditure_set.order_by('candidate').values_list('candidate', flat=True).distinct().exclude(candidate=None)
+        electioneering_candidates = []
+        for expenditure in self.expenditure_set.filter(electioneering_communication=True):
+            electioneering_candidates += list(expenditure.electioneering_candidates.order_by('id').values_list('id', flat=True))
+
+        candidate_ids = set(list(ie_candidates) + electioneering_candidates)
+        candidates = []
+        for id in candidate_ids:
+            candidate = Candidate.objects.get(id=id)
+            if candidate in self.candidates_supported():
+                support_oppose = 'Support'
+            elif candidate in self.candidates_opposed():
+                support_oppose = 'Oppose'
+            else:
+                support_oppose = '*'
+            amount = self.money_spent_on_candidate(candidate)
+            candidates.append({'candidate': candidate,
+                                'support_oppose': support_oppose,
+                                'amount': amount, })
+
+        return candidates
 
 
 class CommitteeId(models.Model):
@@ -146,6 +173,11 @@ class Candidate(models.Model):
     district = models.CharField(max_length=2)
     slug = models.SlugField()
 
+    # Denormalizations
+    total_expenditures = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    expenditures_supporting = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    expenditures_opposing = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+
     objects = CandidateManager()
 
     class Meta:
@@ -187,6 +219,25 @@ class Candidate(models.Model):
         committee_ids = self.expenditure_set.filter(support_oppose=support_oppose).values_list('committee', flat=True).distinct()
         return Committee.objects.filter(id__in=committee_ids)
 
+    def all_committees_with_amounts(self):
+        ie_committees = self.expenditure_set.order_by('committee').values_list('committee', flat=True).distinct()
+        electioneering_committees = self.electioneering_expenditures.order_by('committee').values_list('committee', flat=True).distinct()
+        committee_ids = set(list(ie_committees) + list(electioneering_committees))
+        committees = []
+        for id in committee_ids:
+            committee = Committee.objects.get(id=id)
+            if committee in self.committees_supporting():
+                support_oppose = 'Support'
+            elif committee in self.committees_opposing():
+                support_oppose = 'Oppose'
+            else:
+                support_oppose = '*'
+            amount = committee.money_spent_on_candidate(self)
+            committees.append({'committee': committee,
+                               'support_oppose': support_oppose,
+                               'amount': amount, })
+        return committees
+
     def committees_supporting(self):
         return self.committees('S')
 
@@ -199,6 +250,11 @@ class Candidate(models.Model):
             filter.update({'support_oppose': support_oppose})
 
         return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+
+    def total_including_electioneering(self):
+        ie = self.expenditure_set.aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+        electioneering = self.electioneering_expenditures.aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+        return ie + electioneering
 
     def total_supporting(self):
         return self.total('S')
@@ -219,6 +275,16 @@ class Candidate(models.Model):
 
         return self.expenditure_set.filter(**filter).exclude(**exclude).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
+    def electioneering_total(self):
+        return self.electioneering_expenditures.aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+
+    def denormalize(self):
+        self.total_expenditures = self.total_including_electioneering()
+        self.expenditures_supporting = self.total_supporting()
+        self.expenditures_opposing = self.total_opposing()
+        self.save()
+        
+
 
 
 class Expenditure(models.Model):
@@ -236,7 +302,7 @@ class Expenditure(models.Model):
     election_type = models.CharField(max_length=1,
                                       choices=(('P', 'Primary'), ('G', 'General'))
                                       )
-    candidate = models.ForeignKey(Candidate)
+    candidate = models.ForeignKey(Candidate, blank=True, null=True) # NULL for electioneering
     transaction_id = models.CharField(max_length=32)
     #memo_code = models.CharField(max_length=1, blank=True)
     #memo_text = models.CharField(max_length=255)
@@ -248,6 +314,14 @@ class Expenditure(models.Model):
 
     race = models.CharField(max_length=16) # denormalizing
     pdf_url = models.URLField(verify_exists=False)
+
+    electioneering_communication = models.BooleanField(default=False)
+
+    # Electioneering communications reports sometimes 
+    # multiple candidates for the same communication.
+    # For those we need to use a ManyToManyField
+    electioneering_candidates = models.ManyToManyField(Candidate, related_name='electioneering_expenditures')
+
 
     class Meta:
         ordering = ('-expenditure_date', )

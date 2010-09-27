@@ -35,7 +35,13 @@
             {% for expenditure in object_list %}
             <tr class="{% cycle 'odd' 'even' %}" id="{{ expenditure.id }}">
                 <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
-                <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
+                <td>{% spaceless %}
+                    {% if expenditure.electioneering_communication %}
+                        *
+                    {% else %}
+                        {% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}
+                    {% endif %}
+                    {% endspaceless %}</td>
                 <td>{% if expenditure.expenditure_amount < 0 %}-&nbsp;{% endif %}${{ expenditure.expenditure_amount|absolute_value|intcomma }}</td>
                 <td>{{ expenditure.expenditure_purpose }}</td>
                 <td>{{ expenditure.payee }}</td>

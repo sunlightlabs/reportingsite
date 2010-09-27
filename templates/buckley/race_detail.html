@@ -28,10 +28,11 @@
 <a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>: 
 <div class="amountLine">
     <ul>
-        {#<li>Independent expenditures in support: <span class="amount">${{ candidate.total_supporting|intcomma }}</span></li>#}
     <li>Independent expenditures in support: <span class="amount">${{ candidate|total_support_by_election_type:election_type|intcomma }}</span></li>
-    {#<li>Independent expenditures in opposition: <span class="amount">${{ candidate.total_opposing|intcomma }}</span></li>#}
     <li>Independent expenditures in opposition: <span class="amount">${{ candidate|total_opposition_by_election_type:election_type|intcomma }}</span></li>
+    {% if candidate.electioneering_total %}
+    <li>Electioneering communications: <span class="amount">${{ candidate.electioneering_total|intcomma }}</span> *</li>
+    {% endif %}
     </ul>
 </div>
 {% endfor %}

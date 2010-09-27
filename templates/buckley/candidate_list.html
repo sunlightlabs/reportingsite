@@ -35,9 +35,9 @@
         <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.last_first }}</a></td>
         <td>{{ candidate.party }}</td>
         <td>{{ candidate.full_race_name }}</td>
-        <td>${{ candidate.total|intcomma }}</td>
-        <td>${{ candidate.total_supporting|intcomma }}</td>
-        <td>${{ candidate.total_opposing|intcomma }}</td>
+        <td>${{ candidate.total_expenditures|intcomma }}</td>
+        <td>${{ candidate.expenditures_supporting|intcomma }}</td>
+        <td>${{ candidate.expenditures_opposing|intcomma }}</td>
     </tr>
     {% endfor %}
     </tbody>
@@ -46,4 +46,5 @@
     {% with '[3,1]' as sortdir %}
     {% include "buckley/tablesorter.html" %}
     {% endwith %}
+
 {% endblock content %}

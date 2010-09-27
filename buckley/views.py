@@ -46,17 +46,37 @@ def races():
             if k not in amounts:
                 amounts[k] = 0
         amounts['other'] = sum([v for k, v in amounts.iteritems() if k not in ('G', 'P')])
-        amounts['total'] = sum([amounts['G'], amounts['P'], amounts['other']])
 
         if district.lower() == 'senate':
             full_race = '%s Senate' % STATE_CHOICES[state.upper()]
+            office = 'S'
         else:
             try:
                 if int(district) < 10:
                     district = '0%s' % district
             except ValueError:
                 continue
+            office = 'H'
             full_race = '%s %s' % (STATE_CHOICES[state], ordinal(district))
+
+        # Get amounts from electioneering communications
+        # where there is no race set on the expenditure.
+        filter = {'office': office, 'state': state, }
+        if office == 'H':
+            filter['district'] = district
+        candidates = Candidate.objects.filter(**filter)
+        already_included = [] # So we don't double count electioneering communications in the same race
+        for candidate in candidates:
+            expenditures = candidate.electioneering_expenditures.filter(race='')
+            for expenditure in expenditures:
+                if expenditure not in already_included:
+                    already_included.append(expenditure)
+                    if expenditure.election_type not in ('P', 'G'):
+                        amounts['other'] += expenditure.expenditure_amount
+                    else:
+                        amounts[expenditure.election_type] += expenditure.expenditure_amount
+
+        amounts['total'] = sum([amounts['G'], amounts['P'], amounts['other']])
 
         race_amts.append({'race': race,
                           'full_race': full_race,
@@ -104,6 +124,18 @@ def race_expenditures(request, race, election_type=None):
         full_race = '%s %s' % (STATE_CHOICES[state.upper()], ordinal(district))
 
     expenditures = Expenditure.objects.filter(race=race).filter(**filter).exclude(exclude).order_by('-expenditure_date')
+
+    # Check whether there are any electioneering
+    # communications.
+    electioneering = set()
+    filter['race'] = ''
+    for candidate in candidates:
+        electioneering_communications = candidate.electioneering_expenditures.filter(**filter).values_list('id', flat=True)
+        for expenditure in electioneering_communications:
+            electioneering.add(expenditure)
+
+    expenditures = expenditures | Expenditure.objects.filter(id__in=electioneering)
+
     if not expenditures:
         raise Http404
 
@@ -150,6 +182,11 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
     expenditures = Expenditure.objects.filter(candidate=candidate,
                                                 committee=committee
                                                 ).order_by('-expenditure_date')
+    # Check whether there are any electioneering
+    # communications by this committee for this
+    # candidate
+    expenditures = expenditures | candidate.electioneering_expenditures.filter(committee=committee)
+
     if not expenditures:
         raise Http404
 

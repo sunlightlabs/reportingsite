@@ -36,7 +36,8 @@ socket.setdefaulttimeout(25)
 logging.basicConfig(filename='ie_import_errors.log', level=logging.DEBUG)
 
 
-cursor = MySQLdb.Connection('reporting.sunlightfoundation.com', 'reporting', '***REMOVED***', 'reporting').cursor()
+#cursor = MySQLdb.Connection('reporting.sunlightfoundation.com', 'reporting', '***REMOVED***', 'reporting').cursor()
+cursor = MySQLdb.Connection('localhost', 'reporting', '***REMOVED***', 'reporting').cursor()
 
 # Some names we know are missing FEC IDs.
 NAME_LOOKUP = {
@@ -130,15 +131,21 @@ def candidate_lookup_by_id(fec_id):
     return generic_querier(query, params)
 
 
-def candidate_lookup_by_race(row):
-    office = row['CAN_OFF']
-    district = row['CAN_OFF_DIS']
-    state = row['CAN_OFF_STA']
-    prefix, first, last, suffix = name_tools.split(row['CAND_NAM'])
+def candidate_lookup_by_race(row, name_field='CAND_NAM', office_field='CAN_OFF',
+        district_field='CAN_OFF_DIS', state_field='CAN_OFF_STA'):
+    office = row[office_field]
+    district = row.get(district_field, '')
+    state = row[state_field]
+    prefix, first, last, suffix = name_tools.split(row[name_field])
     if office == 'H':
-        query = "SELECT * FROM candidates WHERE distidrunfor = %s AND cycle = 2010 AND firstlastp LIKE %s"
-        params = ['%s%s' % (state, district),
-                  '%' + last + '%', ]
+        if district:
+            query = "SELECT * FROM candidates WHERE distidrunfor = %s AND cycle = 2010 AND firstlastp LIKE %s"
+            params = ['%s%s' % (state, district),
+                      '%' + last + '%', ]
+        else:
+            query = "SELECT * FROM candidates WHERE distidrunfor LIKE %s AND cycle = 2010 AND firstlastp LIKE %s"
+            params = [state + '%', '%' + last + '%', ]
+
     elif office == 'S':
         query = "SELECT * FROM candidates WHERE distidrunfor LIKE %s AND cycle = 2010 AND firstlastp LIKE %s"
         params = ['%sS' % state + '%',
