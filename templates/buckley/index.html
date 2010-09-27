@@ -29,7 +29,7 @@
             <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
             <td>{% if expenditure.race %}<a href="{% url buckley_race_detail race=expenditure.race %}">{{ expenditure.race }}</a>{% else %}Multiple *{% endif %}</td>
             <td><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a></td>
-            <td>{% if expenditure.electioneering_communication %}*{% else %}{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}{% endif %}</td>
+            <td>{% if expenditure.electioneering_communication %}<a href="#asterisk">*</a>{% else %}{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}{% endif %}</td>
             {% spaceless %}
             <td>
                 {% if expenditure.electioneering_communication %}
@@ -57,5 +57,7 @@
 </div>
 <div class="clear"></div>
 {% endif %}
+
+{% include "buckley/electioneering_asterisk.html" %}
 
 {% endblock content %}
