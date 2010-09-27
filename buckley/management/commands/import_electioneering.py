@@ -341,3 +341,10 @@ class Command(BaseCommand):
                                            committee=amendment.committee, 
                                            electioneering_communication=True,
                                            candidate=amendment.candidate).delete()
+
+        # Denormalize expensive-to-calculate fields
+        for candidate in Candidate.objects.all():
+            candidate.denormalize()
+
+        # Clear the cached widget
+        cache.delete('buckley:widget2')

@@ -572,5 +572,9 @@ class Command(BaseCommand):
             if candidate.expenditure_set.count() == 0:
                 candidate.delete()
 
+        # Denormalize expensive-to-calculate fields
+        for candidate in Candidate.objects.all():
+            candidate.denormalize()
+
         # Clear the cached widget
         cache.delete('buckley:widget2')
