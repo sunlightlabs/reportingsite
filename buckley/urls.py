@@ -58,7 +58,7 @@ urlpatterns = patterns('',
             CandidateFeed(),
             name='buckley_candidate_detail_feed'),
 
-        url(r'^candidate\/(?P<candidate_slug>[-\w]+)\/(?P<committee_slug>[-\w]+)\/?$',
+        url(r'^candidate\/(?P<candidate_slug>[-\w\,]+)\/(?P<committee_slug>[-\w]+)\/?$',
             'buckley.views.candidate_committee_detail',
             {},
             name='buckley_candidate_committee_detail'),

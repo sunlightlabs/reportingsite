@@ -10,16 +10,26 @@
 
 {% block breadcrumb %}{{ block.super }}
 <li><a href="{% url buckley_candidate_list %}">Candidates</a></li>
+{% ifequal candidate_count 1 %}
 <li><a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a></li>
+{% endifequal %}
 <li>Spending by {{ committee }}</li>
 {% endblock breadcrumb %}
 
 {% block content %}
     {% include "buckley/tabs.html" %}
 
-    <h2 id="searchTitle">Outside spending by <a href="{% url buckley_committee_detail slug=committee.slug %}">{{ committee }}</a> regarding <a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}</h2>
+    {% spaceless %}
+    <h2 id="searchTitle">Outside spending by <a href="{% url buckley_committee_detail slug=committee.slug %}">{{ committee }}</a> regarding 
+        {% for candidate in candidates %}
+        <a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+    </h2>
+    {% endspaceless %}
     <div class="amountLine">
+        {% ifequal candidate_count 1 %}
         Total outside spending: <span class="amount">${{ committee|committee_candidate_money:candidate|intcomma }}</span>
+        {% endifequal %}
     </div>
     <table id="expendituresData" class="tablesorter">
         <thead>

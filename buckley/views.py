@@ -176,16 +176,32 @@ def race_expenditures(request, race, election_type=None):
 def candidate_committee_detail(request, candidate_slug, committee_slug):
     if candidate_slug == 'no-candidate-listed':
         raise Http404
-    candidate = get_object_or_404(Candidate, slug=candidate_slug)
+
     committee = get_object_or_404(Committee, slug=committee_slug)
 
-    expenditures = Expenditure.objects.filter(candidate=candidate,
-                                                committee=committee
-                                                ).order_by('-expenditure_date')
-    # Check whether there are any electioneering
-    # communications by this committee for this
-    # candidate
-    expenditures = expenditures | candidate.electioneering_expenditures.filter(committee=committee)
+    if candidate_slug.find(','):
+        candidate_slugs = candidate_slug.split(',')
+        candidates = Candidate.objects.filter(slug__in=candidate_slugs)
+        if not candidates:
+            raise Http404
+
+        expenditure_ids = defaultdict(int)
+        for candidate in candidates:
+            for e in candidate.electioneering_expenditures.all():
+                expenditure_ids[e.pk] += 1
+        expenditures = Expenditure.objects.filter(pk__in=[k for k, v in expenditure_ids.iteritems() if v > 1])
+
+    else:
+        candidate = get_object_or_404(Candidate, slug=candidate_slug)
+
+        expenditures = Expenditure.objects.filter(candidate=candidate,
+                                                    committee=committee
+                                                    ).order_by('-expenditure_date')
+        candidates = [candidate,]
+        # Check whether there are any electioneering
+        # communications by this committee for this
+        # candidate
+        expenditures = expenditures | candidate.electioneering_expenditures.filter(committee=committee)
 
     if not expenditures:
         raise Http404
@@ -193,7 +209,9 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
     return render_to_response('buckley/candidate_committee_detail.html',
                               {'object_list': expenditures, 
                                'committee': committee,
-                               'candidate': candidate, })
+                               'candidates': candidates, 
+                               'candidate_count': len(candidates),
+                               })
 
 def widget():
 

@@ -1,3 +1,5 @@
+from collections import defaultdict
+from decimal import Decimal
 import re
 import socket
 import urllib2
@@ -113,6 +115,7 @@ class Committee(models.Model):
 
     def all_candidates_with_amounts(self):
         ie_candidates = self.expenditure_set.order_by('candidate').values_list('candidate', flat=True).distinct().exclude(candidate=None)
+
         electioneering_candidates = []
         for expenditure in self.expenditure_set.filter(electioneering_communication=True):
             electioneering_candidates += list(expenditure.electioneering_candidates.order_by('id').values_list('id', flat=True))
@@ -133,6 +136,70 @@ class Committee(models.Model):
                                 'amount': amount, })
 
         return candidates
+
+    def combined_all_candidates_with_amounts(self):
+        """Combine same electioneering comm. mentioning
+        multiple candidates onto one line.
+        """
+        # key is candidates mentioned, value is 
+        # queryset of expenditures
+        expenditures = defaultdict(list)
+
+        for expenditure in self.expenditure_set.all():
+            if expenditure.electioneering_communication:
+                expenditures[tuple(expenditure.electioneering_candidates.all())].append(expenditure)
+            else:
+                expenditures[tuple(Candidate.objects.filter(pk=expenditure.candidate.pk))].append(expenditure)
+
+
+        # key is candidates mentioned, value is
+        # dict of race (or 'multiple'), amount
+        rows = {}
+        for candidates, exps in expenditures.iteritems():
+            amount = sum([x.expenditure_amount for x in exps])
+            support_oppose = set()
+            for exp in exps:
+                if exp.electioneering_communication:
+                    support_oppose = ['*',]
+                    break
+                if exp.support_oppose == 'S':
+                    support_oppose.add('Support')
+                elif exp.support_oppose == 'O':
+                    support_oppose.add('Oppose')
+                else:
+                    support_oppose = ''
+
+            if len(support_oppose) > 1:
+                support_oppose = ''
+            else:
+                support_oppose = support_oppose[0]
+
+            if len(candidates) == 1:
+                rows[candidates] = {'race': candidates[0].race(),
+                                    'amount': amount,
+                                    'support_oppose': support_oppose,
+                                    }
+            else:
+                if candidates:
+                    if len(set([x.race() for x in candidates])) > 1:
+                        race = 'Multiple'
+                    else:
+                        race = candidates[0].race()
+                else: # Some ECs have no candidate
+                    race = ''
+
+                slugs = ','.join([x.slug for x in candidates])
+
+                rows[candidates] = {'race': race,
+                                    'amount': amount, 
+                                    'support_oppose': '*',
+                                    'slugs': slugs,
+                                    }
+
+        return rows.items()
+
+
+
 
 
 class CommitteeId(models.Model):
