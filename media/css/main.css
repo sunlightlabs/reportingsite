@@ -65,7 +65,7 @@ div.lastItem, li.lastModule { background: none;}
 body.home div#pageMain #featureHeader { padding-top: 40px; margin-left: 25px; text-indent: -9999em; display: block; width: 477px; height: 39px; background: url(../img/title_expenditure.png) left 41px no-repeat; position: relative; }
 div#pageMain #featureHeader { font-size: 300%;  margin-bottom: 0; color: #394701; }
 body.expendituresAbout #featureHeader { position: relative; z-index: 2;}
-#featureBox p { color: #e6e7e8; width: 675px;}
+#featureBox p { color: #e6e7e8; width: 710px; }
 .tip, #breadcrumbs li { font-style: oblique; font-size: 90%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 16px;}
 div#pageMain #featureBox h3 { background-color: #497c6c; border: 1px solid #3e6c58; padding: 5px 10px 2px; color: #fff; text-transform: none; margin-bottom: 10px; font-size: 120%; font-weight: normal;}
 #featureBox .featureModule li { color: #223c07; float: left; width: 250px; margin: 0 15px 0 5px; line-height: 20px; font-family: Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 95%; }
