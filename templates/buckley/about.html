@@ -21,7 +21,7 @@
     <h2 id="featureHeader">Follow the Unlimited Money</h2>
     <div id="featureMainNav">
         <ul>
-            <li id="expenditures"><a href="{% url buckley_index %}">Latest Independent Expenditures</a></li>
+            <li id="expenditures"><a href="{% url buckley_index %}">Latest Outside Spending</a></li>
             <li id="about"><a href="{% url buckley_about %}">About</a></li>
             <li id="stories" class="last"><a href="{% url buckley_stories %}">Stories</a></li>
         </ul>  
@@ -39,7 +39,7 @@
 
 {% block sidebar %}
     <div class="mainModule sideExpenditures">
-        <h3>Latest Independent Expenditures</h3>
+        <h3>Latest Outside Spending</h3>
         {% regroup latest_expenditures by expenditure_date as date_list %}
         {% for date_expenditures in date_list %}
             <h4>{{ date_expenditures.grouper|date:"N j" }}</h4>
@@ -49,7 +49,7 @@
                 {% endfor %}
             </ul>
         {% endfor %}
-        <a class="viewAll" href="/independent-expenditures/">View All Expenditures</a>
+        <a class="viewAll" href="/independent-expenditures/">View All Outside Spending</a>
 
     </div>
     <div class="mainModule sideStories">

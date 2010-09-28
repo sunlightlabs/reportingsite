@@ -11,15 +11,15 @@
 {% block breadcrumb %}{{ block.super }}
 <li><a href="{% url buckley_candidate_list %}">Candidates</a></li>
 <li><a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a></li>
-<li>Expenditures by {{ committee }}</li>
+<li>Spending by {{ committee }}</li>
 {% endblock breadcrumb %}
 
 {% block content %}
     {% include "buckley/tabs.html" %}
 
-    <h2 id="searchTitle">Independent expenditures by <a href="{% url buckley_committee_detail slug=committee.slug %}">{{ committee }}</a> for/against <a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}</h2>
+    <h2 id="searchTitle">Outside spending by <a href="{% url buckley_committee_detail slug=committee.slug %}">{{ committee }}</a> regarding <a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}</h2>
     <div class="amountLine">
-        Total indepdent expenditures: <span class="amount">${{ committee|committee_candidate_money:candidate|intcomma }}</span>
+        Total outside spending: <span class="amount">${{ committee|committee_candidate_money:candidate|intcomma }}</span>
     </div>
     <table id="expendituresData" class="tablesorter">
         <thead>

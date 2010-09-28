@@ -48,7 +48,7 @@
 
 {% block sidebar %}
     <div class="mainModule sideExpenditures">
-        <h3>Latest Independent Expenditures</h3>
+        <h3>Latest Outside Spending</h3>
         {% regroup latest_expenditures by expenditure_date as date_list %}
         {% for date_expenditures in date_list %}
             <h4>{{ date_expenditures.grouper|date:"N j" }}</h4>
@@ -58,6 +58,6 @@
                 {% endfor %}
             </ul>
         {% endfor %}
-        <a class="viewAll" href="/independent-expenditures/">View All Expenditures</a>
+        <a class="viewAll" href="/independent-expenditures/">View All Outside Spending</a>
     </div>
 {% endblock sidebar %}

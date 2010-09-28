@@ -15,12 +15,14 @@
     {% include "buckley/tabs.html" %}
 
 <h2>Committees</h2>
-<p class="tip">Select a committee to see details.</p>
+<p class="tip">Select a committee to see details. <a href="{% url buckley_letter_list %}">View all committes intending to accept unlimited contributions.</a></p>
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
             <th class="sort">Committee</th>
-            <th class="sort">Total spent on independent expenditures</th>
+            <th class="sort">Independent expenditures</th>
+            <th class="sort">Electioneering communications</th>
+            <th class="sort">IE-only letter</th>
             <th></th>
         </tr>
     </thead>
@@ -29,7 +31,9 @@
             {% if committee.total %}
                 <tr class="{% cycle 'odd' 'even' %}">
                     <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
-                    <td>${{ committee.total|intcomma }}</td>
+                    <td>${{ committee.ie_total|intcomma }}</td>
+                    <td>${{ committee.ec_total|intcomma }}</td>
+                    <td>{% if committee.ieonly_url %}<a href="{{ committee.ieonly_url }}">Yes</a>{% endif %}</td>
                     <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</a></td>
                 </tr>
             {% endif %}

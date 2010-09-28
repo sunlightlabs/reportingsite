@@ -20,7 +20,7 @@
 {% block content %}
     {% include "buckley/tabs.html" %}
 
-<h2>Independent expenditures - {{ race }}{% if election_type %} ({{ election_type }}){% endif %}</h2>
+<h2>Outside spending - {{ race }}{% if election_type %} ({{ election_type }}){% endif %}</h2>
 
 <h3 class="h5">Candidates</h3>
 
@@ -37,7 +37,7 @@
 </div>
 {% endfor %}
 <div class="amountLine">
-    Total independent expenditures in race: <span class="amount">${{ total_spent|intcomma }}</span>
+    Total outside spending in race: <span class="amount">${{ total_spent|intcomma }}</span>
 </div>
     {% if election_types %}
 <strong>Elections:</strong> {% for e in election_types %}<a href="{% url buckley_race_election_type_detail race=short_race, election_type=e.slug %}">{{ e.election_type }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}

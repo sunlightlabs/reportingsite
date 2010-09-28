@@ -1,0 +1,24 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% load humanize %}
+
+{% block title %}{{ block.super }} - {{ title }}{% endblock %}
+
+{% block body %}{{ block.super }} {{ body_class }}{% endblock %}
+
+{% block breadcrumb %}
+{{ block.super }}
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    {% include "buckley/tabs.html" %}
+
+    <h2>{{ title }}</h2>
+    <p class="tip">{{ description }}</p>
+
+    {% include "buckley/expenditure_table.html" %}
+
+    {% include "buckley/pagination.html" %}
+
+{% endblock content %}

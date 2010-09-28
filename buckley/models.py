@@ -86,6 +86,12 @@ class Committee(models.Model):
 
         return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
+    def ie_total(self):
+        return self.expenditure_set.filter(electioneering_communication=False).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+
+    def ec_total(self):
+        return self.expenditure_set.filter(electioneering_communication=True).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+
     def money_spent_on_candidate(self, candidate, support_oppose=None):
         filter = {'candidate': candidate}
         if support_oppose:

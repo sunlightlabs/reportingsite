@@ -21,7 +21,7 @@
 <p class="tip">This committee has <a href="{{ object.ieonly_url }}">filed a letter indicating that it will acception donations of unlimited amounts</a></p>
 {% endif %}
 <div class="amountLine">
-    Total amount spent on independent expenditures: <span class="amount">${{ object.total|intcomma }}</span>
+    Total outside spending: <span class="amount">${{ object.total|intcomma }}</span>
 </div>
 <div class="clear"></div>
 
@@ -44,7 +44,7 @@
             <td>{{ candidate.candidate.race }}</td>
             <td><a href="{% url buckley_candidate_committee_detail candidate_slug=candidate.candidate.slug committee_slug=object.slug %}">{{ candidate.candidate }}</a></td>
             <td>{{ candidate.candidate.party }}</td>
-            <td>{{ candidate.support_oppose }}</td>
+            <td>{% ifequal candidate.support_oppose '*' %}<a href="#asterisk">{{ candidate.support_oppose }}</a>{% else %}{{ candidate.support_oppose }}{% endifequal %}</td>
             <td>${{ candidate.amount|intcomma }}</td>
         </tr>
         {% endfor %}

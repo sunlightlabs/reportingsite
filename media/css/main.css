@@ -209,8 +209,8 @@ body.separateNav #expenditureSearch { padding-right: 170px;}
 -moz-border-radius-topright: 5px;
 -webkit-border-top-left-radius: 5px; 
 -webkit-border-top-right-radius: 5px; margin-right: 2px;}
-#filterExpenditures li:hover, body.expendituresCommittee li#filter_committee, body.expendituresCandidate li#filter_candidate, body.expendituresRace li#filter_race, body.expendituresLetters li#filter_letters { background-color: #2a5f65; border-top: 1px solid #134045; border-left: 1px solid #134045; border-right: 1px solid #134045; }
-#filterExpenditures li:hover a, body.expendituresCommittee li#filter_committee a, body.expendituresCandidate li#filter_candidate a, body.expendituresRace li#filter_race a, body.expendituresLetters li#filter_letters a { color: #fff;}
+#filterExpenditures li:hover, body.expendituresCommittee li#filter_committee, body.expendituresCandidate li#filter_candidate, body.expendituresRace li#filter_race, body.expendituresLetters li#filter_letters, body.expendituresElectioneering li#filter_electioneering, body.expendituresIes li#filter_ies { background-color: #2a5f65; border-top: 1px solid #134045; border-left: 1px solid #134045; border-right: 1px solid #134045; }
+#filterExpenditures li:hover a, body.expendituresCommittee li#filter_committee a, body.expendituresCandidate li#filter_candidate a, body.expendituresRace li#filter_race a, body.expendituresLetters li#filter_letters a, body.expendituresElectioneering li#filter_electioneering a, body.expendituresIes li#filter_ies a { color: #fff;}
 #filterExpenditures span { font-weight: bold; text-transform: uppercase; font-size: 120%; margin-bottom: 15px; display: block;}
 div#pageMain #filterExpenditures label { width: auto; margin-right: 25px; line-height: 16px;}
 
