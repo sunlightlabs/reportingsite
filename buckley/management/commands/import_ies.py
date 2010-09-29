@@ -559,6 +559,9 @@ class Command(BaseCommand):
         Expenditure.objects.filter(image_number__in=[10990653705, 10990653694], candidate__slug='alan-b-mollohan').update(support_oppose='O')
         Expenditure.objects.filter(image_number__in=[10991169349, 10991169350, 10991169350], candidate__slug='pat-toomey').update(support_oppose='O')
         Expenditure.objects.filter(image_number__in=[10991180834, 10991180834, 10991180834, 10991180842, 10991180822, 10991180822, 10991180835], candidate__slug='joseph-a-sestak-jr').update(support_oppose='S')
+        Expenditure.objects.filter(image_number__in=[10991225146, 10991124434, 10991124436, 10931094398, 10931135624, 10931094385, 10931094382, 10931094380, 10030273417], candidate__slug__in=['paul-w-hodes', 'robin-w-carnahan', 'bill-halter', ]).update(support_oppose='S')
+        Expenditure.objects.filter(image_number=10930395723, candidate__slug='robert-f-bennett').update(support_oppose='O')
+
         Expenditure.objects.filter(image_number=10931278251, candidate__slug='tim-griffin').update(support_oppose='O')
         Expenditure.objects.filter(image_number=10931278248, candidate__slug='joyce-elliott').update(support_oppose='S')
 
