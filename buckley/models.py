@@ -311,6 +311,62 @@ class Candidate(models.Model):
                                'amount': amount, })
         return committees
 
+    def sole_all_committees_with_amounts(self):
+        """Create a list of all committees that have expended for/against
+        this candidate, with amounts, but only include expenditures/ECs
+        that have referred to ONLY this candidate, as opposed to ones
+        that have referred to another candidate as well.
+        """
+        # Include all IE committees that have
+        # expended for/against this candidate;
+        # IEs list only one candidate.
+        ie_committee_ids = self.expenditure_set.order_by('committee').values_list('committee', flat=True).distinct()
+        ie_committees = Committee.objects.filter(pk__in=ie_committee_ids)
+
+        electioneering_expenditures_include = set()
+        for ec in self.electioneering_expenditures.all():
+            if ec.electioneering_candidates.count() == 1:
+                electioneering_expenditures_include.add(ec.pk)
+
+        electioneering_expenditures = Expenditure.objects.filter(pk__in=electioneering_expenditures_include)
+        ec_committees = defaultdict(list)
+        committees = {}
+        for ec in electioneering_expenditures:
+            ec_committees[ec.committee.pk].append(ec)
+
+        for k, v in ec_committees.iteritems():
+            committees[k] = {'committee': v[0].committee,
+                             'support_oppose': '*',
+                             'amount': sum([x.expenditure_amount for x in v]), }
+
+        for committee in ie_committees:
+            if committee in self.committees_supporting():
+                support_oppose = 'Support'
+            elif committee in self.committees_opposing():
+                support_oppose = 'Oppose'
+            else:
+                support_oppose = '*'
+            amount = committee.money_spent_on_candidate(self)
+            committees[committee.pk] = {'committee': committee,
+                                        'support_oppose': support_oppose,
+                                        'amount': amount, }
+
+        return committees.values()
+
+
+    def joint_electioneering(self):
+        """Create a list of electioneering communications
+        that have mentioned this candidate and at least
+        one other candidate.
+        """
+        include = []
+        for ec in self.electioneering_expenditures.all():
+            if ec.electioneering_candidates.count() > 1:
+                include.append(ec)
+
+        return include
+
+
     def committees_supporting(self):
         return self.committees('S')
 
@@ -351,13 +407,38 @@ class Candidate(models.Model):
     def electioneering_total(self):
         return self.electioneering_expenditures.aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
-    def electioneering_total_by_election_type(self, election_type):
+    def sole_electioneering_total(self, election_type=None):
+        """Total of electioneering communications
+        that mention ONLY this candidate (as opposed
+        to ones that mention other candidates as well).
+        """
+        include = []
+        filter = {}
+        exclude = {}
+        if election_type:
+            if election_type in ('P', 'G'):
+                filter.update({'election_type': election_type, })
+            else:
+                exclude.update({'election_type__in': ['P', 'G', ]})
+
+        for ec in self.electioneering_expenditures.filter(**filter).exclude(**exclude):
+            if ec.electioneering_candidates.count() == 1:
+                include.append(ec.pk)
+
+        if not include:
+            return 0
+
+        return Expenditure.objects.filter(pk__in=include).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+
+
+    def electioneering_total_by_election_type(self, election_type=None):
         filter = {'electioneering_communication': True, }
         exclude = {}
-        if election_type in ('P', 'G'):
-            filter.update({'election_type': election_type})
-        else:
-            exclude.update({'election_type__in': ['P', 'G', ]})
+        if election_type:
+            if election_type in ('P', 'G'):
+                filter.update({'election_type': election_type})
+            else:
+                exclude.update({'election_type__in': ['P', 'G', ]})
 
         return self.electioneering_expenditures.filter(**filter).exclude(**exclude).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
@@ -443,3 +524,12 @@ class Expenditure(models.Model):
         if match:
             return '%s%s' % (base_url, match.groups()[0])
         return ''
+
+    def candidate_slugs(self):
+        """For electioneering communications, return a comma-concatenated list
+        of candidates' slugs.
+        """
+        if not self.electioneering_candidates.all():
+            return ''
+
+        return ','.join([x.slug for x in self.electioneering_candidates.all()])

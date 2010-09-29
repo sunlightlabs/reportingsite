@@ -30,8 +30,8 @@
     <ul>
     <li>Independent expenditures in support: <span class="amount">${{ candidate|total_support_by_election_type:election_type|intcomma }}</span></li>
     <li>Independent expenditures in opposition: <span class="amount">${{ candidate|total_opposition_by_election_type:election_type|intcomma }}</span></li>
-    {% if candidate|total_electioneering_by_election_type:election_type %}
-    <li>Electioneering communications: <span class="amount">${{ candidate|total_electioneering_by_election_type:election_type|intcomma }}</span> <a href="#asterisk">*</a></li>
+    {% if candidate|total_sole_electioneering_by_election_type:election_type %}
+    <li>Electioneering communications: <span class="amount">${{ candidate|total_sole_electioneering_by_election_type:election_type|intcomma }}</span> <a href="#asterisk">*</a></li>
     {% endif %}
     </ul>
 </div>

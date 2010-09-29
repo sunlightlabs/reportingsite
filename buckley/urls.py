@@ -58,6 +58,11 @@ urlpatterns = patterns('',
             CandidateFeed(),
             name='buckley_candidate_detail_feed'),
 
+        url(r'^candidate\/(?P<slug>[-\w]+)\/multi\/?$',
+            'buckley.views.multi_candidate_ecs',
+            {},
+            name='buckley_multi_candidate_ecs'),
+
         url(r'^candidate\/(?P<candidate_slug>[-\w\,]+)\/(?P<committee_slug>[-\w]+)\/?$',
             'buckley.views.candidate_committee_detail',
             {},

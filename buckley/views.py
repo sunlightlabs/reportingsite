@@ -61,6 +61,7 @@ def races():
 
         # Get amounts from electioneering communications
         # where there is no race set on the expenditure.
+        """
         filter = {'office': office, 'state': state, }
         if office == 'H':
             filter['district'] = district
@@ -75,6 +76,7 @@ def races():
                         amounts['other'] += expenditure.expenditure_amount
                     else:
                         amounts[expenditure.election_type] += expenditure.expenditure_amount
+        """
 
         amounts['total'] = sum([amounts['G'], amounts['P'], amounts['other']])
 
@@ -126,13 +128,18 @@ def race_expenditures(request, race, election_type=None):
     expenditures = Expenditure.objects.filter(race=race).filter(**filter).exclude(exclude).order_by('-expenditure_date')
 
     # Check whether there are any electioneering
-    # communications.
+    # communications. For electioneering communications
+    # that mention multiple candidates, only
+    # include those where the candidates are in
+    # the same race.
     electioneering = set()
     filter['race'] = ''
     for candidate in candidates:
-        electioneering_communications = candidate.electioneering_expenditures.filter(**filter).values_list('id', flat=True)
+        electioneering_communications = candidate.electioneering_expenditures.filter(**filter)
         for expenditure in electioneering_communications:
-            electioneering.add(expenditure)
+            races = set([x.race() for x in expenditure.electioneering_candidates.all()])
+            if len(races) == 1:
+                electioneering.add(expenditure.pk)
 
     expenditures = expenditures | Expenditure.objects.filter(id__in=electioneering)
 
@@ -204,7 +211,20 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
         # Check whether there are any electioneering
         # communications by this committee for this
         # candidate
-        expenditures = expenditures | candidate.electioneering_expenditures.filter(committee=committee)
+        electioneering = candidate.electioneering_expenditures.filter(committee=committee)
+
+        # Remove any electioneering communications
+        # that also mention other candidates
+        # (they'll be shown elsewhere)
+        exclude = []
+        for ec in electioneering:
+            if ec.electioneering_candidates.count() > 1:
+                exclude.append(ec.pk)
+
+        electioneering = electioneering.exclude(pk__in=exclude)
+
+        # Combine IEs and electioneering communications.
+        expenditures = expenditures | electioneering
 
     if not expenditures:
         raise Http404
@@ -215,6 +235,7 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
                                'candidates': candidates, 
                                'candidate_count': len(candidates),
                                'candidate': candidate,
+                               'total': expenditures.aggregate(total=Sum('expenditure_amount'))['total'],
                                })
 
 def widget():
@@ -422,4 +443,19 @@ def ie_stories():
     tag = get_tag('Independent Expenditures')
     posts = TaggedItem.objects.get_by_model(Post, tag)
     return posts
+
+
+def multi_candidate_ecs(self, slug):
+    """List electioneering communications mentioning
+    the given candidate and other candidates.
+    """
+    candidate = get_object_or_404(Candidate, slug=slug)
+    include = []
+    for ec in candidate.electioneering_expenditures.all():
+        if ec.electioneering_candidates.count() > 1:
+            include.append(ec)
+
+    return render_to_response('buckley/multi_candidate_ecs.html',
+                             {'expenditures': include,
+                              'candidate': candidate, })
 

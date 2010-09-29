@@ -51,9 +51,22 @@ def total_opposition_by_election_type(candidate, election_type):
 
 @register.filter
 def total_electioneering_by_election_type(candidate, election_type):
+    if not election_type:
+        return candidate.electioneering_total_by_election_type()
     if election_type == 'primary':
         return candidate.electioneering_total_by_election_type('P')
     elif election_type == 'general':
         return candidate.electioneering_total_by_election_type('G')
     else:
         return candidate.electioneering_total_by_election_type('O')
+
+@register.filter
+def total_sole_electioneering_by_election_type(candidate, election_type):
+    if not election_type:
+        return candidate.sole_electioneering_total()
+    if election_type == 'primary':
+        return candidate.sole_electioneering_total(election_type='P')
+    elif election_type == 'general':
+        return candidate.sole_electioneering_total(election_type='G')
+    else:
+        return candidate.sole_electioneering_total('O')

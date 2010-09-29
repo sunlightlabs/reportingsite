@@ -20,16 +20,14 @@
     {% include "buckley/tabs.html" %}
 
     {% spaceless %}
-    <h2 id="searchTitle">Outside spending by <a href="{% url buckley_committee_detail slug=committee.slug %}">{{ committee }}</a> regarding 
+    <h2 id="withDetail">{{ committee }}:<br>Filings mentioning
         {% for candidate in candidates %}
         <a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}{% if not forloop.last %}, {% endif %}
         {% endfor %}
     </h2>
     {% endspaceless %}
     <div class="amountLine">
-        {% ifequal candidate_count 1 %}
-        Total outside spending: <span class="amount">${{ committee|committee_candidate_money:candidate|intcomma }}</span>
-        {% endifequal %}
+        Total: <span class="amount">${{ total|intcomma }}</span>
     </div>
     <table id="expendituresData" class="tablesorter">
         <thead>
