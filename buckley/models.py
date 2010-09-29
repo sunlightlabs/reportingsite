@@ -172,7 +172,7 @@ class Committee(models.Model):
             if len(support_oppose) > 1:
                 support_oppose = ''
             else:
-                support_oppose = support_oppose[0]
+                support_oppose = list(support_oppose)[0]
 
             if len(candidates) == 1:
                 rows[candidates] = {'race': candidates[0].race(),
@@ -181,7 +181,7 @@ class Committee(models.Model):
                                     }
             else:
                 if candidates:
-                    if len(set([x.race() for x in candidates])) > 1:
+                    if len(list(set([x.race() for x in candidates]))) > 1:
                         race = 'Multiple'
                     else:
                         race = candidates[0].race()
