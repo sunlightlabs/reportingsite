@@ -20,7 +20,7 @@
     {% include "buckley/tabs.html" %}
 
     {% spaceless %}
-    <h2 id="withDetail">{{ committee }}:<br>Filings mentioning
+    <h2 id="withDetail"><a href="{{ committee.get_absolute_url }}">{{ committee }}</a>:<br>Filings mentioning
         {% for candidate in candidates %}
         <a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}{% if not forloop.last %}, {% endif %}
         {% endfor %}
