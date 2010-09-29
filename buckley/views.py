@@ -177,9 +177,10 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
     if candidate_slug == 'no-candidate-listed':
         raise Http404
 
+
     committee = get_object_or_404(Committee, slug=committee_slug)
 
-    if candidate_slug.find(','):
+    if candidate_slug.find(',') > 0:
         candidate_slugs = candidate_slug.split(',')
         candidates = Candidate.objects.filter(slug__in=candidate_slugs)
         if not candidates:
@@ -190,6 +191,8 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
             for e in candidate.electioneering_expenditures.all():
                 expenditure_ids[e.pk] += 1
         expenditures = Expenditure.objects.filter(pk__in=[k for k, v in expenditure_ids.iteritems() if v > 1])
+
+        candidate = None
 
     else:
         candidate = get_object_or_404(Candidate, slug=candidate_slug)
@@ -211,6 +214,7 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
                                'committee': committee,
                                'candidates': candidates, 
                                'candidate_count': len(candidates),
+                               'candidate': candidate,
                                })
 
 def widget():

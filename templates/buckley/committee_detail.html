@@ -55,21 +55,10 @@
                 {% endfor %}
                 </a>
                 {% endspaceless %}</td>
-            <td>{{ data.support_oppose }}</td>
+            <td>{% ifequal data.support_oppose '*' %}<a href="#asterisk">{{ data.support_oppose }}</a>{% else %}{{ data.support_oppose }}{% endifequal %}</td>
             <td>${{ data.amount|intcomma }}</td>
         </tr>
         {% endfor %}
-        {% comment %}
-        {% for candidate in object.all_candidates_with_amounts %}
-        <tr class="{% cycle 'odd' 'even' %}">
-            <td>{{ candidate.candidate.race }}</td>
-            <td><a href="{% url buckley_candidate_committee_detail candidate_slug=candidate.candidate.slug committee_slug=object.slug %}">{{ candidate.candidate }}</a></td>
-            <td>{{ candidate.candidate.party }}</td>
-            <td>{% ifequal candidate.support_oppose '*' %}<a href="#asterisk">{{ candidate.support_oppose }}</a>{% else %}{{ candidate.support_oppose }}{% endifequal %}</td>
-            <td>${{ candidate.amount|intcomma }}</td>
-        </tr>
-        {% endfor %}
-        {% endcomment %}
     </tbody>
 </table>
 
