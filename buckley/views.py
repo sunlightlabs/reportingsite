@@ -143,6 +143,10 @@ def race_expenditures(request, race, election_type=None):
 
     expenditures = expenditures | Expenditure.objects.filter(id__in=electioneering)
 
+    includes_electioneering = False
+    if Expenditure.objects.filter(electioneering_communication=True, race=race):
+        includes_electioneering = True
+
     if not expenditures:
         raise Http404
 
@@ -177,6 +181,7 @@ def race_expenditures(request, race, election_type=None):
                                'page_obj': page,
                                'election_types': election_types,
                                'election_type': election_type,
+                               'includes_electioneering': includes_electioneering,
                               })
 
 @cache_page(60*15)

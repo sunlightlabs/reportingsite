@@ -22,7 +22,7 @@
             <li>Independent expenditure money supporting: <span class="amount">${{ object.total_supporting|intcomma }}</span> </li>
             <li>Independent expenditure money opposing: <span class="amount">${{ object.total_opposing|intcomma }}</span> </li>
             {% if object.sole_electioneering_total %}
-            <li>Electioneering communications: <span class="amount">${{ object.sole_electioneering_total|intcomma }}</span> *
+            <li>Electioneering communications: <span class="amount">${{ object.sole_electioneering_total|intcomma }}</span> <a href="#asterisk">*</a>
             {% endif %}
         <ul>
     </div>
@@ -41,7 +41,7 @@
             {% for row in object.sole_all_committees_with_amounts %}
             <tr class="{% cycle 'odd' 'even' %}">
                 <td><a href="{% url buckley_candidate_committee_detail candidate_slug=object.slug committee_slug=row.committee.slug %}">{{ row.committee.name }}</a></td>
-                <td>{{ row.support_oppose }}</td>
+                <td>{% ifequal row.support_oppose '*' %}<a href="#asterisk">*</a>{% else %}{{ row.support_oppose }}{% endifequal %}</a></td>
                 <td>${{ row.amount|intcomma }}</td>
             </tr>
             {% endfor %}

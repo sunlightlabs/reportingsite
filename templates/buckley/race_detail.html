@@ -37,7 +37,7 @@
 </div>
 {% endfor %}
 <div class="amountLine">
-    Total outside spending in race: <span class="amount">${{ total_spent|intcomma }}</span>
+    Total outside spending in race: <span class="amount">${{ total_spent|intcomma }} {% if includes_electioneering %}<a href="#asterisk">*</a>{% endif %}</span>
 </div>
     {% if election_types %}
 <strong>Elections:</strong> {% for e in election_types %}<a href="{% url buckley_race_election_type_detail race=short_race, election_type=e.slug %}">{{ e.election_type }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
