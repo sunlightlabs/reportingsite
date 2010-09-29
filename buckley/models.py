@@ -444,7 +444,7 @@ class Candidate(models.Model):
 
 
     def denormalize(self):
-        self.total_expenditures = self.total_including_electioneering() or 0
+        self.total_expenditures = (self.total_including_electioneering() + self.sole_electioneering_total()) or 0
         self.expenditures_supporting = self.total_supporting() or 0
         self.expenditures_opposing = self.total_opposing() or 0
         self.save()
