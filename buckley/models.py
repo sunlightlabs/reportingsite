@@ -340,15 +340,17 @@ class Candidate(models.Model):
                              'amount': sum([x.expenditure_amount for x in v]), }
 
         for committee in ie_committees:
-            if committees.get('support_oppose') == '*':
-                support_oppose = '*'
+            if committee in self.committees_supporting():
+                support_oppose = 'Support'
+            elif committee in self.committees_opposing():
+                support_oppose = 'Oppose'
             else:
-                if committee in self.committees_supporting():
-                    support_oppose = 'Support'
-                elif committee in self.committees_opposing():
-                    support_oppose = 'Oppose'
-                else:
+                support_oppose = '*'
+
+            if committee.pk in committees:
+                if committees[committee.pk]['support_oppose'] == '*':
                     support_oppose = '*'
+
             amount = committee.money_spent_on_candidate(self)
             committees[committee.pk] = {'committee': committee,
                                         'support_oppose': support_oppose,
