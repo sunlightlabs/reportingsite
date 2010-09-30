@@ -494,6 +494,8 @@ class Expenditure(models.Model):
     # For those we need to use a ManyToManyField
     electioneering_candidates = models.ManyToManyField(Candidate, related_name='electioneering_expenditures')
 
+    timestamp = models.DateTimeField()
+
 
     class Meta:
         ordering = ('-expenditure_date', )

@@ -43,6 +43,9 @@ class ExpenditureFeed(Feed):
         else:
             return '%s: %s' % (item.committee, item.candidate)
 
+    def item_pubdate(self, item):
+        return item.timestamp
+
 
 class CandidateFeed(Feed):
 
@@ -68,6 +71,9 @@ class CandidateFeed(Feed):
     def item_link(self, item):
         return item.get_absolute_url() + '#' + str(item.pk)
 
+    def item_pubdate(self, item):
+        return item.timestamp
+
 
 class CommitteeFeed(Feed):
 
@@ -75,7 +81,7 @@ class CommitteeFeed(Feed):
         return get_object_or_404(Committee, slug=slug)
 
     def title(self, obj):
-        return obj.name
+        return 'Outside spending: %s' % obj.name
 
     def link(self, obj):
         return obj.get_absolute_url()
@@ -86,8 +92,17 @@ class CommitteeFeed(Feed):
     def items(self, obj):
         return Expenditure.objects.filter(committee=obj)[:15]
 
+    def item_title(self, item):
+        if item.electioneering_communication:
+            return ', '.join([x.__unicode__() for x in item.electioneering_candidates.all()])
+        else:
+            return item.candidate
+
     def item_link(self, item):
         return item.get_absolute_url() + '#' + str(item.pk)
+
+    def item_pubdate(self, item):
+        return item.timestamp
 
 
 class CommitteeLetterFeed(Feed):
@@ -111,6 +126,9 @@ class CommitteeLetterFeed(Feed):
         return '%s filed a letter with the FEC on %s stating its intent to raise unlimited amounts for independent expenditures' % (item.name,
                date)
 
+    def item_pubdate(self, item):
+        return item.timestamp
+
 
 class RaceFeed(Feed):
 
@@ -122,7 +140,7 @@ class RaceFeed(Feed):
 
     def title(self, obj):
         expenditure = Expenditure.objects.filter(race=self.race, electioneering_communication=False)[0]
-        return expenditure.candidate.full_race_name()
+        return 'Outside spending: %s' % expenditure.candidate.full_race_name()
 
     def item_link(self, item):
         return item.get_absolute_url() + '#' + str(item.pk)
@@ -139,3 +157,6 @@ class RaceFeed(Feed):
 
     def item_description(self, item):
         return make_expenditure_description(item)
+
+    def item_pubdate(self, item):
+        return item.timestamp
