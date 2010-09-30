@@ -259,7 +259,7 @@ def widget():
             if len(spending_list) >= limit:
                 break
 
-            expenditures = Expenditure.objects.filter(expenditure_date=date)
+            expenditures = Expenditure.objects.filter(expenditure_date=date, electioneering_communication=False)
 
             pro = defaultdict(dict)
             con = defaultdict(dict)
