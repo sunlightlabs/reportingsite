@@ -34,7 +34,7 @@
             <td>{% spaceless %}
                 {% for candidate in expenditure.electioneering_candidates.all %}
                 {#<a href="{% url buckley_candidate_committee_detail candidate_slug=expenditure.candidate_slugs committee_slug=expenditure.committee.slug %}">#}
-                    {{ candidate }}
+                    <a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>
                 {#</a>#}
                     {% if candidate.party %} ({{ candidate.party }}){% endif %}
                 {% if not forloop.last %}, {% endif %}
