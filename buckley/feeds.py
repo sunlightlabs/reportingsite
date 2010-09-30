@@ -59,6 +59,9 @@ class CandidateFeed(Feed):
         all = obj.expenditure_set.all() | obj.electioneering_expenditures.all()
         return all.order_by('-expenditure_date')[:50]
 
+    def item_title(self, item):
+        return '%s: $%s' % (item.committee, intcomma(item.expenditure_amount))
+
 
 class CommitteeFeed(Feed):
 
