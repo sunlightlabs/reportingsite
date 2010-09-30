@@ -1,6 +1,6 @@
-ALTER TABLE buckely_candidate ADD `total_expenditures` numeric(19, 2);
-ALTER TABLE buckely_candidate ADD `expenditures_supporting` numeric(19, 2);
-ALTER TABLE buckely_candidate ADD `expenditures_opposing` numeric(19, 2);
+ALTER TABLE buckley_candidate ADD `total_expenditures` numeric(19, 2);
+ALTER TABLE buckley_candidate ADD `expenditures_supporting` numeric(19, 2);
+ALTER TABLE buckley_candidate ADD `expenditures_opposing` numeric(19, 2);
 CREATE TABLE `buckley_expenditure_electioneering_candidates` (
     `id` integer AUTO_INCREMENT NOT NULL PRIMARY KEY,
     `expenditure_id` integer NOT NULL,
