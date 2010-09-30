@@ -168,11 +168,13 @@ class Committee(models.Model):
                     support_oppose.add('Oppose')
                 else:
                     support_oppose = ''
+                    break
 
-            if len(support_oppose) > 1:
-                support_oppose = ''
-            else:
-                support_oppose = list(support_oppose)[0]
+            if support_oppose != '':
+                if len(support_oppose) > 1:
+                    support_oppose = ''
+                else:
+                    support_oppose = list(support_oppose)[0]
 
             if len(candidates) == 1:
                 rows[candidates] = {'race': candidates[0].race(),
