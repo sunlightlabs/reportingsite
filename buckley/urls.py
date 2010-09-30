@@ -98,6 +98,10 @@ urlpatterns = patterns('',
             {},
             name='buckley_race_detail'),
 
+        url(r'^race\/(?P<race>[-\w]+)\/rss\/?$',
+            RaceFeed(),
+            name='buckley_race_detail_feed'),
+
         url(r'race\/(?P<race>[-\w]+)\/(?P<election_type>[-\w]+)\/?$',
             'buckley.views.race_expenditures',
             {},
