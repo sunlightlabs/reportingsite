@@ -8,11 +8,16 @@ from buckley.models import *
 
 
 def make_expenditure_description(item):
-    return '%s spent $%s on %s %s %s' % (item.committee,
-                                         intcomma(item.expenditure_amount),
-                                         item.expenditure_purpose,
-                                         'in support of' if item.support_oppose == 'S' else 'in opposition to',
-                                         item.candidate)
+    if not item.electioneering_communication:
+        return '%s spent $%s on %s %s %s' % (item.committee,
+                                             intcomma(item.expenditure_amount),
+                                             item.expenditure_purpose,
+                                             'in support of' if item.support_oppose == 'S' else 'in opposition to',
+                                             item.candidate)
+    else:
+        return '%s spent %s on an electioneering communication mentioning %s' % (item.committee,
+                intcomma(item.expenditure_amount),
+                ', '.join([x.__unicode__() for x in item.electioneering_candidates.all()]))
 
 class ExpenditureFeed(Feed):
     title = "Newest independent expenditure"
@@ -31,6 +36,10 @@ class ExpenditureFeed(Feed):
     def item_pubdate(self, item):
         return datetime.datetime.combine(item.expenditure_date, datetime.time())
 
+    def item_title(self, item):
+        return '%s: %s' % (item.committee,
+                            ', '.join([x.__unicode__() for x in item.electioneering_candidates.all()]))
+
 
 class CandidateFeed(Feed):
 
@@ -47,7 +56,8 @@ class CandidateFeed(Feed):
         return make_expenditure_description(item)
 
     def items(self, obj):
-        return Expenditure.objects.filter(candidate=obj)[:15]
+        all = obj.expenditure_set.all() | obj.electioneering_expenditures.all()
+        return all.order_by('-expenditure_date')[:50]
 
 
 class CommitteeFeed(Feed):
@@ -66,24 +76,6 @@ class CommitteeFeed(Feed):
 
     def items(self, obj):
         return Expenditure.objects.filter(committee=obj)[:15]
-
-
-class PayeeFeed(Feed):
-
-    def get_object(self, request, slug):
-        return get_object_or_404(Payee, slug=slug)
-
-    def title(self, obj):
-        return obj.name
-
-    def link(self, obj):
-        return obj.get_absolute_url()
-
-    def item_description(self, item):
-        return make_expenditure_description(item)
-
-    def items(self, obj):
-        return Expenditure.objects.filter(payee=obj)[:15]
 
 
 class CommitteeLetterFeed(Feed):

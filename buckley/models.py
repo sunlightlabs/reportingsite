@@ -504,7 +504,10 @@ class Expenditure(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('buckley_candidate_committee_detail', [self.candidate.slug, self.committee.slug, ])
+        if self.candidate:
+            return ('buckley_candidate_committee_detail', [self.candidate.slug, self.committee.slug, ])
+        slugs = ','.join([x.slug for x in self.electioneering_candidates.all()])
+        return ('buckley_candidate_committee_detail', [slugs, self.committee.slug, ])
 
     def election_type_full(self):
         if self.election_type == 'G':
