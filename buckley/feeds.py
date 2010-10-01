@@ -90,7 +90,7 @@ class CommitteeFeed(Feed):
         return make_expenditure_description(item)
 
     def items(self, obj):
-        return Expenditure.objects.filter(committee=obj)[:15]
+        return Expenditure.objects.filter(committee=obj)[:50]
 
     def item_title(self, item):
         if item.electioneering_communication:
@@ -146,7 +146,7 @@ class RaceFeed(Feed):
         return item.get_absolute_url() + '#' + str(item.pk)
 
     def items(self):
-        return Expenditure.objects.filter(race=self.race)
+        return Expenditure.objects.filter(race=self.race)[:50]
 
     def item_title(self, item):
         if item.electioneering_communication:

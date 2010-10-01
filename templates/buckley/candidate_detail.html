@@ -15,6 +15,8 @@
 {% block content %}
     {% include "buckley/tabs.html" %}
 
+    <a style="display: block; float: right;" href="{% url buckley_candidate_detail_feed slug=object.slug %}"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/feed-icon-14x14.png" alt="RSS" title="Subscribe to an RSS feed of outside spending filings that mention {{ object }}" style="border: 0;" /></a>
+
     <h2 class="withDetail">{{ object }}{% if object.party %} ({{ object.party }}){% endif %}</h2>
     <span class="raceDetail"><a href="{% url buckley_race_detail race=object.race %}">{{ object.full_race_name }}</a></span>
     <div class="amountLine clear">
@@ -26,6 +28,7 @@
             {% endif %}
         <ul>
     </div>
+
 
     <div class="clear"></div>
 
@@ -56,6 +59,8 @@
     {% with '[4,1]' as sortdir %}
     {% include "buckley/tablesorter.html" %}
     {% endwith %}
+
+
 
     {% include "buckley/electioneering_asterisk.html" %}
 

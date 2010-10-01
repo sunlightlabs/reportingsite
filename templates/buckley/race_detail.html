@@ -20,6 +20,8 @@
 {% block content %}
     {% include "buckley/tabs.html" %}
 
+    <a style="display: block; float: right;" href="{% url buckley_race_detail_feed race=short_race %}"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/feed-icon-14x14.png" alt="RSS" title="Subscribe to an RSS feed of outside spending in the {{ race }} race" style="border: 0;" /></a>
+
 <h2>Outside spending - {{ race }}{% if election_type %} ({{ election_type }}){% endif %}</h2>
 
 <h3 class="h5">Candidates</h3>
