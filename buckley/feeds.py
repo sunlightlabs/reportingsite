@@ -127,7 +127,7 @@ class CommitteeLetterFeed(Feed):
                date)
 
     def item_pubdate(self, item):
-        return item.timestamp
+        return datetime.datetime.combine(item.date_letter_submitted, datetime.time())
 
 
 class RaceFeed(Feed):
