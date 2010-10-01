@@ -27,6 +27,10 @@
             <li>Electioneering communications: <span class="amount">${{ object.sole_electioneering_total|intcomma }}</span> <a href="#asterisk">*</a>
             {% endif %}
         <ul>
+    {% if object.transparencydata_id %}
+    <br>
+    View more data about this candidate at <a target="_new" href="{{ object.influence_explorer_url }}">Influence Explorer</a>
+    {% endif %}
     </div>
 
 
