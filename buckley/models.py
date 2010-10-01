@@ -2,7 +2,12 @@ from collections import defaultdict
 from decimal import Decimal
 import re
 import socket
+import urllib
 import urllib2
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 from django.db import models
 from django.db.models import signals
@@ -253,6 +258,8 @@ class Candidate(models.Model):
     expenditures_supporting = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     expenditures_opposing = models.DecimalField(max_digits=19, decimal_places=2, null=True)
 
+    transparencydata_id = models.CharField(max_length=40)
+
     objects = CandidateManager()
 
     class Meta:
@@ -437,7 +444,6 @@ class Candidate(models.Model):
 
         return Expenditure.objects.filter(pk__in=include).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
-
     def electioneering_total_by_election_type(self, election_type=None):
         filter = {'electioneering_communication': True, }
         exclude = {}
@@ -449,14 +455,32 @@ class Candidate(models.Model):
 
         return self.electioneering_expenditures.filter(**filter).exclude(**exclude).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
-
     def denormalize(self):
         self.total_expenditures = (self.total() + self.sole_electioneering_total()) or 0
         self.expenditures_supporting = self.total_supporting() or 0
         self.expenditures_opposing = self.total_opposing() or 0
         self.save()
-        
 
+    def get_transparencydata_id(self):
+        if not self.crp_id:
+            return ''
+
+        body = urllib.urlencode({'apikey': '***REMOVED***',
+                                 'namespace': 'urn:crp:recipient', 
+                                 'id': self.crp_id, })
+        url = 'http://transparencydata.com/api/1.0/entities/id_lookup.json?%s' % body
+        response = urllib2.urlopen(url).read()
+        data = json.loads(response)
+        if data:
+            return data[0]['id']
+
+        return ''
+
+    def influence_explorer_url(self):
+        if not self.transparencydata_id:
+            return None
+        return 'http://influenceexplorer.com/politician/%s/%s' % (self.slug,
+                                                                  self.transparencydata_id)
 
 
 class Expenditure(models.Model):
