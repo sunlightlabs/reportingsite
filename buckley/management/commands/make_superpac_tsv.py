@@ -9,7 +9,7 @@ from buckley.models import *
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        writer = csv.writer(sys.stdout, delimiter='\t')
+        writer = csv.writer(sys.stdout, delimiter='|')
         headers = ['Committee','Amount','Support/Oppose','Candidate','Party','Race',]
         writer.writerow(headers)
         ieonly_ids = [x.pk for x in IEOnlyCommittee.objects.all() if x.has_expenditures()]
