@@ -17,5 +17,5 @@ class Command(BaseCommand):
         committees = Committee.objects.filter(pk__in=[x.committee.pk for x in committee_ids])
         for committee in committees:
             for i in committee.all_candidates_with_amounts():
-                writer.writerow([committee,] + i.values())
+                writer.writerow([committee, ] + i.values() + [i['candidate'].party, i['candidate'].race(), ])
         
