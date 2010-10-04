@@ -201,6 +201,11 @@ urlpatterns = patterns('',
             {},
             name='buckley_search'),
 
+        url(r'totals\/?$',
+            'buckley.views.totals',
+            {},
+            name='buckley_totals'),
+
         url(r'^\/?$',
             cache_page(object_list, 60*15),
             {'queryset': Expenditure.objects.all(), 

@@ -464,3 +464,16 @@ def multi_candidate_ecs(self, slug):
                              {'expenditures': include,
                               'candidate': candidate, })
 
+
+def totals(request):
+    ie_total = Expenditure.objects.filter(electioneering_communication=False).aggregate(total=Sum('expenditure_amount'))['total']
+    ec_total = Expenditure.objects.filter(electioneering_communication=True).aggregate(total=Sum('expenditure_amount'))['total']
+    total = ie_total + ec_total
+    committees = Expenditure.objects.filter(expenditure_date__gte=datetime.date.today()-datetime.timedelta(days=7)).order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
+
+    return render_to_response('buckley/totals.html',
+                              {'ie_total': ie_total,
+                               'ec_total': ec_total,
+                               'total': total,
+                               'committees': committees, })
+
