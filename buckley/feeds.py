@@ -2,6 +2,7 @@ import datetime
 
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.contrib.syndication.views import Feed
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 
 from buckley.models import *
@@ -139,8 +140,24 @@ class RaceFeed(Feed):
         self.race = race
 
     def title(self, obj):
-        expenditure = Expenditure.objects.filter(race=self.race, electioneering_communication=False)[0]
-        return 'Outside spending: %s' % expenditure.candidate.full_race_name()
+        expenditures = Expenditure.objects.filter(race=self.race, electioneering_communication=False)
+        if expenditures:
+            return 'Outside spending: %s' % expenditure.candidate.full_race_name()
+        try:
+            state, seat = self.race.split('-')
+        except ValueError:
+            raise Http404
+
+        if seat.lower() == 'senate':
+            candidates = Candidate.objects.filter(office='S', state=state)
+        else:
+            candidates = Candidate.objects.filter(office='H', state=state, district=seat)
+
+        if not candidates:
+            raise Http404
+
+        return 'Outside spending: %s' % candidates[0].full_race_name()
+
 
     def item_link(self, item):
         return item.get_absolute_url() + '#' + str(item.pk)
