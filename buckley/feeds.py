@@ -142,7 +142,7 @@ class RaceFeed(Feed):
     def title(self, obj):
         expenditures = Expenditure.objects.filter(race=self.race, electioneering_communication=False)
         if expenditures:
-            return 'Outside spending: %s' % expenditure.candidate.full_race_name()
+            return 'Outside spending: %s' % expenditures[0].candidate.full_race_name()
         try:
             state, seat = self.race.split('-')
         except ValueError:
