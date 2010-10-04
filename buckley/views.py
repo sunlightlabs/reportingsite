@@ -479,6 +479,7 @@ def totals(request):
                               {'ie_total': ie_total,
                                'ec_total': ec_total,
                                'total': total,
+                               'since': datetime.date.today() - datetime.timedelta(days=5),
                                'ie_only_total': ie_only_total,
                                'committees': committees, })
 
