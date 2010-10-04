@@ -1,0 +1,55 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% block content %}
+
+{% load humanize %}
+
+<style type="text/css">
+    table { border-collapse: collapse; }
+    td, th { border: 1px solid black; padding: 4px; }
+</style>
+
+<h2>Totals this election cycle</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Type</th>
+            <th>Amount spent</th>
+        </tr>
+    </thead>
+    <tbody>
+        <tr>
+            <th>Independent expenditures</th>
+            <td>${{ ie_total|intcomma }}</td>
+        </tr>
+        <tr>
+            <th>Electioneering communications</th>
+            <td>${{ ec_total|intcomma }}</td>
+        </tr>
+        <tr>
+            <th>Total</th>
+            <td>${{ total|intcomma }}</td>
+        </tr>
+    </tbody>
+</table>
+
+<br><br>
+
+<h2>Amounts spent in past 7 days</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Committee</th>
+            <th>Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for committee in committees %}
+            <tr>
+                <td><a href="{% url buckley_committee_detail slug=committee.committee__slug %}">{{ committee.committee__name }}</a></td>
+                <td>${{ committee.amount|intcomma }}</td>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock content %}
