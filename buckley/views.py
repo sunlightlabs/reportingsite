@@ -473,13 +473,15 @@ def totals(request):
     ie_only = [x.pk for x in Committee.objects.all() if x.ieonly_url()]
     ie_only_total = Expenditure.objects.filter(committee__pk__in=ie_only).aggregate(total=Sum('expenditure_amount'))['total']
 
-    committees = Expenditure.objects.filter(expenditure_date__gte=datetime.date.today()-datetime.timedelta(days=5)).order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
+    cutoff = datetime.date.today() - datetime.timedelta(days=4)
+
+    committees = Expenditure.objects.filter(expenditure_date__gt=cutoff).order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
 
     return render_to_response('buckley/totals.html',
                               {'ie_total': ie_total,
                                'ec_total': ec_total,
                                'total': total,
-                               'since': datetime.date.today() - datetime.timedelta(days=5),
+                               'since': cutoff,
                                'ie_only_total': ie_only_total,
                                'committees': committees, })
 
