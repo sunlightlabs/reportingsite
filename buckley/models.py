@@ -62,6 +62,8 @@ class Committee(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField()
 
+    #transparencydata_id = models.CharField(max_length=40)
+
     #objects = CommitteeManager()
 
     class Meta:
@@ -205,7 +207,36 @@ class Committee(models.Model):
 
         return rows.items()
 
+    def get_transparencydata_id(self):
 
+        class RedirectHandler(urllib2.HTTPRedirectHandler):
+            def http_error_302(self, req, fp, code, msg, headers):   
+                result = urllib2.HTTPRedirectHandler.http_error_302(
+                                self, req, fp, code, msg, headers)              
+                result.status = code                                
+                return result
+
+        body = urllib.urlencode({'query': self.name, })
+        request = urllib2.Request('http://influenceexplorer.com/search?%s' % body)
+        opener = urllib2.build_opener(RedirectHandler)
+        f = opener.open(request)
+
+        try:
+            if f.status == 302:
+                return f.url.split('/')[-1]
+        except:
+            pass
+
+        return ''
+
+    def get_address(self):
+        url = 'http://query.nictusa.com/cgi-bin/fecimg/?%s' % self.fec_id()
+        page = urllib2.urlopen(url).read()
+        m = re.search(r'</B></FONT><BR><BR>(.*?)<TABLE', page, re.S)
+        if not m:
+            return ''
+
+        return [x.replace('<BR>', '') for x in m.groups()[0].split('\n') if x]
 
 
 
@@ -258,7 +289,7 @@ class Candidate(models.Model):
     expenditures_supporting = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     expenditures_opposing = models.DecimalField(max_digits=19, decimal_places=2, null=True)
 
-    transparencydata_id = models.CharField(max_length=40)
+    transparencydata_id = models.CharField(max_length=40, default='')
 
     objects = CandidateManager()
 
