@@ -8,7 +8,9 @@
 {% block body %}home{% endblock %}
 
 {% block feature %}
+<a href="{% url buckley_index %}">
 <h2 id="featureHeader">Follow the Unlimited Money</h2>
+</a>
  <div id="featureBox">
      <p class="tip">Track the latest activities of outside groups influencing federal elections. Many of these organizations can accept unlimited donations from any source — including labor unions, corporations and individuals — and some are not required to disclose their donors.</p>
      {% for ie_date in ies %}
