@@ -551,6 +551,22 @@ class Command(BaseCommand):
         Expenditure.objects.filter(image_number=10930676766, candidate__slug='nick-rahall').delete()
         Expenditure.objects.filter(image_number=10931302159).delete()
 
+        # Fix Murkowski problem
+        def fix_murkowski():
+            frank = Candidate.objects.filter(slug='frank-h-murkowski')
+            if not frank:
+                return
+            frank = frank[0]
+
+            lisa = Candidate.objects.filter(slug='lisa-murkowski')
+            if not lisa:
+                return
+            lisa = lisa[0]
+            frank.expenditure_set.update(candidate=lisa)
+            frank.delete()
+
+        fix_murkowski()
+
         # Fix support/oppose errors
         Expenditure.objects.filter(image_number=10990630854, candidate__slug='blanche-lincoln').update(support_oppose='O')
         Expenditure.objects.filter(image_number=10931242198, candidate__slug='ann-mclane-kuster').update(support_oppose='S')
