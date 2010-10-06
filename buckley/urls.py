@@ -206,6 +206,11 @@ urlpatterns = patterns('',
             {},
             name='buckley_totals'),
 
+        url(r'aggregate_by_date\/?$',
+            'buckley.views.general_aggregate_by_date',
+            {},
+            name='buckely_aggregate_by_date'),
+
         url(r'^\/?$',
             cache_page(object_list, 60*15),
             {'queryset': Expenditure.objects.all(), 

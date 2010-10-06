@@ -485,3 +485,17 @@ def totals(request):
                                'ie_only_total': ie_only_total,
                                'committees': committees, })
 
+
+def general_aggregate_by_date(request):
+    election_day = datetime.date(2010, 11, 2)
+    filter = {'election_type': 'G',
+              'expenditure_date__gte': election_day - datetime.timedelta(days=60)}
+
+    data = Expenditure.objects.filter(**filter).order_by('expenditure_date').values('expenditure_date').annotate(amount=Sum('expenditure_amount'))
+    dates = []
+    running_total = 0
+    for i in data:
+        running_total += i['amount']
+        dates.append((str(i['expenditure_date']), str(running_total)))
+
+    return HttpResponse(json.dumps(dates), mimetype='application/json')

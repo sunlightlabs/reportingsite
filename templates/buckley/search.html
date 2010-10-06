@@ -28,9 +28,7 @@
                 <th class="sort">Candidate</th>
                 <th class="sort">Party</th>
                 <th class="sort">Race</th>
-                <th class="sort">Total independent expenditures</th>
-                <th class="sort">Independent expenditures supporting</th>
-                <th class="sort">Independent expenditures opposing</th>
+                <th class="sort">Total outside spending</th>
             </tr>
         </thead>
         <tbody>
@@ -39,9 +37,7 @@
                 <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.last_first }}</a></td>
                 <td>{{ candidate.party }}</td>
                 <td>{{ candidate.full_race_name }}</td>
-                <td>${{ candidate.total|intcomma }}</td>
-                <td>${{ candidate.total_supporting|intcomma }}</td>
-                <td>${{ candidate.total_opposing|intcomma }}</td>
+                <td>${{ candidate.sole_total|intcomma }}</td>
             </tr>
             {% endfor %}
         </tbody>

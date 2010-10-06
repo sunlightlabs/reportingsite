@@ -475,6 +475,11 @@ class Candidate(models.Model):
 
         return Expenditure.objects.filter(pk__in=include).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
+    def sole_total(self):
+        ies = self.expenditure_set.aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+        electioneering = self.sole_electioneering_total()
+        return ies + electioneering
+
     def electioneering_total_by_election_type(self, election_type=None):
         filter = {'electioneering_communication': True, }
         exclude = {}
