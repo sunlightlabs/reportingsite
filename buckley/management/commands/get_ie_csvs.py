@@ -8,6 +8,7 @@ import datetime
 import re
 import urllib2
 
+from django.core.cache import cache
 from django.core.management.base import BaseCommand, CommandError
 from django.template.defaultfilters import slugify
 
@@ -190,3 +191,5 @@ class Command(BaseCommand):
                             )
 
                 print expenditure.id
+
+        cache.delete('buckley:widget2')
