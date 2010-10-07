@@ -68,7 +68,7 @@ class Command(BaseCommand):
                      (35, 'candidate_district'),
                      (41, 'receipt_date')]
 
-        for url in urls:
+        for url in urls[:1]:
             dlpage = urllib2.urlopen(url).read()
             m = re.search(r'\/showcsv\/.*\.fec', dlpage)
             if not m:
@@ -77,6 +77,8 @@ class Command(BaseCommand):
             reader = csv.reader(StringIO(urllib2.urlopen(csv_url).read()))
             for row in reader:
                 if row[0] == 'F57' or row[0] == 'F5N':
+                    if len(row) < 33:
+                        continue
                     row = make_row_dict(row, f5_fields)
                 elif row[0] == 'SE':
                     row = make_row_dict(row, se_fields)
@@ -116,44 +118,53 @@ class Command(BaseCommand):
                 print committee
 
                 try:
-                    candidate = Candidate.objects.get(fec_id=row['candidate_id'])
+                    if row['candidate_id']:
+                        candidate = Candidate.objects.get(fec_id=row['candidate_id'])
+                    else:
+                        raise Candidate.DoesNotExist
                 except Candidate.DoesNotExist:
                     candidate = candidate_lookup_by_id(row['candidate_id'])
                     if not candidate:
-                        continue
-                    row.update(candidate)
-                    crp_name = re.sub(r'\s\([A-Z0-9]\)', '', row.get('FirstLastP', ''))
-                    if crp_name:
-                        party = re.search(r'\([A-Z0-9]\)$', row.get('FirstLastP', ''))
-                        if party:
-                            try:
-                                party = party.groups()[0]
-                            except IndexError:
+                        try:
+                            candidate = Candidate.objects.get(slug=slugify(' '.join([row['candidate_first'], row['candidate_last']])))
+                        except Candidate.DoesNotExist:
+                            continue
+                    else:
+                        row.update(candidate)
+                        crp_name = re.sub(r'\s\([A-Z0-9]\)', '', row.get('FirstLastP', ''))
+                        try:
+                            candidate = Candidate.objects.get(slug=slugify(crp_name)[:50])
+                        except Candidate.DoesNotExist:
+
+                            if crp_name:
+                                party = re.search(r'\([A-Z0-9]\)$', row.get('FirstLastP', ''))
+                                if party:
+                                    try:
+                                        party = party.groups()[0]
+                                    except IndexError:
+                                        party = ''
+                                else:
+                                    party = ''
+                            else:
                                 party = ''
-                        else:
-                            party = ''
-                    else:
-                        party = ''
 
-                    fec_name = ('%(candidate_last)s, %(candidate_first)s %(candidate_middle)s' % row).strip()
-                    if crp_name:
-                        candidate_name = crp_name
-                    else:
-                        candidate_name = fec_name
+                            fec_name = ('%(candidate_last)s, %(candidate_first)s %(candidate_middle)s' % row).strip()
+                            if crp_name:
+                                candidate_name = crp_name
+                            else:
+                                candidate_name = fec_name
 
-                    candidate = Candidate.objects.create(
-                            fec_id=row['candidate_id'],
-                            fec_name=fec_name,
-                            crp_id=row.get('CID', ''),
-                            crp_name=crp_name,
-                            party=party,
-                            office=row['candidate_office'],
-                            state=row['candidate_state'],
-                            district=row['candidate_district'],
-                            slug=slugify(candidate_name)[:50]
-                            )
-
-
+                            candidate = Candidate.objects.create(
+                                    fec_id=row['candidate_id'],
+                                    fec_name=fec_name,
+                                    crp_id=row.get('CID', ''),
+                                    crp_name=crp_name,
+                                    party=party,
+                                    office=row['candidate_office'],
+                                    state=row['candidate_state'],
+                                    district=row['candidate_district'],
+                                    slug=slugify(candidate_name)[:50]
+                                    )
 
                 try:
                     payee = Payee.objects.get(slug=slugify(row['payee_name'])[:50])
