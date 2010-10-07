@@ -35,7 +35,7 @@ class ExpenditureFeed(Feed):
         return make_expenditure_description(item)
 
     def item_pubdate(self, item):
-        return datetime.datetime.combine(item.expenditure_date, datetime.time())
+        return item.timestamp
 
     def item_title(self, item):
         if item.electioneering_communication:
