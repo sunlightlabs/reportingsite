@@ -68,7 +68,7 @@ class Command(BaseCommand):
                      (35, 'candidate_district'),
                      (41, 'receipt_date')]
 
-        for url in urls[:1]:
+        for url in urls:
             dlpage = urllib2.urlopen(url).read()
             m = re.search(r'\/showcsv\/.*\.fec', dlpage)
             if not m:
@@ -202,5 +202,15 @@ class Command(BaseCommand):
                             )
 
                 print expenditure.id
+
+        # Get rid of duplicate candidate slugs
+        noparty = Candidate.objects.filter(party='')
+        for bad in noparty:
+            good = Candidate.objects.filter(slug=candidate.slug).exclude(party='')
+            if good:
+                good = good[0]
+                bad.expenditure_set.update(candidate=good)
+                bad.delete()
+
 
         cache.delete('buckley:widget2')
