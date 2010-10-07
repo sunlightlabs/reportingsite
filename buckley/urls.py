@@ -36,7 +36,9 @@ urlpatterns = patterns('',
 
         url(r'^committee/(?P<slug>[-\w]+)\/?$', 
             cache_page(object_detail, 60*15),
-            {'queryset': Committee.objects.all(), },
+            {'queryset': Committee.objects.all(), 
+                'paginate_by': 25,
+                },
             name='buckley_committee_detail'),
 
         url(r'^committee\/?$',
