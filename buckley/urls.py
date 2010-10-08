@@ -212,6 +212,11 @@ urlpatterns = patterns('',
             {},
             name='buckely_aggregate_by_date'),
 
+        url(r'compare\/csv\/?$',
+            'buckley.views.comparison_csv',
+            {},
+            name='buckley_comparison_csv'),
+
         url(r'^\/?$',
             cache_page(object_list, 60*15),
             {'queryset': Expenditure.objects.all(), 

@@ -499,3 +499,32 @@ def general_aggregate_by_date(request):
         dates.append((str(i['expenditure_date']), str(running_total)))
 
     return HttpResponse(json.dumps(dates), mimetype='application/json')
+
+
+def comparison_csv(request):
+    """Create a CSV comparing daily spending in 2006 
+    with daily spending in 2010.
+    """
+    data06 = [656180, 1988810, 2002816, 2578012, 2967906, 3403189, 4456219, 8268810, 8393571, 8398721, 9194123, 11052522, 11729883, 12776705, 15420903, 15624340, 17011909, 23135004, 24392352, 27985494, 37929319, 37960392, 38058758, 41308284, 46780670, 48998314, 50777884, 66041627, 66063949, 66075226, 66908175, 74774321, 79555103, 82584861, 101912918, 102007418, 104154093, 118922522, 122280289, 124092971, 142662350, 142993616, 143055554, 148537996, 158272144, 162770505, 172912130, 195460681, 197110604, 197169484, 208893950, 215935191, 227512513, 233469664, 240413148, 240966841, 241134886, 241870247, 241956050, ]
+
+    election_day = datetime.date(2010, 11, 2)
+    cutoff = election_day - datetime.timedelta(days=60)
+    data10 = []
+    running_total = 0
+    for i in Expenditure.objects.filter(expenditure_date__gte=cutoff).order_by('expenditure_date').values('expenditure_date').annotate(amount=Sum('expenditure_amount')):
+        running_total += i['amount']
+        data10.append(running_total)
+
+    response = HttpResponse(mimetype='text/csv')
+    response = HttpResponse(mimetype='text/plain')
+    writer = csv.writer(response)
+    writer.writerow(['Days until election', '2006', '2010', ])
+
+    for n, i in enumerate(data06):
+        days_left = 60-n
+        if len(data10) > n:
+            writer.writerow([n, i, data10[n], ])
+        else:
+            writer.writerow([n, i, 'null', ])
+
+    return response
