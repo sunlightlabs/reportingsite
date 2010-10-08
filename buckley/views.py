@@ -3,15 +3,16 @@ import csv
 import datetime
 from operator import itemgetter
 
-from django.views.decorators.cache import cache_page
 from django.contrib.humanize.templatetags.humanize import intcomma, ordinal
+from django.contrib.localflavor.us.us_states import STATE_CHOICES
 from django.contrib.sites.models import Site
 from django.core.cache import cache
+from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.db.models import Sum, Q
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
-from django.contrib.localflavor.us.us_states import STATE_CHOICES
-from django.core.paginator import Paginator, EmptyPage, InvalidPage
+from django.template import RequestContext
+from django.views.decorators.cache import cache_page
 
 try:
     import json
@@ -31,7 +32,8 @@ except ImportError:
 @cache_page(60*60)
 def expenditure_detail(request, committee_slug, object_id):
     expenditure = get_object_or_404(Expenditure, committee__slug=committee_slug, pk=object_id)
-    return render_to_response('buckley/expenditure_detail.html', {'object': expenditure, })
+    return render_to_response('buckley/expenditure_detail.html', {'object': expenditure, },
+                                context_instance=RequestContext(request))
 
 
 def races():
@@ -96,7 +98,7 @@ def race_list(request, return_raw_data=False):
     race_amts = races()
     return render_to_response('buckley/race_list.html',
                               {'races': race_amts,
-                               })
+                               }, context_instance=RequestContext(request))
 
 
 @cache_page(60*15)
@@ -182,7 +184,7 @@ def race_expenditures(request, race, election_type=None):
                                'election_types': election_types,
                                'election_type': election_type,
                                'includes_electioneering': includes_electioneering,
-                              })
+                              }, context_instance=RequestContext(request))
 
 @cache_page(60*15)
 def candidate_committee_detail(request, candidate_slug, committee_slug):
@@ -241,7 +243,7 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
                                'candidate_count': len(candidates),
                                'candidate': candidate,
                                'total': expenditures.aggregate(total=Sum('expenditure_amount'))['total'],
-                               })
+                               }, context_instance=RequestContext(request))
 
 def widget():
 
@@ -308,7 +310,13 @@ def widget():
         #spending_list.sort(key=itemgetter('date', 'committee', 'candidate', 'support_oppose'), reverse=True)
         cache.set(cache_key, dates, 60*60)
 
-    return dates
+    last_update = Expenditure.objects.order_by('-timestamp').values_list('timestamp', flat=True)
+    if last_update:
+        last_update = last_update[0]
+    else:
+        last_update = None
+
+    return dates, last_update
     """
     return render_to_response('buckley/widget.html',
                               {'object_list': spending_list, 
@@ -320,7 +328,9 @@ def widget():
 def embed(request):
     return render_to_response('buckley/widget.js',
             {'host': request.META['HTTP_HOST'], },
-            mimetype='text/javascript')
+            mimetype='text/javascript', 
+            context_instance=RequestContext(request)
+            )
 
 
 def search(request):
@@ -339,7 +349,7 @@ def search(request):
                               {'candidates': candidates,
                                'committees': committees,
                                'num_results': num_results,
-                               'terms': terms, })
+                               'terms': terms, }, context_instance=RequestContext(request))
 
 def committee_list_csv(request):
     fields = ['ID', 'Committee', 'Total spent on independent expenditures', 'As of', ]
@@ -462,7 +472,7 @@ def multi_candidate_ecs(self, slug):
 
     return render_to_response('buckley/multi_candidate_ecs.html',
                              {'expenditures': include,
-                              'candidate': candidate, })
+                              'candidate': candidate, }, context_instance=RequestContext(request))
 
 
 def totals(request):
@@ -483,7 +493,7 @@ def totals(request):
                                'total': total,
                                'since': cutoff+datetime.timedelta(days=1),
                                'ie_only_total': ie_only_total,
-                               'committees': committees, })
+                               'committees': committees, }, context_instance=RequestContext(request))
 
 
 def general_aggregate_by_date(request):
@@ -528,3 +538,53 @@ def comparison_csv(request):
             writer.writerow([n, i, 'null', ])
 
     return response
+
+def comparison_chart():
+    """Create a chart comparing daily spending in 2006
+    with daily spending in 2010.
+    """
+    data06 = [656180, 1988810, 2002816, 2578012, 2967906, 
+            3403189, 4456219, 8268810, 8393571, 8398721, 
+            9194123, 11052522, 11729883, 12776705, 15420903, 
+            15624340, 17011909, 23135004, 24392352, 27985494, 
+            37929319, 37960392, 38058758, 41308284, 46780670, 
+            48998314, 50777884, 66041627, 66063949, 66075226, 
+            66908175, 74774321, 79555103, 82584861, 101912918, 
+            102007418, 104154093, 118922522, 122280289, 124092971, 
+            142662350, 142993616, 143055554, 148537996, 158272144, 
+            162770505, 172912130, 195460681, 197110604, 197169484, 
+            208893950, 215935191, 227512513, 233469664, 240413148, 
+            240966841, 241134886, 241870247, 241956050, ]
+
+    daily06 = [679668, 1676911, 14650, 21, 608633, 429830,
+            456275, 1061030, 3863248, 124830, 5150,
+            916425, 1873399, 677524, 1056169, 2644773,
+            203437, 1387617, 6123095, 1257348, 3613347,
+            9943827, 32335, 98366, 3252526, 5519818,
+            2316090, 2029570, 15270493, 22322, 11277,
+            832949, 7998082, 4794778, 3731860, 20153723,
+            85300, 21181, 2583914, 14842645, 3399767,
+            1812882, 18585068, 331266, 62199, 6119077,
+            9736094, 4498361, 10181730, 22813488, 1650224,
+            58926, 11724468, 7049546, 11577773, 5962547,
+            7015403, 553693, 172502, 737545, 95310,]
+
+
+    #data06 = zip([str(x) for x in range(len(data06))[::-1]], data06)
+    data06 = []
+    running_total = 0
+    for n, i in enumerate(daily06):
+        running_total += i
+        data06.append((str(60-n), running_total))
+
+    election_day = datetime.date(2010, 11, 2)
+    cutoff = election_day - datetime.timedelta(days=60)
+
+    data10 = []
+    running_total = 0
+    for n, i in enumerate(list(Expenditure.objects.filter(expenditure_date__gte=cutoff).order_by('expenditure_date').values('expenditure_date').annotate(amount=Sum('expenditure_amount')))[:-2]):
+        running_total += i['amount']
+        data10.append((str(60-n), int(running_total)))
+
+    print data06
+    print data10

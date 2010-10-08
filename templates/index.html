@@ -25,6 +25,7 @@
      {% endfor %}
     <div class="clear" id="featureNav">
         <ul>
+            <li style="color:#142403">Last update: {{ last_ie_update|date:"N j, P" }}</li>
             <li><a href="{% url buckley_index %}">View all the latest outside spending</a></li>
             <li><a href="{% url buckley_about %}">About</a></li>
             <li class="last"><a href="{% url buckley_stories %}">Stories</a></li>
