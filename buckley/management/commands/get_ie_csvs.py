@@ -10,6 +10,7 @@ import urllib2
 
 from django.core.cache import cache
 from django.core.management.base import BaseCommand, CommandError
+from django.db import IntegrityError
 from django.template.defaultfilters import slugify
 
 from dateutil.parser import parse as dateparse
@@ -188,21 +189,24 @@ class Command(BaseCommand):
                     print 'Found %s' % expenditure
                 except Expenditure.DoesNotExist:
 
-                    expenditure = Expenditure.objects.create(
-                            image_number=hash(str(row)), # made up
-                            committee=committee,
-                            payee=payee,
-                            expenditure_purpose=row['expenditure_purpose'],
-                            expenditure_date=row['expenditure_date'],
-                            expenditure_amount=Decimal(row['expenditure_amount']),
-                            support_oppose=row['support_oppose'],
-                            election_type='G', # Only using this script on new filings; all G
-                            candidate=candidate,
-                            transaction_id=row['transaction_id'],
-                            filing_number=0,
-                            receipt_date=row['receipt_date'],
-                            race=candidate.race()
-                            )
+                    try:
+                        expenditure = Expenditure.objects.create(
+                                image_number=hash(str(row)), # made up
+                                committee=committee,
+                                payee=payee,
+                                expenditure_purpose=row['expenditure_purpose'],
+                                expenditure_date=row['expenditure_date'],
+                                expenditure_amount=Decimal(row['expenditure_amount']),
+                                support_oppose=row['support_oppose'],
+                                election_type='G', # Only using this script on new filings; all G
+                                candidate=candidate,
+                                transaction_id=row['transaction_id'],
+                                filing_number=0,
+                                receipt_date=row['receipt_date'],
+                                race=candidate.race()
+                                )   
+                    except IntegrityError:
+                        continue
 
                 print expenditure.id
 
