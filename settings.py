@@ -97,11 +97,10 @@ INSTALLED_APPS = (
     'reporting',
     'django.contrib.humanize',
     'mediasync',
-    'reportingsite.millions', 
+    #'reportingsite.millions', 
     'storages',
     'debug_toolbar',
     'haystack',
-    'django.contrib.humanize',
     'buckley',
 )
 
