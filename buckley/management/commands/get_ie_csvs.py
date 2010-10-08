@@ -127,7 +127,10 @@ class Command(BaseCommand):
                     candidate = candidate_lookup_by_id(row['candidate_id'])
                     if not candidate:
                         try:
-                            candidate = Candidate.objects.get(slug=slugify(' '.join([row['candidate_first'], row['candidate_last']])))
+                            if row['candidate_first'] == 'MICHAEL' and row['candidate_last'] == 'FITZPATRICK (PA)':
+                                candidate = Candidate.objects.get(slug='michael-g-fitzpatrick')
+                            else:
+                                candidate = Candidate.objects.get(slug=slugify(' '.join([row['candidate_first'], row['candidate_last']])))
                         except Candidate.DoesNotExist:
                             continue
                     else:
