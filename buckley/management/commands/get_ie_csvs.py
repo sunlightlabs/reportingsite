@@ -181,6 +181,9 @@ class Command(BaseCommand):
                     expenditure = Expenditure.objects.get(
                             transaction_id=row['transaction_id'],
                             expenditure_date=row['expenditure_date'],
+                            expenditure_amount=Decimal(row['expenditure_amount']),
+                            expenditure_purpose=row['expenditure_purpose'],
+                            candidate=candidate,
                             committee=committee)
                     print 'Found %s' % expenditure
                 except Expenditure.DoesNotExist:
@@ -211,6 +214,10 @@ class Command(BaseCommand):
                 good = good[0]
                 bad.expenditure_set.update(candidate=good)
                 bad.delete()
+
+        # denormalize
+        for candidate in Candidate.objects.all():
+            candidate.denormalize()
 
 
         cache.delete('buckley:widget2')
