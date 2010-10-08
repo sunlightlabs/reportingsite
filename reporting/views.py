@@ -207,11 +207,14 @@ def index(request):
     #    cache.set(key, blogs, 60*15)
 
     from buckley.views import widget
+    ie_data, last_update = widget()
+
 
     return render_to_response('index.html', 
                               {'blogs': blogs, 'featured': featured, 'bodyclass': 'home',
                                'host': request.META['HTTP_HOST'],
-                               'ies': widget(),
+                               'ies': ie_data,
+                               'last_ie_update': last_update,
                               },
                               context_instance=RequestContext(request))
 
