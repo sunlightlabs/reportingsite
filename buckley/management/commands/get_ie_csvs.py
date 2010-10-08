@@ -208,8 +208,7 @@ class Command(BaseCommand):
                                 receipt_date=row['receipt_date'],
                                 race=candidate.race()
                                 )   
-                    except IntegrityError:
-                        continue
+                    except IntegrityError: continue
 
                 print expenditure.id
 
@@ -221,6 +220,14 @@ class Command(BaseCommand):
                 good = good[0]
                 bad.expenditure_set.update(candidate=good)
                 bad.delete()
+
+        # Remove errors
+        bad = []
+        for expenditure in Expenditure.objects.filter(electioneering_communication=False):
+            if expenditure.race != expenditure.candidate.race():
+                bad.append(expenditure)
+        for b in bad:
+            b.delete()
 
         # denormalize
         for candidate in Candidate.objects.all():
