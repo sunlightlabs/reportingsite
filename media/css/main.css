@@ -196,8 +196,8 @@ strong { font-weight: bold;}
 body.home #brandingbar, body.theblog #brandingbar, body.about #brandingbar { border-bottom: 1px solid #bcbec0; padding:0.4em 0.9em 0.4em 0; }
 body.home #brandingbar a#sllink, body.theblog #brandingbar a#sllink, body.about #brandingbar a#sllink  { background:#F6F8FB url(http://assets.sunlightfoundation.com/images/project_of_sf.gif) 0 3px no-repeat;}
 
-div.features ul, div.about ul, div.posts ul { list-style-type: disc; padding-left: 30px; margin-bottom: 20px;}
-div.features ol, div.about ol, div.posts ol{ list-style-type: decimal; padding-left: 30px; margin-bottom: 20px;}
+div.features ul, div.about ul, div.posts ul { list-style-type: disc; padding-left: 30px; margin-bottom: 20px; color: #58595B; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+div.features ol, div.about ol, div.posts ol{ list-style-type: decimal; padding-left: 30px; margin-bottom: 20px; color: #58595B; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 
 .clear { clear: both;}
 
