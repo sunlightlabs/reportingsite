@@ -312,7 +312,7 @@ def widget():
 
     last_update = Expenditure.objects.order_by('-timestamp').values_list('timestamp', flat=True)
     if last_update:
-        last_update = last_update[0]
+        last_update = last_update[0] - datetime.timedelta(hours=4)
     else:
         last_update = None
 
@@ -460,7 +460,7 @@ def ie_stories():
     return posts
 
 
-def multi_candidate_ecs(self, slug):
+def multi_candidate_ecs(request, slug):
     """List electioneering communications mentioning
     the given candidate and other candidates.
     """
@@ -472,7 +472,7 @@ def multi_candidate_ecs(self, slug):
 
     return render_to_response('buckley/multi_candidate_ecs.html',
                              {'expenditures': include,
-                              'candidate': candidate, }, context_instance=RequestContext(request))
+                              'candidate': candidate, }, context_instance=RequestContext(request) )
 
 
 def totals(request):
