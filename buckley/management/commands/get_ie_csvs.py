@@ -70,6 +70,7 @@ class Command(BaseCommand):
                      (41, 'receipt_date')]
 
         for url in urls:
+            filing_number = url.strip('/').split('/')[-1]
             dlpage = urllib2.urlopen(url).read()
             m = re.search(r'\/showcsv\/.*\.fec', dlpage)
             if not m:
@@ -204,11 +205,12 @@ class Command(BaseCommand):
                                 election_type='G', # Only using this script on new filings; all G
                                 candidate=candidate,
                                 transaction_id=row['transaction_id'],
-                                filing_number=0,
+                                filing_number=filing_number,
                                 receipt_date=row['receipt_date'],
                                 race=candidate.race()
-                                )   
-                    except IntegrityError: continue
+                                )
+                    except IntegrityError:
+                        continue
 
                 print expenditure.id
 

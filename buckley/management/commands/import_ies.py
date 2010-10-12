@@ -36,8 +36,8 @@ socket.setdefaulttimeout(25)
 logging.basicConfig(filename='ie_import_errors.log', level=logging.DEBUG)
 
 
-cursor = MySQLdb.Connection('reporting.sunlightfoundation.com', 'reporting', '***REMOVED***', 'reporting').cursor()
-#cursor = MySQLdb.Connection('localhost', 'reporting', '***REMOVED***', 'reporting').cursor()
+#cursor = MySQLdb.Connection('reporting.sunlightfoundation.com', 'reporting', '***REMOVED***', 'reporting').cursor()
+cursor = MySQLdb.Connection('localhost', 'reporting', '***REMOVED***', 'reporting').cursor()
 
 # Some names we know are missing FEC IDs.
 NAME_LOOKUP = {
@@ -284,7 +284,7 @@ class Command(BaseCommand):
                                     #logging.debug('Could not find candidate for image number %s transaction id %s' % (row['IMAGE_NUM'], row['TRAN_ID']))
                                     #logging.debug(row)
                                     skipped.append(row)
-                                    continue 
+                                    continue
                                 else:
                                     candidates_by_name[row['CAND_NAM']] = name
 
@@ -505,24 +505,30 @@ class Command(BaseCommand):
             else:
                 logging.debug('Skipped record because no CID:' + str(row))
 
-            
         # Remove amendmended filings
         for amendment in Expenditure.objects.exclude(amendment='N'):
             # Check for A2 amendments
             if amendment.amendment == 'A2':
                 Expenditure.objects.filter(Q(amendment='N') | Q(amendment='A1'),
-                                           transaction_id=amendment.transaction_id, 
-                                           committee=amendment.committee, 
+                                           transaction_id=amendment.transaction_id,
+                                           committee=amendment.committee,
+                                           expenditure_date=amendment.expenditure_date,
                                            candidate=amendment.candidate).delete()
             else:
-                Expenditure.objects.filter(amendment='N', 
-                                           transaction_id=amendment.transaction_id, 
-                                           committee=amendment.committee, 
+                Expenditure.objects.filter(amendment='N',
+                                           transaction_id=amendment.transaction_id,
+                                           committee=amendment.committee,
+                                           expenditure_date=amendment.expenditure_date,
                                            candidate=amendment.candidate).delete()
+
 
         # Remove apparent duplicates
         for expenditure in Expenditure.objects.all():
-            e = Expenditure.objects.filter(candidate=expenditure.candidate, committee=expenditure.committee, expenditure_date=expenditure.expenditure_date, payee=expenditure.payee, expenditure_amount=expenditure.expenditure_amount).exclude(filing_number=expenditure.filing_number)
+            e = Expenditure.objects.filter(candidate=expenditure.candidate,
+                                           committee=expenditure.committee,
+                                           expenditure_date=expenditure.expenditure_date,
+                                           payee=expenditure.payee,
+                                           expenditure_amount=str(round(expenditure.expenditure_amount))).exclude(filing_number=expenditure.filing_number)
             if e.count() > 1:
                 for to_delete in e[1:]:
                     to_delete.delete()
@@ -530,9 +536,18 @@ class Command(BaseCommand):
         # Remove more apparent duplicates
         dupes = {}
         for expenditure in Expenditure.objects.all():
-            e = Expenditure.objects.filter(candidate=expenditure.candidate, committee=expenditure.committee, expenditure_date=expenditure.expenditure_date, payee=expenditure.payee, expenditure_amount=expenditure.expenditure_amount).exclude(filing_number=expenditure.filing_number)
+            e = Expenditure.objects.filter(candidate=expenditure.candidate,
+                                           committee=expenditure.committee,
+                                           expenditure_date=expenditure.expenditure_date,
+                                           payee=expenditure.payee,
+                                           ).exclude(filing_number=expenditure.filing_number)
             if e:
-                dupes[expenditure] = e
+                d = []
+                for i in e:
+                    if round(i.expenditure_amount) == round(expenditure.expenditure_amount):
+                        d.append(i)
+                if d:
+                    dupes[expenditure] = d
 
         for k, v in dupes.items():
             if Expenditure.objects.filter(pk=k.pk):
