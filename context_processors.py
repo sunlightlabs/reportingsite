@@ -1,3 +1,5 @@
+import datetime
+
 from reporting.models import Post
 from feedinator import Feed, FeedEntry
 from buckley.models import Expenditure
@@ -28,4 +30,4 @@ def outside_spending_updated(request):
         updated = expenditures[0]
     else:
         updated = None
-    return {'outside_spending_updated': updated, }
+    return {'outside_spending_updated': updated - datetime.timedelta(hours=4), }
