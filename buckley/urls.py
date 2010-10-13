@@ -29,6 +29,10 @@ urlpatterns = patterns('',
             CommitteeFeed(),
             name='buckley_committee_detail_feed'),
 
+        url(r'^committee\/(?P<slug>[-\w]+)\/contributions\/?$',
+            'buckley.views.committee_contribution_list',
+            name='buckley_committee_contribution_list'),
+
         url(r'^committee\/(?P<committee_slug>[-\w]+)\/(?P<candidate_slug>[-\w]+)\/?$',
             'buckley.views.candidate_committee_detail',
             {},

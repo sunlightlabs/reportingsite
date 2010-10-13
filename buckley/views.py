@@ -588,3 +588,40 @@ def comparison_chart():
 
     print data06
     print data10
+
+
+def committee_contribution_list(request, slug):
+    committee = get_object_or_404(Committee, slug=slug)
+    contributions = committee.contribution_set.all()
+    if not contributions:
+        raise Http404
+
+    order_options = ('name',
+                     'amount',
+                     'date',
+                     'occupation',
+                     'employer',
+                     'city',
+                     'state')
+
+    default_order = '-date'
+    order = request.GET.get('order', default_order)
+    if order.strip('-') not in order_options:
+        order = default_order
+
+    contributions = contributions.order_by(order)
+
+    paginator = Paginator(contributions, 50, orphans=5)
+    pagenum = request.GET.get('page', 1)
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+
+    return render_to_response('buckley/committee_contribution_list.html',
+                              {'object_list': page.object_list,
+                               'committee': committee,
+                               'page_obj': page,
+                               'order': order.strip('-'),
+                               'sort': 'desc' if order.startswith('-') else 'asc',
+                              }, context_instance=RequestContext(request))
