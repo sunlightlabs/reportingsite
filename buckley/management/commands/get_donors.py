@@ -15,7 +15,7 @@ from dateutil.parser import parse as dateparse
 
 from buckley.models import Committee, Contribution
 
-MIN_DATE = datetime.date(2009, 1, 1)
+MIN_DATE = datetime.date(2010, 9, 1)
 
 socket.setdefaulttimeout(25)
 
@@ -25,7 +25,6 @@ def get_form_urls(cid):
     """
     url = 'http://query.nictusa.com/cgi-bin/dcdev/forms/%s/' % cid
     page = urllib2.urlopen(url).read()
-    #filing_ids = re.findall("<A HREF='(\d+)\/'>Form F3X?N - \d\d\/\d\d\/\d\d\d\d", page)
     filings = re.findall("<A HREF='(\d+)\/'>Form F3X?N - (\d\d\/\d\d\/\d\d\d\d)", page)
 
     # Schedule A is itemized receipts
@@ -127,18 +126,22 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
         already = list(Contribution.objects.order_by('url').values_list('url', flat=True).distinct())
+        last_contributions = Contribution.objects.order_by('-pk')
+        if last_contributions:
+            last_contribution_url = last_contributions[0].url
+            del already[already.index(last_contribution_url)]
 
         committees = Committee.objects.all()
         for committee in committees:
 
-            if not committee.ieonly_url():
-                continue
+            #if not committee.ieonly_url():
+            #    continue
 
             for cid in committee.committeeid_set.all():
                 filing_urls = get_form_urls(cid)
                 for url in filing_urls:
-                    #if url in already:
-                    #    continue
+                    if url in already:
+                        continue
 
                     #print url
                     filing_number = url.split('/')[-3]
