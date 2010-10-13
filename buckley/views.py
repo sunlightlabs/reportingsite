@@ -582,7 +582,7 @@ def comparison_chart():
 
     data10 = []
     running_total = 0
-    for n, i in enumerate(list(Expenditure.objects.filter(expenditure_date__gte=cutoff).order_by('expenditure_date').values('expenditure_date').annotate(amount=Sum('expenditure_amount')))[:-2]):
+    for n, i in enumerate(list(Expenditure.objects.filter(expenditure_date__gte=cutoff).order_by('expenditure_date').values('expenditure_date').annotate(amount=Sum('expenditure_amount')))):
         running_total += i['amount']
         data10.append((str(60-n), int(running_total)))
 
