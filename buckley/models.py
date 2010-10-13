@@ -62,6 +62,13 @@ class Committee(models.Model):
     name = models.CharField(max_length=255)
     slug = models.SlugField()
 
+    tax_status = models.CharField(max_length=10,
+            choices=(('501(c)(4)', '501(c)(4)'),
+                     ('501(c)(5)', '501(c)(5)'),
+                     ('501(c)(6)', '501(c)(6)'),
+                     ('527', '527'),),
+            blank=True)
+
     #transparencydata_id = models.CharField(max_length=40)
 
     #objects = CommitteeManager()
