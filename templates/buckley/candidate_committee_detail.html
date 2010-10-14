@@ -47,7 +47,7 @@
                     {% if expenditure.electioneering_communication %}
                     <a href="#asterisk">*</a>
                     {% else %}
-                        {% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}
+                        {% if expenditure.support_oppose == 'O' %}Oppose{% else %}{% if expenditure.support_oppose == 'S' %}Support{% endif %}{%endif %}
                     {% endif %}
                     {% endspaceless %}</td>
                 <td>{% if expenditure.expenditure_amount < 0 %}-&nbsp;{% endif %}${{ expenditure.expenditure_amount|absolute_value|intcomma }}</td>
