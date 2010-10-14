@@ -485,7 +485,7 @@ def totals(request):
 
     cutoff = datetime.date.today() - datetime.timedelta(days=4)
 
-    committees = Expenditure.objects.filter(expenditure_date__gt=cutoff).order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
+    committees = Expenditure.objects.filter(expenditure_date__gt=cutoff).exclude(committee__slug='').order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
 
     return render_to_response('buckley/totals.html',
                               {'ie_total': ie_total,
