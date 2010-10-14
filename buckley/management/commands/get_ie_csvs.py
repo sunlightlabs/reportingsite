@@ -78,13 +78,13 @@ class Command(BaseCommand):
             csv_url = 'http://query.nictusa.com%s' % m.group()
             reader = csv.reader(StringIO(urllib2.urlopen(csv_url).read()))
             for row in reader:
-                if row[0] == 'F57' or row[0] == 'F5N':
+                if row[0] == 'F57' or row[0] == 'F5A':
                     if len(row) < 33:
                         continue
                     row = make_row_dict(row, f5_fields)
                 elif row[0] == 'SE':
                     row = make_row_dict(row, se_fields)
-                elif row[0] == 'F24' or row[0] == 'F5A':
+                elif row[0] == 'F24' or row[0] == 'F5N':
                     committee_name = row[3]
                     continue
                 else:
