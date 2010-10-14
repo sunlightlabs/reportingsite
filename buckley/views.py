@@ -633,19 +633,25 @@ def committee_filings(request):
     today = datetime.date.today().strftime('%Y/%m/%d')
 
     url = 'http://api.nytimes.com/svc/elections/us/v3/finances/2010/filings/%s.json?api-key=%s' % (today, apikey)
-    print url
 
     response = urllib2.urlopen(url).read()
     data = json.loads(response)
 
-    ids = CommitteeId.objects.values_list('fec_committee_id', flat=True)
+    ids = list(CommitteeId.objects.values_list('fec_committee_id', flat=True))
+    ieonly_ids = list(IEOnlyCommittee.objects.values_list('id', flat=True))
+
+    ids = ids + ieonly_ids
 
     filings = []
     for result in data['results']:
         cid = re.search(r'C\d{8}', result['fec_uri']).group()
         if cid in ids and not 'HOUR' in result['report_title']:
-            committee_id = CommitteeId.objects.get(fec_committee_id=cid)
-            result['committee_obj'] = committee_id.committee
+            try:
+                committee_id = CommitteeId.objects.get(fec_committee_id=cid)
+                committee = committee_id.committee
+            except CommitteeId.DoesNotExist:
+                committee = IEOnlyCommittee.objects.get(id=cid)
+            result['committee_obj'] = committee
             filings.append(result)
 
     return render_to_response('buckley/committee_filings.html',
