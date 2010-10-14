@@ -17,7 +17,7 @@ from buckley.models import Committee, Contribution
 
 MIN_DATE = datetime.date(2010, 9, 1)
 
-socket.setdefaulttimeout(25)
+socket.setdefaulttimeout(60)
 
 
 def get_form_urls(cid):
