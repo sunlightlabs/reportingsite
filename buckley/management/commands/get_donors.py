@@ -17,7 +17,7 @@ from buckley.models import Committee, Contribution
 
 MIN_DATE = datetime.date(2010, 9, 1)
 
-socket.setdefaulttimeout(60)
+socket.setdefaulttimeout(1000)
 
 
 def get_form_urls(cid):
@@ -45,8 +45,12 @@ def parse_donor_page(page):
             yield data
 
 def parse_donor_list(url):
-    time.sleep(5)
-    page = urllib2.urlopen(url).read()
+    time.sleep(20)
+    try:
+        page = urllib2.urlopen(url).read() 
+    except socket.timeout:
+        print 'Skipping %s' % url
+        yield None
     for row in parse_donor_page(page):
         row['url'] = url
         yield row
@@ -56,7 +60,7 @@ def parse_donor_list(url):
     if m:
         max_page = int(m.groups()[0])
         for i in range(2, max_page+1):
-            time.sleep(5)
+            time.sleep(20)
             page = urllib2.urlopen('/'.join([url, str(i)])).read()
             for row in parse_donor_page(page):
                 row['url'] = url
@@ -146,6 +150,9 @@ class Command(BaseCommand):
                     #print url
                     filing_number = url.split('/')[-3]
                     for row in parse_donor_list(url):
+
+                        if not row: 
+                            continue
 
                         row['committee'] = committee
                         row['filing_number'] = filing_number
