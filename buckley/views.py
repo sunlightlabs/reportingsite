@@ -2,6 +2,7 @@ from collections import defaultdict, deque
 import csv
 import datetime
 from operator import itemgetter
+import urllib2
 
 from django.contrib.humanize.templatetags.humanize import intcomma, ordinal
 from django.contrib.localflavor.us.us_states import STATE_CHOICES
@@ -624,4 +625,29 @@ def committee_contribution_list(request, slug):
                                'page_obj': page,
                                'order': order.strip('-'),
                                'sort': 'desc' if order.startswith('-') else 'asc',
+                              }, context_instance=RequestContext(request))
+
+
+def committee_filings(request):
+    apikey = '***REMOVED***'
+    today = datetime.date.today().strftime('%Y/%m/%d')
+
+    url = 'http://api.nytimes.com/svc/elections/us/v3/finances/2010/filings/%s.json?api-key=%s' % (today, apikey)
+    print url
+
+    response = urllib2.urlopen(url).read()
+    data = json.loads(response)
+
+    ids = CommitteeId.objects.values_list('fec_committee_id', flat=True)
+
+    filings = []
+    for result in data['results']:
+        cid = re.search(r'C\d{8}', result['fec_uri']).group()
+        if cid in ids and not 'HOUR' in result['report_title']:
+            committee_id = CommitteeId.objects.get(fec_committee_id=cid)
+            result['committee_obj'] = committee_id.committee
+            filings.append(result)
+
+    return render_to_response('buckley/committee_filings.html',
+                              {'filings': filings, 
                               }, context_instance=RequestContext(request))

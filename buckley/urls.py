@@ -221,6 +221,11 @@ urlpatterns = patterns('',
             {},
             name='buckley_comparison_csv'),
 
+        url(r'filings\/?$',
+            'buckley.views.committee_filings',
+            {},
+            name='buckley_committee_filings'),
+
         url(r'^\/?$',
             cache_page(object_list, 60*15),
             {'queryset': Expenditure.objects.all(), 

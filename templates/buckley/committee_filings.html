@@ -1,0 +1,32 @@
+<style type="text/css">
+    * { font-family: Helvetica, Arial, sans-serif; font-size: 13px; }
+    table { border-collapse: collapse; }
+    td, th { padding: 5px; border: 1px solid gray; }
+
+</style>
+<table>
+    <thead>
+        <tr>
+            <th>Committee</th>
+            <th>Report</th>
+            <th></th>
+            <th></th>
+            <th>Amended</th>
+            <th>Coverage from</th>
+            <th>Coverage to</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for filing in filings %}
+        <tr>
+            <td><a href="{{ filing.committee_obj.get_absolute_url }}">{{ filing.committee_name }}</a></td>
+            <td><a href="{{ filing.fec_uri }}">{{ filing.report_title }}</a></td>
+            <td><a href="{{ filing.fec_uri }}sa/ALL">Receipts</a></td>
+            <td><a href="{{ filing.fec_uri }}se">Disbursements</a></td>
+            <td>{% if filing.amended %}<a href="{{ filing.amended_uri }}">Yes</a>{% else %}No{% endif %}</td>
+            <td>{{ filing.date_coverage_from }}</td>
+            <td>{{ filing.date_coverage_to }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
