@@ -10,7 +10,7 @@ import MySQLdb
 
 MIN_DATE = datetime.date(2009, 1, 1)
 
-cursor = MySQLdb.Connection('localhost', 'campfin', 'campfin', 'campfin').cursor()
+cursor = MySQLdb.Connection('localhost', 'reporting', '***REMOVED***', 'reporting').cursor()
 
 
 def get_527_committees():

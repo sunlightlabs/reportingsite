@@ -66,7 +66,11 @@ class Committee(models.Model):
             choices=(('501(c)(4)', '501(c)(4)'),
                      ('501(c)(5)', '501(c)(5)'),
                      ('501(c)(6)', '501(c)(6)'),
-                     ('527', '527'),),
+                     ('527', '527'),
+                     ('FECA PAC', 'FECA PAC'),
+                     ('FECA Party', 'FECA Party'),
+                     ('Person', 'Person'),
+            ),
             blank=True)
 
     #transparencydata_id = models.CharField(max_length=40)

@@ -50,6 +50,7 @@
             <tr>
                 <td><a href="{% url buckley_committee_detail slug=committee.committee__slug %}">{{ committee.committee__name }}</a></td>
                 <td>${{ committee.amount|intcomma }}</td>
+            </tr>
         {% endfor %}
     </tbody>
 </table>
