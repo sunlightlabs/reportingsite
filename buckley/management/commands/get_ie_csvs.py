@@ -217,7 +217,7 @@ class Command(BaseCommand):
         # Get rid of duplicate candidate slugs
         noparty = Candidate.objects.filter(party='')
         for bad in noparty:
-            good = Candidate.objects.filter(slug=candidate.slug).exclude(party='')
+            good = Candidate.objects.filter(slug=bad.slug).exclude(party='')
             if good:
                 good = good[0]
                 bad.expenditure_set.update(candidate=good)
@@ -234,6 +234,27 @@ class Command(BaseCommand):
         # denormalize
         for candidate in Candidate.objects.all():
             candidate.denormalize()
+
+        # Remove more apparent duplicates
+        dupes = {}
+        for expenditure in Expenditure.objects.all():
+            e = Expenditure.objects.filter(candidate=expenditure.candidate,
+                                           committee=expenditure.committee,
+                                           expenditure_date=expenditure.expenditure_date,
+                                           payee=expenditure.payee,
+                                           ).exclude(filing_number=expenditure.filing_number)
+            if e:
+                d = []
+                for i in e:
+                    if round(i.expenditure_amount) == round(expenditure.expenditure_amount):
+                        d.append(i)
+                if d:
+                    dupes[expenditure] = d
+
+        for k, v in dupes.items():
+            if Expenditure.objects.filter(pk=k.pk):
+                for expenditure in v:
+                    expenditure.delete()
 
 
         cache.delete('buckley:widget2')
