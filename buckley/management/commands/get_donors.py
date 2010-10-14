@@ -1,6 +1,8 @@
 """Get donor information for committees.
 """
+from cStringIO import StringIO
 from decimal import Decimal
+import csv
 import datetime
 import re
 import socket
@@ -28,13 +30,27 @@ def get_form_urls(cid):
     filings = re.findall("<A HREF='(\d+)\/'>Form F3X?N - (\d\d\/\d\d\/\d\d\d\d)", page)
 
     # Schedule A is itemized receipts
-    url = 'http://query.nictusa.com/cgi-bin/dcdev/forms/%s/%%s/sa/ALL' % cid
+    url = 'http://query.nictusa.com/cgi-bin/dcdev/forms/DL/%s/'
 
     for id, date_filed in filings:
         date = dateparse(date_filed).date()
         if date < MIN_DATE:
             continue
-        yield url % id
+
+        dlpage = urllib2.urlopen(url % id).read()
+        m = re.search(r'\/showcsv\/.*\.fec', dlpage)
+        if not m or m is None:
+            yield None
+        try:
+            yield 'http://query.nictusa.com%s' % m.group()
+        except AttributeError:
+            m = re.search(r'\/comma\/\d+.fec', dlpage)
+            if m:
+                yield 'http://query.nictusa.com%s' % m.group()
+            else:
+                print 'AttributeError: %s' % dlpage
+                yield None
+
 
 
 def parse_donor_page(page):
@@ -114,9 +130,55 @@ def parse_donor_row(row):
             }
 
 
+def parse_donor_csv(url):
+    reader = csv.reader(StringIO(urllib2.urlopen(url).read()))
+    for row in reader:
+        if not row[0].startswith('SA11'):
+            continue
+
+        yield row
+
+
 def save_row(row):
     try:
         contribution = Contribution.objects.create(**row)
+    except IntegrityError:
+        return
+    return contribution
+
+
+def save_contribution(row, committee, url, filing_number):
+    if row[5] == 'ORG':
+        name = row[6]
+    elif row[5] == 'PAC':
+        name = row[6]
+    else:
+        name=('%s, %s %s %s' % (row[7],
+                               row[8],
+                               row[9],
+                               row[11])).replace('  ', ' ').strip()
+
+
+    try:
+        contribution = Contribution.objects.create(
+                committee=committee,
+                filing_number=filing_number,
+                name=name,
+                contributor_type=row[5],
+                date=dateparse(row[19]).date(),
+                employer=row[24],
+                occupation=row[25],
+                street1=row[12],
+                street2=row[13],
+                city=row[14],
+                state=row[15],
+                zipcode=row[16],
+                amount=row[20],
+                aggregate=row[21] or 0,
+                memo=row[23],
+                url=url,
+                data_row=str(row)
+                )
     except IntegrityError:
         return
     return contribution
@@ -131,7 +193,7 @@ class Command(BaseCommand):
             last_contribution_url = last_contributions[0].url
             del already[already.index(last_contribution_url)]
 
-        committees = Committee.objects.all()
+        committees = Committee.objects.all().reverse()
         for committee in committees:
 
             #if not committee.ieonly_url():
@@ -140,11 +202,149 @@ class Command(BaseCommand):
             for cid in committee.committeeid_set.all():
                 filing_urls = get_form_urls(cid)
                 for url in filing_urls:
+                    if not url:
+                        continue
+
                     if url in already:
                         continue
 
-                    #print url
-                    filing_number = url.split('/')[-3]
+                    filing_number = url.split('/')[-1].replace('.fec', '')
+
+                    for row in parse_donor_csv(url):
+                        contribution = save_contribution(row, committee, url, filing_number)
+                        print committee, url, contribution
+
+
+"""
+
+                        print ' | '.join([str(len(row)), 
+                                          row[0],
+                                          row[1],
+                                          row[2],
+                                          row[4],
+                                          row[5],
+                                          row[6],
+                                          row[7], #last
+                                          row[8], #first
+                                          row[9], #middle
+                                          row[10], #prefix
+                                          row[11], #suffix
+                                          row[12], #street1
+                                          row[13], #street2
+                                          row[14], #city
+                                          row[15], #state
+                                          row[16], #zipcode
+                                          row[17], #
+                                          row[18], #
+                                          row[19], #date
+                                          row[20], #amt
+                                          row[21], #aggregate
+                                          row[22], #sometimes '15'
+                                          row[23], #blank - memo?
+                                          row[24], #employer
+                                          row[25], #occupation
+                                          row[26], #blank
+                                          row[27],
+                                          row[28],
+                                          row[29],
+                                          row[30],
+                                          ])
+['SA17', 'C00255752', 'SA17.89416', '', '', 'ORG', 'NORTHERN TRUST CO', '', '', '', '', '', '50 S LASALLE', '', 'CHICAGO', 'IL', '60675', '', '', '20100831', '28.34', '124.28', '', 'INTEREST INCOME', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
+form_type,
+committee_id,
+entity_type,
+contributor,
+street1,
+street2,
+city,
+state,
+zipcode,
+item_elect_cd,
+item_elect_other,
+indemp,
+indocc,
+aggregate,
+date,
+amount,
+trans_code,
+trans_description,
+fec_committee_id,
+fec_candidate_id,
+candidate_name,
+candidate_office,
+candidate_state,
+candidate_district,
+conduit_name,
+conduit_street1,
+conduit_street2,
+conduit_city,
+conduit_state,
+conduit_zip,
+memo_code,
+memo_text,
+amended_cd,
+tran_id,
+back_ref_tran_id,
+
+                    FORM TYPE
+FILER FEC CMTE ID
+
+ENTITY TYPE
+CONTRIBUTOR NAME
+
+STREET  1
+STREET  2
+CITY
+STATE
+ZIP
+
+ITEM ELECT CD
+ITEM ELECT OTHER
+
+INDEMP
+INDOCC
+
+AGGREGATE AMT Y-T-D
+DATE RECEIVED
+AMOUNT RECEIVED
+
+TRANS CODE
+TRANS DESCRIP
+
+FEC COMMITTEE ID NUMBER
+
+FEC CANDIDATE ID NUMBER
+CANDIDATE NAME
+CAN/OFFICE
+CAN/STATE 
+CAN/DIST
+
+CONDUIT NAME
+CONDUIT STREET1
+CONDUIT STREET2
+CONDUIT CITY
+CONDUIT STATE
+CONDUIT ZIP
+
+MEMO CODE
+MEMO TEXT
+
+AMENDED CD
+TRAN ID
+
+BACK REF TRAN ID
+BACK REF SCHED NAME
+
+Reference to SI or SL system code that identifies the Account
+
+INCREASED LIMIT
+
+CONTRIB ORGANIZATION NAME
+CONTRIBUTOR LAST NAME
+CONTRIBUTOR FIRST NAME
+CONTRIBUTOR MIDDLE NAME
+CONTRIBUTOR PREFIX
+CONTRIBUTOR SUFFIX
                     for row in parse_donor_list(url):
 
                         row['committee'] = committee
@@ -152,4 +352,4 @@ class Command(BaseCommand):
 
                         print row
                         contribution = save_row(row)
-
+                    """

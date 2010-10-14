@@ -624,6 +624,7 @@ class Contribution(models.Model):
     committee = models.ForeignKey(Committee)
     filing_number = models.IntegerField()
     name = models.CharField(max_length=255)
+    contributor_type = models.CharField(max_length=10)
     date = models.DateField()
     employer = models.CharField(max_length=100)
     occupation = models.CharField(max_length=100)
@@ -636,6 +637,7 @@ class Contribution(models.Model):
     aggregate = models.DecimalField(max_digits=19, decimal_places=2)
     memo = models.CharField(max_length=100)
     url = models.URLField(verify_exists=False)
+    data_row = models.TextField()
 
     def __unicode__(self):
         return self.name
