@@ -488,7 +488,7 @@ def totals(request):
 
     committees = Expenditure.objects.filter(expenditure_date__gt=cutoff).exclude(committee__slug='').order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
 
-    by_party = sorted(list(Expenditure.objects.exclude(support_oppose='').values('candidate__party', 'support_oppose').annotate(amt=Sum('expenditure_amount'))), key=itemgetter('candidate__party', 'support_oppose'), reverse=True)
+    by_party = sorted(list(Expenditure.objects.exclude(support_oppose='', candidate__party='').values('candidate__party', 'support_oppose').annotate(amt=Sum('expenditure_amount'))), key=itemgetter('candidate__party', 'support_oppose'), reverse=True)
 
     return render_to_response('buckley/totals.html',
                               {'ie_total': ie_total,
