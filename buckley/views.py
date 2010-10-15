@@ -743,7 +743,7 @@ def api_committee_detail(request, fec_id):
             'district': candidate.district if not candidate.district.startswith('S') else '',
             'race': candidate.race(),
             'url': base_url % candidate.get_absolute_url(),
-            'api_url': base_url % '/independent-expenditures/api/candidates/%s.json' % candidate.fec_id,
+            'api_url': base_url % '/independent-expenditures/api/candidates/%s.json' % candidate.crp_id,
             'total_spent': int(c['supporting'] or 0 + c['opposing'] or 0),
             'supporting': int(c['supporting'] or 0),
             'opposing': int(c['opposing'] or 0),
