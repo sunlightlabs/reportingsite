@@ -490,6 +490,10 @@ def totals(request):
 
     by_party = sorted(list(Expenditure.objects.exclude(support_oppose='', candidate__party='').values('candidate__party', 'support_oppose').annotate(amt=Sum('expenditure_amount'))), key=itemgetter('candidate__party', 'support_oppose'), reverse=True)
 
+    for i in by_party:
+        i['party_cmtes'] = Expenditure.objects.filter(committee__tax_status='FECA Party', candidate__party=i['candidate__party'], support_oppose=i['support_oppose']).aggregate(t=Sum('expenditure_amount'))['t'] or 0
+        i['non_party_cmtes'] = Expenditure.objects.exclude(committee__tax_status='FECA Party').filter(candidate__party=i['candidate__party'], support_oppose=i['support_oppose']).aggregate(t=Sum('expenditure_amount'))['t'] or 0
+
     return render_to_response('buckley/totals.html',
                               {'ie_total': ie_total,
                                'ec_total': ec_total,
