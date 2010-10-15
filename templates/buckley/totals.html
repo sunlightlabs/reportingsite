@@ -41,7 +41,9 @@
     <thead>
         <tr>
             <th>Party</th>
-            <th>Amount</th>
+            <th>Total Amount</th>
+            <th>Non-Party Committees</th>
+            <th>Party Committees</th>
             <th>Support/Oppose</th>
         </tr>
     </thead>
@@ -50,6 +52,8 @@
         <tr>
             <td>{{ p.candidate__party }}</td>
             <td><a href="{% url buckley_totals_by_party party=p.candidate__party support_oppose=p.support_oppose %}">${{ p.amt|intcomma }}</a></td>
+            <td>${{ p.non_party_cmtes|intcomma }}</td>
+            <td>${{ p.party_cmtes|intcomma }}</td>
             <td>{{ p.support_oppose }}</td>
         </tr>
         {% endfor %}
