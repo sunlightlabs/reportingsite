@@ -17,7 +17,7 @@ from dateutil.parser import parse as dateparse
 
 from buckley.models import Committee, Contribution
 
-MIN_DATE = datetime.date(2010, 9, 1)
+MIN_DATE = datetime.date(2009, 2, 1)
 
 socket.setdefaulttimeout(1000)
 
@@ -146,7 +146,7 @@ def parse_donor_csv(url):
 def save_row(row):
     try:
         contribution = Contribution.objects.create(**row)
-    except IntegrityError:
+    except (IntegrityError, Warning):
         return
     return contribution
 
@@ -167,6 +167,7 @@ def save_contribution(row, committee, url, filing_number):
         contribution = Contribution.objects.create(
                 committee=committee,
                 filing_number=filing_number,
+                transaction_id=row[2],
                 name=name,
                 contributor_type=row[5],
                 date=dateparse(row[19]).date(),
@@ -197,7 +198,7 @@ class Command(BaseCommand):
             last_contribution_url = last_contributions[0].url
             del already[already.index(last_contribution_url)]
 
-        committees = Committee.objects.all().reverse()
+        committees = Committee.objects.all()
         for committee in committees:
 
             #if not committee.ieonly_url():
@@ -210,6 +211,7 @@ class Command(BaseCommand):
                         continue
 
                     if url in already:
+                        print 'Already: %s' % url
                         continue
 
                     filing_number = url.split('/')[-1].replace('.fec', '')
