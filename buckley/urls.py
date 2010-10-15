@@ -231,6 +231,36 @@ urlpatterns = patterns('',
             {},
             name='buckley_committee_filings'),
 
+        url(r'api\/committees.json$',
+            'buckley.views.api_committee_list',
+            {},
+            name='buckley_api_committee_list'),
+
+        url(r'api\/committees\/(?P<fec_id>C\d{8})\.json$',
+            'buckley.views.api_committee_detail',
+            {},
+            name='buckley_api_committee_detail'),
+
+        url(r'api\/candidates.json$',
+            'buckley.views.api_candidate_list',
+            {},
+            name='buckley_api_candidate_list'),
+
+        url(r'api\/candidates\/(?P<crp_id>N\d{8})\.json$',
+            'buckley.views.api_candidate_detail',
+            {},
+            name='buckley_api_candidate_detail'),
+
+        url(r'api\/races.json$',
+            'buckley.views.api_race_list',
+            {},
+            name='buckley_api_race_list'),
+
+        url(r'api\/races\/(?P<race>[-\w]+)\.json$',
+            'buckley.views.api_race_detail',
+            {},
+            name='buckley_api_race_detail'),
+
         url(r'^\/?$',
             cache_page(object_list, 60*15),
             {'queryset': Expenditure.objects.all(), 
