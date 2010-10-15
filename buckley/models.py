@@ -623,6 +623,7 @@ class Expenditure(models.Model):
 class Contribution(models.Model):
     committee = models.ForeignKey(Committee)
     filing_number = models.IntegerField()
+    transaction_id = models.CharField(max_length=32)
     name = models.CharField(max_length=255)
     contributor_type = models.CharField(max_length=10)
     date = models.DateField()
@@ -643,6 +644,6 @@ class Contribution(models.Model):
         return self.name
 
     class Meta:
-        unique_together = (('committee', 'filing_number', 'name', 'date', 'employer', 'occupation',
+        unique_together = (('committee', 'filing_number', 'transaction_id', 'name', 'date', 'employer', 'occupation',
                             'street1', 'street2', 'city', 'state', 'zipcode', 'amount', 'aggregate', 
                             'memo', ), )
