@@ -47,11 +47,13 @@
     </thead>
     <tbody>
         {% for p in by_party %}
+{% if p.candidate__party and p.support_oppose %}
         <tr>
             <td>{{ p.candidate__party }}</td>
             <td><a href="{% url buckley_totals_by_party party=p.candidate__party support_oppose=p.support_oppose %}">${{ p.amt|intcomma }}</a></td>
             <td>{{ p.support_oppose }}</td>
         </tr>
+{% endif %}
         {% endfor %}
     </tbody>
 </table>
