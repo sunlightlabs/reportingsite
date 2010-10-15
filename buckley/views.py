@@ -488,13 +488,34 @@ def totals(request):
 
     committees = Expenditure.objects.filter(expenditure_date__gt=cutoff).exclude(committee__slug='').order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
 
+    by_party = sorted(list(Expenditure.objects.exclude(support_oppose='').values('candidate__party', 'support_oppose').annotate(amt=Sum('expenditure_amount'))), key=itemgetter('candidate__party', 'support_oppose'), reverse=True)
+
     return render_to_response('buckley/totals.html',
                               {'ie_total': ie_total,
                                'ec_total': ec_total,
                                'total': total,
                                'since': cutoff+datetime.timedelta(days=1),
                                'ie_only_total': ie_only_total,
+                               'by_party': by_party,
                                'committees': committees, }, context_instance=RequestContext(request))
+
+def totals_by_party(request, party, support_oppose):
+    committees = Expenditure.objects.filter(candidate__party=party, support_oppose=support_oppose).values('committee__name', 'committee__slug').annotate(t=Sum('expenditure_amount')).order_by('-t')
+
+    party = {'R': 'Republicans',
+             'I': 'Independents',
+             'D': 'Democrats'}[party]
+
+    support_oppose = {'S': 'support', 'O': 'opposition'}[support_oppose]
+    print support_oppose
+
+    return render_to_response('buckley/totals_by_party.html',
+                              {'committees': committees, 
+                               'party': party,
+                               'support_oppose': support_oppose,
+                               },
+                              context_instance=RequestContext(request))
+
 
 
 def general_aggregate_by_date(request):

@@ -211,6 +211,11 @@ urlpatterns = patterns('',
             {},
             name='buckley_totals'),
 
+        url(r'totals\/party\/(?P<party>\w)\/(?P<support_oppose>\w)\/?$',
+            'buckley.views.totals_by_party',
+            {},
+            name='buckley_totals_by_party'),
+
         url(r'aggregate_by_date\/?$',
             'buckley.views.general_aggregate_by_date',
             {},

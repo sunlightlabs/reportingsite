@@ -36,6 +36,27 @@
 <strong>Note:</strong> ${{ ie_only_total|intcomma }} of this spending has been from "Super" PACs -- groups that have submitted a letter saying they will accept contributions of unlimited amounts.
 
 <br><br>
+<h2>Party totals this election cycle</h2>
+<table>
+    <thead>
+        <tr>
+            <th>Party</th>
+            <th>Amount</th>
+            <th>Support/Oppose</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for p in by_party %}
+        <tr>
+            <td>{{ p.candidate__party }}</td>
+            <td><a href="{% url buckley_totals_by_party party=p.candidate__party support_oppose=p.support_oppose %}">${{ p.amt|intcomma }}</a></td>
+            <td>{{ p.support_oppose }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br><br>
 
 <h2>Amounts spent since {{ since }}</h2>
 <table>
