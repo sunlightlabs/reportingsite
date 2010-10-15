@@ -693,3 +693,179 @@ def committee_filings(request):
     return render_to_response('buckley/committee_filings.html',
                               {'filings': filings, 
                               }, context_instance=RequestContext(request))
+
+
+def api_committee_list(request):
+    committees = []
+    base_url = 'http://%s%%s' % Site.objects.get_current().domain
+    for committee in Committee.objects.all():
+        if not committee.slug:
+            continue
+        committees.append([{
+            'committee': committee.name,
+            'url': base_url % committee.get_absolute_url(),
+            'api_url': base_url % '/independent-expenditures/api/committees/%s.json' % committee.fec_id(),
+            'fec_id': committee.fec_id(),
+            'total_spent': int(committee.total()),
+            'independent_expenditure_total': int(committee.ie_total()),
+            'electioneering_total': int(committee.ec_total()),
+            'description': 'Lorem Ipsum',
+            }])
+    return HttpResponse(json.dumps(committees), mimetype='text/plain')
+
+
+def api_committee_detail(request, fec_id):
+    committee_id = get_object_or_404(CommitteeId, fec_committee_id=fec_id)
+    committee = committee_id.committee
+
+    data = {'committee': committee.name,
+            'total_spent': int(committee.total()),
+            'description': 'Lorem Ipsum', }
+
+    base_url = 'http://%s%%s' % Site.objects.get_current().domain
+
+    candidates = []
+    candidate_list = committee.candidates_supported() | committee.candidates_opposed()
+    for candidate in candidate_list:
+        c = {}
+        for i, j in [('S', 'supporting'), ('O', 'opposing')]:
+            c[j] = Expenditure.objects.filter(committee=committee,
+                                              candidate=candidate,
+                                              support_oppose=i).aggregate(total=Sum('expenditure_amount')
+                                                      )['total']
+        candidates.append({
+            'candidate': str(candidate),
+            'fec_id': candidate.fec_id,
+            'crp_id': candidate.crp_id,
+            'party': candidate.party,
+            'office': candidate.office,
+            'state': candidate.state,
+            'district': candidate.district if not candidate.district.startswith('S') else '',
+            'race': candidate.race(),
+            'url': base_url % candidate.get_absolute_url(),
+            'api_url': base_url % '/independent-expenditures/api/candidates/%s.json' % candidate.fec_id,
+            'total_spent': int(c['supporting'] or 0 + c['opposing'] or 0),
+            'supporting': int(c['supporting'] or 0),
+            'opposing': int(c['opposing'] or 0),
+            })
+    candidates.sort(key=itemgetter('total_spent'), reverse=True)
+
+    data['candidates'] = candidates
+    
+    return HttpResponse(json.dumps(data), mimetype='text/plain')
+
+
+def api_candidate_list(request):
+    data = []
+    for candidate in Candidate.objects.all():
+        data.append(get_candidate_data(candidate))
+        """
+        data.append({
+            'candidate': str(candidate),
+            'fec_id': candidate.fec_id,
+            'crp_id': candidate.crp_id,
+            'party': candidate.party,
+            'office': candidate.office,
+            'state': candidate.state,
+            'district': candidate.district if not candidate.district.startswith('S') else '',
+            'race': candidate.full_race_name(),
+            'url': base_url % candidate.get_absolute_url(),
+            'api_url': base_url % '/independent-expenditures/api/candidates/%s.json' % candidate.crp_id,
+            'total_outside_spending': int(candidate.total_including_electioneering()),
+            'total_electioneering': int(candidate.sole_electioneering_total()),
+            'total_independent_expenditures': int(candidate.total('S') + candidate.total('O')),
+            'independent_expenditures_supporting': int(candidate.total('S')),
+            'independent_expenditures_opposing': int(candidate.total('O')),
+            })
+        """
+
+    return HttpResponse(json.dumps(data), mimetype='text/plain')
+
+def get_candidate_data(candidate):
+    base_url = 'http://%s%%s' % Site.objects.get_current().domain
+    return {'candidate': str(candidate),
+            'fec_id': candidate.fec_id,
+            'crp_id': candidate.crp_id,
+            'party': candidate.party,
+            'office': candidate.office,
+            'state': candidate.state,
+            'district': candidate.district if not candidate.district.startswith('S') else '',
+            'race': candidate.full_race_name(),
+            'url': base_url % candidate.get_absolute_url(),
+            'api_url': base_url % '/independent-expenditures/api/candidates/%s.json' % candidate.crp_id,
+            'total_outside_spending': int(candidate.total_including_electioneering()),
+            'total_electioneering': int(candidate.sole_electioneering_total()),
+            'total_independent_expenditures': int(candidate.total('S') + candidate.total('O')),
+            'independent_expenditures_supporting': int(candidate.total('S')),
+            'independent_expenditures_opposing': int(candidate.total('O')),
+            }
+
+def api_candidate_detail(request, crp_id):
+    candidate = get_object_or_404(Candidate, crp_id=crp_id)
+    data = get_candidate_data(candidate)
+    data['committees'] = []
+    base_url = 'http://%s%%s' % Site.objects.get_current().domain
+
+    data['committees'] = []
+    for committee in candidate.all_committees_with_amounts():
+        data['committees'].append({'committee': committee['committee'].name,
+                                   'url': base_url % committee['committee'].get_absolute_url(),
+                                   'api_url': base_url % '/independent-expenditures/api/committees/%s.json' % committee['committee'].fec_id(),
+                                   'fec_id': committee['committee'].fec_id(), 
+                                   'support_oppose': committee['support_oppose'],
+                                   'amount': int(committee['amount']),
+                                   })
+
+    return HttpResponse(json.dumps(data), mimetype='text/plain')
+
+def api_race_list(request):
+    base_url = 'http://%s%%s' % Site.objects.get_current().domain
+    races = []
+    for race in Expenditure.objects.order_by('race').values_list('race', flat=True).distinct():
+        if not race:
+            continue
+        expenditures = Expenditure.objects.filter(race=race).order_by('-candidate')
+        try:
+            races.append({
+                'race': expenditures[0].candidate.race(),
+                'total_outside_spending': int(expenditures.aggregate(total=Sum('expenditure_amount'))['total']),
+                'url': base_url % '/independent-expenditures/race/%s' % race,
+                'api_url': base_url % '/independent-expenditures/api/races/%s.json' % race,
+                })
+        except AttributeError:
+            continue
+
+    return HttpResponse(json.dumps(races), mimetype='text/plain')
+
+
+def api_race_detail(request, race):
+    base_url = 'http://%s%%s' % Site.objects.get_current().domain
+    expenditures = Expenditure.objects.filter(race=race)
+    if not expenditures:
+        raise Http404
+
+    candidates = Candidate.objects.filter(pk__in=expenditures.values_list('candidate__pk', flat=True))
+    if not candidates:
+        raise Http404
+
+    race = {'race': candidates[0].full_race_name(),
+            'total_outside_spending': int(expenditures.aggregate(total=Sum('expenditure_amount'))['total']),
+            'candidates': [
+                {'candidate': str(x),
+                    'fec_id': x.fec_id,
+                    'crp_id': x.crp_id,
+                    'party': x.party,
+                    'url': base_url % x.get_absolute_url(), 
+                    'api_url': base_url % '/independent-expenditures/api/races/%s.json' % x.crp_id, 
+                    'total_outside_spending': int(x.total_including_electioneering()),
+                    'total_electioneering': int(x.sole_electioneering_total()),
+                    'total_independent_expenditures': int(x.total('S') + x.total('O')),
+                    'independent_expenditures_supporting': int(x.total('S')),
+                    'independent_expenditures_opposing': int(x.total('O')),
+                    } for x in
+                                Candidate.objects.filter(pk__in=expenditures.values_list('candidate__pk', flat=True))
+
+                ],
+            }
+
+    return HttpResponse(json.dumps(race), mimetype='text/plain')
