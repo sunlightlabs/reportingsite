@@ -630,29 +630,44 @@ def committee_contribution_list(request, slug):
 
 def committee_filings(request):
     apikey = '***REMOVED***'
-    today = datetime.date.today().strftime('%Y/%m/%d')
 
-    url = 'http://api.nytimes.com/svc/elections/us/v3/finances/2010/filings/%s.json?api-key=%s' % (today, apikey)
-
-    response = urllib2.urlopen(url).read()
-    data = json.loads(response)
+    start = datetime.date.today() - datetime.timedelta(1)
+    curr = start
 
     ids = list(CommitteeId.objects.values_list('fec_committee_id', flat=True))
     ieonly_ids = list(IEOnlyCommittee.objects.values_list('id', flat=True))
-
     ids = ids + ieonly_ids
 
     filings = []
-    for result in data['results']:
-        cid = re.search(r'C\d{8}', result['fec_uri']).group()
-        if cid in ids and not 'HOUR' in result['report_title']:
-            try:
-                committee_id = CommitteeId.objects.get(fec_committee_id=cid)
-                committee = committee_id.committee
-            except CommitteeId.DoesNotExist:
-                committee = IEOnlyCommittee.objects.get(id=cid)
-            result['committee_obj'] = committee
-            filings.append(result)
+
+    while True:
+
+        if curr > datetime.date.today():
+            break
+
+        #today = datetime.date.today().strftime('%Y/%m/%d')
+        date = curr.strftime('%Y/%m/%d')
+
+        url = 'http://api.nytimes.com/svc/elections/us/v3/finances/2010/filings/%s.json?api-key=%s' % (date, apikey)
+
+        response = urllib2.urlopen(url).read()
+        data = json.loads(response)
+
+        for result in data['results']:
+            cid = re.search(r'C\d{8}', result['fec_uri']).group()
+            if cid in ids and not 'HOUR' in result['report_title']:
+                try:
+                    committee_id = CommitteeId.objects.get(fec_committee_id=cid)
+                    committee = committee_id.committee
+                except CommitteeId.DoesNotExist:
+                    committee = IEOnlyCommittee.objects.get(id=cid)
+                result['committee_obj'] = committee
+                result['date'] = curr
+                filings.append(result)
+
+        curr += datetime.timedelta(1)
+
+    filings.sort(key=itemgetter('date'), reverse=True)
 
     return render_to_response('buckley/committee_filings.html',
                               {'filings': filings, 
