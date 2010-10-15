@@ -10,7 +10,8 @@ import MySQLdb
 
 MIN_DATE = datetime.date(2009, 1, 1)
 
-cursor = MySQLdb.Connection('localhost', 'reporting', '***REMOVED***', 'reporting').cursor()
+#cursor = MySQLdb.Connection('localhost', 'reporting', '***REMOVED***', 'reporting').cursor()
+cursor = MySQLdb.Connection('reporting.sunlightlabs.com', 'reporting', '***REMOVED***', 'reporting').cursor()
 
 
 def get_527_committees():
@@ -32,6 +33,7 @@ def save_527_contribution(committee, contribution):
         contribution = Contribution.objects.create(
                             committee=committee,
                             filing_number=contribution['ID'],
+                            transaction_id='',
                             name=contribution['Contrib'],
                             date=contribution['Date'],
                             employer=contribution['Employer'],
@@ -44,7 +46,7 @@ def save_527_contribution(committee, contribution):
                             amount=str(contribution['Amount']),
                             aggregate=str(contribution['YTD']),
                             memo='',
-                            url='')
+                            url='CRP 527')
     except IntegrityError:
         return None
 
@@ -58,9 +60,6 @@ def get_fec_contributions(committee_id):
 
 
 def save_fec_contribution(committee, contribution):
-    """
-    {'City': 'WASHINGTON', 'Zip': '20005', 'Orgname': '', 'ContribID': 'j1001430872 ', 'State': 'DC', 'Type': '15 ', 'OtherID': '', 'RecipCode': 'PL', 'CmteID': 'C00004036', 'Microfilm': '10930745518', 'FECTransID': '1464786', 'FecOccEmp': 'SEIU/EXECUTIVE BOARD MEM', 'Date': '04/30/2010', 'UltOrg': '', 'Gender': 'F', 'Amount': '202', 'Occ_EF': 'Executive Board Mem', 'RecipID': 'C00004036', 'Source': 'P/PAC', 'RealCode': 'LG300', 'Street': '1519 - 12th St Nw', 'Emp_EF': 'SEIU', 'Contrib': 'HENRY, MARY KAY', 'Cycle': '2010'}
-    """
     try:
         contribution = Contribution.objects.create(
                 committee=committee,
@@ -77,7 +76,8 @@ def save_fec_contribution(committee, contribution):
                 amount=contribution['Amount'],
                 aggregate=0,
                 memo='',
-                url=''
+                url='',
+                data_row=''
                 )
     except IntegrityError:
         print 'Skipping'
@@ -94,6 +94,7 @@ class Command(BaseCommand):
                 contribution = save_527_contribution(committee_id.committee, row)
                 print contribution
 
+        """
         for committee_id in CommitteeId.objects.all():
             for row in get_fec_contributions(committee_id):
                 try:
@@ -101,4 +102,5 @@ class Command(BaseCommand):
                 except:
                     print 'Error: %s' % str(row)
                 print committee_id.committee, contribution
+        """
 
