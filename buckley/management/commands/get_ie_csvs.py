@@ -16,6 +16,7 @@ from django.template.defaultfilters import slugify
 from dateutil.parser import parse as dateparse
 
 from buckley.models import *
+from get_donors import get_form_urls, parse_donor_csv, save_contribution
 from import_ies import committee_lookup, candidate_lookup_by_id
 
 
@@ -113,10 +114,21 @@ class Command(BaseCommand):
                             name=committee_name,
                             slug=slugify(committee_name)[:50]
                         )
+
+                    print created
+                    if created: # Get committee's previous contributions
+                        print row['committee_id']
+                        for csv_url in get_form_urls(row['committee_id']):
+                            print 'Getting contributions'
+                            filing_number = csv_url.split('/')[-1].replace('.fec', '')
+                            print filing_number
+                            for csv_row in parse_donor_csv(csv_url):
+                                contribution = save_contribution(csv_row, committee, csv_url, filing_number)
+                                print contribution
+
                     committee_id = CommitteeId.objects.create(
                             fec_committee_id=row['committee_id'],
                             committee=committee)
-
                 print committee
 
                 try:

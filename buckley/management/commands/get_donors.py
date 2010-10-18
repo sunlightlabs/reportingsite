@@ -23,12 +23,12 @@ from dateutil.parser import parse as dateparse
 
 from buckley.models import *
 
-MIN_DATE = datetime.date(2010, 10, 1)
+MIN_DATE = datetime.date(2009, 1, 1)
 
 socket.setdefaulttimeout(100000)
 
 
-def get_form_urls(cid):
+def get_form_urls(cid, use_min_date=True):
     """Get the URLs for monthly and quarterly reports.
     """
     url = 'http://query.nictusa.com/cgi-bin/dcdev/forms/%s/' % cid
@@ -40,7 +40,7 @@ def get_form_urls(cid):
 
     for id, date_filed in filings:
         date = dateparse(date_filed).date()
-        if date < MIN_DATE:
+        if date < MIN_DATE and use_min_date:
             continue
 
         print date
