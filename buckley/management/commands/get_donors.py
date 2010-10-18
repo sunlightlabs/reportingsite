@@ -201,9 +201,10 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         apikey = '***REMOVED***'
-        date = datetime.date.today() - datetime.timedelta(1)
-        dates = [datetime.date.today(),
-                 datetime.date.today() - datetime.timedelta(1), ]
+        if args:
+            date = dateparse(args[0]).date()
+        else:
+            date = datetime.date.today()
 
         committees = []
 
@@ -211,25 +212,24 @@ class Command(BaseCommand):
         ieonly_ids = list(IEOnlyCommittee.objects.values_list('id', flat=True))
         ids = ids + ieonly_ids
 
-        for date in dates:
-            url = 'http://api.nytimes.com/svc/elections/us/v3/finances/2010/filings/%s.json?api-key=%s' % (date.strftime('%Y/%m/%d'), apikey)
-            #url = 'http://projects.nytimes.com/campfin/svc/elections/us/v3/finances/2010/filings/%s.json' % date.strftime('%Y/%m/%d')
+        url = 'http://api.nytimes.com/svc/elections/us/v3/finances/2010/filings/%s.json?api-key=%s' % (date.strftime('%Y/%m/%d'), apikey)
+        #url = 'http://projects.nytimes.com/campfin/svc/elections/us/v3/finances/2010/filings/%s.json' % date.strftime('%Y/%m/%d')
 
-            response = urllib2.urlopen(url).read()
-            data = json.loads(response)
+        response = urllib2.urlopen(url).read()
+        data = json.loads(response)
 
-            for result in data['results']:
-                cid = re.search(r'C\d{8}', result['fec_uri']).group()
-                if cid in ids and ('QUARTER' in result['report_title'] or 'MONTH' in result['report_title']):
-                    try:
-                        committee_id = CommitteeId.objects.get(fec_committee_id=cid)
-                        committee = committee_id.committee
-                    except CommitteeId.DoesNotExist:
-                        continue
-                        #committee = IEOnlyCommittee.objects.get(id=cid)
+        for result in data['results']:
+            cid = re.search(r'C\d{8}', result['fec_uri']).group()
+            if cid in ids and ('QUARTER' in result['report_title'] or 'MONTH' in result['report_title']):
+                try:
+                    committee_id = CommitteeId.objects.get(fec_committee_id=cid)
+                    committee = committee_id.committee
+                except CommitteeId.DoesNotExist:
+                    continue
+                    #committee = IEOnlyCommittee.objects.get(id=cid)
 
-                    filing_number = result['fec_uri'].strip('/').split('/')[-1]
-                    committees.append((committee, filing_number))
+                filing_number = result['fec_uri'].strip('/').split('/')[-1]
+                committees.append((committee, filing_number))
 
         for committee, filing_number  in committees:
             print committee, filing_number
