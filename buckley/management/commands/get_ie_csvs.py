@@ -270,3 +270,4 @@ class Command(BaseCommand):
 
 
         cache.delete('buckley:widget2')
+        cache.delete('buckley:totals')

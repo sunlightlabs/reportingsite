@@ -1,6 +1,7 @@
 from collections import defaultdict, deque
 import csv
 import datetime
+from decimal import Decimal
 from operator import itemgetter
 import urllib2
 
@@ -477,31 +478,52 @@ def multi_candidate_ecs(request, slug):
 
 
 def totals(request):
-    ie_total = Expenditure.objects.filter(electioneering_communication=False).aggregate(total=Sum('expenditure_amount'))['total']
-    ec_total = Expenditure.objects.filter(electioneering_communication=True).aggregate(total=Sum('expenditure_amount'))['total']
-    total = ie_total + ec_total
+    cache_key = 'buckley:totals'
+    data = cache.get(cache_key)
 
-    ie_only = [x.pk for x in Committee.objects.all() if x.ieonly_url()]
-    ie_only_total = Expenditure.objects.filter(committee__pk__in=ie_only).aggregate(total=Sum('expenditure_amount'))['total']
+    if not data:
+        ie_total = Expenditure.objects.filter(electioneering_communication=False).aggregate(total=Sum('expenditure_amount'))['total']
+        ec_total = Expenditure.objects.filter(electioneering_communication=True).aggregate(total=Sum('expenditure_amount'))['total']
+        total = ie_total + ec_total
 
-    cutoff = datetime.date.today() - datetime.timedelta(days=4)
+        ie_only = [x.pk for x in Committee.objects.all() if x.ieonly_url()]
+        ie_only_total = Expenditure.objects.filter(committee__pk__in=ie_only).aggregate(total=Sum('expenditure_amount'))['total']
 
-    committees = Expenditure.objects.filter(expenditure_date__gt=cutoff).exclude(committee__slug='').order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
+        cutoff = datetime.date.today() - datetime.timedelta(days=4)
 
-    by_party = sorted(list(Expenditure.objects.exclude(support_oppose='', candidate__party='').values('candidate__party', 'support_oppose').annotate(amt=Sum('expenditure_amount'))), key=itemgetter('candidate__party', 'support_oppose'), reverse=True)
+        committees = Expenditure.objects.filter(expenditure_date__gt=cutoff).exclude(committee__slug='').order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
 
-    for i in by_party:
-        i['party_cmtes'] = Expenditure.objects.filter(committee__tax_status='FECA Party', candidate__party=i['candidate__party'], support_oppose=i['support_oppose']).aggregate(t=Sum('expenditure_amount'))['t'] or 0
-        i['non_party_cmtes'] = Expenditure.objects.exclude(committee__tax_status='FECA Party').filter(candidate__party=i['candidate__party'], support_oppose=i['support_oppose']).aggregate(t=Sum('expenditure_amount'))['t'] or 0
+        by_party = sorted(list(Expenditure.objects.exclude(support_oppose='', candidate__party='').values('candidate__party', 'support_oppose').annotate(amt=Sum('expenditure_amount'))), key=itemgetter('candidate__party', 'support_oppose'), reverse=True)
+
+        latest_big_expenditures = Expenditure.objects.filter(expenditure_amount__gt=250000).order_by('-timestamp')[:10]
+
+        top_races = Expenditure.objects.order_by('race').values('race').annotate(amt=Sum('expenditure_amount')).order_by('-amt')[:10]
+
+        states = defaultdict(Decimal)
+        for race in Expenditure.objects.order_by('race').values('race').exclude(race='').annotate(amt=Sum('expenditure_amount')):
+            states[race['race'].split('-')[0]] += race['amt']
+
+        top_states = sorted(states.items(key=itemgetter(1), reverse=True))[:10]
+
+        for i in by_party:
+            i['party_cmtes'] = Expenditure.objects.filter(committee__tax_status='FECA Party', candidate__party=i['candidate__party'], support_oppose=i['support_oppose']).aggregate(t=Sum('expenditure_amount'))['t'] or 0
+            i['non_party_cmtes'] = Expenditure.objects.exclude(committee__tax_status='FECA Party').filter(candidate__party=i['candidate__party'], support_oppose=i['support_oppose']).aggregate(t=Sum('expenditure_amount'))['t'] or 0
+
+   data = {'ie_total': ie_total,
+           'ec_total': ec_total,
+           'total': total,
+           'since': cutoff+datetime.timedelta(days=1),
+           'ie_only_total': ie_only_total,
+           'by_party': by_party,
+           'latest_big_expenditures': latest_big_expenditures,
+           'top_states': top_states,
+           'committees': committees, }
+
+    cache.set(cache_key, data, 60*60*24)
 
     return render_to_response('buckley/totals.html',
-                              {'ie_total': ie_total,
-                               'ec_total': ec_total,
-                               'total': total,
-                               'since': cutoff+datetime.timedelta(days=1),
-                               'ie_only_total': ie_only_total,
-                               'by_party': by_party,
-                               'committees': committees, }, context_instance=RequestContext(request))
+                              data,
+                              context_instance=RequestContext(request))
 
 def totals_by_party(request, party, support_oppose):
     committees = Expenditure.objects.filter(candidate__party=party, support_oppose=support_oppose).values('committee__name', 'committee__slug').annotate(t=Sum('expenditure_amount')).order_by('-t')

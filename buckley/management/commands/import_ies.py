@@ -612,3 +612,5 @@ class Command(BaseCommand):
 
         # Clear the cached widget
         cache.delete('buckley:widget2')
+
+        cache.delete('buckley:totals')
