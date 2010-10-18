@@ -9,17 +9,22 @@ import socket
 import time
 import urllib2
 
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
 from django.core.management.base import BaseCommand, CommandError
 from django.template.defaultfilters import slugify
 from django.db import IntegrityError
 
 from dateutil.parser import parse as dateparse
 
-from buckley.models import Committee, Contribution
+from buckley.models import *
 
-MIN_DATE = datetime.date(2009, 2, 1)
+MIN_DATE = datetime.date(2010, 10, 1)
 
-socket.setdefaulttimeout(1000)
+socket.setdefaulttimeout(100000)
 
 
 def get_form_urls(cid):
@@ -36,6 +41,8 @@ def get_form_urls(cid):
         date = dateparse(date_filed).date()
         if date < MIN_DATE:
             continue
+
+        print date
 
         dlpage = urllib2.urlopen(url % id).read()
         m = re.search(r'\/showcsv\/.*\.fec', dlpage)
@@ -192,26 +199,72 @@ def save_contribution(row, committee, url, filing_number):
 class Command(BaseCommand):
     
     def handle(self, *args, **options):
-        already = list(Contribution.objects.order_by('url').values_list('url', flat=True).distinct())
-        last_contributions = Contribution.objects.order_by('-pk')
-        if last_contributions:
-            last_contribution_url = last_contributions[0].url
-            del already[already.index(last_contribution_url)]
 
-        committees = Committee.objects.all()
-        for committee in committees:
+        apikey = '***REMOVED***'
+        date = datetime.date.today() - datetime.timedelta(1)
+        dates = [datetime.date.today(),
+                 datetime.date.today() - datetime.timedelta(1), ]
 
-            #if not committee.ieonly_url():
-            #    continue
+        committees = []
 
-            for cid in committee.committeeid_set.all():
+        ids = list(CommitteeId.objects.values_list('fec_committee_id', flat=True))
+        ieonly_ids = list(IEOnlyCommittee.objects.values_list('id', flat=True))
+        ids = ids + ieonly_ids
+
+        for date in dates:
+            url = 'http://api.nytimes.com/svc/elections/us/v3/finances/2010/filings/%s.json?api-key=%s' % (date.strftime('%Y/%m/%d'), apikey)
+            #url = 'http://projects.nytimes.com/campfin/svc/elections/us/v3/finances/2010/filings/%s.json' % date.strftime('%Y/%m/%d')
+
+            response = urllib2.urlopen(url).read()
+            data = json.loads(response)
+
+            for result in data['results']:
+                cid = re.search(r'C\d{8}', result['fec_uri']).group()
+                if cid in ids and ('QUARTER' in result['report_title'] or 'MONTH' in result['report_title']):
+                    try:
+                        committee_id = CommitteeId.objects.get(fec_committee_id=cid)
+                        committee = committee_id.committee
+                    except CommitteeId.DoesNotExist:
+                        continue
+                        #committee = IEOnlyCommittee.objects.get(id=cid)
+
+                    filing_number = result['fec_uri'].strip('/').split('/')[-1]
+                    committees.append((committee, filing_number))
+
+        for committee, filing_number  in committees:
+            print committee, filing_number
+            filing_url = 'http://query.nictusa.com/cgi-bin/dcdev/forms/DL/%s/' % filing_number
+            dlpage = urllib2.urlopen(filing_url).read()
+            m = re.search(r'\/showcsv\/.*\.fec', dlpage)
+            if not m or m is None:
+                continue
+            try:
+                csv_url = 'http://query.nictusa.com%s' % m.group()
+            except AttributeError:
+                m = re.search(r'\/comma\/\d+.fec', dlpage)
+                if m:
+                    csv_url = 'http://query.nictusa.com%s' % m.group()
+                else:
+                    print 'AttributeError: %s' % dlpage
+                    continue
+
+            for row in parse_donor_csv(csv_url):
+                contribution = save_contribution(row, committee, url, filing_number)
+                print committee, csv_url, contribution
+
+            """
+            try:
+                id_set = committee.committeeid_set.all()
+            except AttributeError:
+                try:
+                    id_set = CommitteeId.objects.filter(fec_committee_id=committee.id)
+                except CommitteeId.DoesNotExist:
+                    continue
+
+            for cid in id_set:
                 filing_urls = get_form_urls(cid)
                 for url in filing_urls:
                     if not url:
-                        continue
-
-                    if url in already:
-                        print 'Already: %s' % url
                         continue
 
                     filing_number = url.split('/')[-1].replace('.fec', '')
@@ -220,145 +273,4 @@ class Command(BaseCommand):
                         contribution = save_contribution(row, committee, url, filing_number)
                         print committee, url, contribution
 
-
-"""
-
-                        print ' | '.join([str(len(row)), 
-                                          row[0],
-                                          row[1],
-                                          row[2],
-                                          row[4],
-                                          row[5],
-                                          row[6],
-                                          row[7], #last
-                                          row[8], #first
-                                          row[9], #middle
-                                          row[10], #prefix
-                                          row[11], #suffix
-                                          row[12], #street1
-                                          row[13], #street2
-                                          row[14], #city
-                                          row[15], #state
-                                          row[16], #zipcode
-                                          row[17], #
-                                          row[18], #
-                                          row[19], #date
-                                          row[20], #amt
-                                          row[21], #aggregate
-                                          row[22], #sometimes '15'
-                                          row[23], #blank - memo?
-                                          row[24], #employer
-                                          row[25], #occupation
-                                          row[26], #blank
-                                          row[27],
-                                          row[28],
-                                          row[29],
-                                          row[30],
-                                          ])
-['SA17', 'C00255752', 'SA17.89416', '', '', 'ORG', 'NORTHERN TRUST CO', '', '', '', '', '', '50 S LASALLE', '', 'CHICAGO', 'IL', '60675', '', '', '20100831', '28.34', '124.28', '', 'INTEREST INCOME', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '', '']
-form_type,
-committee_id,
-entity_type,
-contributor,
-street1,
-street2,
-city,
-state,
-zipcode,
-item_elect_cd,
-item_elect_other,
-indemp,
-indocc,
-aggregate,
-date,
-amount,
-trans_code,
-trans_description,
-fec_committee_id,
-fec_candidate_id,
-candidate_name,
-candidate_office,
-candidate_state,
-candidate_district,
-conduit_name,
-conduit_street1,
-conduit_street2,
-conduit_city,
-conduit_state,
-conduit_zip,
-memo_code,
-memo_text,
-amended_cd,
-tran_id,
-back_ref_tran_id,
-
-                    FORM TYPE
-FILER FEC CMTE ID
-
-ENTITY TYPE
-CONTRIBUTOR NAME
-
-STREET  1
-STREET  2
-CITY
-STATE
-ZIP
-
-ITEM ELECT CD
-ITEM ELECT OTHER
-
-INDEMP
-INDOCC
-
-AGGREGATE AMT Y-T-D
-DATE RECEIVED
-AMOUNT RECEIVED
-
-TRANS CODE
-TRANS DESCRIP
-
-FEC COMMITTEE ID NUMBER
-
-FEC CANDIDATE ID NUMBER
-CANDIDATE NAME
-CAN/OFFICE
-CAN/STATE 
-CAN/DIST
-
-CONDUIT NAME
-CONDUIT STREET1
-CONDUIT STREET2
-CONDUIT CITY
-CONDUIT STATE
-CONDUIT ZIP
-
-MEMO CODE
-MEMO TEXT
-
-AMENDED CD
-TRAN ID
-
-BACK REF TRAN ID
-BACK REF SCHED NAME
-
-Reference to SI or SL system code that identifies the Account
-
-INCREASED LIMIT
-
-CONTRIB ORGANIZATION NAME
-CONTRIBUTOR LAST NAME
-CONTRIBUTOR FIRST NAME
-CONTRIBUTOR MIDDLE NAME
-CONTRIBUTOR PREFIX
-CONTRIBUTOR SUFFIX
-                    for row in parse_donor_list(url):
-
-                        if not row: 
-                            continue
-
-                        row['committee'] = committee
-                        row['filing_number'] = filing_number
-
-                        print row
-                        contribution = save_row(row)
-                    """
+            """
