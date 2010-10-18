@@ -499,17 +499,20 @@ def totals(request):
 
         top_races = Expenditure.objects.order_by('race').values('race').annotate(amt=Sum('expenditure_amount')).order_by('-amt')[:10]
 
+        """
         states = defaultdict(Decimal)
         for race in Expenditure.objects.order_by('race').values('race').exclude(race='').annotate(amt=Sum('expenditure_amount')):
             states[race['race'].split('-')[0]] += race['amt']
 
-        top_states = sorted(states.items(key=itemgetter(1), reverse=True))[:10]
+        top_states = sorted(states.items, key=itemgetter(1), reverse=True)[:10]
+        """
+        top_states = []
 
         for i in by_party:
             i['party_cmtes'] = Expenditure.objects.filter(committee__tax_status='FECA Party', candidate__party=i['candidate__party'], support_oppose=i['support_oppose']).aggregate(t=Sum('expenditure_amount'))['t'] or 0
             i['non_party_cmtes'] = Expenditure.objects.exclude(committee__tax_status='FECA Party').filter(candidate__party=i['candidate__party'], support_oppose=i['support_oppose']).aggregate(t=Sum('expenditure_amount'))['t'] or 0
 
-   data = {'ie_total': ie_total,
+    data = {'ie_total': ie_total,
            'ec_total': ec_total,
            'total': total,
            'since': cutoff+datetime.timedelta(days=1),
