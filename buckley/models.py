@@ -639,6 +639,7 @@ class Contribution(models.Model):
     memo = models.CharField(max_length=100)
     url = models.URLField(verify_exists=False)
     data_row = models.TextField()
+    data_row_hash = models.CharField(max_length=32, db_index=True) # This would normally have a unique key, but some data rows are blank.
 
     def __unicode__(self):
         return self.name

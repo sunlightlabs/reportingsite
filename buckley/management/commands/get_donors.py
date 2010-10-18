@@ -8,6 +8,7 @@ import re
 import socket
 import time
 import urllib2
+from hashlib import md5
 
 try:
     import json
@@ -169,6 +170,10 @@ def save_contribution(row, committee, url, filing_number):
                                row[9],
                                row[11])).replace('  ', ' ').strip()
 
+    data_row_hash = md5(str(data_row)).hexdigest()
+    previously_saved = Contribution.objects.filter(data_row_hash=data_row_hash)
+    if previously_saved:
+        return previously_saved[0]
 
     try:
         contribution = Contribution.objects.create(
@@ -189,7 +194,8 @@ def save_contribution(row, committee, url, filing_number):
                 aggregate=row[21] or 0,
                 memo=row[23],
                 url=url,
-                data_row=str(row)
+                data_row=str(row),
+                data_row_hash=data_row_hash
                 )
     except IntegrityError:
         return
@@ -249,7 +255,7 @@ class Command(BaseCommand):
                     continue
 
             for row in parse_donor_csv(csv_url):
-                contribution = save_contribution(row, committee, url, filing_number)
+                contribution = save_contribution(row, committee, csv_url, filing_number)
                 print committee, csv_url, contribution
 
             """
