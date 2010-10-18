@@ -170,10 +170,10 @@ def save_contribution(row, committee, url, filing_number):
                                row[9],
                                row[11])).replace('  ', ' ').strip()
 
-    data_row_hash = md5(str(data_row)).hexdigest()
+    data_row_hash = md5(str(row)).hexdigest()
     previously_saved = Contribution.objects.filter(data_row_hash=data_row_hash)
     if previously_saved:
-        return previously_saved[0]
+        return None
 
     try:
         contribution = Contribution.objects.create(
@@ -226,7 +226,7 @@ class Command(BaseCommand):
 
         for result in data['results']:
             cid = re.search(r'C\d{8}', result['fec_uri']).group()
-            if cid in ids and ('QUARTER' in result['report_title'] or 'MONTH' in result['report_title']):
+            if cid in ids and ('QUARTER' in result['report_title'] or 'MONTH' in result['report_title'] or 'PRE-GENERAL' in result['report_title']):
                 try:
                     committee_id = CommitteeId.objects.get(fec_committee_id=cid)
                     committee = committee_id.committee
