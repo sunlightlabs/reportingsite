@@ -17,7 +17,7 @@ from dateutil.parser import parse as dateparse
 
 from buckley.models import Committee, Contribution
 
-MIN_DATE = datetime.date(2009, 2, 1)
+MIN_DATE = datetime.date(2010, 10, 1)
 
 socket.setdefaulttimeout(1000)
 
