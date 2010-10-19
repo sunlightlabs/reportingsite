@@ -502,10 +502,15 @@ def totals(request):
         top_races = Expenditure.objects.exclude(race='', candidate=None).filter(expenditure_date__gt=cutoff).order_by('race').values('race').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
         races = []
         for race in top_races:
-            candidates = Expenditure.objects.filter(race=race['race'])
-            if not candidates:
+            expenditures = Expenditure.objects.filter(race=race['race'], electioneering_communication=False)
+            if not expenditures:
                 continue
-            race['full_race_name'] = candidates[0].full_race_name()
+            expenditure = expenditures[0]
+            candidate = expenditure.candidate
+            if not candidate:
+                continue
+
+            race['full_race_name'] = candidate.full_race_name()
             races.append(race)
 
         parties = {'D': 'Democrats', 'R': 'Republicans', }
