@@ -499,7 +499,7 @@ def totals(request):
             candidate['candidate'] = Candidate.objects.get(pk=candidate['candidate'])
             candidates.append(candidate)
 
-        top_races = Expenditure.objects.exclude(race='').filter(expenditure_date__gt=cutoff).order_by('race').values('race').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
+        top_races = Expenditure.objects.exclude(race='', candidate=None).filter(expenditure_date__gt=cutoff).order_by('race').values('race').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
         races = []
         for race in top_races:
             race['full_race_name'] = Expenditure.objects.filter(race=race['race'])[0].candidate.full_race_name()
