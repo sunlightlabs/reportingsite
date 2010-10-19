@@ -17,11 +17,12 @@
     {% for expenditure in latest_big_expenditures|slice:"12" %}
     <tr class="{% cycle 'odd' 'even' %}">
         <td>
-        {% if expenditure.electioneering_communication %}
-        {{ expenditure.committee }}: ${{ expenditure.expenditure_amount|intcomma }} electioneering communication mentioning {% for candidate in expenditure.electioneering_candidates.all %}{{ candidate }}{% if candidate.race %} ({{ candidate.full_race_name }}){% endif %}{% if not forloop.last %}, {% endif %}{%endfor %}
-        {% else %}
-        {{ expenditure.committee }}: ${{ expenditure.expenditure_amount|intcomma }} {% ifequal expenditure.support_oppose 'S' %}supporting{% endifequal %}{% ifequal expenditure.support_oppose 'O' %}opposing{% endifequal %} {{ expenditure.candidate }} {% if expenditure.candidate.race %}({{ expenditure.candidate.full_race_name }}){% endif %}
-        {% endif %}
+            {% if expenditure.electioneering_communication %}
+            {{ expenditure.committee }}: ${{ expenditure.expenditure_amount|intcomma }} electioneering communication mentioning {% for candidate in expenditure.electioneering_candidates.all %}{{ candidate }}{% if candidate.race %} ({{ candidate.full_race_name }}){% endif %}{% if not forloop.last %}, {% endif %}{%endfor %}
+            {% else %}
+            {{ expenditure.committee }}: ${{ expenditure.expenditure_amount|intcomma }} {% ifequal expenditure.support_oppose 'S' %}supporting{% endifequal %}{% ifequal expenditure.support_oppose 'O' %}opposing{% endifequal %} {{ expenditure.candidate }} {% if expenditure.candidate.race %}({{ expenditure.candidate.full_race_name }}){% endif %}
+            {% endif %}
+            <a href="{{ expenditure.get_absolute_url }}#{{ expenditure.pk }}">details</a>
         </td>
     </tr>
     {% endfor %}
