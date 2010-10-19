@@ -493,6 +493,18 @@ def totals(request):
 
         committees = Expenditure.objects.filter(expenditure_date__gt=cutoff).exclude(committee__slug='').order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
 
+        top_candidates = Expenditure.objects.filter(expenditure_date__gt=cutoff).order_by('candidate').values('candidate').annotate(amount=Sum('expenditure_amount')).order_by('-amount')[:10]
+        candidates = []
+        for candidate in top_candidates:
+            candidate['candidate'] = Candidate.objects.get(pk=candidate['candidate'])
+            candidates.append(candidate)
+
+        top_races = Expenditure.objects.exclude(race='').filter(expenditure_date__gt=cutoff).order_by('race').values('race').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
+        races = []
+        for race in top_races:
+            race['full_race_name'] = Expenditure.objects.filter(race=race['race'])[0].candidate.full_race_name()
+            races.append(race)
+
         parties = {'D': 'Democrats', 'R': 'Republicans', }
         by_party = sorted(list(Expenditure.objects.exclude(support_oppose='', candidate__party='').filter(candidate__party__in=['R', 'D',]).values('candidate__party', 'support_oppose').annotate(amt=Sum('expenditure_amount'))), key=itemgetter('candidate__party', 'support_oppose'), reverse=True)
         """
@@ -506,8 +518,6 @@ def totals(request):
         """
 
         latest_big_expenditures = Expenditure.objects.filter(expenditure_amount__gt=250000).order_by('-timestamp')[:100]
-
-        top_races = Expenditure.objects.order_by('race').values('race').annotate(amt=Sum('expenditure_amount')).order_by('-amt')[:10]
 
         """
         states = defaultdict(Decimal)
@@ -530,7 +540,10 @@ def totals(request):
            'by_party': by_party,
            'latest_big_expenditures': latest_big_expenditures,
            'top_states': top_states,
-           'committees': committees, }
+           'committees': committees, 
+           'candidates': candidates,
+           'races': races,
+           }
 
     cache.set(cache_key, data, 60*60*24)
 

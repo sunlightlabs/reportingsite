@@ -90,7 +90,7 @@
     <thead>
         <tr>
             <th>Committee</th>
-            <th>Amount</th>
+            <th>Outside spending</th>
         </tr>
     </thead>
     <tbody>
@@ -99,6 +99,46 @@
                 <td><a href="{% url buckley_committee_detail slug=committee.committee__slug %}">{{ committee.committee__name }}</a></td>
                 <td>${{ committee.amount|intcomma }}</td>
             </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br><br>
+
+<h3>Top races since {{ since|date:"F j" }}</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Race</th>
+            <th>Outside spending</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for race in races|slice:"10" %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td><a href="{% url buckley_race_detail race=race.race %}">{{ race.full_race_name }}</a></td>
+            <td>${{ race.amount|intcomma }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+<br><br>
+
+<h3>Top candidates since {{ since|date:"F j" }}</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Candidate</th>
+            <th>Outside spending</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for candidate in candidates|slice:"10" %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td><a href="{{ candidate.candidate.get_absolute_url }}">{{ candidate.candidate }}</a></td>
+            <td>${{ candidate.amount|intcomma }}</td>
+        </tr>
         {% endfor %}
     </tbody>
 </table>
