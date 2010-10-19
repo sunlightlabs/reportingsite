@@ -16,7 +16,12 @@
 <table id="expendituresData">
     {% for expenditure in latest_big_expenditures|slice:"12" %}
     <tr class="{% cycle 'odd' 'even' %}">
-        <td>{{ expenditure.committee }}: ${{ expenditure.expenditure_amount|intcomma }} {% ifequal expenditure.support_oppose 'S' %}supporting{% endifequal %}{% ifequal expenditure.support_oppose 'O' %}opposing{% endifequal %} {{ expenditure.candidate }} {% if expenditure.candidate.race %}({{ expenditure.candidate.full_race_name }}){% endif %}
+        <td>
+        {% if expenditure.electioneering_communication %}
+        {{ expenditure.committee }}: ${{ expenditure.expenditure_amount|intcomma }} electioneering communication mentioning {% for candidate in expenditure.electioneering_candidates.all %}{{ candidate }}{% if candidate.race %} ({{ candidate.full_race_name }}){% endif %}, {% if forloop.last %}and{% endif %}{%endfor %}
+        {% else %}
+        {{ expenditure.committee }}: ${{ expenditure.expenditure_amount|intcomma }} {% ifequal expenditure.support_oppose 'S' %}supporting{% endifequal %}{% ifequal expenditure.support_oppose 'O' %}opposing{% endifequal %} {{ expenditure.candidate }} {% if expenditure.candidate.race %}({{ expenditure.candidate.full_race_name }}){% endif %}
+        {% endif %}
         </td>
     </tr>
     {% endfor %}
@@ -89,7 +94,7 @@
     </thead>
     <tbody>
         {% for committee in committees|slice:"10" %}
-            <tr>
+            <tr class="{% cycle 'odd' 'even' %}">
                 <td><a href="{% url buckley_committee_detail slug=committee.committee__slug %}">{{ committee.committee__name }}</a></td>
                 <td>${{ committee.amount|intcomma }}</td>
             </tr>
