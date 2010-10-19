@@ -5,57 +5,72 @@
 {% load humanize %}
 
 <style type="text/css">
-    table { border-collapse: collapse; }
-    td, th { border: 1px solid black; padding: 4px; }
+    /*table { border-collapse: collapse; }*/
+    /*td, th { border: 1px solid black; padding: 4px; }*/
+    h3 { text-align: center; }
 </style>
 
-<h2>Totals this election cycle</h2>
-<table>
+
+<div style="width: 300px; float: right;">
+<h4>Recent big spending</h4>
+<table id="expendituresData">
+    {% for expenditure in latest_big_expenditures|slice:"12" %}
+    <tr class="{% cycle 'odd' 'even' %}">
+        <td>{{ expenditure.committee }}: ${{ expenditure.expenditure_amount|intcomma }} {% ifequal expenditure.support_oppose 'S' %}supporting{% endifequal %}{% ifequal expenditure.support_oppose 'O' %}opposing{% endifequal %} {{ expenditure.candidate }} {% if expenditure.candidate.race %}({{ expenditure.candidate.full_race_name }}){% endif %}
+        </td>
+    </tr>
+    {% endfor %}
+</table>
+</div>
+
+<div style="width: 500px; margin-right: 100px;">
+<h3>Totals this election cycle</h3>
+<table id="expendituresData">
     <thead>
         <tr>
-            <th>Type</th>
-            <th>Amount spent</th>
+            <th></th>
+            <th>Amount</th>
         </tr>
     </thead>
     <tbody>
-        <tr>
-            <th>Independent expenditures</th>
+        <tr class="odd">
+            <td><strong>Independent expenditures</strong></td>
             <td>${{ ie_total|intcomma }}</td>
         </tr>
-        <tr>
-            <th>Electioneering communications</th>
+        <tr class="even">
+            <td><strong>Electioneering communications</strong></td>
             <td>${{ ec_total|intcomma }}</td>
         </tr>
-        <tr>
-            <th>Total</th>
+        <tr class="odd">
+            <td><strong>Total</strong></td>
             <td>${{ total|intcomma }}</td>
         </tr>
     </tbody>
 </table>
-<br>
-<strong>Note:</strong> ${{ ie_only_total|intcomma }} of this spending has been from "Super" PACs -- groups that have submitted a letter saying they will accept contributions of unlimited amounts.
 
 <br><br>
-<h2>Party totals this election cycle</h2>
+
+<h3>Spending by political party</h3>
 <table>
     <thead>
         <tr>
-            <th>Party</th>
-            <th>Total Amount</th>
-            <th>Non-Party Committees</th>
-            <th>Party Committees</th>
-            <th>Support/Oppose</th>
+            <th></th>
+            <th>By Non-Party Committees</th>
+            <th>By Party Committees</th>
+            <th>Total</th>
         </tr>
     </thead>
     <tbody>
         {% for p in by_party %}
 {% if p.candidate__party and p.support_oppose %}
-        <tr>
-            <td>{{ p.candidate__party }}</td>
-            <td><a href="{% url buckley_totals_by_party party=p.candidate__party support_oppose=p.support_oppose %}">${{ p.amt|intcomma }}</a></td>
+    <tr class="{% cycle 'odd' 'even' %}">
+            <td><strong>{% ifequal p.support_oppose 'S' %}Supporting{% endifequal %}{% ifequal p.support_oppose 'O' %}Opposing{% endifequal %}
+                {% ifequal p.candidate__party 'D' %}Democrats{% endifequal %}{% ifequal p.candidate__party 'R' %}Republicans{% endifequal %}
+            </strong>
+            </td>
             <td>${{ p.non_party_cmtes|intcomma }}</td>
             <td>${{ p.party_cmtes|intcomma }}</td>
-            <td>{{ p.support_oppose }}</td>
+            <td>{#<a href="{% url buckley_totals_by_party party=p.candidate__party support_oppose=p.support_oppose %}">#}${{ p.amt|intcomma }}{#</a>#}</td>
         </tr>
 {% endif %}
         {% endfor %}
@@ -64,7 +79,7 @@
 
 <br><br>
 
-<h2>Amounts spent since {{ since }}</h2>
+<h3>Top spenders since {{ since|date:"F j" }}</h3>
 <table>
     <thead>
         <tr>
@@ -73,7 +88,7 @@
         </tr>
     </thead>
     <tbody>
-        {% for committee in committees %}
+        {% for committee in committees|slice:"10" %}
             <tr>
                 <td><a href="{% url buckley_committee_detail slug=committee.committee__slug %}">{{ committee.committee__name }}</a></td>
                 <td>${{ committee.amount|intcomma }}</td>
@@ -81,5 +96,8 @@
         {% endfor %}
     </tbody>
 </table>
+
+</div>
+
 
 {% endblock content %}

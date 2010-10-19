@@ -493,9 +493,19 @@ def totals(request):
 
         committees = Expenditure.objects.filter(expenditure_date__gt=cutoff).exclude(committee__slug='').order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
 
-        by_party = sorted(list(Expenditure.objects.exclude(support_oppose='', candidate__party='').values('candidate__party', 'support_oppose').annotate(amt=Sum('expenditure_amount'))), key=itemgetter('candidate__party', 'support_oppose'), reverse=True)
+        parties = {'D': 'Democrats', 'R': 'Republicans', }
+        by_party = sorted(list(Expenditure.objects.exclude(support_oppose='', candidate__party='').filter(candidate__party__in=['R', 'D',]).values('candidate__party', 'support_oppose').annotate(amt=Sum('expenditure_amount'))), key=itemgetter('candidate__party', 'support_oppose'), reverse=True)
+        """
+        by_party += sorted(list(Expenditure.objects.exclude(support_oppose='', candidate__party__in=['R', 'D',]).values('support_oppose').annotate(amt=Sum('expenditure_amount'))), key=itemgetter('support_oppose'), reverse=True)
+        for p in by_party:
+            if p.has_key('candidate__party'):
+                p['party'] = parties.get(p['candidate__party'])
+            else:
+                p['party'] = 'Others'
+            #p['party'] = parties.get(p.get('candidate__party'), 'Others')
+        """
 
-        latest_big_expenditures = Expenditure.objects.filter(expenditure_amount__gt=250000).order_by('-timestamp')[:10]
+        latest_big_expenditures = Expenditure.objects.filter(expenditure_amount__gt=250000).order_by('-timestamp')[:100]
 
         top_races = Expenditure.objects.order_by('race').values('race').annotate(amt=Sum('expenditure_amount')).order_by('-amt')[:10]
 
