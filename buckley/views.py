@@ -855,28 +855,6 @@ def api_candidate_list(request):
             candidate['api_url'] = ''
 
 
-#    for candidate in Candidate.objects.all():
-#        data.append(get_candidate_data(candidate))
-#        """
-#        data.append({
-#            'candidate': str(candidate),
-#            'fec_id': candidate.fec_id,
-#            'crp_id': candidate.crp_id,
-#            'party': candidate.party,
-#            'office': candidate.office,
-#            'state': candidate.state,
-#            'district': candidate.district if not candidate.district.startswith('S') else '',
-#            'race': candidate.full_race_name(),
-#            'url': base_url % candidate.get_absolute_url(),
-#            'api_url': base_url % '/independent-expenditures/api/candidates/%s.json' % candidate.crp_id,
-#            'total_outside_spending': int(candidate.total_including_electioneering()),
-#            'total_electioneering': int(candidate.sole_electioneering_total()),
-#            'total_independent_expenditures': int(candidate.total('S') + candidate.total('O')),
-#            'independent_expenditures_supporting': int(candidate.total('S')),
-#            'independent_expenditures_opposing': int(candidate.total('O')),
-#            })
-#        """
-
     return HttpResponse(json.dumps(candidates), mimetype='text/plain')
 
 def get_candidate_data(candidate):
@@ -933,24 +911,6 @@ def api_candidate_detail(request, crp_id):
         del(data['candidate_crp_id'])
         candidate['top_contributors'].append(data)
 
-
-    """
-    candidate = get_object_or_404(Candidate, crp_id=crp_id)
-    data = get_candidate_data(candidate)
-    data['committees'] = []
-    base_url = 'http://%s%%s' % Site.objects.get_current().domain
-
-    data['committees'] = []
-    for committee in candidate.all_committees_with_amounts():
-        data['committees'].append({'committee': committee['committee'].name,
-                                   'url': base_url % committee['committee'].get_absolute_url(),
-                                   'api_url': base_url % '/independent-expenditures/api/committees/%s.json' % committee['committee'].fec_id(),
-                                   'fec_id': committee['committee'].fec_id(), 
-                                   'support_oppose': committee['support_oppose'],
-                                   'amount': int(committee['amount']),
-                                   })
-
-    """
     return HttpResponse(json.dumps(candidate), mimetype='text/plain')
 
 def api_race_list(request):
