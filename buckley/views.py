@@ -785,10 +785,14 @@ def api_committee_list(request):
     for committee in Committee.objects.all():
         if not committee.slug:
             continue
+        try:
+            fec_id = committee.fec_id()
+        except IndexError:
+            continue
         committees.append([{
             'committee': committee.name,
             'url': base_url % committee.get_absolute_url(),
-            'api_url': base_url % '/independent-expenditures/api/committees/%s.json' % committee.fec_id(),
+            'api_url': base_url % '/independent-expenditures/api/committees/%s.json' % fec_id,
             'fec_id': committee.fec_id(),
             'total_spent': int(committee.total()),
             'independent_expenditure_total': int(committee.ie_total()),
