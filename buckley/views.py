@@ -840,30 +840,44 @@ def api_committee_detail(request, fec_id):
 
 
 def api_candidate_list(request):
-    data = []
-    for candidate in Candidate.objects.all():
-        data.append(get_candidate_data(candidate))
-        """
-        data.append({
-            'candidate': str(candidate),
-            'fec_id': candidate.fec_id,
-            'crp_id': candidate.crp_id,
-            'party': candidate.party,
-            'office': candidate.office,
-            'state': candidate.state,
-            'district': candidate.district if not candidate.district.startswith('S') else '',
-            'race': candidate.full_race_name(),
-            'url': base_url % candidate.get_absolute_url(),
-            'api_url': base_url % '/independent-expenditures/api/candidates/%s.json' % candidate.crp_id,
-            'total_outside_spending': int(candidate.total_including_electioneering()),
-            'total_electioneering': int(candidate.sole_electioneering_total()),
-            'total_independent_expenditures': int(candidate.total('S') + candidate.total('O')),
-            'independent_expenditures_supporting': int(candidate.total('S')),
-            'independent_expenditures_opposing': int(candidate.total('O')),
-            })
-        """
+    base_url = 'http://%s%%s' % Site.objects.get_current().domain
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM all_candidates") 
 
-    return HttpResponse(json.dumps(data), mimetype='text/plain')
+    fields = [x[0] for x in cursor.description]
+    candidates = [dict(zip(fields, row)) for row in cursor.fetchall()]
+
+    for candidate in candidates:
+        del(candidate['id'])
+        if candidate['crp_id']:
+            candidate['api_url'] = base_url % '/independent-expenditures/api/candidates/%s.json' % candidate['crp_id']
+        else:
+            candidate['api_url'] = ''
+
+
+#    for candidate in Candidate.objects.all():
+#        data.append(get_candidate_data(candidate))
+#        """
+#        data.append({
+#            'candidate': str(candidate),
+#            'fec_id': candidate.fec_id,
+#            'crp_id': candidate.crp_id,
+#            'party': candidate.party,
+#            'office': candidate.office,
+#            'state': candidate.state,
+#            'district': candidate.district if not candidate.district.startswith('S') else '',
+#            'race': candidate.full_race_name(),
+#            'url': base_url % candidate.get_absolute_url(),
+#            'api_url': base_url % '/independent-expenditures/api/candidates/%s.json' % candidate.crp_id,
+#            'total_outside_spending': int(candidate.total_including_electioneering()),
+#            'total_electioneering': int(candidate.sole_electioneering_total()),
+#            'total_independent_expenditures': int(candidate.total('S') + candidate.total('O')),
+#            'independent_expenditures_supporting': int(candidate.total('S')),
+#            'independent_expenditures_opposing': int(candidate.total('O')),
+#            })
+#        """
+
+    return HttpResponse(json.dumps(candidates), mimetype='text/plain')
 
 def get_candidate_data(candidate):
     base_url = 'http://%s%%s' % Site.objects.get_current().domain
@@ -885,7 +899,40 @@ def get_candidate_data(candidate):
             }
 
 def api_candidate_detail(request, crp_id):
-    data = {}
+
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM all_candidates WHERE crp_id = %s", [crp_id, ])
+    candidate = dict(zip([x[0] for x in cursor.description], cursor.fetchone()))
+
+    del(candidate['id'])
+    candidate['candidate_campaign_spending'] = candidate['spending']
+    del(candidate['spending'])
+
+    try:
+        candidate_obj = Candidate.objects.get(crp_id=candidate['crp_id'])
+        candidate['outside_spending'] = int(candidate_obj.sole_total())
+        candidate['top_outside_spending_groups'] = []
+        outside_spending = sorted(candidate_obj.sole_all_committees_with_amounts(), key=itemgetter('amount'), reverse=True)
+        for spending in outside_spending:
+            candidate['top_outside_spending_groups'].append({
+                'committee': spending['committee'].name,
+                'support_oppose': spending['support_oppose'],
+                'amount': int(spending['amount']),
+                })
+    except Candidate.DoesNotExist:
+        candidate['outside_spending'] = 0
+        candidate['top_outside_spending_groups'] = []
+
+    candidate['top_contributors'] = []
+
+    cursor.execute("SELECT * FROM candidate_contributions WHERE candidate_crp_id = %s ORDER BY rank", [candidate['crp_id'], ])
+    fields = [x[0] for x in cursor.description]
+    for row in cursor.fetchall():
+        data = dict(zip(fields, row))
+        del(data['id'])
+        del(data['candidate_crp_id'])
+        candidate['top_contributors'].append(data)
+
 
     """
     candidate = get_object_or_404(Candidate, crp_id=crp_id)
@@ -904,7 +951,7 @@ def api_candidate_detail(request, crp_id):
                                    })
 
     """
-    return HttpResponse(json.dumps(data), mimetype='text/plain')
+    return HttpResponse(json.dumps(candidate), mimetype='text/plain')
 
 def api_race_list(request):
     base_url = 'http://%s%%s' % Site.objects.get_current().domain
