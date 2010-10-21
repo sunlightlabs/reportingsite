@@ -101,6 +101,8 @@ class Command(BaseCommand):
                     committee_id = CommitteeId.objects.get(fec_committee_id=row['committee_id'])
                     if committee_id:
                         committee = committee_id.committee
+                    else:
+                        continue
                 except CommitteeId.DoesNotExist:
                     committee = committee_lookup(row['committee_id'])
                     row.update(committee)
