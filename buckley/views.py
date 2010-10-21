@@ -479,6 +479,26 @@ def multi_candidate_ecs(request, slug):
 
 
 def totals(request):
+    total = Total.objects.all().reverse()[0]
+    top_committees = TopCommittee.objects.order_by('-amount')[:10]
+    top_races = TopRace.objects.order_by('-amount')[:10]
+    top_candidates = TopCandidate.objects.order_by('-amount')[:10]
+
+    latest_big_expenditures = Expenditure.objects.filter(expenditure_amount__gt=250000).order_by('-timestamp')[:100]
+
+    cutoff = datetime.date.today() - datetime.timedelta(days=4)
+
+    return render_to_response('buckley/totals.html',
+                              {'total': total,
+                               'top_committees': top_committees,
+                               'top_races': top_races,
+                               'top_candidates': top_candidates,
+                               'latest_big_expenditures': latest_big_expenditures, 
+                               'since': cutoff+datetime.timedelta(days=1),
+                               },
+                               context_instance=RequestContext(request))
+
+
     cache_key = 'buckley:totals'
     data = cache.get(cache_key)
 

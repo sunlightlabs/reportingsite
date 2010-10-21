@@ -41,15 +41,15 @@
     <tbody>
         <tr class="odd">
             <td><strong>Independent expenditures</strong></td>
-            <td>${{ ie_total|intcomma }}</td>
+            <td>${{ total.ie_total|intcomma }}</td>
         </tr>
         <tr class="even">
             <td><strong>Electioneering communications</strong></td>
-            <td>${{ ec_total|intcomma }}</td>
+            <td>${{ total.ec_total|intcomma }}</td>
         </tr>
         <tr class="odd">
             <td><strong>Total</strong></td>
-            <td>${{ total|intcomma }}</td>
+            <td>${{ total.total|intcomma }}</td>
         </tr>
     </tbody>
 </table>
@@ -67,6 +67,31 @@
         </tr>
     </thead>
     <tbody>
+        <tr class="odd">
+            <td><strong>Supporting Republicans</strong></td>
+            <td>${{ total.republican_support_nonparty|intcomma }}</td>
+            <td>${{ total.republican_support_party|intcomma }}</td>
+            <td>${{ total.republican_support_total|intcomma }}</td>
+        </tr>
+        <tr class="even">
+            <td><strong>Opposing Republicans</strong></td>
+            <td>${{ total.republican_oppose_nonparty|intcomma }}</td>
+            <td>${{ total.republican_oppose_party|intcomma }}</td>
+            <td>${{ total.republican_oppose_total|intcomma }}</td>
+        </tr>
+        <tr class="odd">
+            <td><strong>Supporting Democrats</strong></td>
+            <td>${{ total.democrat_support_nonparty|intcomma }}</td>
+            <td>${{ total.democrat_support_party|intcomma }}</td>
+            <td>${{ total.democrat_support_total|intcomma }}</td>
+        </tr>
+        <tr class="even">
+            <td><strong>Opposing Democrats</strong></td>
+            <td>${{ total.democrat_oppose_nonparty|intcomma }}</td>
+            <td>${{ total.democrat_oppose_party|intcomma }}</td>
+            <td>${{ total.democrat_oppose_total|intcomma }}</td>
+        </tr>
+        {% comment %}
         {% for p in by_party %}
 {% if p.candidate__party and p.support_oppose %}
     <tr class="{% cycle 'odd' 'even' %}">
@@ -80,6 +105,7 @@
         </tr>
 {% endif %}
         {% endfor %}
+        {% endcomment %}
     </tbody>
 </table>
 
@@ -94,12 +120,20 @@
         </tr>
     </thead>
     <tbody>
+        {% for committee in top_committees %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td><a href="{{ committee.committee.get_absolute_url }}">{{ committee.committee }}</a></td>
+            <td>${{ committee.amount|intcomma }}</td>
+        </tr>
+        {% endfor %}
+        {% comment %}
         {% for committee in committees|slice:"10" %}
             <tr class="{% cycle 'odd' 'even' %}">
                 <td><a href="{% url buckley_committee_detail slug=committee.committee__slug %}">{{ committee.committee__name }}</a></td>
                 <td>${{ committee.amount|intcomma }}</td>
             </tr>
         {% endfor %}
+        {% endcomment %}
     </tbody>
 </table>
 
@@ -114,12 +148,20 @@
         </tr>
     </thead>
     <tbody>
+        {% for race in top_races %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td><a href="{% url buckley_race_detail race=race.race %}">{{ race.race }}</a></td>
+            <td>${{ race.amount|intcomma }}</td>
+        </tr>
+        {% endfor %}
+        {% comment %}
         {% for race in races|slice:"10" %}
         <tr class="{% cycle 'odd' 'even' %}">
             <td><a href="{% url buckley_race_detail race=race.race %}">{{ race.full_race_name }}</a></td>
             <td>${{ race.amount|intcomma }}</td>
         </tr>
         {% endfor %}
+        {% endcomment %}
     </tbody>
 </table>
 
@@ -134,12 +176,20 @@
         </tr>
     </thead>
     <tbody>
+        {% for candidate in top_candidates %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.candidate }}</a></td>
+            <td>${{ candidate.amount|intcomma }}</td>
+        </tr>
+        {% endfor %}
+        {% comment %}
         {% for candidate in candidates|slice:"10" %}
         <tr class="{% cycle 'odd' 'even' %}">
             <td><a href="{{ candidate.candidate.get_absolute_url }}">{{ candidate.candidate }}</a></td>
             <td>${{ candidate.amount|intcomma }}</td>
         </tr>
         {% endfor %}
+        {% endcomment %}
     </tbody>
 </table>
 

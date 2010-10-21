@@ -648,3 +648,35 @@ class Contribution(models.Model):
         unique_together = (('committee', 'filing_number', 'transaction_id', 'name', 'date', 'employer', 'occupation',
                             'street1', 'street2', 'city', 'state', 'zipcode', 'amount', 'aggregate', 
                             'memo', ), )
+
+
+"""Caching data for the totals page.
+"""
+class Total(models.Model):
+    ie_total = models.DecimalField(max_digits=19, decimal_places=2)
+    ec_total = models.DecimalField(max_digits=19, decimal_places=2)
+    total = models.DecimalField(max_digits=19, decimal_places=2)
+    republican_support_nonparty = models.DecimalField(max_digits=19, decimal_places=2)
+    republican_support_party = models.DecimalField(max_digits=19, decimal_places=2)
+    republican_support_total = models.DecimalField(max_digits=19, decimal_places=2)
+    republican_oppose_nonparty = models.DecimalField(max_digits=19, decimal_places=2)
+    republican_oppose_party = models.DecimalField(max_digits=19, decimal_places=2)
+    republican_oppose_total = models.DecimalField(max_digits=19, decimal_places=2)
+    democrat_support_nonparty = models.DecimalField(max_digits=19, decimal_places=2)
+    democrat_support_party = models.DecimalField(max_digits=19, decimal_places=2)
+    democrat_support_total = models.DecimalField(max_digits=19, decimal_places=2)
+    democrat_oppose_nonparty = models.DecimalField(max_digits=19, decimal_places=2)
+    democrat_oppose_party = models.DecimalField(max_digits=19, decimal_places=2)
+    democrat_oppose_total = models.DecimalField(max_digits=19, decimal_places=2)
+
+class TopCommittee(models.Model):
+    committee = models.ForeignKey(Committee)
+    amount = models.DecimalField(max_digits=19, decimal_places=2)
+
+class TopRace(models.Model):
+    race = models.CharField(max_length=16)
+    amount = models.DecimalField(max_digits=19, decimal_places=2)
+
+class TopCandidate(models.Model):
+    candidate = models.ForeignKey(Candidate)
+    amount = models.DecimalField(max_digits=19, decimal_places=2)
