@@ -2,7 +2,231 @@
 
 {% block content %}
 
+<script type="text/javascript">
+var outsideSpending; 
+$(document).ready(function() {
+      var total = {{ total.total }};
+      outsideSpending = new Highcharts.Chart({
+         chart: {
+            renderTo: 'outside-spending-pie',
+            defaultSeriesType: 'pie'
+         },
+         title: {
+            text: 'Outside spending'
+         },
+        tooltip: {
+                 formatter: function() {
+                    return '<b>'+ this.point.name +'</b>: '+ Math.round((this.y/total)*100) +' %';
+                 }
+              },
+
+        legend: {
+                 layout: 'horizontal'
+              },
+        series: [{
+                 type: 'pie',
+                 name: 'Outside spending',
+                 data: [
+                    ['Independent expenditures',   {{ total.ie_total }}],
+                    ['Electioneering communications',       {{ total.ec_total }}],
+                 ]
+              }]
+      });
+
+      var partyTotal = {{ total.republican_support_total }} + {{ total.republican_oppose_total }} + {{ total.democrat_support_total }} + {{ total.democrat_oppose_total }};
+    partyVsNonparty = new Highcharts.Chart({
+        chart: {
+            renderTo: 'party-pie',
+            defaultSeriesType: 'pie',
+        },
+        title: {
+            text: 'Outside spending by candidate party'
+        },
+        tooltip: {
+                 formatter: function() {
+                    return '<b>'+ this.point.name +'</b>: '+ Math.round((this.y/partyTotal)*100) +' %';
+                 }
+      },
+        legend: {
+            layout: 'horizontal'
+        },
+        series: [{
+            type: 'pie',
+            name: 'Outside spending by candidate party',
+            data: [
+            ['Supporting Republicans/Opposing Democrats', {{ total.republican_support_total }} + {{ total.democrat_oppose_total }}],
+            ['Supporting Democrats/Opposing Republicans', {{ total.democrat_support_total }} + {{ total.republican_oppose_total }}]
+            ]
+        }]
+    });
+
+    var partyCommitteeTotal = {{ total.republican_support_party }} + {{ total.republican_oppose_party }} + {{ total.democrat_support_party }} + {{ total.democrat_oppose_party }};
+    var nonpartyCommitteeTotal = {{ total.republican_support_nonparty }} + {{ total.republican_oppose_nonparty }} + {{ total.democrat_support_nonparty }} + {{ total.democrat_oppose_nonparty }};
+    partyCommitteeVsNonpartyCommittee = new Highcharts.Chart({
+        chart: {
+            renderTo: 'party-committee-pie',
+            defaultSeriesType: 'pie'
+        },
+        title: {
+            text: 'Outside spending: Party committees vs. Non-party committees'
+        },
+        tooltip: {
+                 formatter: function() {
+                    return '<b>'+ this.point.name +'</b>: '+ Math.round((this.y/partyTotal)*100) +' %';
+                 }
+      },
+        legend: {
+            layout: 'horizontal'
+        },
+        series: [{
+            type: 'pie',
+            name: 'Outside spending by candidate party',
+            data: [
+            ['Party committees', partyCommitteeTotal],
+            ['Non-party committees', nonpartyCommitteeTotal]
+            ]
+        }]
+    });
+
+    committeeChart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'committee-barchart',
+            defaultSeriesType: 'bar',
+        },
+        title: {
+            text: 'Top spenders in past 4 days'
+        },
+        xAxis: {
+         categories: [
+            {% for committee in top_committees|slice:"5" %}
+            '{{ committee.committee }}'{% if not forloop.last %},{% endif %}
+            {% endfor %}
+         ],
+          labels: {
+            rotation: -45,
+            align: 'right',
+            style: {
+                font: 'normal 10px Verdana, sans-serif'
+            }
+         }
+      },
+        yAxis: {
+                 min: 0,
+                 title: {
+                    text: 'Amount spent'
+                 }
+              },
+       plotOptions: {
+         column: {
+            stacking: 'normal'
+         }
+        },
+
+        tooltip: {
+                 formatter: function() {
+                    return '<b>$'+ Math.round(this.y);
+                 }
+      },
+        series: [
+                { data: [{% for committee in top_committees|slice:"5" %}{{ committee.amount }}{% if not forloop.last %},{% endif %}{% endfor %}]
+                }
+                ],
+        legend: { enabled: false }
+    });
+
+    raceChart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'race-barchart',
+            defaultSeriesType: 'bar',
+        },
+        title: {
+            text: 'Top races in past 4 days'
+        },
+        xAxis: {
+         categories: [
+            {% for race in top_races|slice:"5" %}
+            '{{ race.race }}'{% if not forloop.last %},{% endif %}
+            {% endfor %}
+         ],
+      },
+        yAxis: {
+                 min: 0,
+                 title: {
+                    text: 'Amount spent'
+                 }
+              },
+       plotOptions: {
+         column: {
+            stacking: 'normal'
+         }
+        },
+
+        tooltip: {
+                 formatter: function() {
+                    return '<b>$'+ Math.round(this.y);
+                 }
+      },
+        series: [
+                { data: [{% for race in top_races|slice:"5" %}{{ race.amount }}{% if not forloop.last %},{% endif %}{% endfor %}]
+                }
+                ],
+        legend: { enabled: false }
+    });
+
+    candidateChart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'candidate-barchart',
+            defaultSeriesType: 'bar',
+        },
+        title: {
+            text: 'Top candidates in past 4 days'
+        },
+        xAxis: {
+         categories: [
+            {% for candidate in top_candidates|slice:"5" %}
+            '{{ candidate.candidate }}'{% if not forloop.last %},{% endif %}
+            {% endfor %}
+         ],
+          labels: {
+            rotation: -45,
+            align: 'right',
+            style: {
+                font: 'normal 10px Verdana, sans-serif'
+            }
+         }
+      },
+        yAxis: {
+                 min: 0,
+                 title: {
+                    text: 'Outside spending for/against'
+                 }
+              },
+       plotOptions: {
+         column: {
+            stacking: 'normal'
+         }
+        },
+
+        tooltip: {
+                 formatter: function() {
+                    return '<b>$'+ Math.round(this.y);
+                 }
+      },
+        series: [
+                { data: [{% for candidate in top_candidates|slice:"5" %}{{ candidate.amount }}{% if not forloop.last %},{% endif %}{% endfor %}]
+                }
+                ],
+        legend: { enabled: false }
+    });
+
+});
+</script>
+
+
+{% load media %}
 {% load humanize %}
+
+{% js "js/highcharts.js" %}
 
 <style type="text/css">
     /*table { border-collapse: collapse; }*/
@@ -21,7 +245,7 @@
             {% else %}
             {{ expenditure.committee }}: ${{ expenditure.expenditure_amount|intcomma }} {% ifequal expenditure.support_oppose 'S' %}supporting{% endifequal %}{% ifequal expenditure.support_oppose 'O' %}opposing{% endifequal %} {{ expenditure.candidate }} {% if expenditure.candidate.race %}({{ expenditure.candidate.full_race_name }}){% endif %}
             {% endif %}
-            <a href="{{ expenditure.get_absolute_url }}#{{ expenditure.pk }}">details</a>
+            <a href="{{ expenditure.get_absolute_url }}#{{ expenditure.pk }}">{{ expenditure.expenditure_date }}</a>
         </td>
     </tr>
     {% endfor %}
@@ -52,6 +276,9 @@
         </tr>
     </tbody>
 </table>
+
+
+<div id="outside-spending-pie" style="width: 100%; height: 400px"></div>
 
 <br><br>
 
@@ -90,27 +317,16 @@
             <td>${{ total.democrat_oppose_party|intcomma }}</td>
             <td>${{ total.democrat_oppose_total|intcomma }}</td>
         </tr>
-        {% comment %}
-        {% for p in by_party %}
-{% if p.candidate__party and p.support_oppose %}
-    <tr class="{% cycle 'odd' 'even' %}">
-            <td><strong>{% ifequal p.support_oppose 'S' %}Supporting{% endifequal %}{% ifequal p.support_oppose 'O' %}Opposing{% endifequal %}
-                {% ifequal p.candidate__party 'D' %}Democrats{% endifequal %}{% ifequal p.candidate__party 'R' %}Republicans{% endifequal %}
-            </strong>
-            </td>
-            <td>${{ p.non_party_cmtes|intcomma }}</td>
-            <td>${{ p.party_cmtes|intcomma }}</td>
-            <td>{#<a href="{% url buckley_totals_by_party party=p.candidate__party support_oppose=p.support_oppose %}">#}${{ p.amt|intcomma }}{#</a>#}</td>
-        </tr>
-{% endif %}
-        {% endfor %}
-        {% endcomment %}
     </tbody>
 </table>
 
+<div id="party-pie" style="width: 100%; height: 400px"></div>
+<div id="party-committee-pie" style="width: 100%; height: 400px"></div>
+
+
 <br><br>
 
-<h3>Top spenders since {{ since|date:"F j" }}</h3>
+<h3>Top spenders in the past 4 days</h3>
 <table>
     <thead>
         <tr>
@@ -119,26 +335,20 @@
         </tr>
     </thead>
     <tbody>
-        {% for committee in top_committees %}
+        {% for committee in top_committees|slice:"5" %}
         <tr class="{% cycle 'odd' 'even' %}">
             <td><a href="{{ committee.committee.get_absolute_url }}">{{ committee.committee }}</a></td>
             <td>${{ committee.amount|intcomma }}</td>
         </tr>
         {% endfor %}
-        {% comment %}
-        {% for committee in committees|slice:"10" %}
-            <tr class="{% cycle 'odd' 'even' %}">
-                <td><a href="{% url buckley_committee_detail slug=committee.committee__slug %}">{{ committee.committee__name }}</a></td>
-                <td>${{ committee.amount|intcomma }}</td>
-            </tr>
-        {% endfor %}
-        {% endcomment %}
     </tbody>
 </table>
 
+<div id="committee-barchart" style="width: 100%; height: 400px"></div>
+
 <br><br>
 
-<h3>Top races since {{ since|date:"F j" }}</h3>
+<h3>Top races in the past 4 days</h3>
 <table>
     <thead>
         <tr>
@@ -147,26 +357,20 @@
         </tr>
     </thead>
     <tbody>
-        {% for race in top_races %}
+        {% for race in top_races|slice:"5" %}
         <tr class="{% cycle 'odd' 'even' %}">
             <td><a href="{% url buckley_race_detail race=race.race %}">{{ race.race }}</a></td>
             <td>${{ race.amount|intcomma }}</td>
         </tr>
         {% endfor %}
-        {% comment %}
-        {% for race in races|slice:"10" %}
-        <tr class="{% cycle 'odd' 'even' %}">
-            <td><a href="{% url buckley_race_detail race=race.race %}">{{ race.full_race_name }}</a></td>
-            <td>${{ race.amount|intcomma }}</td>
-        </tr>
-        {% endfor %}
-        {% endcomment %}
     </tbody>
 </table>
 
+<div id="race-barchart" style="width: 100%; height: 400px"></div>
+
 <br><br>
 
-<h3>Top candidates since {{ since|date:"F j" }}</h3>
+<h3>Top candidates in the past 4 days</h3>
 <table>
     <thead>
         <tr>
@@ -175,22 +379,16 @@
         </tr>
     </thead>
     <tbody>
-        {% for candidate in top_candidates %}
+        {% for candidate in top_candidates|slice:"5" %}
         <tr class="{% cycle 'odd' 'even' %}">
             <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.candidate }}</a></td>
             <td>${{ candidate.amount|intcomma }}</td>
         </tr>
         {% endfor %}
-        {% comment %}
-        {% for candidate in candidates|slice:"10" %}
-        <tr class="{% cycle 'odd' 'even' %}">
-            <td><a href="{{ candidate.candidate.get_absolute_url }}">{{ candidate.candidate }}</a></td>
-            <td>${{ candidate.amount|intcomma }}</td>
-        </tr>
-        {% endfor %}
-        {% endcomment %}
     </tbody>
 </table>
+
+<div id="candidate-barchart" style="width: 100%; height: 400px"></div>
 
 </div>
 
