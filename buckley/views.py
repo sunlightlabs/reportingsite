@@ -11,6 +11,7 @@ from django.contrib.sites.models import Site
 from django.core.cache import cache
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.db.models import Sum, Q
+from django.db import connection
 from django.http import Http404, HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
 from django.template import RequestContext
@@ -548,7 +549,7 @@ def totals(request):
            'by_party': by_party,
            'latest_big_expenditures': latest_big_expenditures,
            'top_states': top_states,
-           'committees': committees, 
+           'committees': committees,
            'candidates': candidates,
            'races': races,
            }
@@ -861,6 +862,9 @@ def get_candidate_data(candidate):
             }
 
 def api_candidate_detail(request, crp_id):
+    data = {}
+
+    """
     candidate = get_object_or_404(Candidate, crp_id=crp_id)
     data = get_candidate_data(candidate)
     data['committees'] = []
@@ -876,56 +880,72 @@ def api_candidate_detail(request, crp_id):
                                    'amount': int(committee['amount']),
                                    })
 
+    """
     return HttpResponse(json.dumps(data), mimetype='text/plain')
 
 def api_race_list(request):
     base_url = 'http://%s%%s' % Site.objects.get_current().domain
+    cursor = connection.cursor()
+    cursor.execute("SELECT seat, state, district FROM all_candidates GROUP BY seat")
     races = []
-    for race in Expenditure.objects.order_by('race').values_list('race', flat=True).distinct():
-        if not race:
-            continue
-        expenditures = Expenditure.objects.filter(race=race).order_by('-candidate')
-        try:
-            races.append({
-                'race': expenditures[0].candidate.race(),
-                'total_outside_spending': int(expenditures.aggregate(total=Sum('expenditure_amount'))['total']),
-                'url': base_url % '/independent-expenditures/race/%s' % race,
-                'api_url': base_url % '/independent-expenditures/api/races/%s.json' % race,
-                })
-        except AttributeError:
-            continue
+    for row in cursor.fetchall():
+        data = dict(zip([x[0] for x in cursor.description], row))
+        data['api_url'] = base_url % '/independent-expenditures/api/races/%(seat)s.json' % data
+        if data['district'] == 'Senate':
+            url = '/independent-expenditures/race/%s-Senate' % data['state']
+        else:
+            url = '/independent-expenditures/race/%s-%s' % (data['state'], str(int(data['seat'][-2:])))
+        data['url'] = base_url % url
+        races.append(data)
 
     return HttpResponse(json.dumps(races), mimetype='text/plain')
 
 
 def api_race_detail(request, race):
     base_url = 'http://%s%%s' % Site.objects.get_current().domain
-    expenditures = Expenditure.objects.filter(race=race)
-    if not expenditures:
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM all_candidates WHERE seat = %s", [race, ])
+    if not cursor.rowcount:
         raise Http404
 
-    candidates = Candidate.objects.filter(pk__in=expenditures.values_list('candidate__pk', flat=True))
-    if not candidates:
-        raise Http404
+    fields = [x[0] for x in cursor.description]
+    candidates = [dict(zip(fields, row)) for row in cursor.fetchall()]
+    for candidate in candidates:
+        del(candidate['id'])
+        candidate['candidate_campaign_spending'] = candidate['spending']
+        del(candidate['spending'])
+        try:
+            candidate_obj = Candidate.objects.get(crp_id=candidate['crp_id'])
+            candidate['outside_spending'] = int(candidate_obj.sole_total())
+            candidate['top_outside_spending_groups'] = []
+            outside_spending = sorted(candidate_obj.sole_all_committees_with_amounts(), key=itemgetter('amount'), reverse=True)
+            for spending in outside_spending:
+                candidate['top_outside_spending_groups'].append({
+                    'committee': spending['committee'].name,
+                    'support_oppose': spending['support_oppose'],
+                    'amount': int(spending['amount']),
+                    })
+        except Candidate.DoesNotExist:
+            candidate['outside_spending'] = 0
+            candidate['top_outside_spending_groups'] = []
 
-    race = {'race': candidates[0].full_race_name(),
-            'total_outside_spending': int(expenditures.aggregate(total=Sum('expenditure_amount'))['total']),
-            'candidates': [
-                {'candidate': str(x),
-                    'fec_id': x.fec_id,
-                    'crp_id': x.crp_id,
-                    'party': x.party,
-                    'url': base_url % x.get_absolute_url(), 
-                    'api_url': base_url % '/independent-expenditures/api/races/%s.json' % x.crp_id, 
-                    'total_outside_spending': int(x.total_including_electioneering()),
-                    'total_electioneering': int(x.sole_electioneering_total()),
-                    'total_independent_expenditures': int(x.total('S') + x.total('O')),
-                    'independent_expenditures_supporting': int(x.total('S')),
-                    'independent_expenditures_opposing': int(x.total('O')),
-                    } for x in
-                                Candidate.objects.filter(pk__in=expenditures.values_list('candidate__pk', flat=True))
+        candidate['top_contributors'] = []
+        cursor.execute("SELECT * FROM candidate_contributions WHERE candidate_crp_id = %s ORDER BY rank", [candidate['crp_id'], ])
+        fields = [x[0] for x in cursor.description]
+        for row in cursor.fetchall():
+            data = dict(zip(fields, row))
+            del(data['id'])
+            del(data['candidate_crp_id'])
+            candidate['top_contributors'].append(data)
 
-                ],
-            }
+        if candidate['crp_id']:
+            candidate['api_url'] = base_url % '/independent-expenditures/api/candidates/%s.json' % candidate['crp_id']
+        else:
+            candidate['api_url'] = ''
+
+    race = {}
+    race['candidates'] = candidates
+    race['state'] = candidate['state']
+    race['district'] = candidate['district']
 
     return HttpResponse(json.dumps(race), mimetype='text/plain')
