@@ -390,7 +390,9 @@ class Command(BaseCommand):
                 expenditure.race = expenditure.candidate.race()
                 expenditure.save()
 
+
             except Expenditure.DoesNotExist:
+                filing_number = int(Decimal(row['FILE_NUM'].replace(',', '')))
                 expenditure = Expenditure.objects.create(
                         image_number=int(Decimal(row['IMAGE_NUM'])),
                         committee=committee,
@@ -402,7 +404,7 @@ class Command(BaseCommand):
                         election_type=row['ELE_TYP'],
                         candidate=candidate,
                         transaction_id=row['TRAN_ID'],
-                        filing_number=int(Decimal(row['FILE_NUM'].replace(',', ''))),
+                        filing_number=filing_number,
                         amendment=row['AMNDT_IND'],
                         receipt_date=dateparse(row['RECEIPT_DT']).date(),
                         race=candidate.race()
