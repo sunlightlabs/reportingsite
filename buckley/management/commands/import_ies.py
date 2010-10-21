@@ -23,6 +23,7 @@ from django.db.models import Q
 from django.template.defaultfilters import slugify
 
 from buckley.models import *
+from buckley.management.commands.cache_totals import cache_totals
 
 from dateutil.parser import parse as dateparse
 from dateutil.tz import tzutc
@@ -616,3 +617,6 @@ class Command(BaseCommand):
         cache.delete('buckley:widget2')
 
         cache.delete('buckley:totals')
+
+
+        cache_totals()

@@ -16,6 +16,7 @@ from django.template.defaultfilters import slugify
 from dateutil.parser import parse as dateparse
 
 from buckley.models import *
+from buckley.management.commands.cache_totals import cache_totals
 from get_donors import get_form_urls, parse_donor_csv, save_contribution
 from import_ies import committee_lookup, candidate_lookup_by_id
 
@@ -273,3 +274,5 @@ class Command(BaseCommand):
 
         cache.delete('buckley:widget2')
         cache.delete('buckley:totals')
+
+        cache_totals()
