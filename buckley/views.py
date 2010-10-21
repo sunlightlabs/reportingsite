@@ -496,7 +496,10 @@ def totals(request):
         top_candidates = Expenditure.objects.filter(expenditure_date__gt=cutoff).order_by('candidate').values('candidate').annotate(amount=Sum('expenditure_amount')).order_by('-amount')[:10]
         candidates = []
         for candidate in top_candidates:
-            candidate['candidate'] = Candidate.objects.get(pk=candidate['candidate'])
+            try:
+                candidate['candidate'] = Candidate.objects.get(pk=candidate['candidate'])
+            except Candidate.DoesNotExist:
+                continue
             candidates.append(candidate)
 
         top_races = Expenditure.objects.exclude(race='', candidate=None).filter(expenditure_date__gt=cutoff).order_by('race').values('race').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
