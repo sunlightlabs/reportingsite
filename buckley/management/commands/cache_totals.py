@@ -61,8 +61,11 @@ def cache_totals():
     top_candidates = Expenditure.objects.filter(expenditure_date__gt=cutoff).order_by('candidate').values('candidate').annotate(amount=Sum('expenditure_amount')).order_by('-amount')[:10]
     TopCandidate.objects.all().delete()
     for candidate in top_candidates[:10]:
-        TopCandidate.objects.create(candidate=Candidate.objects.get(pk=candidate['candidate']),
-                                    amount=candidate['amount'])
+        try:
+            TopCandidate.objects.create(candidate=Candidate.objects.get(pk=candidate['candidate']),
+                                        amount=candidate['amount'])     
+        except Candidate.DoesNotExist:
+            continue
 
     total.save()
 
