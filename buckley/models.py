@@ -61,6 +61,7 @@ class Committee(models.Model):
     #id = models.CharField(max_length=9, primary_key=True)
     name = models.CharField(max_length=255)
     slug = models.SlugField()
+    description = models.TextField()
 
     tax_status = models.CharField(max_length=10,
             choices=(('501(c)(4)', '501(c)(4)'),
