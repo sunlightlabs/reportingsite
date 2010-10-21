@@ -885,7 +885,40 @@ def get_candidate_data(candidate):
             }
 
 def api_candidate_detail(request, crp_id):
-    data = {}
+
+    cursor = connection.cursor()
+    cursor.execute("SELECT * FROM all_candidates WHERE crp_id = %s", [crp_id, ])
+    candidate = dict(zip([x[0] for x in cursor.description], cursor.fetchone()))
+
+    del(candidate['id'])
+    candidate['candidate_campaign_spending'] = candidate['spending']
+    del(candidate['spending'])
+
+    try:
+        candidate_obj = Candidate.objects.get(crp_id=candidate['crp_id'])
+        candidate['outside_spending'] = int(candidate_obj.sole_total())
+        candidate['top_outside_spending_groups'] = []
+        outside_spending = sorted(candidate_obj.sole_all_committees_with_amounts(), key=itemgetter('amount'), reverse=True)
+        for spending in outside_spending:
+            candidate['top_outside_spending_groups'].append({
+                'committee': spending['committee'].name,
+                'support_oppose': spending['support_oppose'],
+                'amount': int(spending['amount']),
+                })
+    except Candidate.DoesNotExist:
+        candidate['outside_spending'] = 0
+        candidate['top_outside_spending_groups'] = []
+
+    candidate['top_contributors'] = []
+
+    cursor.execute("SELECT * FROM candidate_contributions WHERE candidate_crp_id = %s ORDER BY rank", [candidate['crp_id'], ])
+    fields = [x[0] for x in cursor.description]
+    for row in cursor.fetchall():
+        data = dict(zip(fields, row))
+        del(data['id'])
+        del(data['candidate_crp_id'])
+        candidate['top_contributors'].append(data)
+
 
     """
     candidate = get_object_or_404(Candidate, crp_id=crp_id)
@@ -904,7 +937,7 @@ def api_candidate_detail(request, crp_id):
                                    })
 
     """
-    return HttpResponse(json.dumps(data), mimetype='text/plain')
+    return HttpResponse(json.dumps(candidate), mimetype='text/plain')
 
 def api_race_list(request):
     base_url = 'http://%s%%s' % Site.objects.get_current().domain
