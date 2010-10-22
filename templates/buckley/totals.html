@@ -412,22 +412,22 @@ $(document).ready(function() {
         <h3>Outside Spending by Candidate Party</h3>
         <div id="party-pie"></div>
         <dl id="spendingKey">
-            <dt><span class="color1">color block</span>Name</dt>
-            <dd>$</dd>
+            <dt><span class="color1">color block</span>Supporting Republicans/<br />Opposing Democrats</dt>
+            <dd>${{ pro_gop_total|intcomma }}</dd>
 
-            <dt><span class="color2">color block</span>Name</dt>
-            <dd>$</dd>
+            <dt><span class="color2">color block</span>Supporting Democrats/<br />Opposing Republicans</dt>
+            <dd>${{ pro_democrat_total|intcomma }}</dd>
         </dl>
     </div>
     <div id="party-committeeWrapper">
-        <h3>Outside Spending by Committee</h3>
+        <h3>Outside Spending by Committee Type</h3>
         <div id="party-committee-pie"></div>
         <dl id="spendingKey">
-            <dt><span class="color1">color block</span>Name</dt>
-            <dd>$</dd>
+            <dt><span class="color1">color block</span>Party committees</dt>
+            <dd>${{ party_committee_total|intcomma }}</dd>
 
-            <dt><span class="color2">color block</span>Name</dt>
-            <dd>$</dd>
+            <dt><span class="color2">color block</span>Non-party committees</dt>
+            <dd>${{ non_party_committee_total|intcomma }}</dd>
         </dl>
     </div>
     <div class="clear"></div>

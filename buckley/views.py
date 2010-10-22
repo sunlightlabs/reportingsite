@@ -484,6 +484,13 @@ def totals(request):
     top_races = TopRace.objects.order_by('-amount')[:10]
     top_candidates = TopCandidate.objects.order_by('-amount')[:10]
 
+    pro_gop_total = total.republican_support_total + total.democrat_oppose_total
+    pro_democrat_total = total.democrat_support_total + total.republican_oppose_total
+
+    party_committee_total = total.republican_support_party + total.republican_oppose_party + total.democrat_support_party + total.democrat_oppose_party
+    non_party_committee_total = total.republican_support_nonparty + total.republican_oppose_nonparty + total.democrat_support_nonparty + total.democrat_oppose_nonparty
+
+
     latest_big_expenditures = Expenditure.objects.filter(expenditure_amount__gt=250000).order_by('-timestamp')[:100]
 
     cutoff = datetime.date.today() - datetime.timedelta(days=4)
@@ -495,6 +502,10 @@ def totals(request):
                                'top_candidates': top_candidates,
                                'latest_big_expenditures': latest_big_expenditures, 
                                'since': cutoff+datetime.timedelta(days=1),
+                               'pro_gop_total': pro_gop_total,
+                               'pro_democrat_total': pro_democrat_total,
+                               'party_committee_total': party_committee_total,
+                               'non_party_committee_total': non_party_committee_total,
                                },
                                context_instance=RequestContext(request))
 
