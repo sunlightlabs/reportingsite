@@ -343,6 +343,7 @@ $(document).ready(function() {
 <div id="featureMainNav">
     <ul>
         <li id="expenditures"><a href="{% url buckley_index %}">Latest Outside Spending</a></li>
+        <li id="overview"><a href="{% url buckley_totals %}">Overview</a></li>
         <li id="about"><a href="{% url buckley_about %}">About</a></li>
         <li id="stories" class="last"><a href="{% url buckley_stories %}">Stories</a></li>
     </ul>  
@@ -441,7 +442,7 @@ $(document).ready(function() {
     <div id="race-barchart"></div>
 </div>
 <div class="mainModule">
-    <h3>Top candidates in the past 5 days</h3>
+    <h3>Top candidates mentioned in the past 5 days</h3>
     <div id="candidate-barchart"></div>
 </div>
 
