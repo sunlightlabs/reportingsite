@@ -356,8 +356,8 @@ $(document).ready(function() {
 </div>
 
 <div class="mainModule">
-    <h3>${{ total.total|intcomma }}<br>Spent this election cycle</h3>
-    <h4>Outside Spending</h4>
+    <h3>${{ total.total|intcomma }}<br>total outside spending</h3>
+    <h4>Type of spending</h4>
     <div id="outside-spending-pie"></div>
     <dl id="spendingKey">
         <dt><span class="color1">color block</span>Independent expenditures</dt>
@@ -369,7 +369,7 @@ $(document).ready(function() {
     <div class="clear"></div> 
 </div>
 <div class="mainModule">
-    <h3>Spending by political party</h3>
+    <h3>Spending by committee type</h3>
     <table>
         <thead>
             <tr>
@@ -433,15 +433,15 @@ $(document).ready(function() {
     <div class="clear"></div>
 </div>
 <div class="mainModule">
-    <h3>Top spenders in the past 4 days</h3>
+    <h3>Top spenders in the past 5 days</h3>
     <div id="committee-barchart"></div>
 </div>
 <div class="mainModule">
-    <h3>Top races in the past 4 days</h3>
+    <h3>Top races in the past 5 days</h3>
     <div id="race-barchart"></div>
 </div>
 <div class="mainModule">
-    <h3>Top candidates in the past 4 days</h3>
+    <h3>Top candidates in the past 5 days</h3>
     <div id="candidate-barchart"></div>
 </div>
 
@@ -452,10 +452,10 @@ $(document).ready(function() {
 <ul id="expendituresData" class="categories">
     {% for expenditure in latest_big_expenditures|slice:"12" %}
         <li>
+            <span class="expenditureDate">{{ expenditure.expenditure_date|date:"F j" }}</span>
             {% if expenditure.electioneering_communication %}
             <strong>{{ expenditure.committee }}:</strong> <span class="expenditureNumber">${{ expenditure.expenditure_amount|intcomma }}</span> electioneering communication mentioning {% for candidate in expenditure.electioneering_candidates.all %}{{ candidate }}{% if candidate.race %} ({{ candidate.full_race_name }}){% endif %}{% if not forloop.last %}, {% endif %}{%endfor %}
             {% else %}
-            <span class="expenditureDate">{{ expenditure.expenditure_date }}</span>
             <strong>{{ expenditure.committee }}:</strong> <span class="expenditureNumber">${{ expenditure.expenditure_amount|intcomma }}</span> {% ifequal expenditure.support_oppose 'S' %}supporting{% endifequal %}{% ifequal expenditure.support_oppose 'O' %}opposing{% endifequal %} {{ expenditure.candidate }} {% if expenditure.candidate.race %}({{ expenditure.candidate.full_race_name }}){% endif %}
             {% endif %}
             <a class="readMoreRT" href="{{ expenditure.get_absolute_url }}#{{ expenditure.pk }}">View Details</a>
