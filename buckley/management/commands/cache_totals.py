@@ -42,7 +42,7 @@ def cache_totals():
             total.democrat_oppose_total = i['amt']
 
 
-    cutoff = datetime.date.today() - datetime.timedelta(days=4)
+    cutoff = datetime.date.today() - datetime.timedelta(days=5)
 
     committees = Expenditure.objects.filter(expenditure_date__gt=cutoff).exclude(committee__slug='').order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
     TopCommittee.objects.all().delete()
