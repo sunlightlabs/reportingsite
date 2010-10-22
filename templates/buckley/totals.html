@@ -231,7 +231,7 @@ $(document).ready(function() {
 
         tooltip: {
                  formatter: function() {
-                    return '<b>$'+ Math.round(this.y);
+                    return '<b>$' + Highcharts.numberFormat(this.y, 0) + '';
                  }
       },
         series: [
@@ -302,7 +302,7 @@ $(document).ready(function() {
 
         tooltip: {
                  formatter: function() {
-                    return '<b>$'+ Math.round(this.y);
+                    return '<b>$' + Highcharts.numberFormat(this.y, 0) + '';
                  }
       },
         series: [
