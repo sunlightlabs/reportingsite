@@ -142,7 +142,7 @@ $(document).ready(function() {
         xAxis: {
          categories: [
             {% for committee in top_committees|slice:"5" %}
-            '{{ committee.committee }}'{% if not forloop.last %},{% endif %}
+            '{{ committee.committee|safe }}'{% if not forloop.last %},{% endif %}
             {% endfor %}
          ],
           labels: {
