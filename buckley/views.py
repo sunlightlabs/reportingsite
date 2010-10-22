@@ -491,7 +491,7 @@ def totals(request):
     non_party_committee_total = total.republican_support_nonparty + total.republican_oppose_nonparty + total.democrat_support_nonparty + total.democrat_oppose_nonparty
 
 
-    latest_big_expenditures = Expenditure.objects.filter(expenditure_amount__gt=250000).order_by('-timestamp')[:100]
+    latest_big_expenditures = Expenditure.objects.filter(expenditure_amount__gt=250000).order_by('-expenditure_date')[:100]
 
     cutoff = datetime.date.today() - datetime.timedelta(days=4)
 
