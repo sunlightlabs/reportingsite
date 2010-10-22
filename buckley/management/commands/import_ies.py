@@ -585,6 +585,13 @@ class Command(BaseCommand):
 
         fix_murkowski()
 
+        try:
+            bad = Committee.objects.get(name='New Prosperity Foundation, The')
+            good = Committee.objects.get(name='The New Prosperity Foundation')
+            bad.expenditure_set.update(committee=good)
+        except:
+            pass
+
         # Fix support/oppose errors
         Expenditure.objects.filter(image_number=10990630854, candidate__slug='blanche-lincoln').update(support_oppose='O')
         Expenditure.objects.filter(image_number=10931242198, candidate__slug='ann-mclane-kuster').update(support_oppose='S')
