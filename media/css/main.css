@@ -142,11 +142,11 @@ textarea { background: url(../img/comment_lines.png) top left no-repeat; border:
 div#footer { background: url(../img/bar_bottom.png) top left no-repeat; padding: 60px 0 0; margin: -11px auto 40px auto; width: 960px;}
 
 div.categories span{ float: right; }
-div.categories li { font-size: 105%; padding: 7px 10px; border-bottom: 1px solid #B8B9B9;}
-div.categories li a {color: #5E5E5E;}
-div.categories li:hover a {color: #457b80;}
-div.categories li:hover { background-color: #fff; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
-div.categories li.lastCategory { border-bottom: none;}
+.categories li { font-size: 105%; padding: 15px 10px; border-bottom: 1px dotted #B8B9B9;}
+.categories li a {color: #5E5E5E;}
+.categories li:hover a {color: #457b80;}
+.categories li:hover { background-color: #fff; -moz-border-radius: 5px; -webkit-border-radius: 5px; }
+.categories li.lastCategory { border-bottom: none;}
 
 blockquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 150%; color: #000000; font-style: oblique; line-height: 27px; margin-bottom: 15px; background-color: #E3E3DF; margin-bottom: 15px; padding: 20px; }
 div.pullquote { font-family: Georgia, Times New Roman, Times, serif; font-size: 200%; color: #000000;  border-top: 1px solid; border-bottom: 1px solid; line-height: 30px; padding: 10px 10px; margin: 5px; font-style: oblique; text-align: center; margin-bottom: 15px;}
@@ -218,7 +218,7 @@ div#pageMain #filterExpenditures label { width: auto; margin-right: 25px; line-h
 div#pageMain input.radio { width: 15px; margin-right: 10px; float: left;}
 
 table { width: 100%;}
-table .odd { background-color: #fafaf8;}
+.odd { background-color: #fafaf8;}
 tbody td { padding: 15px 10px; line-height: 16px;}
 thead th { text-transform: uppercase; padding: 0 10px 15px; font-weight: bold;}
 
@@ -299,3 +299,7 @@ div#pageMain #featureMainNav input#searchbox { width: 220px; }
 
 #party-committeeWrapper { width: 275px; float: left;}
 #party-pieWrapper { width: 275px; margin-right: 30px; float: left;}
+.expenditureNumber { color: #5a8705;}
+
+.readMoreRT { font-size: 115%; font-style: oblique; display: block; margin-top: 10px;}
+.expenditureDate { display: block; margin-bottom: 5px; color: #9F9F9F;}

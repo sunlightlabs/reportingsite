@@ -449,18 +449,17 @@ $(document).ready(function() {
 
 {% block sidebar %}
 <h4>Recent big spending</h4>
-<table id="expendituresData">
+<ul id="expendituresData" class="categories">
     {% for expenditure in latest_big_expenditures|slice:"12" %}
-    <tr class="{% cycle 'odd' 'even' %}">
-        <td>
+        <li>
             {% if expenditure.electioneering_communication %}
-            {{ expenditure.committee }}: ${{ expenditure.expenditure_amount|intcomma }} electioneering communication mentioning {% for candidate in expenditure.electioneering_candidates.all %}{{ candidate }}{% if candidate.race %} ({{ candidate.full_race_name }}){% endif %}{% if not forloop.last %}, {% endif %}{%endfor %}
+            <strong>{{ expenditure.committee }}:</strong> <span class="expenditureNumber">${{ expenditure.expenditure_amount|intcomma }}</span> electioneering communication mentioning {% for candidate in expenditure.electioneering_candidates.all %}{{ candidate }}{% if candidate.race %} ({{ candidate.full_race_name }}){% endif %}{% if not forloop.last %}, {% endif %}{%endfor %}
             {% else %}
-            {{ expenditure.committee }}: ${{ expenditure.expenditure_amount|intcomma }} {% ifequal expenditure.support_oppose 'S' %}supporting{% endifequal %}{% ifequal expenditure.support_oppose 'O' %}opposing{% endifequal %} {{ expenditure.candidate }} {% if expenditure.candidate.race %}({{ expenditure.candidate.full_race_name }}){% endif %}
+            <span class="expenditureDate">{{ expenditure.expenditure_date }}</span>
+            <strong>{{ expenditure.committee }}:</strong> <span class="expenditureNumber">${{ expenditure.expenditure_amount|intcomma }}</span> {% ifequal expenditure.support_oppose 'S' %}supporting{% endifequal %}{% ifequal expenditure.support_oppose 'O' %}opposing{% endifequal %} {{ expenditure.candidate }} {% if expenditure.candidate.race %}({{ expenditure.candidate.full_race_name }}){% endif %}
             {% endif %}
-            <a href="{{ expenditure.get_absolute_url }}#{{ expenditure.pk }}">{{ expenditure.expenditure_date }}</a>
-        </td>
-    </tr>
+            <a class="readMoreRT" href="{{ expenditure.get_absolute_url }}#{{ expenditure.pk }}">View Details</a>
+        </li>
     {% endfor %}
-</table>
+</ul>
 {% endblock sidebar %}
