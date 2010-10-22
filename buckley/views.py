@@ -493,7 +493,7 @@ def totals(request):
 
     latest_big_expenditures = Expenditure.objects.filter(expenditure_amount__gt=250000).order_by('-expenditure_date')[:100]
 
-    cutoff = datetime.date.today() - datetime.timedelta(days=4)
+    cutoff = datetime.date.today() - datetime.timedelta(days=5)
 
     return render_to_response('buckley/totals.html',
                               {'total': total,
