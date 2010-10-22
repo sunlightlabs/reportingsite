@@ -246,6 +246,13 @@ class Command(BaseCommand):
         for b in bad:
             b.delete()
 
+        try:
+            bad = Committee.objects.get(name='New Prosperity Foundation, The')
+            good = Committee.objects.get(name='The New Prosperity Foundation')
+            bad.expenditure_set.update(committee=good)
+        except:
+            pass
+
         # denormalize
         for candidate in Candidate.objects.all():
             candidate.denormalize()
