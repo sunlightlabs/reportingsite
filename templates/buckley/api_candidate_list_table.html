@@ -1,0 +1,43 @@
+<style type="text/css">
+    * { font-family: Helvetica, Arial, sans-serif;
+    }
+    table {
+        border-collapse: collapse;
+    }
+    table th, table td {
+        border: 1px solid gray;
+        padding: 5px;
+    }
+</style>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+            var item;
+            var row;
+            $.getJSON('/independent-expenditures/api/candidates.json', {}, function(data) {
+                for (i in data) {
+                    item = data[i];
+                    row = '<tr>';
+                    row += '<td>' + item['seat'] + '</td>';
+                    row += '<td><a href="/independent-expenditures/api/candidates/' + item['crp_id'] + '/">' + item['candidate'] + '</a></td>';
+                    row += '</tr>'
+                    $("#candidates tbody").append(row);
+                }
+            });
+    });
+</script>
+
+<h1>Candidates</h1>
+
+<table id="candidates">
+    <thead>
+        <tr>
+            <th>Race</th>
+            <th>Candidate</th>
+        </tr>
+    </thead>
+    <tbody>
+    </tbody>
+</table>

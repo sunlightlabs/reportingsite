@@ -252,6 +252,18 @@ urlpatterns = patterns('',
             {},
             name='buckley_api_candidate_detail'),
 
+        url(r'api\/candidates\/(?P<crp_id>N\d{8})\/?$',
+                'django.views.generic.simple.direct_to_template',
+                {'template': 'buckley/api_candidate_detail_table.html',
+                },
+                name='buckley_api_candidate_detail_table'),
+
+        url(r'api\/candidates\/?$',
+                'django.views.generic.simple.direct_to_template',
+                {'template': 'buckley/api_candidate_list_table.html',
+                },
+                name='buckley_api_candidate_list_table'),
+
         url(r'api\/races.json$',
             'buckley.views.api_race_list',
             {},
