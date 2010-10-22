@@ -72,7 +72,7 @@ div#pageMain #featureBox h3 { background-color: #497c6c; border: 1px solid #3e6c
 .featureModule { float: left; margin-right: 5px; margin-bottom: 25px;}
 .featureModule span { margin: 0 0 10px 5px; display: block;}
 #featureBox a:link, #featureBox a:active, #featureBox a:visited { color: #142403; text-decoration: underline;}
-#featureBox a:hover, body.expendituresHome #featureMainNav li#expenditures a, body.expendituresAbout #featureMainNav li#about a, body.expendituresStories #featureMainNav li#stories a, body.expendituresCandidate li#expenditures a, body.expendituresRace li#expenditures a, body.expendituresCommittee li#expenditures a, body.expendituresLetters li#expenditures a { color: #fff; }
+#featureBox a:hover, body.expendituresHome #featureMainNav li#expenditures a, body.expendituresAbout #featureMainNav li#about a, body.expendituresStories #featureMainNav li#stories a, body.expendituresCandidate li#expenditures a, body.expendituresRace li#expenditures a, body.expendituresCommittee li#expenditures a, body.expendituresLetters li#expenditures a, body.expendituresTotals li#overview a { color: #fff; }
 #featureNav li, #featureMainNav li { float: left; border-right: 1px solid #739935; margin-right: 20px; padding-right: 20px; font-size: 110%; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; line-height: 18px;}
 #featureNav li.last { border-right: none;}
 
