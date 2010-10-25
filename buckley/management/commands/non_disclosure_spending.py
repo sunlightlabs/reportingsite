@@ -36,6 +36,7 @@ class Command(BaseCommand):
                             expenditure.committee.fec_id(),
                             expenditure.committee,
                             '%s (%s)' % (expenditure.candidate, expenditure.candidate.party),
+                            expenditure.payee,
                             expenditure.expenditure_purpose,
                             expenditure.expenditure_date,
                             expenditure.expenditure_amount,
