@@ -9,10 +9,10 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         writer = csv.writer(open(r'ie_export_2010-10-25.csv', 'a'))
+        writer.writerow(['committee_id', 'committee', 'candidate_id', 'candidate',
+            'payee', 'expenditure_purpose', 'expenditure_date', 'expenditure_amount',
+            'support/oppose', 'election_type', 'amendment', 'race', 'filing_number', ])
         for expenditure in Expenditure.objects.filter(electioneering_communication=False).order_by('-expenditure_date'):
-            writer.writerow(['committee_id', 'committee', 'candidate_id', 'candidate',
-                'payee', 'expenditure_purpose', 'expenditure_date', 'expenditure_amount',
-                'support/oppose', 'election_type', 'amendment', 'race', ])
             row = [ expenditure.committee.fec_id(),
                     expenditure.committee,
                     expenditure.candidate.fec_id,
@@ -24,5 +24,6 @@ class Command(BaseCommand):
                     expenditure.support_oppose,
                     expenditure.election_type,
                     expenditure.amendment,
-                    expenditure.race, ]
+                    expenditure.race, 
+                    expenditure.filing_number, ]
             writer.writerow(row)
