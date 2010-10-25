@@ -254,7 +254,7 @@ class Command(BaseCommand):
             pass
 
         # Remove duplicate slugs.
-        slugs = list(Committee.objects.values('slug', flat=True).annotate(n=Count('slug')).filter(n__gt=1))
+        slugs = list(Committee.objects.value('slug', flat=True).annotate(n=Count('slug')).filter(n__gt=1))
         for slug in slugs:
             bad, good = Committee.objects.filter(slug=slug).order_by('pk')
             bad.expenditure_set.all().update(committee=good)
