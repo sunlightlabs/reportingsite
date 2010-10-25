@@ -7,6 +7,16 @@
 {% block content %}
 
 <script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+<script type="text/javascript">
 var outsideSpending; 
 $(document).ready(function() {
       var total = {{ total.total }};
