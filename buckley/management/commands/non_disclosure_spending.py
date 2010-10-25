@@ -22,6 +22,7 @@ class Command(BaseCommand):
                             expenditure.committee.fec_id(),
                             expenditure.committee,
                             ', '.join(['%s (%s)' % (str(x), x.party) for x in expenditure.electioneering_candidates.all()]),
+                            expenditure.payee,
                             expenditure.expenditure_purpose,
                             expenditure.expenditure_date,
                             expenditure.expenditure_amount,
