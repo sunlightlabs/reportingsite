@@ -16,7 +16,7 @@
      {% for ie_date in ies %}
      <div class="featureModule">
          <h3>{{ ie_date.0|date:"F j" }}</h3>
-         <span class="tip">Last update: {{ last_ie_update|date:"N j, P" }}</span>
+         {% if forloop.first %}<span class="tip">Last update: {{ last_ie_update|date:"N j, P" }}</span>{% endif %}
          <ul>
              {% for ie in ie_date.1 %}
              <li><a href="{{ ie.committee.get_absolute_url }}">{{ ie.committee }}</a> spent <a href="{% url buckley_candidate_committee_detail candidate_slug=ie.candidate.slug committee_slug=ie.committee.slug %}">${{ ie.amount|intcomma }}</a> in {{ ie.support_oppose }} <a href="{{ ie.candidate.get_absolute_url }}">{{ ie.candidate }}</a> in the <a href="{% url buckley_race_detail race=ie.candidate.race %}">{{ ie.candidate.full_race_name }} race</a>.
