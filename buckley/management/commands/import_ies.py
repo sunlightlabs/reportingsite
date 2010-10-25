@@ -592,6 +592,14 @@ class Command(BaseCommand):
         except:
             pass
 
+        # Remove duplicate slugs.
+        slugs = list(Committee.objects.values('slug', flat=True).annotate(n=Count('slug')).filter(n__gt=1))
+        for slug in slugs:
+            bad, good = Committee.objects.filter(slug=slug).order_by('pk')
+            bad.expenditure_set.all().update(committee=good)
+            bad.contribution_set.all().update(committee=good)
+            bad.delete()
+
         # Fix support/oppose errors
         Expenditure.objects.filter(image_number=10990630854, candidate__slug='blanche-lincoln').update(support_oppose='O')
         Expenditure.objects.filter(image_number=10931242198, candidate__slug='ann-mclane-kuster').update(support_oppose='S')

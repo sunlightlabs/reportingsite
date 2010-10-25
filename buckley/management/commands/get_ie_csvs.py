@@ -253,6 +253,14 @@ class Command(BaseCommand):
         except:
             pass
 
+        # Remove duplicate slugs.
+        slugs = list(Committee.objects.values('slug', flat=True).annotate(n=Count('slug')).filter(n__gt=1))
+        for slug in slugs:
+            bad, good = Committee.objects.filter(slug=slug).order_by('pk')
+            bad.expenditure_set.all().update(committee=good)
+            bad.contribution_set.all().update(committee=good)
+            bad.delete()
+
         # denormalize
         for candidate in Candidate.objects.all():
             candidate.denormalize()
@@ -277,6 +285,7 @@ class Command(BaseCommand):
             if Expenditure.objects.filter(pk=k.pk):
                 for expenditure in v:
                     expenditure.delete()
+
 
 
         cache.delete('buckley:widget2')
