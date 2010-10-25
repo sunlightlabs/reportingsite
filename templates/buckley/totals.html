@@ -185,9 +185,9 @@ $(document).ready(function() {
                 { data: [{% for committee in top_nonparty_committees|slice:"5" %}{{ committee.amount }}{% if not forloop.last %},{% endif %}{% endfor %}],
                 dataLabels: {
                     enabled: true,
-                    color: '#fff',
+                    color: '#668D3C',
                     align: 'right',
-                    x: -5,
+                    x: 50,
                     y: -5,
                     formatter: function() {
                                    return '$' + Highcharts.numberFormat(this.y/1000000, 2) + 'M';
@@ -256,9 +256,9 @@ $(document).ready(function() {
                 { data: [{% for committee in top_party_committees|slice:"5" %}{{ committee.amount }}{% if not forloop.last %},{% endif %}{% endfor %}],
                 dataLabels: {
                     enabled: true,
-                    color: '#fff',
+                    color: '#668D3C',
                     align: 'right',
-                    x: -5,
+                    x: 50,
                     y: -5,
                     formatter: function() {
                                    return '$' + Highcharts.numberFormat(this.y/1000000, 2) + 'M';
