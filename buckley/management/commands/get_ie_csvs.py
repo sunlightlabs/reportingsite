@@ -11,6 +11,7 @@ import urllib2
 from django.core.cache import cache
 from django.core.management.base import BaseCommand, CommandError
 from django.db import IntegrityError
+from django.db.models import *
 from django.template.defaultfilters import slugify
 
 from dateutil.parser import parse as dateparse
@@ -254,7 +255,7 @@ class Command(BaseCommand):
             pass
 
         # Remove duplicate slugs.
-        slugs = list(Committee.objects.value('slug', flat=True).annotate(n=Count('slug')).filter(n__gt=1))
+        slugs = list(Committee.objects.values_list('slug', flat=True).annotate(n=Count('slug')).filter(n__gt=1))
         for slug in slugs:
             bad, good = Committee.objects.filter(slug=slug).order_by('pk')
             bad.expenditure_set.all().update(committee=good)
