@@ -131,9 +131,9 @@ $(document).ready(function() {
         }]
     });
 
-    committeeChart = new Highcharts.Chart({
+    nonPartyCommitteeChart = new Highcharts.Chart({
         chart: {
-            renderTo: 'committee-barchart',
+            renderTo: 'non-party-committee-barchart',
             defaultSeriesType: 'bar',
             backgroundColor: '#f1f1ef',
             margin: [0, 0, 0, 280],
@@ -153,7 +153,7 @@ $(document).ready(function() {
         credits: { enabled: false },
         xAxis: {
          categories: [
-            {% for committee in top_committees|slice:"5" %}
+            {% for committee in top_nonparty_committees|slice:"5" %}
             "{{ committee.committee|safe }}"{% if not forloop.last %},{% endif %}
             {% endfor %}
          ],
@@ -182,12 +182,83 @@ $(document).ready(function() {
                  }
       },
         series: [
-                { data: [{% for committee in top_committees|slice:"5" %}{{ committee.amount }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                { data: [{% for committee in top_nonparty_committees|slice:"5" %}{{ committee.amount }}{% if not forloop.last %},{% endif %}{% endfor %}],
                 dataLabels: {
                     enabled: true,
-                    color: '#668D3C',
+                    color: '#fff',
                     align: 'right',
-                    x: 50,
+                    x: -5,
+                    y: -5,
+                    formatter: function() {
+                                   return '$' + Highcharts.numberFormat(this.y/1000000, 2) + 'M';
+                                },
+                    style: {
+                        font: 'normal 11px Verdana, sans-serif'
+                    }           
+                },
+                }
+                
+                ],
+        legend: { enabled: false }
+    });
+
+    partyCommitteeChart = new Highcharts.Chart({
+        chart: {
+            renderTo: 'party-committee-barchart',
+            defaultSeriesType: 'bar',
+            backgroundColor: '#f1f1ef',
+            margin: [0, 0, 0, 280],
+            height: 250,
+            width: 580
+        },
+        title: {
+               text: "",
+              style: {
+                display: 'none',
+                position: 'absolute',
+                left: '0',
+                top: '0'
+            }
+        },
+        colors: [ '#668D3C'],
+        credits: { enabled: false },
+        xAxis: {
+         categories: [
+            {% for committee in top_party_committees|slice:"5" %}
+            "{{ committee.committee|safe }}"{% if not forloop.last %},{% endif %}
+            {% endfor %}
+         ],
+          labels: {
+            align: 'right',
+            style: {
+                font: 'normal 10px Verdana, sans-serif'
+            }
+         }
+      },
+        yAxis: {
+                 min: 0,
+                 title: {
+                    text: 'Amount spent'
+                 }
+              },
+       plotOptions: {
+         column: {
+            stacking: 'normal'
+         }
+        },
+
+        tooltip: {
+                 formatter: function() {
+                    return '$' + Highcharts.numberFormat(this.y, 0) + '';
+                 }
+      },
+        series: [
+                { data: [{% for committee in top_party_committees|slice:"5" %}{{ committee.amount }}{% if not forloop.last %},{% endif %}{% endfor %}],
+                dataLabels: {
+                    enabled: true,
+                    color: '#fff',
+                    align: 'right',
+                    x: -5,
                     y: -5,
                     formatter: function() {
                                    return '$' + Highcharts.numberFormat(this.y/1000000, 2) + 'M';
@@ -446,8 +517,12 @@ $(document).ready(function() {
     <div class="clear"></div>
 </div>
 <div class="mainModule">
-    <h3>Top spenders in the past 5 days</h3>
-    <div id="committee-barchart"></div>
+    <h3>Top party-committee spenders<br />in the past 5 days</h3>
+    <div id="party-committee-barchart"></div>
+</div>
+<div class="mainModule">
+    <h3>Top non-party-committee spenders<br />in the past 5 days</h3>
+    <div id="non-party-committee-barchart"></div>
 </div>
 <div class="mainModule">
     <h3>Top races in the past 5 days</h3>

@@ -44,13 +44,22 @@ def cache_totals():
 
     cutoff = datetime.date.today() - datetime.timedelta(days=5)
 
-    committees = Expenditure.objects.filter(expenditure_date__gt=cutoff).exclude(committee__slug='').order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
+    non_party_committees = Expenditure.objects.filter(expenditure_date__gt=cutoff).exclude(Q(committee__slug='') | Q(committee__tax_status='FECA Party')).order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
     TopCommittee.objects.all().delete()
-    for committee in committees[:10]:
+    for committee in non_party_committees[:10]:
         c = Committee.objects.get(slug=committee['committee__slug'])
         amount = committee['amount']
         TopCommittee.objects.create(committee=c,
                                     amount=amount)
+
+    party_committees = Expenditure.objects.filter(expenditure_date__gt=cutoff, committee__tax_status='FECA Party').exclude(committee__slug='').order_by('committee').values('committee__name', 'committee__slug').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
+    TopPartyCommittee.objects.all().delete()
+    for committee in party_committees[:10]:
+        c = Committee.objects.get(slug=committee['committee__slug'])
+        amount = committee['amount']
+        TopPartyCommittee.objects.create(committee=c,
+                                         amount=amount)
+
  
     top_races = Expenditure.objects.exclude(race='', candidate=None).filter(expenditure_date__gt=cutoff).order_by('race').values('race').annotate(amount=Sum('expenditure_amount')).order_by('-amount')
     TopRace.objects.all().delete()

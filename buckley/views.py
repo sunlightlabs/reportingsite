@@ -480,7 +480,8 @@ def multi_candidate_ecs(request, slug):
 
 def totals(request):
     total = Total.objects.all().reverse()[0]
-    top_committees = TopCommittee.objects.order_by('-amount')[:10]
+    top_nonparty_committees = TopCommittee.objects.order_by('-amount')[:10]
+    top_party_committees = TopPartyCommittee.objects.order_by('-amount')[:10]
     top_races = TopRace.objects.order_by('-amount')[:10]
     top_candidates = TopCandidate.objects.order_by('-amount')[:10]
 
@@ -497,7 +498,8 @@ def totals(request):
 
     return render_to_response('buckley/totals.html',
                               {'total': total,
-                               'top_committees': top_committees,
+                               'top_party_committees': top_party_committees,
+                               'top_nonparty_committees': top_nonparty_committees,
                                'top_races': top_races,
                                'top_candidates': top_candidates,
                                'latest_big_expenditures': latest_big_expenditures, 

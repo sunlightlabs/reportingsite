@@ -674,6 +674,10 @@ class TopCommittee(models.Model):
     committee = models.ForeignKey(Committee)
     amount = models.DecimalField(max_digits=19, decimal_places=2)
 
+class TopPartyCommittee(models.Model):
+    committee = models.ForeignKey(Committee)
+    amount = models.DecimalField(max_digits=19, decimal_places=2) 
+
 class TopRace(models.Model):
     race = models.CharField(max_length=16)
     amount = models.DecimalField(max_digits=19, decimal_places=2)
