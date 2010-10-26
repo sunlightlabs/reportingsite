@@ -231,6 +231,7 @@ class Command(BaseCommand):
                 print expenditure.id
 
         # Get rid of duplicate candidate slugs
+        print 'removing duplicate candidate slugs'
         noparty = Candidate.objects.filter(party='')
         for bad in noparty:
             good = Candidate.objects.filter(slug=bad.slug).exclude(party='')
@@ -240,6 +241,7 @@ class Command(BaseCommand):
                 bad.delete()
 
         # Remove errors
+        print 'removing errors where expenditure race != candidate race'
         bad = []
         for expenditure in Expenditure.objects.filter(electioneering_communication=False):
             if expenditure.race != expenditure.candidate.race():
@@ -255,6 +257,7 @@ class Command(BaseCommand):
             pass
 
         # Remove duplicate slugs.
+        print 'removing duplicate slugs'
         slugs = list(Committee.objects.values_list('slug', flat=True).annotate(n=Count('slug')).filter(n__gt=1))
         for slug in slugs:
             bad, good = Committee.objects.filter(slug=slug).order_by('pk')
@@ -263,10 +266,13 @@ class Command(BaseCommand):
             bad.delete()
 
         # denormalize
+        print 'denormalizing candidate totals'
         for candidate in Candidate.objects.all():
             candidate.denormalize()
 
         # Remove more apparent duplicates
+        print 'removing more apparent duplicates'
+        """
         dupes = {}
         for expenditure in Expenditure.objects.all():
             e = Expenditure.objects.filter(candidate=expenditure.candidate,
@@ -286,10 +292,12 @@ class Command(BaseCommand):
             if Expenditure.objects.filter(pk=k.pk):
                 for expenditure in v:
                     expenditure.delete()
+        """
 
 
 
         cache.delete('buckley:widget2')
         cache.delete('buckley:totals')
 
+        print 'caching totals'
         cache_totals()
