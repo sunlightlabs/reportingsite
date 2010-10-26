@@ -20,4 +20,6 @@ class Command(BaseCommand):
                     dupes[expenditure] = d
 
         for k, v in dupes.items():
-            print k, v
+            if Expenditure.objects.filter(pk=k.pk):
+                for expenditure in v:
+                    expenditure.delete()
