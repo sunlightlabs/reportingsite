@@ -937,7 +937,7 @@ def api_candidate_detail(request, crp_id):
 def api_race_list(request):
     base_url = 'http://%s%%s' % Site.objects.get_current().domain
     cursor = connection.cursor()
-    cursor.execute("SELECT seat, state, district FROM all_candidates GROUP BY seat")
+    cursor.execute("SELECT seat, state, district, seatholder_bioguide_id FROM all_candidates GROUP BY seat")
     races = []
     for row in cursor.fetchall():
         data = dict(zip([x[0] for x in cursor.description], row))
@@ -998,5 +998,6 @@ def api_race_detail(request, race):
     race['candidates'] = candidates
     race['state'] = candidate['state']
     race['district'] = candidate['district']
+    race['seatholder_bioguide_id'] = candidate['seatholder_bioguide_id']
 
     return HttpResponse(json.dumps(race), mimetype='text/plain')
