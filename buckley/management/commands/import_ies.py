@@ -19,7 +19,7 @@ except ImportError:
 from django.core.cache import cache
 from django.core.mail import send_mail
 from django.core.management.base import NoArgsCommand, BaseCommand, CommandError
-from django.db.models import Q
+from django.db.models import *
 from django.template.defaultfilters import slugify
 
 from buckley.models import *
@@ -509,6 +509,7 @@ class Command(BaseCommand):
                 logging.debug('Skipped record because no CID:' + str(row))
 
         # Remove amendmended filings
+        print 'removing amended filings'
         for amendment in Expenditure.objects.exclude(amendment='N'):
             # Check for A2 amendments
             if amendment.amendment == 'A2':
@@ -526,6 +527,7 @@ class Command(BaseCommand):
 
 
         # Remove apparent duplicates
+        print 'removing apparent duplicates'
         for expenditure in Expenditure.objects.all():
             e = Expenditure.objects.filter(candidate=expenditure.candidate,
                                            committee=expenditure.committee,
@@ -537,6 +539,7 @@ class Command(BaseCommand):
                     to_delete.delete()
 
         # Remove more apparent duplicates
+        print 'removing more apparent duplicates'
         dupes = {}
         for expenditure in Expenditure.objects.all():
             e = Expenditure.objects.filter(candidate=expenditure.candidate,
@@ -593,6 +596,7 @@ class Command(BaseCommand):
             pass
 
         # Remove duplicate slugs.
+        print 'removing duplicate slugs'
         slugs = list(Committee.objects.values_list('slug', flat=True).annotate(n=Count('slug')).filter(n__gt=1))
         for slug in slugs:
             bad, good = Committee.objects.filter(slug=slug).order_by('pk')
@@ -615,16 +619,19 @@ class Command(BaseCommand):
         Expenditure.objects.filter(image_number=10931278248, candidate__slug='joyce-elliott').update(support_oppose='S')
 
         # Remove committees that have no expenditures
+        print 'removing committees that have no expenditures'
         for committee in Committee.objects.all():
             if committee.expenditure_set.count() == 0:
                 committee.delete()
 
         # Remove candidates that have no expenditures
+        print 'removing candidates that have no expenditures'
         for candidate in Candidate.objects.all():
             if candidate.expenditure_set.count() == 0:
                 candidate.delete()
 
         # Denormalize expensive-to-calculate fields
+        print 'denormalizing candidate totals'
         for candidate in Candidate.objects.all():
             candidate.denormalize()
 
@@ -634,4 +641,5 @@ class Command(BaseCommand):
         cache.delete('buckley:totals')
 
 
+        print 'caching totals'
         cache_totals()
