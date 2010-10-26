@@ -13,6 +13,7 @@ from django.db import models
 from django.db.models import signals
 from django.contrib.localflavor.us.us_states import STATE_CHOICES
 from django.contrib.humanize.templatetags.humanize import ordinal
+from django.core.cache import cache
 
 STATE_CHOICES = dict(STATE_CHOICES)
 
@@ -162,6 +163,11 @@ class Committee(models.Model):
         """Combine same electioneering comm. mentioning
         multiple candidates onto one line.
         """
+        cache_key = 'buckley:combined_all_candidates_with_amounts:%s' % self.pk
+        data = cache.get(cache_key)
+        if data:
+            return data
+
         # key is candidates mentioned, value is 
         # queryset of expenditures
         expenditures = defaultdict(list)
@@ -219,7 +225,9 @@ class Committee(models.Model):
                                     'slugs': slugs,
                                     }
 
-        return rows.items()
+        data = rows.items()
+        cache.set(cache_key, data, 60*60*24)
+        return data
 
     def get_transparencydata_id(self):
 
