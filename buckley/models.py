@@ -74,6 +74,8 @@ class Committee(models.Model):
             ),
             blank=True)
 
+    has_donors = models.BooleanField()
+
     #transparencydata_id = models.CharField(max_length=40)
 
     #objects = CommitteeManager()
