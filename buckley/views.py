@@ -906,6 +906,8 @@ def api_candidate_detail(request, crp_id):
     try:
         candidate_obj = Candidate.objects.get(crp_id=candidate['crp_id'])
         candidate['outside_spending'] = int(candidate_obj.sole_total())
+        candidate['outside_spending_supporting'] = int(candidate_obj.total_supporting())
+        candidate['outside_spending_opposing'] = int(candidate_obj.total_opposing())
         candidate['top_outside_spending_groups'] = []
         outside_spending = sorted(candidate_obj.sole_all_committees_with_amounts(), key=itemgetter('amount'), reverse=True)
         for spending in outside_spending:
@@ -916,6 +918,8 @@ def api_candidate_detail(request, crp_id):
                 })
     except Candidate.DoesNotExist:
         candidate['outside_spending'] = 0
+        candidate['outside_spending_supporting'] = 0
+        candidate['outside_spending_opposing'] = 0
         candidate['top_outside_spending_groups'] = []
 
     candidate['top_contributors'] = []
