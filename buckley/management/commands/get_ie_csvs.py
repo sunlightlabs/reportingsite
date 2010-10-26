@@ -272,7 +272,6 @@ class Command(BaseCommand):
 
         # Remove more apparent duplicates
         print 'removing more apparent duplicates'
-        """
         dupes = {}
         for expenditure in Expenditure.objects.all():
             e = Expenditure.objects.filter(candidate=expenditure.candidate,
@@ -292,8 +291,6 @@ class Command(BaseCommand):
             if Expenditure.objects.filter(pk=k.pk):
                 for expenditure in v:
                     expenditure.delete()
-        """
-
 
 
         cache.delete('buckley:widget2')
