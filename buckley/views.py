@@ -965,7 +965,6 @@ def api_race_detail(request, race):
     candidates = [dict(zip(fields, row)) for row in cursor.fetchall()]
     seatholder_bioguide_id = candidates[0]['seatholder_bioguide_id']
     for candidate in candidates:
-        del(candidate['timestamp'])
         del(candidate['id'])
         del(candidate['seatholder_bioguide_id'])
         candidate['candidate_campaign_spending'] = candidate['spending']
