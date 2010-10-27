@@ -903,6 +903,7 @@ def api_candidate_detail(request, crp_id):
     del(candidate['id'])
     candidate['candidate_campaign_spending'] = candidate['spending']
     del(candidate['spending'])
+    del(candidate['timestamp'])
 
     try:
         candidate_obj = Candidate.objects.get(crp_id=candidate['crp_id'])
