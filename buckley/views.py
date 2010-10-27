@@ -810,7 +810,7 @@ def api_committee_list(request):
             'total_spent': int(committee.total()),
             'independent_expenditure_total': int(committee.ie_total()),
             'electioneering_total': int(committee.ec_total()),
-            'description': 'Lorem Ipsum',
+            'description': committee.description,
             }])
     return HttpResponse(json.dumps(committees), mimetype='text/plain')
 
@@ -821,7 +821,7 @@ def api_committee_detail(request, fec_id):
 
     data = {'committee': committee.name,
             'total_spent': int(committee.total()),
-            'description': 'Lorem Ipsum', }
+            'description': committee.description, }
 
     base_url = 'http://%s%%s' % Site.objects.get_current().domain
 
