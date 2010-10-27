@@ -961,6 +961,7 @@ def api_race_detail(request, race):
 
     fields = [x[0] for x in cursor.description]
     candidates = [dict(zip(fields, row)) for row in cursor.fetchall()]
+    seatholder_bioguide_id = candidates[0]['seatholder_bioguide_id']
     for candidate in candidates:
         del(candidate['id'])
         candidate['candidate_campaign_spending'] = candidate['spending']
@@ -968,7 +969,10 @@ def api_race_detail(request, race):
         try:
             candidate_obj = Candidate.objects.get(crp_id=candidate['crp_id'])
             candidate['outside_spending'] = int(candidate_obj.sole_total())
-            candidate['top_outside_spending_groups'] = []
+            #candidate['top_outside_spending_groups'] = []
+            candidate['outside_spending_supporting'] = int(candidate_obj.total_supporting())
+            candidate['outside_spending_opposing'] = int(candidate_obj.total_opposing())
+            """
             outside_spending = sorted(candidate_obj.sole_all_committees_with_amounts(), key=itemgetter('amount'), reverse=True)
             for spending in outside_spending:
                 candidate['top_outside_spending_groups'].append({
@@ -976,10 +980,14 @@ def api_race_detail(request, race):
                     'support_oppose': spending['support_oppose'],
                     'amount': int(spending['amount']),
                     })
+            """
         except Candidate.DoesNotExist:
             candidate['outside_spending'] = 0
-            candidate['top_outside_spending_groups'] = []
+            #candidate['top_outside_spending_groups'] = []
+            candidate['outside_spending_supporting'] = 0
+            candidate['outside_spending_opposing'] = 0
 
+        """
         candidate['top_contributors'] = []
         cursor.execute("SELECT * FROM candidate_contributions WHERE candidate_crp_id = %s ORDER BY rank", [candidate['crp_id'], ])
         fields = [x[0] for x in cursor.description]
@@ -988,6 +996,7 @@ def api_race_detail(request, race):
             del(data['id'])
             del(data['candidate_crp_id'])
             candidate['top_contributors'].append(data)
+        """
 
         if candidate['crp_id']:
             candidate['api_url'] = base_url % '/independent-expenditures/api/candidates/%s.json' % candidate['crp_id']
@@ -998,6 +1007,6 @@ def api_race_detail(request, race):
     race['candidates'] = candidates
     race['state'] = candidate['state']
     race['district'] = candidate['district']
-    race['seatholder_bioguide_id'] = candidate['seatholder_bioguide_id']
+    race['seatholder_bioguide_id'] = seatholder_bioguide_id
 
     return HttpResponse(json.dumps(race), mimetype='text/plain')
