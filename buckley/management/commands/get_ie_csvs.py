@@ -123,6 +123,8 @@ class Command(BaseCommand):
                     if created: # Get committee's previous contributions
                         print row['committee_id']
                         for csv_url in get_form_urls(row['committee_id']):
+                            if not csv:
+                                continue
                             print 'Getting contributions'
                             filing_number = csv_url.split('/')[-1].replace('.fec', '')
                             print filing_number
@@ -271,6 +273,7 @@ class Command(BaseCommand):
             candidate.denormalize()
 
         # Remove more apparent duplicates
+        """
         print 'removing more apparent duplicates'
         dupes = {}
         for expenditure in Expenditure.objects.all():
@@ -291,6 +294,7 @@ class Command(BaseCommand):
             if Expenditure.objects.filter(pk=k.pk):
                 for expenditure in v:
                     expenditure.delete()
+        """
 
 
         cache.delete('buckley:widget2')
