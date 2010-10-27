@@ -965,6 +965,7 @@ def api_race_detail(request, race):
     candidates = [dict(zip(fields, row)) for row in cursor.fetchall()]
     seatholder_bioguide_id = candidates[0]['seatholder_bioguide_id']
     for candidate in candidates:
+        del(candidate['timestamp'])
         del(candidate['id'])
         del(candidate['seatholder_bioguide_id'])
         candidate['candidate_campaign_spending'] = candidate['spending']
@@ -985,7 +986,7 @@ def api_race_detail(request, race):
                     'amount': int(spending['amount']),
                     })
             """
-        except Candidate.DoesNotExist:
+        except (Candidate.DoesNotExist, Candidate.MultipleObjectsReturned):
             candidate['outside_spending'] = 0
             #candidate['top_outside_spending_groups'] = []
             candidate['outside_spending_supporting'] = 0
