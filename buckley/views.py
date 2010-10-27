@@ -851,7 +851,7 @@ def api_committee_detail(request, fec_id):
             })
     candidates.sort(key=itemgetter('total_spent'), reverse=True)
 
-    data['candidates'] = candidates
+    data['candidates'] = candidates[:3]
     
     return HttpResponse(json.dumps(data), mimetype='text/plain')
 
@@ -866,6 +866,7 @@ def api_candidate_list(request):
 
     for candidate in candidates:
         del(candidate['id'])
+        del(candidate['timestamp'])
         if candidate['crp_id']:
             candidate['api_url'] = base_url % '/independent-expenditures/api/candidates/%s.json' % candidate['crp_id']
         else:
