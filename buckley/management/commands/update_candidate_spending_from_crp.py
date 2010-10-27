@@ -98,6 +98,7 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for state in STATES:
+            print state
             time.sleep(1)
             for row in get_state_races(state):
                 update_spending(row)
