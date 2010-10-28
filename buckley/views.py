@@ -798,7 +798,7 @@ def committee_filings(request):
 def api_committee_list(request):
     committees = []
     base_url = 'http://%s%%s' % Site.objects.get_current().domain
-    for committee in Committee.objects.all():
+    for committee in Committee.objects.exclude(description=''):
         if not committee.slug:
             continue
         try:
