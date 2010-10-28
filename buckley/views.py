@@ -949,8 +949,10 @@ def api_race_list(request):
         data['api_url'] = base_url % '/independent-expenditures/api/races/%(seat)s.json' % data
         if data['district'] == 'Senate':
             url = '/independent-expenditures/race/%s-Senate' % data['state']
+            data['race'] = '%s Senate' % STATE_CHOICES[data['state']]
         else:
             url = '/independent-expenditures/race/%s-%s' % (data['state'], str(int(data['seat'][-2:])))
+            data['race'] = '%s %s' % (STATE_CHOICES[data['state']], ordinal(data['district']))
         data['url'] = base_url % url
         races.append(data)
 
@@ -1016,5 +1018,10 @@ def api_race_detail(request, race):
     race['state'] = candidate['state']
     race['district'] = candidate['district']
     race['seatholder_bioguide_id'] = seatholder_bioguide_id
+
+    if race['district'] == 'Senate':
+        race['race'] = '%s Senate' % STATE_CHOICES[race['state']]
+    else:
+        race['race'] = '%s %s' % (STATE_CHOICES[race['state']], ordinal(race['district']))
 
     return HttpResponse(json.dumps(race), mimetype='text/plain')
