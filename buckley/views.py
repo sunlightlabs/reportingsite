@@ -942,7 +942,7 @@ def api_candidate_detail(request, crp_id):
 def api_race_list(request):
     base_url = 'http://%s%%s' % Site.objects.get_current().domain
     cursor = connection.cursor()
-    cursor.execute("SELECT seat, state, district, seatholder_bioguide_id FROM all_candidates GROUP BY seat")
+    cursor.execute("SELECT seat, state, district, seatholder_bioguide_id FROM all_candidates WHERE use_for_sunlight_live = 1 GROUP BY seat")
     races = []
     for row in cursor.fetchall():
         data = dict(zip([x[0] for x in cursor.description], row))
@@ -973,6 +973,7 @@ def api_race_detail(request, race):
         candidate['candidate_campaign_spending'] = candidate['spending']
         del(candidate['spending'])
         del(candidate['timestamp'])
+        del(candidate['use_for_sunlight_live'])
         try:
             candidate_obj = Candidate.objects.get(crp_id=candidate['crp_id'])
             candidate['outside_spending'] = int(candidate_obj.sole_total())
