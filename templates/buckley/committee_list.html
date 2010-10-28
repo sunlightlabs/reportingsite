@@ -37,7 +37,8 @@
                     <td>${{ committee.ec_total|intcomma }}</td>
                     {#<td>{% if committee.ieonly_url %}<a href="{{ committee.ieonly_url }}">Yes</a>{% endif %}</td>#}
                     {% if committee.slug %}
-                    <td>{% if committee.contribution_set.count %}<a href="{% url buckley_committee_contribution_list slug=committee.slug %}">Donors</a>{% endif %}</td>
+                    {#<td>{% if committee.contribution_set.count %}<a href="{% url buckley_committee_contribution_list slug=committee.slug %}">Donors</a>{% endif %}</td>#}
+                    <td>{% if committee.has_donors %}<a href="{% url buckley_committee_contribution_list slug=committee.slug %}">Donors</a>{% endif %}</td>
                     {% else %}
                     <td></td>
                     {% endif %}

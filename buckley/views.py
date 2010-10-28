@@ -711,9 +711,12 @@ def comparison_chart():
 
 def committee_contribution_list(request, slug):
     committee = get_object_or_404(Committee, slug=slug)
+    if not committee.has_donors:
+        raise Http404
+
     contributions = committee.contribution_set.all()
     if not contributions:
-        raise Http404
+        contributions = Contribution.objects.none()
 
     order_options = ('name',
                      'amount',

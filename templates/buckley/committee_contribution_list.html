@@ -22,6 +22,7 @@
 <p class="tip">This committee has <a href="{{ committee.ieonly_url }}">filed a letter indicating that it will accept donations of unlimited amounts</a></p>
 {% endif %}
 
+{% if object_list %}
     <table id="expendituresData" class="tablesorter">
         <thead>
             <th class="sort header{% ifequal order 'name' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'name' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}name">Name</a></th>
@@ -44,6 +45,10 @@
             {% endfor %}
         </tbody>
     </table>
+
+    {% else %}
+    This organization's contributions have not yet been imported.
+    {% endif %}
 
 {% if page_obj.has_other_pages %}
 <div id="paginator" style="width: 250px; margin-left: auto; margin-right: auto; margin-top: 20px; margin-bottom: 20px;">
