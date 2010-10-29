@@ -163,10 +163,10 @@ class Committee(models.Model):
         """Combine same electioneering comm. mentioning
         multiple candidates onto one line.
         """
-        cache_key = 'buckley:combined_all_candidates_with_amounts:%s' % self.pk
-        data = cache.get(cache_key)
-        if data:
-            return data
+        #cache_key = 'buckley:combined_all_candidates_with_amounts:%s' % self.pk
+        #data = cache.get(cache_key)
+        #if data:
+        #    return data
 
         # key is candidates mentioned, value is 
         # queryset of expenditures
@@ -226,7 +226,7 @@ class Committee(models.Model):
                                     }
 
         data = rows.items()
-        cache.set(cache_key, data, 60*60*24)
+        #cache.set(cache_key, data, 60*60*24)
         return data
 
     def get_transparencydata_id(self):
