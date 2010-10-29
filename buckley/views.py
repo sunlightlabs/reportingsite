@@ -25,6 +25,7 @@ except ImportError:
 STATE_CHOICES = dict(STATE_CHOICES)
 
 from buckley.models import *
+from buckley.name_tools import split as name_split
 
 try:
     import json
@@ -870,6 +871,12 @@ def api_candidate_list(request):
     for candidate in candidates:
         del(candidate['id'])
         del(candidate['timestamp'])
+
+        candidate['prefix'], \
+                candidate['first'], \
+                candidate['last'], \
+                candidate['suffix'] = name_split(candidate['candidate'])
+
         if candidate['crp_id']:
             candidate['api_url'] = base_url % '/independent-expenditures/api/candidates/%s.json' % candidate['crp_id']
         else:
@@ -928,6 +935,12 @@ def api_candidate_detail(request, crp_id):
         candidate['top_outside_spending_groups'] = []
 
     candidate['top_contributors'] = []
+
+    candidate['prefix'], \
+            candidate['first'], \
+            candidate['last'], \
+            candidate['suffix'] = name_split(candidate['candidate'])
+
 
     cursor.execute("SELECT * FROM candidate_contributions WHERE candidate_crp_id = %s ORDER BY rank", [candidate['crp_id'], ])
     fields = [x[0] for x in cursor.description]
