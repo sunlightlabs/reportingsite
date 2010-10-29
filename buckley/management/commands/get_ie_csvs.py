@@ -7,6 +7,7 @@ import csv
 import datetime
 import re
 import urllib2
+import socket
 
 from django.core.cache import cache
 from django.core.management.base import BaseCommand, CommandError
@@ -27,6 +28,9 @@ def make_row_dict(row, fields):
     for index, field in fields:
         data[field] = row[index]
     return data
+
+
+socket.setdefaulttimeout(1000)
 
 
 class Command(BaseCommand):
@@ -81,9 +85,12 @@ class Command(BaseCommand):
             csv_url = 'http://query.nictusa.com%s' % m.group()
             reader = csv.reader(StringIO(urllib2.urlopen(csv_url).read()))
             for row in reader:
+                amendment = 'N'
                 if row[0] == 'F57' or row[0] == 'F5A':
                     if len(row) < 33:
                         continue
+                    if row[0] == 'F5A':
+                        amendment = 'A1'
                     row = make_row_dict(row, f5_fields)
                 elif row[0] == 'SE':
                     row = make_row_dict(row, se_fields)
@@ -225,7 +232,8 @@ class Command(BaseCommand):
                                 transaction_id=row['transaction_id'],
                                 filing_number=filing_number,
                                 receipt_date=row['receipt_date'],
-                                race=candidate.race()
+                                race=candidate.race(),
+                                amendment=amendment
                                 )
                     except IntegrityError:
                         continue
@@ -271,6 +279,24 @@ class Command(BaseCommand):
         print 'denormalizing candidate totals'
         for candidate in Candidate.objects.all():
             candidate.denormalize()
+
+        # Remove amendmended filings
+        print 'removing amended filings'
+        for amendment in Expenditure.objects.exclude(amendment='N'):
+            # Check for A2 amendments
+            if amendment.amendment == 'A2':
+                Expenditure.objects.filter(Q(amendment='N') | Q(amendment='A1'),
+                                           transaction_id=amendment.transaction_id,
+                                           committee=amendment.committee,
+                                           expenditure_date=amendment.expenditure_date,
+                                           candidate=amendment.candidate).delete()
+            else:
+                Expenditure.objects.filter(amendment='N',
+                                           transaction_id=amendment.transaction_id,
+                                           committee=amendment.committee,
+                                           expenditure_date=amendment.expenditure_date,
+                                           candidate=amendment.candidate).delete()
+
 
         # Remove more apparent duplicates
         """
