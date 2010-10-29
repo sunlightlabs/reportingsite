@@ -17,6 +17,7 @@ from django.core.cache import cache
 from django.db.models import Q
 
 from buckley.models import *
+from buckley.management.commands.cache_totals import cache_totals
 
 from import_ies import committee_lookup, candidate_lookup_by_name, \
                        candidate_lookup_by_race, candidate_lookup_by_id, \
@@ -32,10 +33,19 @@ from buckley import name_tools
 FEC_ID_LOOKUP = {
         'S4MA00075': 'S0MA00075',
         'S4NH00235': 'S0NH00235',
+        'H6NY21128': 'H6NY24128',
+        'H4GA12159': 'H4GA12010',
+        'H6NY23081': 'H0NY23081',
         }
 
 NAME_LOOKUP = {
         'WILLIAM, HALTER': 'S0AR00168',
+        'CONNOLLY, GERRY': 'H8VA11062',
+        'HERSETH-SANDLIN, STEPHANIE': 'H2SD00092',
+        'PERRIOELLO, TOM': 'H8VA05106',
+        'Owens, Bill': 'H0NY23081',
+        'Barrow, John': 'H4GA12010',
+        'Arcuri, Michael': 'H6NY24128',
         }
 
 
@@ -131,6 +141,7 @@ class Command(BaseCommand):
                             #candidate = 'missing'
                             if row['CAND_NM'] in NAME_LOOKUP:
                                 candidate_data = candidate_lookup_by_id(NAME_LOOKUP[row['CAND_NM']])
+                                row['candidate_id'] = NAME_LOOKUP[row['CAND_NM']]
                                 if candidate_data:
                                     row.update(candidate_data)
                                 else:
@@ -176,7 +187,12 @@ class Command(BaseCommand):
                             pass
 
                 if not candidate and not row.get('FirstLastP', None):
-                    continue
+                    try:
+                        candidate = Candidate.objects.get(fec_id=row['candidate_id'])
+                    except (Candidate.DoesNotExist, Candidate.MultipleObjectsReturned):
+                        print row
+                        continue
+                    #continue
 
                 if not candidate:
                     state = row['CAND_OFFICE_ST']
@@ -249,6 +265,8 @@ class Command(BaseCommand):
                 receipt_date = dateparse(row['RECEIPT_DT'])
                 filing_number = row['FILE_NUM'].replace(',', '')
                 amendment = row['AMNDT_IND']
+                if amendment != 'N':
+                    continue
 
                 # Sometimes the candidates in this expenditure
                 # are from different races. If that's the case,
@@ -311,21 +329,11 @@ class Command(BaseCommand):
 
                 expenditure.electioneering_candidates.add(*candidates)
 
-                print expenditure
-
-        # Remove apparent duplicates
-        dupes = {}
-        for expenditure in Expenditure.objects.filter():
-            e = Expenditure.objects.filter(candidate=expenditure.candidate, committee=expenditure.committee, expenditure_date=expenditure.expenditure_date, payee=expenditure.payee, expenditure_amount=expenditure.expenditure_amount).exclude(filing_number=expenditure.filing_number)
-            if e:
-                dupes[expenditure] = e
-
-        for k, v in dupes.items():
-            if Expenditure.objects.filter(pk=k.pk):
-                for expenditure in v:
-                    expenditure.delete()
+                #print expenditure
 
         # Remove amendmended filings
+        """
+        print 'Removing amended filings'
         for amendment in Expenditure.objects.exclude(amendment='N', electioneering_communication=True):
             # Check for A2 amendments
             if amendment.amendment == 'A2':
@@ -340,10 +348,41 @@ class Command(BaseCommand):
                                            committee=amendment.committee, 
                                            electioneering_communication=True,
                                            candidate=amendment.candidate).delete()
+        """
+
+        # Remove more apparent duplicates
+        """
+        print 'removing more apparent duplicates'
+        dupes = {}
+        for expenditure in Expenditure.objects.filter(electioneering_communication=False):
+            e = Expenditure.objects.filter(candidate=expenditure.candidate,
+                                           committee=expenditure.committee,
+                                           expenditure_date=expenditure.expenditure_date,
+                                           payee=expenditure.payee,
+                                           electioneering_communication=False
+                                           ).exclude(filing_number=expenditure.filing_number)
+            if e:
+                d = []
+                for i in e:
+                    if round(i.expenditure_amount) == round(expenditure.expenditure_amount):
+                        d.append(i)
+                if d:
+                    dupes[expenditure] = d
+
+        for k, v in dupes.items():
+            if Expenditure.objects.filter(pk=k.pk):
+                for expenditure in v:
+                    expenditure.delete()
+        """
+
 
         # Denormalize expensive-to-calculate fields
+        print 'Denormalizing candidates'
         for candidate in Candidate.objects.all():
             candidate.denormalize()
 
         # Clear the cached widget
         cache.delete('buckley:widget2')
+
+        #print 'caching totals'
+        cache_totals()
