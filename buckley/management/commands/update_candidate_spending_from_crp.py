@@ -1,5 +1,6 @@
 import csv
 import re
+import socket
 import time
 import urllib2
 
@@ -8,6 +9,8 @@ from django.db import connection
 
 from buckley.models import *
 
+
+socket.setdefaulttimeout(1000)
 
 STATES = ['AK', 'AL', 'AR', 'AS', 'AZ', 'CA', 'CO', 'CT', 'DC',
           'DE', 'FL', 'GA', 'GU', 'HI', 'IA', 'ID', 'IL', 'IN',
