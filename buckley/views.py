@@ -126,8 +126,12 @@ def race_expenditures(request, race, election_type=None):
         candidates = get_list_or_404(Candidate, office='S', state=state)
         full_race = '%s Senate' % STATE_CHOICES[state.upper()]
     else:
-        if int(district) < 10:
-            district = '0%s' % district
+        try:
+            if int(district) < 10:
+                district = '0%s' % district
+        except ValueError:
+            raise Http404
+
         candidates = get_list_or_404(Candidate, office='H', state=state, district=district)
         full_race = '%s %s' % (STATE_CHOICES[state.upper()], ordinal(district))
 
