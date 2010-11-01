@@ -884,6 +884,7 @@ def api_candidate_list(request):
 
     return HttpResponse(json.dumps(candidates), mimetype='text/plain')
 
+
 def api_candidate_detail(request, crp_id):
 
     cursor = connection.cursor()
@@ -980,7 +981,6 @@ def api_race_detail(request, race):
             candidate['outside_spending'] = 0
             candidate['outside_spending_supporting'] = 0
             candidate['outside_spending_opposing'] = 0
-
 
         if candidate['crp_id']:
             candidate['api_url'] = base_url % '/independent-expenditures/api/candidates/%s.json' % candidate['crp_id']
