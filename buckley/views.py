@@ -929,6 +929,7 @@ def api_candidate_detail(request, crp_id):
         data = dict(zip(fields, row))
         del(data['id'])
         del(data['candidate_crp_id'])
+        del(data['timestamp'])
         candidate['top_contributors'].append(data)
 
     return HttpResponse(json.dumps(candidate), mimetype='text/plain')
