@@ -10,20 +10,20 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         races = ['PA-Senate',
                 'WV-Senate',
-                'MD-01',
+                'MD-1',
                 'PA-11',
-                'VA-05',
+                'VA-5',
                 'IL-Senate',
                 'MO-Senate',
-                'MI-07',
+                'MI-7',
                 'OH-16',
                 'CO-Senate',
                 'NV-Senate',
-                'AZ-05',
-                'NV-03',
+                'AZ-5',
+                'NV-3',
                 'WA-Senate',
                 'CA-Senate',
-                'WA-03',]
+                'WA-3',]
 
         for race in races:
             committees = Expenditure.objects.filter(race=race) \
@@ -34,3 +34,4 @@ class Command(BaseCommand):
 
             print '%s: %s' % (race,
                               '; '.join(['%s ($%s)' % (x['committee__name'], intcomma(x['t'])) for x in committees]))
+            print
