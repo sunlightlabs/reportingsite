@@ -46,7 +46,9 @@
             <h4>{{ date_expenditures.grouper|date:"N j" }}</h4>
             <ul>
                 {% for expenditure in date_expenditures.list %}
+{% if expenditure.candidate.race %}
                 <li><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a> spent <a href="{{ expenditure.get_absolute_url }}">${{ expenditure.expenditure_amount|intcomma }}</a> in {% ifequal expenditure.support_oppose 'S' %}support of{% else %}opposition to{% endifequal %} <a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a> in the <a href="{% url buckley_race_detail race=expenditure.candidate.race  %}">{{ expenditure.candidate.full_race_name }} race</a>.</li>
+{% endif %}
                 {% endfor %}
             </ul>
         {% endfor %}
