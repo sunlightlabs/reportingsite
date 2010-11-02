@@ -97,7 +97,7 @@ def races():
     return race_amts
 
 
-@cache_page(60*15)
+@cache_page(60*60)
 def race_list(request, return_raw_data=False):
     race_amts = races()
     return render_to_response('buckley/race_list.html',
@@ -105,7 +105,7 @@ def race_list(request, return_raw_data=False):
                                }, context_instance=RequestContext(request))
 
 
-@cache_page(60*15)
+@cache_page(60*60)
 def race_expenditures(request, race, election_type=None):
 
     try:
@@ -194,7 +194,7 @@ def race_expenditures(request, race, election_type=None):
                                'includes_electioneering': includes_electioneering,
                               }, context_instance=RequestContext(request))
 
-@cache_page(60*15)
+@cache_page(60*60)
 def candidate_committee_detail(request, candidate_slug, committee_slug):
     if candidate_slug == 'no-candidate-listed':
         raise Http404
