@@ -305,7 +305,7 @@ class Command(BaseCommand):
                     expenditure.expenditure_amount = expenditure_amount
                     expenditure.receipt_date = receipt_date
                     expenditure.election_type = election_type
-                    expenditure.filing_number = filing_number
+                    expenditure.filing_number = int(Decimal(filing_number))
                     expenditure.amendment = amendment
                     expenditure.race = race
                     expenditure.save()
@@ -321,7 +321,7 @@ class Command(BaseCommand):
                             expenditure_amount=expenditure_amount,
                             receipt_date=receipt_date,
                             election_type=election_type,
-                            filing_number=filing_number,
+                            filing_number=int(Decimal(filing_number)),
                             amendment=amendment,
                             race=race,
                             electioneering_communication=True
