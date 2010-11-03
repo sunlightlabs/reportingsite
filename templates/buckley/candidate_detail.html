@@ -20,6 +20,7 @@
     <h2 class="withDetail">{{ object }}{% if object.party %} ({{ object.party }}){% endif %}</h2>
     <span class="raceDetail"><a href="{% url buckley_race_detail race=object.race %}">{{ object.full_race_name }}</a></span>
     <div class="amountLine clear">
+    {% if object.winner %}<p class="tip">Winner</p>{% endif %}
         <ul>
             <li>Independent expenditure money supporting: <span class="amount">${{ object.total_supporting|intcomma }}</span> </li>
             <li>Independent expenditure money opposing: <span class="amount">${{ object.total_opposing|intcomma }}</span> </li>

@@ -9,7 +9,7 @@ try:
 except ImportError:
     import simplejson as json
 
-from django.db import models
+from django.db import models, connection
 from django.db.models import signals
 from django.contrib.localflavor.us.us_states import STATE_CHOICES
 from django.contrib.humanize.templatetags.humanize import ordinal
@@ -558,6 +558,16 @@ class Candidate(models.Model):
             return None
         return 'http://influenceexplorer.com/politician/%s/%s' % (self.slug,
                                                                   self.transparencydata_id)
+
+    def winner(self):
+        cursor = connection.cursor()
+        cursor.execute("SELECT winner FROM all_candidates WHERE crp_id = %s",
+                [self.crp_id, ])
+        if not cursor.rowcount:
+            return False
+        if cursor.fetchone()[0] == 1:
+            return True
+        return False
 
 
 class Expenditure(models.Model):

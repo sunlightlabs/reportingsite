@@ -26,6 +26,7 @@
                 <th class="sort">Total outside spending</th>
                 <th class="sort">Supporting</th>
                 <th class="sort">Opposing</th>
+                <th class="sort">Winner</th>
             </tr>
         </thead>
         <tbody>
@@ -38,6 +39,7 @@
         <td>${{ candidate.total_expenditures|intcomma }}{% if candidate.electioneering_total %} <a href="#asterisk">*</a>{% endif %}</td>
         <td>${{ candidate.expenditures_supporting|intcomma }}</td>
         <td>${{ candidate.expenditures_opposing|intcomma }}</td>
+        <td>{% if candidate.winner %}Winner{% endif %}</td>
     </tr>
     {% endfor %}
     </tbody>
