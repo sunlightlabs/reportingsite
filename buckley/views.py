@@ -33,7 +33,10 @@ except ImportError:
     import simplejson as json
 
 
-@cache_page(60*60)
+KEY_PREFIX = '1'
+
+
+@cache_page(60*60*24)
 def expenditure_detail(request, committee_slug, object_id):
     expenditure = get_object_or_404(Expenditure, committee__slug=committee_slug, pk=object_id)
     return render_to_response('buckley/expenditure_detail.html', {'object': expenditure, },
@@ -97,7 +100,7 @@ def races():
     return race_amts
 
 
-@cache_page(60*60)
+@cache_page(60*60*24)
 def race_list(request, return_raw_data=False):
     race_amts = races()
     return render_to_response('buckley/race_list.html',
@@ -105,7 +108,7 @@ def race_list(request, return_raw_data=False):
                                }, context_instance=RequestContext(request))
 
 
-@cache_page(60*60)
+@cache_page(60*60*24, key_prefix=KEY_PREFIX)
 def race_expenditures(request, race, election_type=None):
 
     try:
@@ -194,7 +197,7 @@ def race_expenditures(request, race, election_type=None):
                                'includes_electioneering': includes_electioneering,
                               }, context_instance=RequestContext(request))
 
-@cache_page(60*60)
+@cache_page(60*60*24)
 def candidate_committee_detail(request, candidate_slug, committee_slug):
     if candidate_slug == 'no-candidate-listed':
         raise Http404
@@ -902,9 +905,9 @@ def api_candidate_detail(request, crp_id):
 
     try:
         candidate_obj = Candidate.objects.get(crp_id=candidate['crp_id'])
-        candidate['outside_spending'] = candidate_obj.total_expenditures
-        candidate['outside_spending_supporting'] = candidate_obj.expenditures_supporting
-        candidate['outside_spending_opposing'] = candidate_obj.expenditures_opposing
+        candidate['outside_spending'] = int(candidate_obj.total_expenditures)
+        candidate['outside_spending_supporting'] = int(candidate_obj.expenditures_supporting)
+        candidate['outside_spending_opposing'] = int(candidate_obj.expenditures_opposing)
         candidate['top_outside_spending_groups'] = []
         outside_spending = sorted(candidate_obj.sole_all_committees_with_amounts(), key=itemgetter('amount'), reverse=True)
         for spending in outside_spending:
