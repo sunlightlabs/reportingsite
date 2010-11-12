@@ -5,9 +5,15 @@ from django.conf.urls.defaults import *
 from django.views.generic.list_detail import object_list, object_detail
 
 from willard.models import *
+from willard.feeds import *
 
 
 urlpatterns = patterns('',
+
+        url(r'^issue\/(?P<code>\w{3})\/rss\/?$',
+         IssueFeed(),
+         {},
+         name='willard_issue_detail_feed'),
 
         url(r'^issue\/(?P<code>\w{3})\/?$',
          'willard.views.issue_detail',
@@ -49,6 +55,10 @@ urlpatterns = patterns('',
             {'queryset': Client.objects.all(),
                 },
             name='willard_client_detail'),
+
+        url(r'rss\/?$',
+            RegistrationFeed(),
+            name='willard_feed'),
 
         url(r'^$',
             'willard.views.index',
