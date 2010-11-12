@@ -1,0 +1,12 @@
+{% extends "base.html" %}
+
+{% block title %}{{ block.super }}: Lobbyist registrations{% endblock %}
+
+{% block body %}fullWidth{% endblock %}
+{% block main_content %}
+<div id="columns">
+    <div id="fullColumn">
+        {% block content %}{% endblock content %}
+    </div>
+</div>
+{% endblock main_content %}

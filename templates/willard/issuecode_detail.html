@@ -1,0 +1,99 @@
+{% extends "willard/willard_base.html" %}
+
+{% block content %}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
+
+<script type="text/javascript">
+    var months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+    $(document).ready(function () {
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'monthColumnChart',
+                width: '500',
+                height: '300',
+                backgroundColor: '#f1f1ef',
+                defaultSeriesType: 'column'
+            },
+            title: { 
+                text: '',
+                style: {
+                    display: 'none',
+                    position: 'absolute',
+                    left: '0',
+                    top: '0',
+                }
+            },
+            tooltip: {
+                formatter: function() {
+                    return '<b>'+ this.y +' lobbyist registrations</b>';
+                }
+            },
+            xAxis: {
+                categories: [
+                {% for month in month_counts %}
+                    months[{{ month.month }}-1]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ],
+                title: { text: 'Month' }
+            },
+            yAxis: {
+                min: 0,
+                title: { text: 'Number of registrations' }
+            },
+            legend: { enabled: false },
+            credits: { enabled: false },
+            plotOptions: {
+                series: {
+                    cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function () {
+                                location.href = '#' + this.options.anchor;
+                            }
+                        }
+                    }
+                }
+            },
+            series: [{data: [
+            {% for month in month_counts %}
+                {y: {{ month.count }},
+                 anchor: {{ month.month }}{{ month.year }}
+                }
+                {% if not forloop.last %},{% endif %} 
+            {% endfor %}
+            ]}]
+
+        });
+
+    });
+</script>
+
+<h2>{{ issue_code.issue }}</h2>
+
+<div style="float: right;" id="monthColumnChart"></div>
+
+<div id="registrationList" style="width: 350px;">
+{% for date, registrations in date_data %}
+<h3 id="{{ date|date:'nY' }}">{{ date|date:"N Y" }}</h3>
+<ul style="margin-bottom: 40px;">
+{% for registration in registrations %}
+    <li>
+        <strong>Date:</strong> {{ registration.signed_date|date:"F j, Y" }}
+        <br/>
+        <strong>Registrant:</strong> <a target="_new" href="{{ registration.organization.ie_url }}">{{ registration.organization.name }}</a>
+        <br/>
+        <strong>Client:</strong> <a target="_new" href="{{registration.client.ie_url }}">{{ registration.client.name }}</a>
+        <br/>
+        <strong>Issue{{ registration.issues.count|pluralize }}:</strong> {% for issue_code in registration.issues.all %}{{ issue_code.issue }}{% if not forloop.last %}, {% endif %}{% endfor %}
+        <br/>
+        <strong>Specific issue:</strong> {{ registration.specific_issues }}
+        {% if not forloop.last %}<hr style="margin: 15px 0px;"/>{% endif %}
+    </li>
+
+{% endfor %}
+</ul>
+{% endfor %}
+</div>
+
+{% endblock content %}
