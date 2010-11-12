@@ -12,7 +12,7 @@ from willard.models import *
 
 
 def index(request):
-    cutoff = datetime.date.today() - relativedelta(months=12)
+    cutoff = datetime.date.today() - relativedelta(months=11)
     registrations = Registration.objects.filter(signed_date__lte=datetime.date.today(), signed_date__gte=cutoff)
 
     top_issue_ids = IssueCode.objects.filter(registration__signed_date__gte=cutoff).values_list('pk', flat=True).annotate(c=Count('registration')).order_by('-c')[:5]
@@ -53,7 +53,7 @@ def issue_detail(request, code):
     # Get month counts for the past 12 months.
     month_counts = []
     curr = datetime.date.today()
-    while len(month_counts) < 13:
+    while len(month_counts) < 12:
         month_counts.append({'month': curr.month, 'year': curr.year, 'count': registrations.filter(signed_date__year=curr.year, signed_date__month=curr.month).count()})
         curr -= relativedelta(months=1)
     month_counts.reverse()
