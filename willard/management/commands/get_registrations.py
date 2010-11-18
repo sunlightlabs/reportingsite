@@ -216,6 +216,9 @@ def save_registration(data):
 
 
 def handle_amendments():
+    """Amendments should be handled as the data is imported,
+    but just in case any get through, we remove them here.
+    """
     dupes = Registration.objects.order_by('house_id').values('house_id').annotate(c=Count('pk')).filter(c__gt=1)
     for d in dupes:
         for r in Registration.objects.filter(house_id=d['house_id']).order_by('-signed_date')[1:]:
@@ -226,7 +229,6 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         for xml in get_xml(year=2010):
-            print 'x'
             data = parse_xml(xml)
             save_registration(data)
-        #handle_amendments()
+        handle_amendments()
