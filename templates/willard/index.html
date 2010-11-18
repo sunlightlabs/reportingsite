@@ -24,7 +24,7 @@
         <br/>
         <strong>Client:</strong> <a target="_new" href="{{registration.client.ie_url }}">{{ registration.client.name }}</a>
         <br/>
-        <strong>Issue{{ registration.issues.count|pluralize }}:</strong> {% for issue_code in registration.issues.all %}{{ issue_code.issue }}{% if not forloop.last %}, {% endif %}{% endfor %}
+        <strong>Issues:</strong> {% for issue_code in registration.issues.all %}<a href="{{ issue_code.get_absolute_url }}">{{ issue_code.issue }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
         <br/>
         <strong>Specific issue:</strong> {{ registration.specific_issues }}
         {% if not forloop.last %}<hr style="margin: 15px 0px;"/>{% endif %}
