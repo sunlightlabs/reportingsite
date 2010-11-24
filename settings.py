@@ -102,6 +102,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'haystack',
     'buckley',
+    'gunicorn',
     'willard',
 )
 
