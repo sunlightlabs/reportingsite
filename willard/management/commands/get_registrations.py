@@ -8,6 +8,7 @@ import zipfile
 from django.core.management.base import BaseCommand
 from django.db.models import *
 from django.template.defaultfilters import slugify
+from django.utils.encoding import smart_unicode
 
 from willard.models import *
 
@@ -30,20 +31,25 @@ def get_form_body(year):
                              })
 
 
-def get_xml(year):
-    body = get_form_body(year)
-    url = 'http://disclosures.house.gov/ld/LDDownload.aspx'
-    req = urllib2.Request(url, data=body)
-    response = urllib2.urlopen(req)
-    zf = zipfile.ZipFile(StringIO(response.read()))
+def get_xml(year, filename=None):
+    if filename:
+        zf = zipfile.ZipFile(open(filename, 'r'))
+
+    else:
+        body = get_form_body(year)
+        url = 'http://disclosures.house.gov/ld/LDDownload.aspx'
+        req = urllib2.Request(url, data=body)
+        response = urllib2.urlopen(req)
+        zf = zipfile.ZipFile(StringIO(response.read()))
+
     for f in zf.filelist:
         xml = zf.read(f.filename)
-        yield xml
+        yield f.filename.replace('.xml', ''), xml
 
 
 def parse_xml(xml):
     root = lxml.etree.fromstring(xml)
-    data = {}
+    data = {'xml': xml, }
 
     # Convert xml into a dictionary
     for child in root.iterchildren():
@@ -63,10 +69,14 @@ def parse_xml(xml):
 
         data[child.tag] = child.text or ''
 
-    if data.has_key('effectiveDate'):
+    if data.get('effectiveDate'):
         data['effectiveDate'] = dateparse(data['effectiveDate']).strftime('%Y-%m-%d')
-    if data.has_key('signedDate'):
+    else:
+        data['effectiveDate'] = None
+    if data.get('signedDate'):
         data['signedDate'] = dateparse(data['signedDate']).strftime('%Y-%m-%d')
+    else:
+        data['signedDate'] = None
     return data
 
 
@@ -76,36 +86,36 @@ def save_registration(data):
     registrant, created = Organization.objects.get_or_create(
             slug = slugify(data['organizationName'])[:50],
                 defaults = dict(
-                    name=data['organizationName'],
-                    address1=data['address1'],
-                    address2=data['address2'],
-                    city=data['city'],
-                    state=data['state'][:2],
-                    zip=data['zip'][:5],
-                    country=data['country'],
-                    prefix=data['prefix'],
-                    principal_city=data['principal_city'],
-                    principal_state=data['principal_state'][:2],
-                    principal_zip=data['principal_zip'][:5],
-                    principal_country=data['principal_country'],
-                    general_description=data['registrantGeneralDescription'],
-                    self_select=data['selfSelect']
+                    name=data.get('organizationName', ''),
+                    address1=data.get('address1', ''),
+                    address2=data.get('address2', ''),
+                    city=data.get('city', ''),
+                    state=data.get('state', '')[:2],
+                    zip=data.get('zip', '')[:5],
+                    country=data.get('country', ''),
+                    prefix=data.get('prefix', ''),
+                    principal_city=data.get('principal_city', ''),
+                    principal_state=data.get('principal_state', '')[:2],
+                    principal_zip=data.get('principal_zip', '')[:5],
+                    principal_country=data.get('principal_country', ''),
+                    general_description=data.get('registrantGeneralDescription', ''),
+                    self_select=data.get('selfSelect', '')
                 )
             )
 
     client, created = Client.objects.get_or_create(
             slug = slugify(data['clientName'])[:50],
                 defaults = dict(
-                    name=data['clientName'],
-                    address=data['clientAddress'],
-                    city=data['clientCity'],
-                    state=data['clientState'][:2],
-                    zip=data['clientZip'][:5],
-                    principal_client_city=data['prinClientZip'][:5],
-                    principal_client_state=data['prinClientState'][:2],
-                    principal_client_zip=data['prinClientZip'][:5],
-                    principal_client_country=data['prinClientCountry'],
-                    general_description=data['clientGeneralDescription'][:255]
+                    name=data.get('clientName', ''),
+                    address=data.get('clientAddress', ''),
+                    city=data.get('clientCity', ''),
+                    state=data.get('clientState', '')[:2],
+                    zip=data.get('clientZip', '')[:5],
+                    principal_client_city=data.get('prinClientZip', '')[:5],
+                    principal_client_state=data.get('prinClientState', '')[:2],
+                    principal_client_zip=data.get('prinClientZip', '')[:5],
+                    principal_client_country=data.get('prinClientCountry', ''),
+                    general_description=data.get('clientGeneralDescription', '')[:255]
                 )
             )
 
@@ -113,33 +123,41 @@ def save_registration(data):
     # house ID and check whether they are older
     # than this one. If they are, remove them.
     # If not, skip this one.
-    older = Registration.objects.filter(house_id=data['houseID'],
-                                        signed_date__gt=data['signedDate'])
-    newer = Registration.objects.filter(house_id=data['houseID'],
-                                        signed_date__lte=data['signedDate'])
-    if newer:
-        return
-    if older:
-        older.delete()
+    if data.get('signedDate'):
+        older = Registration.objects.filter(house_id=data['houseID'],
+                                            signed_date__gt=data['signedDate'])
+        newer = Registration.objects.filter(house_id=data['houseID'],
+                                            signed_date__lte=data['signedDate'])
+        if newer:
+            return
+        if older:
+            older.delete()
+
+    try:
+        xml = data.get('xml', '').encode('unicode_escape', 'ignore')
+    except UnicodeDecodeError:
+        xml = ''
 
     registration, created = Registration.objects.get_or_create(
             house_id=data['houseID'],
             signed_date=data['signedDate'],
             defaults = dict(
-                senate_id=data['senateID'],
-                reg_type=data['regType'],
+                senate_id=data.get('senateID', ''),
+                reg_type=data.get('regType', ''),
                 organization=registrant,
                 client=client,
-                specific_issues=data['specific_issues'],
-                report_year=data['reportYear'],
-                report_type=data['reportType'],
-                effective_date=data['effectiveDate'],
-                signer_email=data.get('signerEmail', '')
+                specific_issues=data.get('specific_issues', ''),
+                report_year=data.get('reportYear', ''),
+                report_type=data.get('reportType', ''),
+                effective_date=data.get('effectiveDate', None),
+                signer_email=data.get('signerEmail', ''),
+                form_id=data.get('form_id', ''),
+                xml=xml
                 )
             )
 
 
-    for lobbyist_data in data['lobbyists']:
+    for lobbyist_data in data.get('lobbyists', []):
         try:
             if not lobbyist_data['lobbyistFirstName']:
                 continue
@@ -155,7 +173,7 @@ def save_registration(data):
             )
         registration.lobbyists.add(lobbyist)
 
-    for affiliated in data['affiliatedOrgs']:
+    for affiliated in data.get('affiliatedOrgs', []):
         if not affiliated['affiliatedOrgName']:
             continue
         affiliated_org, created = AffiliatedOrg.objects.get_or_create(
@@ -174,7 +192,7 @@ def save_registration(data):
             )
         registration.affiliated_orgs.add(affiliated_org)
 
-    for entity in data['foreignEntities']:
+    for entity in data.get('foreignEntities', []):
         if not entity['name']:
             continue
 
@@ -202,7 +220,7 @@ def save_registration(data):
             )
         registration.foreign_entities.add(foreign_entity)
 
-    for issue in data['alis']:
+    for issue in data.get('alis', []):
         if not issue.strip():
             continue
         try:
@@ -211,7 +229,6 @@ def save_registration(data):
             issue_code = IssueCode.objects.create(code=issue, issue='')
         registration.issues.add(issue_code)
 
-    #print registration
     print registration.house_id
 
 
@@ -228,7 +245,13 @@ def handle_amendments():
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        for xml in get_xml(year=2010):
+        if args:
+            filename = args[0]
+        else:
+            filename = None
+        for form_id, xml in get_xml(year=2010, filename=filename):
+            print xml
             data = parse_xml(xml)
+            data['form_id'] = form_id
             save_registration(data)
         handle_amendments()

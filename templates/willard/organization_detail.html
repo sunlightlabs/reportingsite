@@ -1,3 +1,7 @@
+{% extends "willard/willard_base.html" %}
+
+{% block content %}
+
 <h1>{{ object }}</h1>
 <ul>
     {% for registration in object.registration_set.all %}
@@ -6,3 +10,5 @@
     </li>
     {% endfor %}
 </ul>
+
+{% endblock %}

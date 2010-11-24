@@ -72,28 +72,22 @@
 <h2>{{ issue_code.issue }}</h2>
 
 <div style="float: right;" id="monthLineChart"></div>
+<h5>Top registrants over the past year</h5>
+{% for registrant in top_registrants %}
+<li><a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a></li>
+{% endfor %}
 
 <div id="registrationList" style="width: 350px;">
-{% for date, registrations in date_data %}
-<h3 id="{{ date|date:'nY' }}">{{ date|date:"N Y" }}</h3>
-<ul style="margin-bottom: 40px;">
-{% for registration in registrations %}
-    <li>
-        <strong>Date:</strong> {{ registration.signed_date|date:"F j, Y" }}
-        <br/>
-        <strong>Registrant:</strong> <a target="_new" href="{{ registration.organization.ie_url }}">{{ registration.organization.name }}</a>
-        <br/>
-        <strong>Client:</strong> <a target="_new" href="{{registration.client.ie_url }}">{{ registration.client.name }}</a>
-        <br/>
-        <strong>Issue{{ registration.issues.count|pluralize }}:</strong> {% for issue_code in registration.issues.all %}{{ issue_code.issue }}{% if not forloop.last %}, {% endif %}{% endfor %}
-        <br/>
-        <strong>Specific issue:</strong> {{ registration.specific_issues }}
-        {% if not forloop.last %}<hr style="margin: 15px 0px;"/>{% endif %}
-    </li>
-
-{% endfor %}
-</ul>
-{% endfor %}
+    <h2>Latest lobbyist registrations</h2>
+    {% regroup page_obj.object_list by signed_date as date_list %}
+    {% for dategroup in date_list %}
+        <h3 style="margin-bottom: 5px;">{{ dategroup.grouper|date:"F j" }}</h3>
+        <ul style="margin-bottom: 40px;">
+            {% for registration in dategroup.list %}
+                {% include "willard/registration_list_item.html" %}
+            {% endfor %}
+        </ul>
+    {% endfor %}
 </div>
 
 {% endblock content %}

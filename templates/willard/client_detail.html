@@ -1,3 +1,7 @@
+{% extends "willard/willard_base.html" %}
+
+{% block content %}
+
 <h1>{{ object }}</h1>
 {% for registration in object.registration_set.all %}
 <li>{{ registration }} ({{ registration.signed_date }}
@@ -5,3 +9,5 @@
     <p>{{ registration.specific_issues }}</p>
 </li>
 {% endfor %}
+
+{% endblock %}

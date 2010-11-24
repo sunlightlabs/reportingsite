@@ -1,41 +1,50 @@
 {% extends "willard/willard_base.html" %}
 
+{% load media %}
+
+
 {% block content %}
+
+<style type="text/css">
+    table#issueList { margin-left: 75px; width: 350px; }
+    table.registrationDetail th,
+    table.registrationDetail td { padding: 3px; 0px; }
+    table.registrationDetail th { font-weight: bold; width: 100px; vertical-align: top; padding-right: 15px; }
+    table.registrationDetail { margin-bottom: 30px; }
+</style>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+{% js "js/jquery.sparkline.min.js "%}
+
 <div style="float: right;">
+    <h3 style="text-align: center;">Top registration issues:<br/>past year</h2>
     <div id="monthLineChart"></div>
     <br/><br/>
-    <h2>Browse lobbying issues</h2>
-    <ul id="issueList">
+    <h3 style="text-align: center;">Browse lobbying issues</h2>
+    <table id="issueList">
         {% for issue in issues %}
-        <li><a href="{{ issue.get_absolute_url }}">{{ issue.issue }}</a></li>
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td><a style="display: block;" href="{{ issue.get_absolute_url }}">{{ issue.issue }}</a></td>
+            <td class="sparkline"><a href="{{ issue.get_absolute_url }}"><span class="inlinesparkline">{{ issue.counts_by_month }}</span></a></td>
+        </tr>
         {% endfor %}
-    </ul>
+    </table>
 </div>
 
 <div id="registrationList" style="width: 350px;">
-    <h2>Latest lobbyist registrations</h2>
+    <!--    <h2>Latest lobbyist registrations</h2>//-->
     {% regroup object_list by signed_date as date_list %}
     {% for dategroup in date_list|slice:"10" %}
-    <h3 style="margin-bottom: 5px;">{{ dategroup.grouper|date:"F j" }}</h3>
+    <h4 style="margin-bottom: 5px;">{{ dategroup.grouper|date:"F j" }}</h4>
     <ul style="margin-bottom: 40px;">
         {% for registration in dategroup.list %}
-        <li>
-        <strong>Registrant:</strong> <a target="_new" href="{{ registration.organization.ie_url }}">{{ registration.organization.name }}</a>
-        <br/>
-        <strong>Client:</strong> <a target="_new" href="{{registration.client.ie_url }}">{{ registration.client.name }}</a>
-        <br/>
-        <strong>Issues:</strong> {% for issue_code in registration.issues.all %}<a href="{{ issue_code.get_absolute_url }}">{{ issue_code.issue }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
-        <br/>
-        <strong>Specific issue:</strong> {{ registration.specific_issues }}
-        {% if not forloop.last %}<hr style="margin: 15px 0px;"/>{% endif %}
-        </li>
+            {% include "willard/registration_list_item.html" %}
         {% endfor %}
     </ul>
     {% endfor %}
 </div>
 
 
-<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
 
 <script type="text/javascript">
@@ -44,8 +53,9 @@
             chart: {
                 renderTo: 'monthLineChart',
                 width: '500',
-                height: '400',
+                height: '350',
                 defaultSeriesType: 'line',
+                marginTop: -40,
                 backgroundColor: '#f1f1ef'
             },
             credits: { enabled: false },
@@ -54,19 +64,16 @@
                 borderWidth: 0,
                 itemWidth: 200,
                 width: 500
-                //y: -40,
-                //x: 90
             },
             title: { 
-                text: 'Lobbyist registrations by issue - past year'
-                /*
+                //text: 'Top lobbyist registration issues - past year'
+                text: '',
                 style: {
                     display: 'none',
                     position: 'absolute',
                     left: '0',
                     top: '0',
                 }
-                */
             },
             tooltip: {
                 formatter: function() {
@@ -99,6 +106,13 @@
             ]
 
         });
+
+        // Create inline sparklines
+        $('.inlinesparkline').sparkline('html', {
+                                fillColor: false,  
+                                spotRadius: 0,
+                                lineColor: '#414042'
+                            });
 
     });
 </script>
