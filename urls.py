@@ -47,6 +47,8 @@ urlpatterns = patterns(
     url(r'^editing/', 'admin_editing', name='admin_editing'),
 
     url(r'^independent-expenditures/', include('buckley.urls')),
+
+    url(r'^lobbying/', include('willard.urls')),
 )
 
 
