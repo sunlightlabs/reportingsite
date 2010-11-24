@@ -1,0 +1,11 @@
+{% extends "willard/willard_base.html" %}
+
+{% block content %}
+
+<h1>{{ day }}</h1>
+
+{% for registration in object_list %}
+    {% include "willard/registration_list_item.html" %}
+{% endfor %}
+
+{% endblock %}
