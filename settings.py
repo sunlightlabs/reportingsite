@@ -18,7 +18,8 @@ DATABASES = {
             'USER': 'reporting',
             'PASSWORD': '***REMOVED***',
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': 'belushi.sunlightlabs.org',
+            #'HOST': 'belushi.sunlightlabs.org',
+	    'HOST': '',
             'PORT': '',
             }
         }
@@ -80,7 +81,8 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'reportingsite.urls'
 
 TEMPLATE_DIRS = (
-    'reportingsite/templates'
+    #'reportingsite/templates'
+    '/projects/reportingsite/src/reportingsite/templates'
 )
 
 INSTALLED_APPS = (
@@ -102,6 +104,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'haystack',
     'buckley',
+    'gunicorn',
 )
 
 INTERNAL_IPS = ('127.0.0.1','localhost')
