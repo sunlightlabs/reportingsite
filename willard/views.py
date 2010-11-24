@@ -14,11 +14,8 @@ from willard.models import *
 
 
 def index(request):
-    cutoff = datetime.date.today() - relativedelta(months=11)
-    cutoff = datetime.date(year=cutoff.year, 
-                           month=cutoff.month, 
-                           day=1)
-    registrations = Registration.objects.filter(signed_date__lte=datetime.date.today(), signed_date__gte=cutoff).select_related()
+    registrations = Registration.objects.filter(signed_date__lte=datetime.date.today(), signed_date__gte=datetime.date.today()-relativedelta(months=1)).select_related()
+    registrations_by_date = [{'date': date, 'registrations': list(regs)} for date, regs in itertools.groupby(registrations, lambda x: x.signed_date)][:10]
 
     top_issue_ids = IssueCode.objects.values_list('pk', flat=True).order_by('-registration_count')[:5]
     top_issues = IssueCode.objects.filter(pk__in=list(top_issue_ids))
@@ -28,6 +25,10 @@ def index(request):
         issues_by_month[issue] = issue.issuecodebymonth_set.values('year', 'month', 'num')
 
     months = []
+    cutoff = datetime.date.today() - relativedelta(months=11)
+    cutoff = datetime.date(year=cutoff.year,
+                           month=cutoff.month,
+                           day=1)
     curr = cutoff
     issue_counts = defaultdict(list)
     while curr <= datetime.date.today():
@@ -38,7 +39,7 @@ def index(request):
         curr += relativedelta(months=1)
 
     return render_to_response('willard/index.html',
-                              {'object_list': registrations.filter(signed_date__gte=datetime.date.today()-relativedelta(months=1)),
+                              {'object_list': registrations_by_date,
                                'issue_counts': issue_counts.items(),
                                'months': months,
                                'issues': IssueCode.objects.exclude(issue='').order_by('issue'),
@@ -85,7 +86,7 @@ def issue_detail(request, code):
                            day=1)
     org_counts = issue_code.registration_set.filter(signed_date__gte=cutoff).values('organization').annotate(c=Count('pk')).order_by('-c')[:5]
     orgs = Organization.objects.filter(pk__in=[x['organization'] for x in org_counts])
-    
+
     return render_to_response('willard/issuecode_detail.html',
                               {'issue_code': issue_code,
                                #'date_data': date_data,
