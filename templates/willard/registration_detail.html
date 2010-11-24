@@ -1,0 +1,17 @@
+{% extends "willard/willard_base.html" %}
+
+{% block content %}
+{{ object.form_id }}
+<div id='embedded_doc'></div>
+
+
+<script type="text/javascript" charset="utf-8" src="http://www.scribd.com/javascripts/view.js"></script>
+<script type="text/javascript">
+    var scribd_doc = scribd.Document.getDoc({{ object.scribd_id }}, '{{ object.scribd_access_key }}');
+    scribd_doc.addParam("height", 900);
+    scribd_doc.addParam("width", 900);
+    scribd_doc.addParam('jsapi_version', 1);
+    scribd_doc.write('embedded_doc');
+</script>
+
+{% endblock content %}
