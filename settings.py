@@ -154,6 +154,8 @@ HAYSTACK_SOLR_URL = 'http://morgan.sunlightlabs.org:8080/solr/core_reporting'
 HAYSTACK_SITECONF = 'search_sites'
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 20
 
+SCRIBD_KEY = '4hyu1j0cx5geo5wk8xyq1'
+SCRIBD_SECRET = 'sec-4to8x6dauoeegj87lpn7ib2fpm'
 
 try:
     from local_settings import *
