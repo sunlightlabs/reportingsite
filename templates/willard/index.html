@@ -32,12 +32,10 @@
 </div>
 
 <div id="registrationList" style="width: 350px;">
-    <!--    <h2>Latest lobbyist registrations</h2>//-->
-    {% regroup object_list by signed_date as date_list %}
-    {% for dategroup in date_list|slice:"10" %}
-    <h4 style="margin-bottom: 5px;">{{ dategroup.grouper|date:"F j" }}</h4>
+    {% for dategroup in object_list %}
+    <h4 style="margin-bottom: 5px;">{{ dategroup.date|date:"F j" }}</h4>
     <ul style="margin-bottom: 40px;">
-        {% for registration in dategroup.list %}
+        {% for registration in dategroup.registrations %}
             {% include "willard/registration_list_item.html" %}
         {% endfor %}
     </ul>

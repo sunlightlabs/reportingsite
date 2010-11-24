@@ -133,7 +133,7 @@ class IssueCode(models.Model):
     issue = models.CharField(max_length=100)
 
     # Denormalizing counts by issue code for the past 12 months.
-    registration_count = models.IntegerField() 
+    registration_count = models.IntegerField()
 
     # A comma-separated list of the number of registrations
     # for this issue over the past 12 months.
@@ -177,7 +177,7 @@ class IssueCode(models.Model):
 
 
 class IssueCodeByMonth(models.Model):
-    """Denoramlization of list of issue codes by month.
+    """Denormalization of list of issue codes by month.
     """
     issue_code = models.ForeignKey(IssueCode, db_index=True)
     month = models.CharField(max_length=2, db_index=True)
