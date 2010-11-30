@@ -1,5 +1,8 @@
 {% extends "willard/willard_base.html" %}
 
+{% load humanize %}
+{% load willard_filters %}
+
 {% block content %}
 <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
@@ -13,6 +16,7 @@
                 width: '500',
                 height: '300',
                 backgroundColor: '#f1f1ef',
+                animation: false,
                 defaultSeriesType: 'line'
             },
             title: { 
@@ -25,6 +29,8 @@
                 }
             },
             tooltip: {
+                borderRadius: 0,
+                borderWidth: 0,
                 formatter: function() {
                     return '<b>'+ this.y +' lobbyist registrations</b>';
                 }
@@ -46,20 +52,16 @@
             plotOptions: {
                 series: {
                     cursor: 'pointer',
-                    point: {
-                        events: {
-                            click: function () {
-                                location.href = '#' + this.options.anchor;
-                            }
-                        }
-                    }
+                    marker: { 
+                        radius: 3
+                    },
+                    lineWidth: 2,
+                    shadow: false
                 }
             },
             series: [{data: [
             {% for month in month_counts %}
-                {y: {{ month.count }},
-                 anchor: {{ month.month }}{{ month.year }}
-                }
+                {y: {{ month.count }} }
                 {% if not forloop.last %},{% endif %} 
             {% endfor %}
             ]}]
@@ -69,16 +71,23 @@
     });
 </script>
 
-<h2>{{ issue_code.issue }}</h2>
+<h2>{{ issue.issue }}</h2>
 
-<div style="float: right;" id="monthLineChart"></div>
+<div style="float: right;">
+<div id="monthLineChart"></div>
 <h5>Top registrants over the past year</h5>
-{% for registrant in top_registrants %}
-<li><a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a></li>
+<ul class="issueChart">
+    {% for registrant in top_registrants %}
+    <li>
+        <a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a>
+        <span class="count">{{ registrant.num|intcomma }}</span>
+        <span class="index" style="width: {{ registrant.num|percentage:past_year_count|intcomma }}%"></span>
+    </li>
 {% endfor %}
+</ul>
+</div>
 
 <div id="registrationList" style="width: 350px;">
-    <h2>Latest lobbyist registrations</h2>
     {% regroup page_obj.object_list by signed_date as date_list %}
     {% for dategroup in date_list %}
         <h3 style="margin-bottom: 5px;">{{ dategroup.grouper|date:"F j" }}</h3>

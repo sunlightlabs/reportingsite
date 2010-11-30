@@ -10,12 +10,12 @@ from willard.feeds import *
 
 urlpatterns = patterns('',
 
-        url(r'^issue\/(?P<code>\w{3})\/rss\/?$',
+        url(r'^issue\/(?P<slug>[-\w]+)\/rss\/?$',
          IssueFeed(),
          {},
          name='willard_issue_detail_feed'),
 
-        url(r'^issue\/(?P<code>\w{3})\/?$',
+        url(r'^issue\/(?P<slug>[-\w]+)\/?$',
          'willard.views.issue_detail',
          {},
          name='willard_issue_detail'),
@@ -34,20 +34,19 @@ urlpatterns = patterns('',
 
         url(r'^firm\/?$',
             object_list,
-            {'queryset': Organization.objects.annotate(registration_count=Count('registration')).order_by('-registration_count')
+            {'queryset': Registrant.objects.annotate(registration_count=Count('registration')).order_by('-registration_count')
                 },
-            name='willard_organization_list'),
+            name='willard_registrant_list'),
 
-        url(r'^firm\/(?P<slug>[-\w]+)\/(?P<form_id>\d+)\/?$',
+        url(r'^firm\/(?P<slug>[-\w]+)\/(?P<id>[-0-9A-Z]+)\/?$',
             'willard.views.registration_detail',
             {},
             name='willard_registration_detail'),
 
         url(r'^firm\/(?P<slug>[-\w]+)\/?$',
-            object_detail,
-            {'queryset': Organization.objects.all(),
-                },
-            name='willard_organization_detail'),
+            'willard.views.registrant_detail',
+            {},
+            name='willard_registrant_detail'),
 
         url(r'^client\/?$',
             object_list,
@@ -56,9 +55,8 @@ urlpatterns = patterns('',
             name='willard_client_list'),
 
         url(r'^client\/(?P<slug>[-\w]+)\/?$',
-            object_detail,
-            {'queryset': Client.objects.all(),
-                },
+            'willard.views.client_detail',
+            {},
             name='willard_client_detail'),
 
         url(r'^date\/?$',

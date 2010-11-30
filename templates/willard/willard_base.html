@@ -4,6 +4,62 @@
 
 {% block body %}fullWidth{% endblock %}
 {% block main_content %}
+<style type="text/css">
+    table#issueList { margin-left: 75px; width: 350px; }
+    table.registrationDetail th,
+    table.registrationDetail td { padding: 3px; 0px; }
+    table.registrationDetail th { font-weight: bold; width: 100px; vertical-align: top; padding-right: 15px; }
+    table.registrationDetail { margin-bottom: 30px; }
+    ul.issueChart { float: right; width: 350px; }
+    ul.issueChart li {
+        position: relative;
+        display: block;
+        border-bottom: 1px solid #ddd;
+        margin: 0 !important;
+        height: 2.25em;
+        font-size: .9em;
+    }
+    ul.issueChart li a {
+        display: block; 
+        padding: 0.4em 4.5em 0.4em 0.5em;
+        position: relative; 
+        z-index: 2; 
+        font-weight: bold;
+        font-size: 1em;
+        _color: #002157;
+    }
+    ul.issueChart .count {
+        display: block; 
+        position: absolute; 
+        top: -.30em; 
+        right: 1em; 
+        margin: 0 0.3em;
+        text-align: right; 
+        color: #808080; 
+        font-weight: bold;
+        font-size: .9em; 
+        line-height: 3em; 
+        display: none;
+        z-index: 100;
+    }
+    ul.issueChart li:hover .count {
+        display: block;
+    }
+    ul.issueChart li:hover {
+        background: #525356;
+    }
+    ul.issueChart .index {
+        display: block; 
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        height: 100%; 
+        background: #afafaf; 
+        text-indent: -9999px; 
+        overflow: hidden; 
+        line-height: 2em;
+    }
+</style>
 <div id="columns">
     <div id="fullColumn">
         {% block content %}{% endblock content %}

@@ -2,12 +2,11 @@
 
 {% block content %}
 
-<h1>{{ object }}</h1>
-{% for registration in object.registration_set.all %}
-<li>{{ registration }} ({{ registration.signed_date }}
-    - {% for issue in registration.issues.all %}<a href="{{ issue.get_absolute_url }}">{{ issue }}</a>, {% endfor %}
-    <p>{{ registration.specific_issues }}</p>
-</li>
+<h1>{{ client }}</h1>
+<ul>
+{% for registration in object_list %}
+    {% include "willard/registration_list_item.html" %}
 {% endfor %}
+</ul>
 
 {% endblock %}

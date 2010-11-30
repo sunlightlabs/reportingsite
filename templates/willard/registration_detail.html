@@ -7,10 +7,11 @@
 
 <script type="text/javascript" charset="utf-8" src="http://www.scribd.com/javascripts/view.js"></script>
 <script type="text/javascript">
-    var scribd_doc = scribd.Document.getDoc({{ object.scribd_id }}, '{{ object.scribd_access_key }}');
+    var scribd_doc = scribd.Document.getDocFromUrl('{{ object.pdf_url|safe }}', 'pub-43329585085964116591');
     scribd_doc.addParam("height", 900);
     scribd_doc.addParam("width", 900);
     scribd_doc.addParam('jsapi_version', 1);
+    scribd_doc.addParam("public", false);
     scribd_doc.write('embedded_doc');
 </script>
 

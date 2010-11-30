@@ -7,6 +7,7 @@ from django.template import RequestContext
 from django.db.models import *
 from django.views.generic.list_detail import object_detail
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
+from django.http import Http404
 
 from dateutil.relativedelta import relativedelta
 
@@ -14,15 +15,15 @@ from willard.models import *
 
 
 def index(request):
-    registrations = Registration.objects.filter(signed_date__lte=datetime.date.today(), signed_date__gte=datetime.date.today()-relativedelta(months=1)).select_related()
-    registrations_by_date = [{'date': date, 'registrations': list(regs)} for date, regs in itertools.groupby(registrations, lambda x: x.signed_date)][:10]
+    registrations = Registration.objects.filter(received__lte=datetime.date.today(), received__gte=datetime.date.today()-relativedelta(months=1)).select_related()
+    registrations_by_date = [{'date': date, 'registrations': list(regs)} for date, regs in itertools.groupby(registrations, lambda x: x.received.date())][:10]
 
-    top_issue_ids = IssueCode.objects.values_list('pk', flat=True).order_by('-registration_count')[:5]
-    top_issues = IssueCode.objects.filter(pk__in=list(top_issue_ids))
+    top_issue_ids = Issue.objects.values_list('pk', flat=True).order_by('-registration_count')[:5]
+    top_issues = Issue.objects.filter(pk__in=list(top_issue_ids))
 
     issues_by_month = {}
     for issue in top_issues:
-        issues_by_month[issue] = issue.issuecodebymonth_set.values('year', 'month', 'num')
+        issues_by_month[issue] = issue.issuebymonth_set.values('year', 'month', 'num')
 
     months = []
     cutoff = datetime.date.today() - relativedelta(months=11)
@@ -38,18 +39,21 @@ def index(request):
 
         curr += relativedelta(months=1)
 
+    past_year_count = Registration.objects.filter(received__gte=cutoff).count()
+
     return render_to_response('willard/index.html',
                               {'object_list': registrations_by_date,
                                'issue_counts': issue_counts.items(),
                                'months': months,
-                               'issues': IssueCode.objects.exclude(issue='').order_by('issue'),
+                               'issues': Issue.objects.filter(registration__received__gte=cutoff).annotate(num=Count('registration')).order_by('-num').select_related(),
+                               'past_year_count': past_year_count,
                                 },
                               context_instance=RequestContext(request))
 
 
-def issue_detail(request, code):
-    issue_code = get_object_or_404(IssueCode, code=code)
-    registrations = issue_code.registration_set.all()
+def issue_detail(request, slug):
+    issue = get_object_or_404(Issue, slug=slug)
+    registrations = issue.registration_set.all().select_related()
 
     paginator = Paginator(registrations, 50, orphans=5)
     pagenum = request.GET.get('page', 1)
@@ -58,50 +62,68 @@ def issue_detail(request, code):
     except (EmptyPage, InvalidPage):
         raise Http404
 
-    """
-    min_date = Registration.objects.exclude(signed_date=None).order_by('signed_date').values_list('signed_date', flat=True)[0]
-    max_date = datetime.date.today()
-
-    year_groups = itertools.groupby(registrations, key=lambda x: x.signed_date.year)
-    date_data = []
-    for year, regs in year_groups:
-        month_groups = itertools.groupby(regs, key=lambda x: x.signed_date.month)
-        for month, month_registrations in month_groups:
-            date = datetime.date(2010, month, 1)
-            date_data.append((date, list(month_registrations)))
-    """
-
-    # Get month counts for the past 12 months.
-    month_counts = []
-    curr = datetime.date.today()
-    while len(month_counts) < 12:
-        month_counts.append({'month': curr.month, 'year': curr.year, 'count': registrations.filter(signed_date__year=curr.year, signed_date__month=curr.month).count()})
-        curr -= relativedelta(months=1)
-    month_counts.reverse()
-
-    # Get top registrants for this issue over the past 12 months.
-    cutoff = datetime.date.today() - relativedelta(months=12)
+    cutoff = datetime.date.today() - relativedelta(months=11)
     cutoff = datetime.date(year=cutoff.year,
                            month=cutoff.month,
                            day=1)
-    org_counts = issue_code.registration_set.filter(signed_date__gte=cutoff).values('organization').annotate(c=Count('pk')).order_by('-c')[:5]
-    orgs = Organization.objects.filter(pk__in=[x['organization'] for x in org_counts])
+
+    # Get month counts for the past 12 months.
+    regs = issue.registration_set.filter(received__gte=cutoff).values('received')
+    grouped = itertools.groupby(regs, lambda x: {'year': x['received'].year, 'month': x['received'].month})
+    month_counts = [{'year': date['year'], 'month': date['month'], 'count': len(list(group))} for date, group in grouped]
+    month_counts.reverse()
+
+    # Get top registrants for this issue over the past 12 months.
+    org_counts = issue.registration_set.filter(received__gte=cutoff).values_list('registrant').annotate(num=Count('pk')).order_by('-num')[:15]
+    counts = dict(org_counts)
+    orgs = Registrant.objects.filter(pk__in=[x[0] for x in org_counts])
+    for org in orgs:
+        org.num = counts[org.pk]
+    orgs = sorted(list(orgs), lambda x, y: cmp(x.num, y.num), reverse=True)
 
     return render_to_response('willard/issuecode_detail.html',
-                              {'issue_code': issue_code,
-                               #'date_data': date_data,
+                              {'issue': issue,
                                'month_counts': month_counts,
                                'page_obj': page,
                                'top_registrants': orgs,
-                               #'dates': dates,
+                               'past_year_count': sum(counts.values()),
                                },
                               context_instance=RequestContext(request))
 
 
-def registration_detail(request, slug, form_id):
-    organization = get_object_or_404(Organization, slug=slug)
-    registration = get_object_or_404(Registration, form_id=form_id, organization=organization)
+def registration_detail(request, slug, id):
+    registrant = get_object_or_404(Registrant, slug=slug)
+    registration = get_object_or_404(Registration, id=id, registrant=registrant)
 
     return object_detail(request,
                          Registration.objects.all(),
-                         object_id=registration.pk)
+                         object_id=registration.pk,
+                         template_name='willard/registration_detail.html')
+
+
+def registrant_detail(request, slug):
+    registrants = Registrant.objects.filter(slug=slug)
+    if not registrants:
+        raise Http404
+    registrations = Registration.objects.filter(registrant__slug=slug).select_related()
+
+    return render_to_response('willard/registrant_detail.html',
+                              {'registrant': registrants[0],
+                               'registrants': registrants,
+                               'object_list': registrations,
+                               },
+                               context_instance=RequestContext(request))
+
+
+def client_detail(request, slug):
+    clients = Client.objects.filter(slug=slug)
+    if not clients:
+        raise Http404
+    registrations = Registration.objects.filter(client__slug=slug).select_related()
+
+    return render_to_response('willard/client_detail.html',
+                              {'client': clients[0],
+                               'clients': clients,
+                               'object_list': registrations,
+                              },
+                              context_instance=RequestContext(request))
