@@ -8,31 +8,30 @@
 {% block body %}home{% endblock %}
 
 {% block feature %}
-<a href="{% url buckley_index %}">
-<h2 id="featureHeader">Follow the Unlimited Money</h2>
-</a>
- <div id="featureBox">
-     <p class="tip">Track the latest activities of outside groups influencing federal elections. Many of these organizations can accept unlimited donations from any source — including labor unions, corporations and individuals — and some are not required to disclose their donors.</p>
-     {% for ie_date in ies %}
-     <div class="featureModule">
-         <h3>{{ ie_date.0|date:"F j" }}</h3>
-         {% if forloop.first %}<span class="tip">Last update: {{ last_ie_update|date:"N j, P" }}</span>{% endif %}
-         <ul>
-             {% for ie in ie_date.1 %}
-             <li><a href="{{ ie.committee.get_absolute_url }}">{{ ie.committee }}</a> spent <a href="{% url buckley_candidate_committee_detail candidate_slug=ie.candidate.slug committee_slug=ie.committee.slug %}">${{ ie.amount|intcomma }}</a> in {{ ie.support_oppose }} <a href="{{ ie.candidate.get_absolute_url }}">{{ ie.candidate }}</a> in the <a href="{% url buckley_race_detail race=ie.candidate.race %}">{{ ie.candidate.full_race_name }} race</a>.
-             {% endfor %}
-         </ul>
-     </div>
-     {% endfor %}
-    <div class="clear" id="featureNav">
-        <ul>
-            <li><a href="{% url buckley_index %}">View all the latest outside spending</a></li>
-            <li><a href="{% url buckley_totals %}">Overview</a></li>
-            <li><a href="{% url buckley_about %}">About</a></li>
-            <li><a href="{% url buckley_stories %}">Stories</a></li>
-            <li class="last"><a href="{% url buckley_committee_list %}">New: Contributions to Committees</a></li>
-        </ul>    
-    </div>    
+    <div id="featureBox">
+        <a href="#" class="carousel-previous carouselBtn">Previous</a>
+        <div class="carousel">
+            <ul>
+                <li>
+                    <h2 style="color: #465700;">Follow the Unlimited Money</h2>
+                    <p>The Sunlight Foundation Reporting Group has put together a widget* – updated in real time – and a searchable database tracking organizations that are paying for ads and other forms of political communication.</p>
+                    <a href="/blog/" class="readMoreRT">View All the Latest Independent Expenditures</a>
+                </li>
+                <li>
+                    <h2>Follow the Unlimited Money 2</h2>
+                    <p>The Sunlight Foundation Reporting Group has put together a widget* – updated in real time – and a searchable database tracking organizations that are paying for ads and other forms of political communication.</p>
+                    <a href="/blog/" class="readMoreRT">View All the Latest Independent Expenditures</a>
+                </li>
+                <li>
+                    <h2>Follow the Unlimited Money 3</h2>
+                    <p>The Sunlight Foundation Reporting Group has put together a widget* – updated in real time – and a searchable database tracking organizations that are paying for ads and other forms of political communication.</p>
+                    <a href="/blog/" class="readMoreRT">View All the Latest Independent Expenditures</a>
+                </li>
+            </ul>
+            <div class="clear"></div>
+        </div>
+        <a class="carousel-next carouselBtn" href="#">Next</a>
+        <div class="clear"></div>
  </div>
  {% endblock %}
  
