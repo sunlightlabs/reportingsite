@@ -18,7 +18,8 @@ DATABASES = {
             'USER': 'reporting',
             'PASSWORD': '***REMOVED***',
             'ENGINE': 'django.db.backends.mysql',
-            'HOST': 'belushi.sunlightlabs.org',
+            #'HOST': 'belushi.sunlightlabs.org',
+	    'HOST': '',
             'PORT': '',
             }
         }
@@ -49,8 +50,8 @@ MEDIA_ROOT = '/media/'
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 #MEDIA_URL = '/media/'
-#http://assets.sunlightfoundation.com.s3.amazonaws.com/
-MEDIA_URL = 'http://reporting.sunlightlabs.com/media/'
+MEDIA_URL = 'http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/'
+#MEDIA_URL = 'http://reporting.sunlightlabs.com/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -80,7 +81,8 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'reportingsite.urls'
 
 TEMPLATE_DIRS = (
-    'reportingsite/templates'
+    #'reportingsite/templates'
+    '/projects/reporting/src/reportingsite/templates'
 )
 
 INSTALLED_APPS = (
@@ -102,6 +104,7 @@ INSTALLED_APPS = (
     'debug_toolbar',
     'haystack',
     'buckley',
+    'gunicorn',
 )
 
 INTERNAL_IPS = ('127.0.0.1','localhost')
