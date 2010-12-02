@@ -1,5 +1,15 @@
 {% extends "willard/willard_base.html" %}
 
+{% block breadcrumb %}
+{{ block.super }}
+{% if plural %}
+<li><a href="{{ object.get_absolute_url }}/../">{{ plural }}</a></li>
+{% if object %}
+<li>{{ object }}</li>
+{% endif %}
+{% endif %}
+{% endblock %}
+
 {% block content %}
 
 <h2>

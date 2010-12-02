@@ -171,6 +171,7 @@ def generic_detail_all(request, model, slug):
                                'given_order': given_order,
                                'sort': 'desc' if given_order.startswith('-') else 'asc',
                                'object': obj,
+                               'plural': model._meta.verbose_name_plural.title(),
                               }, context_instance=RequestContext(request))
 
 

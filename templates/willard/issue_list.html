@@ -3,6 +3,11 @@
 {% load humanize %}
 {% load partition %}
 
+{% block breadcrumb %}
+{{ block.super }}
+<li>Issues</li>
+{% endblock breadcrumb %}
+
 {% block content %}
 
 <h2>Lobbying issues</h2>
