@@ -1,0 +1,32 @@
+{% extends "willard/willard_base.html" %}
+
+{% block content %}
+
+<h2>Search results</h2>
+
+{% if num_results %}
+
+    {% if registrants %}
+    <h4>Registrants</h4>
+    <ul>
+    {% for registrant in registrants %}
+        <li><a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a></li>
+    {% endfor %}
+    </ul>
+    <br /><br />
+    {% endif %}
+
+    {% if clients %}
+    <h4>Clients</h4>
+    <ul>
+    {% for client in clients %}
+        <li><a href="{{ client.get_absolute_url }}">{{ client }}</a></li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+
+{% else %}
+    No results found.
+{% endif %}
+
+{% endblock content %}

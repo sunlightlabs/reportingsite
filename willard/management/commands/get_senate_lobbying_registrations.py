@@ -50,7 +50,11 @@ def parse_xml(xml):
     filings = re.findall(r'<filing.*?<\/filing>', xml, re.I | re.S)
 
     for filing_xml in filings:
-        filing = lxml.etree.fromstring(filing_xml)
+        try:
+            filing = lxml.etree.fromstring(filing_xml)
+        except lxml.etree.XMLSyntaxError:
+            continue
+
         data = {'xml': filing_xml, } # Store the raw XML
 
         # Only keep going if this is a registration
@@ -64,34 +68,40 @@ def parse_xml(xml):
         data['registrant'] = dict(registrant.items())
         client = filing.find('Client')
         data['client'] = dict(client.items())
-        issues = filing.find('Issues')
+        issues = filing.find('Issues') or []
         data['issues'] = [dict(issue.items())['Code'] for issue in issues]
-        data['specific_issue'] = dict(issues[0].items()).get('SpecificIssue', '')
+        if len(issues):
+            data['specific_issue'] = dict(issues[0].items()).get('SpecificIssue', '')
+        else:
+            data['specific_issue'] = ''
 
         yield data
 
 
 def save_filing(data):
-    registrant, created = Registrant.objects.get_or_create(
-            id=data['registrant']['RegistrantID'],
-            defaults=dict(
-                name=data['registrant']['RegistrantName'],
-                crp_name='',
-                slug=slugify(data['registrant']['RegistrantName'])[:50],
-                country=data['registrant']['RegistrantCountry'],
-                description=data['registrant']['GeneralDescription'])
-            )
+    if Registration.objects.filter(id=data['ID']):
+        return
+
+    slug = slugify(data['registrant']['RegistrantName'])[:50]
+    try:
+        registrant = Registrant.objects.get(slug=slug)
+    except Registrant.DoesNotExist:
+        try:
+            registrant = Registrant.objects.get(id=data['registrant']['RegistrantID'])
+        except Registrant.DoesNotExist:
+            registrant = Registrant.objects.create(
+                    slug=slug,
+                    id=data['registrant']['RegistrantID'],
+                    name=data['registrant']['RegistrantName'],
+                    crp_name='')
+
     client, created = Client.objects.get_or_create(
-            name=data['client']['ClientName'],
-            state=data['client']['ClientState'],
+            slug=slugify(data['client']['ClientName'])[:50],
             defaults=dict(
+                name=data['client']['ClientName'],
                 client_id=data['client']['ClientID'],
                 crp_name='',
-                slug=slugify(data['client']['ClientName'])[:50],
-                description=data['client']['GeneralDescription'],
-                is_state_or_local_gov=int(data['client'].get('IsStateOrLocalGov', 0)),
-                status=int(data['client']['ClientStatus']),
-                contact_name=data['client'].get('ContactFullname', ''))
+                status=int(data['client']['ClientStatus']))
             )
     registration, created = Registration.objects.get_or_create(
             id=data['ID'],
@@ -106,9 +116,10 @@ def save_filing(data):
             )
     for registration_issue in data['issues']:
         issue, created = Issue.objects.get_or_create(
-                issue=registration_issue,
                 slug=slugify(registration_issue)[:50],
-                registration_count=0
+                defaults=dict(
+                    issue=registration_issue.title(),
+                    registration_count=0)
                 )
         registration.issues.add(issue)
     

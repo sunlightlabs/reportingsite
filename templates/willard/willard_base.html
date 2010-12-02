@@ -1,67 +1,53 @@
 {% extends "base.html" %}
 
+{% load media %}
+
 {% block title %}{{ block.super }}: Lobbyist registrations{% endblock %}
 
 {% block body %}fullWidth{% endblock %}
 {% block main_content %}
-<style type="text/css">
-    table#issueList { margin-left: 75px; width: 350px; }
-    table.registrationDetail th,
-    table.registrationDetail td { padding: 3px; 0px; }
-    table.registrationDetail th { font-weight: bold; width: 100px; vertical-align: top; padding-right: 15px; }
-    table.registrationDetail { margin-bottom: 30px; }
-    ul.issueChart { float: right; width: 350px; }
-    ul.issueChart li {
-        position: relative;
-        display: block;
-        border-bottom: 1px solid #ddd;
-        margin: 0 !important;
-        height: 2.25em;
-        font-size: .9em;
-    }
-    ul.issueChart li a {
-        display: block; 
-        padding: 0.4em 4.5em 0.4em 0.5em;
-        position: relative; 
-        z-index: 2; 
-        font-weight: bold;
-        font-size: 1em;
-        _color: #002157;
-    }
-    ul.issueChart .count {
-        display: block; 
-        position: absolute; 
-        top: -.30em; 
-        right: 1em; 
-        margin: 0 0.3em;
-        text-align: right; 
-        color: #808080; 
-        font-weight: bold;
-        font-size: .9em; 
-        line-height: 3em; 
-        display: none;
-        z-index: 100;
-    }
-    ul.issueChart li:hover .count {
-        display: block;
-    }
-    ul.issueChart li:hover {
-        background: #525356;
-    }
-    ul.issueChart .index {
-        display: block; 
-        position: absolute; 
-        top: 0; 
-        left: 0; 
-        height: 100%; 
-        background: #afafaf; 
-        text-indent: -9999px; 
-        overflow: hidden; 
-        line-height: 2em;
-    }
-</style>
+{% css "css/lobbying.css" %}
+
 <div id="columns">
-    <div id="fullColumn">
+    <div id="fullColumn" style="overflow:hidden;">
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#searchbox").focus(function () {
+                    if ($(this)[0].value === 'Search for a registrant or client') {
+                        $(this).val('');
+                    }
+                });
+            });
+        </script>
+
+        <h2 id="featureHeader">Lobbyist registration tracker</h2>
+        <div id="featureMainNav">
+            <ul>
+                <li class="issues"><a href="{% url willard_issue_list %}">Browse by issue</a></li>
+                <li class="registrants"><a href="{% url willard_registrant_list %}">Browse by registrant</a></li>
+                <li class="clients"><a href="{% url willard_client_list %}">Browse by client</a></li>
+                <form id="expenditureSearch" action="{% url willard_search %}" method="GET">
+                    <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Search for a registrant or client"{% endif %} type="text" name="q" />
+                    <button class="goBtn" type="submit" value="Search" >
+                        <span>Go</span>
+                    </button>
+                </form>
+                <div class="clear"></div>
+            </ul>
+        </div>
+
+        <div id="breadcrumbs">
+            <ul>
+                {% block breadcrumb %}
+                <li>
+                    <a href="{% url willard_index %}">Lobbyist registrations home</a>
+                </li>
+                {% endblock breadcrumb %}
+            </ul>
+            <div class="clear"></div>
+        </div>
+
         {% block content %}{% endblock content %}
     </div>
 </div>

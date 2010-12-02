@@ -13,11 +13,13 @@
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'monthLineChart',
-                width: '500',
+                width: '525',
                 height: '300',
                 backgroundColor: '#f1f1ef',
                 animation: false,
-                defaultSeriesType: 'line'
+                defaultSeriesType: 'line',
+                marginTop: -25,
+                marginLeft: 50,
             },
             title: { 
                 text: '',
@@ -41,11 +43,15 @@
                     months[{{ month.month }}-1]{% if not forloop.last %},{% endif %}
                 {% endfor %}
                 ],
-                title: { text: 'Month' }
+                    title: { text: 'Month', 
+                             style: { color: '#414042' } 
+                    }
             },
             yAxis: {
                 min: 0,
-                title: { text: 'Number of registrations' }
+                     title: { text: 'Number of registrations',
+                              style: { color: '#414042' }
+                     }
             },
             legend: { enabled: false },
             credits: { enabled: false },
@@ -56,6 +62,7 @@
                         radius: 3
                     },
                     lineWidth: 2,
+                    color: '#2a5f65',
                     shadow: false
                 }
             },
@@ -71,11 +78,28 @@
     });
 </script>
 
-<h2>{{ issue.issue }}</h2>
+<h2>Lobbying issue: {{ issue.issue }}</h2>
+<br />
 
-<div style="float: right;">
+<div class="registrationList">
+    <a style="display: block; float: right;margin-top:10px;" href="{% url willard_issue_detail_feed slug=issue.slug %}"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/feed-icon-14x14.png" alt="RSS" title="Subscribe to an RSS feed of the latest lobbyist registrations" style="border: 0;" /></a>
+    <h2 style="font-size:1.75em;">Latest registrations &nbsp;&nbsp;<span style="font-size:.6em;">(<a href="{% url willard_issue_detail_all slug=issue.slug %}">View all</a>)</a></h2>
+    {% regroup registrations by received.date as date_list %}
+    {% for dategroup in date_list %}
+        <h3 style="margin-bottom: 8px;font-size:1.25em;">{{ dategroup.grouper|date:"F j" }}</h3>
+        <ul style="margin-bottom: 40px;">
+            {% for registration in dategroup.list %}
+                {% include "willard/registration_list_item.html" %}
+            {% endfor %}
+        </ul>
+    {% endfor %}
+</div>
+
+<div style="width:500px;">
+<h3 style="text-align: center; font-size: 1.5em;">Past 12 months</h3>
 <div id="monthLineChart"></div>
-<h5>Top registrants over the past year</h5>
+{% if top_registrants %}
+<h3 style="text-align: center; font-size: 1.25em;">Top registrants</h3>
 <ul class="issueChart">
     {% for registrant in top_registrants %}
     <li>
@@ -86,17 +110,7 @@
 {% endfor %}
 </ul>
 </div>
+{% endif %}
 
-<div id="registrationList" style="width: 350px;">
-    {% regroup page_obj.object_list by signed_date as date_list %}
-    {% for dategroup in date_list %}
-        <h3 style="margin-bottom: 5px;">{{ dategroup.grouper|date:"F j" }}</h3>
-        <ul style="margin-bottom: 40px;">
-            {% for registration in dategroup.list %}
-                {% include "willard/registration_list_item.html" %}
-            {% endfor %}
-        </ul>
-    {% endfor %}
-</div>
 
 {% endblock content %}

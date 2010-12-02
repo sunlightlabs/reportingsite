@@ -5,19 +5,19 @@
 
 {% block content %}
 
-<h2>Lobbying clients</h2>
+<h2>Lobbying registrants</h2>
 
-{% for letter, clients in by_letter %}
+{% for letter, registrants in by_letter %}
 <a href="#{{ letter }}">{{ letter }}</a>
 {% endfor %}
 
-{% for letter, clients in by_letter %}
+{% for letter, registrants in by_letter %}
 <h3 id="{{ letter }}" class="browseHeading">{{ letter }}</h3>
 <table class="browseTable">
-    {% for row in clients|columns_across:3 %}
+    {% for row in registrants|columns_across:3 %}
     <tr>
-        {% for client in row %}
-        <td><a href="{{ client.get_absolute_url }}">{{ client }}</a></td>
+        {% for registrant in row %}
+        <td><a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a></td>
         {% endfor %}
     </tr>
     {% endfor %}

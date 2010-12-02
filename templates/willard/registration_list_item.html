@@ -1,25 +1,31 @@
 <li>
     <table class="registrationDetail">
-        <tr>
+        {% if showdate %}
+        <tr class="odd">
+            <th>Filing date:</th>
+            <td>{{ registration.received|date:"F j, Y" }}</td>
+        </tr>
+        {% endif %}
+        <tr class="even">
             <th>Registrant:</th>
             <td><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></td>
         </tr>
-        <tr>
+        <tr class="odd">
             <th>Client:</th>
             <td><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></td>
         </tr>
-        <tr>
+        <tr class="even">
             <th>Issues:</th>
             <td>
                 {% for issue_code in registration.denormalized_issues %}
-                <li><a href="{{ issue_code.get_absolute_url }}">{{ issue_code.issue }}</a></li>
+                <li>&bull;&nbsp;<a href="{{ issue_code.get_absolute_url }}">{{ issue_code.issue }}</a></li>
                 {% endfor %}
             </td>
         </tr>
-        {% if registration.specific_issues %}
-        <tr>
+        {% if registration.specific_issue %}
+        <tr class="odd">
             <th>Specific issue:</th>
-            <td>{{ registration.specific_issues }}</td>
+            <td>{{ registration.specific_issue }}</td>
         </tr>
         {% endif %}
         <tr>

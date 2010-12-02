@@ -6,11 +6,11 @@ from django.shortcuts import get_object_or_404
 from willard.models import *
 
 def make_item_description(item):
-    description = """%s registered on %s to lobby for %s. The issues listed are %s. The specific issue listed is "%s" """ % (item.organization.name,
-            item.signed_date.strftime("%F %j, %Y"),
-            item.client.name,
-            ', '.join([x.issue for x in item.issues.all()]),
-            item.specific_issues, )
+    description = """%s registered on %s to lobby for %s. The issues listed are %s. The specific issue listed is "%s" """ % (item.registrant,
+            item.received.strftime("%F %j, %Y"),
+            item.client,
+            ', '.join([x.issue for x in item.denormalized_issues]),
+            item.specific_issue, )
     return description
 
 
@@ -20,7 +20,7 @@ class RegistrationFeed(Feed):
     description = 'The latest lobbyist registrations submitted to the House of Representatives'
 
     def items(self):
-        return Registration.objects.order_by('-signed_date')[:50]
+        return Registration.objects.order_by('-received')[:50]
 
     def item_link(self, item):
         return '/lobbying'
@@ -29,17 +29,17 @@ class RegistrationFeed(Feed):
         return make_item_description(item)
 
     def item_pubdate(self, item):
-        date = item.signed_date
+        date = item.received
         return datetime.datetime(date.year, date.month, date.day)
 
     def item_title(self, item):
-        return '%s registered to lobby for %s' % (item.organization.name,
-                                                  item.client.name)
+        return '%s registered to lobby for %s' % (item.registrant,
+                                                  item.client)
 
 class IssueFeed(Feed):
 
-    def get_object(self, request, code):
-        return get_object_or_404(IssueCode, code=code)
+    def get_object(self, request, slug):
+        return get_object_or_404(Issue, slug=slug)
 
     def title(self, obj):
         return 'Lobbyist registrations: %s' % obj.issue
@@ -51,15 +51,61 @@ class IssueFeed(Feed):
         return make_item_description(item)
 
     def items(self, obj):
-        return obj.registration_set.order_by('-signed_date')[:50]
+        return obj.registration_set.order_by('-received')[:50]
 
     def item_title(self, item):
-        return '%s registered to lobby for %s' % (item.organization.name,
-                                                  item.client.name)
+        return '%s registered to lobby for %s' % (item.registrant,
+                                                  item.client)
 
     def item_pubdate(self, item):
-        date = item.signed_date
-        return datetime.datetime(date.year, date.month, date.day)
+        return item.received
 
-    def item_link(self, item):
-        return '/lobbying'
+
+class RegistrantFeed(Feed):
+
+    def get_object(self, request, slug):
+        return get_object_or_404(Registrant, slug=slug)
+
+    def title(self, obj):
+        return 'Lobbyist registrations by %s' % obj
+
+    def item_description(self, item):
+        return make_item_description(item)
+
+    def items(self, obj):
+        return obj.registration_set.order_by('-received')[:50]
+
+    def item_titele(self, item):
+        return '%s registered to lobby for %s' % (item.registrant,
+                                                  item.client)
+
+    def item_pubdate(self, item):
+        return item.received
+
+    def link(self, obj):
+        return obj.get_absolute_url()
+
+
+class ClientFeed(Feed):
+
+    def get_object(self, request, slug):
+        return get_object_or_404(Client, slug=slug)
+
+    def title(self, obj):
+        return 'Lobbyist registrations for %s' % obj
+
+    def item_description(self, item):
+        return make_item_description(item)
+
+    def items(self, obj):
+        return obj.registration_set.order_by('-received')[:50]
+
+    def item_titele(self, item):
+        return '%s registered to lobby for %s' % (item.registrant,
+                                                  item.client)
+
+    def item_pubdate(self, item):
+        return item.received
+
+    def link(self, obj):
+        return obj.get_absolute_url()

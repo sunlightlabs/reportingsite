@@ -2,60 +2,104 @@ from collections import defaultdict
 import datetime
 
 from django.db import models
+from django.template.defaultfilters import slugify
 
 from dateutil.relativedelta import relativedelta
 from picklefield.fields import PickledObjectField
+import MySQLdb
+
+
+def create_counts_by_month(obj):
+    counts = []
+    cutoff = datetime.date.today() - relativedelta(months=12)
+    cutoff = datetime.date(cutoff.year, cutoff.month, 1)
+    curr = cutoff
+    while curr <= datetime.date.today():
+        counts.append(obj.registration_set.filter(received__month=curr.month,
+                                                  received__year=curr.year).count())
+        curr += relativedelta(months=1)
+    return ','.join([str(x) for x in counts])
+
+
+def combine_dupe_slugs(model):
+    slugs = defaultdict(list)
+    for obj in model.objects.all():
+        slugs[slugify(obj.__unicode__())].append(obj)
+    dupes = [(slug, objs) for slug, objs in slugs.items() if len(objs) > 1]
+    for slug, objs in dupes:
+        good = objs[0]
+        bad = objs[1:]
+        for obj in bad:
+            obj.registration_set.update(**{model._meta.verbose_name: good, })
+            obj.delete()
 
 
 class Registrant(models.Model):
     id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=255)
     crp_name = models.CharField(max_length=255)
-    slug = models.SlugField()
-    country = models.CharField(max_length=100)
-    description = models.CharField(max_length=255)
 
+    # For sorting; crp_name if it exists, otherwise
+    # name. This is also used to generate the slug.
+    display_name = models.CharField(max_length=255)
+
+    slug = models.SlugField(unique=True)
     ie_id = models.CharField(max_length=32)
 
     class Meta:
-        ordering = ('name', )
+        ordering = ('display_name', )
 
     def __unicode__(self):
-        return self.name
+        return self.display_name
 
     @models.permalink
     def get_absolute_url(self):
         return ('willard_registrant_detail', [self.slug, ])
+
+    def get_crp_name(self):
+        cursor = MySQLdb.Connection('localhost', 'campfin', 'campfin', 'campfin').cursor()
+        cursor.execute("SELECT registrant FROM lobbying WHERE registrant_raw = %s LIMIT 1",
+                            self.name)
+        if not cursor.rowcount:
+            return ''
+        return cursor.fetchone()[0]
 
 
 class Client(models.Model):
     name = models.CharField(max_length=255)
     client_id = models.IntegerField()
     crp_name = models.CharField(max_length=255)
-    slug = models.SlugField()
-    description = models.CharField(max_length=255)
-    state = models.CharField(max_length=255)
-    is_state_or_local_gov = models.BooleanField()
-    status = models.BooleanField()
-    contact_name = models.CharField(max_length=255)
 
+    # For sorting; crp_name if it exists, otherwise
+    # name. This is also used to generate the slug.
+    display_name = models.CharField(max_length=255)
+
+    slug = models.SlugField(unique=True)
+    status = models.BooleanField()
     ie_id = models.CharField(max_length=32)
 
     class Meta:
-        ordering = ('name', )
-        unique_together = (('name', 'state', ), )
+        ordering = ('display_name', )
 
     def __unicode__(self):
-        return self.name
+        return self.display_name
 
     @models.permalink
     def get_absolute_url(self):
         return ('willard_client_detail', [self.slug, ])
 
+    def get_crp_name(self):
+        cursor = MySQLdb.Connection('localhost', 'campfin', 'campfin', 'campfin').cursor()
+        cursor.execute("SELECT client FROM lobbying WHERE client_raw = %s LIMIT 1",
+                            self.name.strip())
+        if not cursor.rowcount:
+            return ''
+        return cursor.fetchone()[0]
+
 
 class Issue(models.Model):
     issue = models.CharField(max_length=100)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
 
     # Denormalizing counts by issue for the past 12 months.
     registration_count = models.IntegerField()
@@ -101,7 +145,9 @@ class Issue(models.Model):
         self.save()
 
     def denormalize_registration_count(self):
-        self.registration_count = self.registration_set.count()
+        cutoff = datetime.date.today() - relativedelta(months=12)
+        cutoff = datetime.date(cutoff.year, cutoff.month, 1)
+        self.registration_count = self.registration_set.filter(received__gte=cutoff).count()
         self.save()
 
 
@@ -112,6 +158,7 @@ class IssueByMonth(models.Model):
     month = models.CharField(max_length=2, db_index=True)
     year = models.CharField(max_length=4, db_index=True)
     num = models.IntegerField()
+
 
 class Registration(models.Model):
     id = models.CharField(max_length=36, primary_key=True)
