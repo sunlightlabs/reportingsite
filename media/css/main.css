@@ -61,22 +61,22 @@ li.module, div.module{ background: url(../img/break_module.png) bottom left repe
 div.mainModule { background: url(../img/break_mainModule.png) bottom left repeat-x; margin-bottom: 50px; padding-bottom: 50px;}
 div.lastItem, li.lastModule { background: none;}
 
-#featureBox { background: url(../img/bg_feature_2.png) top left no-repeat; height: 268px; margin-left: -5px; margin-top: -22px; padding: 30px 25px 0;}
+#featureBox { background: url(../img/feature_bg.png) center 10px no-repeat; height: 217px; padding: 60px 65px 0; width: 814px; }
+.carouselBtn { text-indent: -9999em; display: block; cursor: pointer; float: left; width: 71px; height: 72px; margin-top: 40px;}
+.carousel-previous { background: url(../img/feature_leftArrow.png) top left no-repeat;  }
+.carousel-previous:hover { background: url(../img/feature_leftArrow.png) bottom left no-repeat; }
+.carousel-next { background: url(../img/feature_rightArrow.png) top left no-repeat; position: relative; right: -45px;  }
+.carousel-next:hover { background: url(../img/feature_rightArrow.png) bottom left no-repeat; }
+.carousel { width: 595px; margin: 0 15px; float: left; overflow: hidden; height: 160px; position: relative;}
+.carousel ul li { float: left; position: relative; width: 635px; left: -635px;}
+.carousel h2 { font-size: 300%; line-height: 40px;}
+
 body.home div#pageMain #featureHeader { padding-top: 40px; margin-left: 25px; text-indent: -9999em; display: block; width: 477px; height: 39px; background: url(../img/title_expenditure.png) left 41px no-repeat; position: relative; }
 div#pageMain #featureHeader { font-size: 300%;  margin-bottom: 0; color: #394701; }
 body.expendituresAbout #featureHeader, expendituresTotals #featureHeader { position: relative; z-index: 2;}
-#featureBox p { color: #e6e7e8; width: 750px; }
-.tip, #breadcrumbs li { font-style: oblique; font-size: 90%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 16px;}
-div#pageMain #featureBox h3 { background-color: #497c6c; border: 1px solid #3e6c58; padding: 5px 10px 2px; color: #fff; text-transform: none; margin-bottom: 3px; font-size: 120%; font-weight: normal;}
-#featureBox .featureModule li { color: #223c07; float: left; width: 250px; margin: 0 15px 0 5px; line-height: 20px; font-family: Helvetica Neue, Helvetica, Arial, sans-serif; font-size: 95%; }
-.featureModule { float: left; margin-right: 5px; margin-bottom: 25px;}
-.featureModule span { margin: 0 0 10px 5px; display: block;}
-#featureBox a:link, #featureBox a:active, #featureBox a:visited { color: #142403; text-decoration: underline;}
-#featureBox a:hover, body.expendituresHome #featureMainNav li#expenditures a, body.expendituresAbout #featureMainNav li#about a, body.expendituresStories #featureMainNav li#stories a, body.expendituresCandidate li#expenditures a, body.expendituresRace li#expenditures a, body.expendituresCommittee li#expenditures a, body.expendituresLetters li#expenditures a, body.expendituresTotals li#overview a { color: #fff; }
-#featureNav li, #featureMainNav li { float: left; border-right: 1px solid #739935; margin-right: 20px; padding-right: 20px; font-size: 110%; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; line-height: 18px;}
+
+.tip, #breadcrumbs li { font-style: oblique; font-size: 90%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 16px;}#featureNav li, #featureMainNav li { float: left; border-right: 1px solid #739935; margin-right: 20px; padding-right: 20px; font-size: 110%; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; line-height: 18px;}
 #featureNav li.last { border-right: none;}
-
-
 #featureMainNav { background: url(../img/bg_secondaryNav.png) top left no-repeat; margin: -22px 0 0 -35px; height: 46px; padding: 30px 35px 0;}
 #featureMainNav a:link, #featureMainNav a:active, #featureMainNav a:visited { color: #394701; }
 #featureMainNav a:hover { color: #e6e7e8;}
