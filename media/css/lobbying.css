@@ -1,0 +1,60 @@
+table#issueList { margin-left: 75px; width: 350px; }
+table.registrationDetail th,
+table.registrationDetail td { padding: 3px; 0px; font-size: .9em; }
+table.registrationDetail th { font-weight: bold; width: 100px; vertical-align: top; padding-right: 10px; }
+table.registrationDetail { margin-bottom: 30px; }
+ul.issueChart { }
+ul.issueChart li {
+    position: relative;
+    display: block;
+    border-bottom: 1px solid #ddd;
+    margin: 0 !important;
+    height: 2.25em;
+    font-size: .9em;
+}
+ul.issueChart li a {
+    display: block; 
+    padding: 0.4em 4.5em 0.4em 0.5em;
+    position: relative; 
+    z-index: 2; 
+    font-weight: bold;
+    font-size: 1em;
+    color: #414042;
+}
+ul.issueChart .count {
+    display: block; 
+    position: absolute; 
+    top: -.30em; 
+    right: 1em; 
+    margin: 0 0.3em;
+    text-align: right; 
+    _color: #808080; 
+    color: #414042;
+    font-weight: bold;
+    font-size: .9em; 
+    line-height: 3em; 
+    display: none;
+    z-index: 100;
+}
+ul.issueChart li:hover .count {
+    display: block;
+}
+ul.issueChart li:hover {
+    background: #c5d8da;
+}
+ul.issueChart .index {
+    display: block; 
+    position: absolute; 
+    top: 0; 
+    left: 0; 
+    height: 100%; 
+    background: #81a7aa;
+    text-indent: -9999px; 
+    overflow: hidden; 
+    line-height: 2em;
+}
+.registrationList { width: 300px; float:right; border-left: 2px solid #afafaf; padding-left: 25px; }
+div#lobbyBar { background-color: #414042; height: 40px; width: 100%; margin-top: 15px; }
+div#lobbyBar li { float: left; border-right: 1px solid #739935; margin-right: 20px; padding-right: 20px; font-size: 110%; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; line-height: 18px;}
+table.browseTable tr td { margin: 0 15px 0 0; padding: 5px; width: 30%; }
+h3.browseHeading { margin: 30px 0 0 0; border-bottom: 1px solid #afafaf; }
