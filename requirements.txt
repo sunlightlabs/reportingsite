@@ -11,7 +11,6 @@ django-haystack==1.0.1-final
 -e hg+http://code.welldev.org/django-storages/@d4014b824a0bfb78dca24ed7fd3f079554c124cb#egg=django_storages-tip
 django-tagging==0.3.1
 feedparser==4.1
-ipython==0.10
 mercurial==1.6
 pysolr==2.0.12
 python-memcached==1.45
