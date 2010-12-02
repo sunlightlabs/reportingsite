@@ -1,6 +1,6 @@
 $().ready( function() {
 	
-	var slideWidth = 575;
+	var slideWidth = 635;
 	var carouselUserIntervention = false;
 	$('.carousel ul').css({'width': $('.carousel li').length * slideWidth});
 	$('.carousel ul').prepend($('.carousel li:last'));

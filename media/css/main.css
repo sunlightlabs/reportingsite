@@ -67,8 +67,8 @@ div.lastItem, li.lastModule { background: none;}
 .carousel-previous:hover { background: url(../img/feature_leftArrow.png) bottom left no-repeat; }
 .carousel-next { background: url(../img/feature_rightArrow.png) top left no-repeat; position: relative; right: -45px;  }
 .carousel-next:hover { background: url(../img/feature_rightArrow.png) bottom left no-repeat; }
-.carousel { width: 575px; margin: 0 25px; float: left; overflow: hidden; height: 160px; position: relative;}
-.carousel ul li { float: left; position: relative; width: 575px; left: -575px;}
+.carousel { width: 595px; margin: 0 15px; float: left; overflow: hidden; height: 160px; position: relative;}
+.carousel ul li { float: left; position: relative; width: 635px; left: -635px;}
 .carousel h2 { font-size: 300%; line-height: 40px;}
 
 body.home div#pageMain #featureHeader { padding-top: 40px; margin-left: 25px; text-indent: -9999em; display: block; width: 477px; height: 39px; background: url(../img/title_expenditure.png) left 41px no-repeat; position: relative; }
