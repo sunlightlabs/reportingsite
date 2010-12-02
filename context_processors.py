@@ -25,6 +25,7 @@ def latest_by_site(request):
 
 
 def outside_spending_updated(request):
+    return {'outside_spending_updated': datetime.datetime(2010, 11, 2, 16, 31)}
     expenditures = Expenditure.objects.order_by('-timestamp').values_list('timestamp', flat=True)
     if expenditures:
         updated = expenditures[0]
