@@ -106,7 +106,7 @@ def save_filing(data):
                 crp_name='',
                 status=int(data['client']['ClientStatus']))
             )
-    if client.created:
+    if created:
         client.crp_name=client.get_crp_name()
         client.display_name = client.crp_name or client.name
         client.save()
