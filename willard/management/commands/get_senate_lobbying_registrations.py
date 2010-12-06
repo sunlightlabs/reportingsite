@@ -94,7 +94,10 @@ def save_filing(data):
                     id=data['registrant']['RegistrantID'],
                     name=data['registrant']['RegistrantName'],
                     crp_name='')
-            registrant.crp_name = registrant.get_crp_name()
+            try:
+                registrant.crp_name = registrant.get_crp_name()
+            except:
+                pass
             registrant.display_name = registrant.crp_name or registrant.name
             registrant.save()
 
@@ -107,7 +110,10 @@ def save_filing(data):
                 status=int(data['client']['ClientStatus']))
             )
     if created:
-        client.crp_name=client.get_crp_name()
+        try:
+            client.crp_name=client.get_crp_name()
+        except:
+            pass
         client.display_name = client.crp_name or client.name
         client.save()
 
@@ -192,7 +198,10 @@ class Command(BaseCommand):
         # and create one.
         for model in [Client, Registrant, ]:
             for obj in model.objects.filter(display_name=''):
-                obj.crp_name = obj.get_crp_name()
+                try:
+                    obj.crp_name = obj.get_crp_name()
+                except:
+                    pass
                 obj.display_name = obj.crp_name or obj.name
                 obj.save()
 
