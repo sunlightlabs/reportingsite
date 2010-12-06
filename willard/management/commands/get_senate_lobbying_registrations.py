@@ -94,6 +94,9 @@ def save_filing(data):
                     id=data['registrant']['RegistrantID'],
                     name=data['registrant']['RegistrantName'],
                     crp_name='')
+            registrant.crp_name = registrant.get_crp_name()
+            registrant.display_name = registrant.crp_name or registrant.name
+            registrant.save()
 
     client, created = Client.objects.get_or_create(
             slug=slugify(data['client']['ClientName'])[:50],
@@ -103,6 +106,12 @@ def save_filing(data):
                 crp_name='',
                 status=int(data['client']['ClientStatus']))
             )
+    if client.created:
+        client.crp_name=client.get_crp_name()
+        client.display_name = client.crp_name or client.name
+        client.save()
+
+
     registration, created = Registration.objects.get_or_create(
             id=data['ID'],
             defaults=dict(
@@ -119,7 +128,8 @@ def save_filing(data):
                 slug=slugify(registration_issue)[:50],
                 defaults=dict(
                     issue=registration_issue.title(),
-                    registration_count=0)
+                    registration_count=0,
+                    counts_by_month='')
                 )
         registration.issues.add(issue)
     
@@ -167,6 +177,8 @@ class Command(BaseCommand):
             for filename, xml in get_xml(year, filename, all_quarters):
                 print filename
                 for filing in parse_xml(xml):
+                    save_filing(filing)
+                    """
                     try:
                         save_filing(filing)
                     except Exception, e:
@@ -174,5 +186,14 @@ class Command(BaseCommand):
                         print e
                         print filing
                         print
+                    """
+
+        # Find any clients or registrants without a display_name
+        # and create one.
+        for model in [Client, Registrant, ]:
+            for obj in model.objects.filter(display_name=''):
+                obj.crp_name = obj.get_crp_name()
+                obj.display_name = obj.crp_name or obj.name
+                obj.save()
 
         denormalize()
