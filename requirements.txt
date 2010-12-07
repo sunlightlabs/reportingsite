@@ -1,17 +1,29 @@
 BeautifulSoup==3.1.0.1
-Django==1.2.1
+Django==1.2.3
 Markdown==2.0.3
 MySQL-python==1.2.3
-boto==2.0a2
+akismet==0.2.0
+boto==2.0b2
 django-debug-toolbar==0.8.3
 -e git://github.com/sunlightlabs/django-feedinator.git@0e3f7b1ce75d0ae8659030d2cc95cdbb4cdc5b58#egg=django_feedinator-0.2.1-py2.6-dev
 -e git://github.com/sunlightlabs/django-gatekeeper.git@f99c724a1d9fcccf130b80586c15b91e6b3c6338#egg=django_gatekeeper-0.4.0a-py2.6-dev
 django-haystack==1.0.1-final
--e git://github.com/sunlightlabs/django-mediasync.git@54cefa361bf604154a5a1e34f58a852177f30fca#egg=django_mediasync-1.0.1-py2.6-dev
+django-mediasync==1.0.1
+django-picklefield==0.1.9
 -e hg+http://code.welldev.org/django-storages/@d4014b824a0bfb78dca24ed7fd3f079554c124cb#egg=django_storages-tip
 django-tagging==0.3.1
 feedparser==4.1
+gunicorn==0.11.2
+httplib2==0.6.0
+ipython==0.10
+lxml==2.3beta1
 mercurial==1.6
+name-tools==0.1.1
+pyPdf==1.12
+pymongo==1.8.1
 pysolr==2.0.12
+python-dateutil==1.5
 python-memcached==1.45
+python-scribd==1.1.0
+python-sunlightapi==1.0.0
 wsgiref==0.1.2
