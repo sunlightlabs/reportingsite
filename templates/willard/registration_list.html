@@ -12,6 +12,10 @@
 
 {% block content %}
 
+{% if object.get_rss_url %}
+<a style="display: block; float: right;margin-top:10px;" href="{{ object.get_rss_url }}"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/feed-icon-14x14.png" alt="RSS" title="Subscribe to an RSS feed of this data" style="border: 0;" /></a>
+{% endif %}
+
 <h2>
     {% if object %}
     {{ object }}
@@ -19,6 +23,9 @@
     All registrations
     {% endif %}
 </h2>
+{% if object.ie_id %}
+<p class="tip"><a href="{{ object.ie_url }}">Get more information at Influence Explorer</a></p>
+{% endif %}
 <br />
 
 <table class="tablesorter">

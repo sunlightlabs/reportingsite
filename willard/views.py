@@ -1,4 +1,5 @@
 from collections import defaultdict
+from operator import itemgetter
 import datetime
 import itertools
 
@@ -28,21 +29,11 @@ def index(request):
     months = []
     cutoff = datetime.date.today() - relativedelta(months=12)
     cutoff = datetime.date(year=cutoff.year, month=cutoff.month, day=1)
-    """
-    curr = cutoff
-    issue_counts = defaultdict(list)
-    while curr <= datetime.date.today():
-        months.append(curr.strftime('%b')[0])
-        for issue, by_month in issues_by_month.items():
-            issue_counts[issue.issue].append(sum([x['num'] for x in by_month if x['year'] == str(curr.year) and x['month'] == str(curr.month)]))
-
-        curr += relativedelta(months=1)
-    """
 
     past_year_count = Registration.objects.filter(received__gte=cutoff).count()
 
     # Create a list of registrations by month for the past year.
-    registrations_by_month = itertools.groupby(Registration.objects.filter(received__lte=datetime.date.today(), 
+    registrations_by_month = itertools.groupby(Registration.objects.filter(received__lte=datetime.date.today(),
                                                                            received__gte=cutoff).order_by('received'),
                                                lambda x: {'month': x.received.month,
                                                           'year': x.received.year, 
@@ -52,13 +43,31 @@ def index(request):
     # Iterate over registrations_by_month
     registrations_by_month = [(month, len(list(registrations))) for month, registrations in registrations_by_month]
 
+    # Create a list of registrations by day for the 30 days previous to the last registration.
+    last_date = Registration.objects.order_by('-received').values_list('received', flat=True)[0].date()
+    month_cutoff = last_date - datetime.timedelta(30)
+    registrations_by_day = dict()
+    for date, group in itertools.groupby(Registration.objects.filter(received__gte=month_cutoff).values_list('received', flat=True), lambda x: x.date()):
+        registrations_by_day[date] = len(list(group))
+
+    # Fill in any missing dates with 0
+    curr = month_cutoff
+    while curr <= last_date:
+        if curr not in registrations_by_day:
+            registrations_by_day[curr] = 0
+        curr += datetime.timedelta(1)
+
+    registrations_by_day = sorted(registrations_by_day.items(), key=itemgetter(0))
+
     return render_to_response('willard/index.html',
                               {'object_list': registrations_by_date,
-                               #'issue_counts': issue_counts.items(),
                                'months': months,
                                'issues': Issue.objects.filter(registration__received__gte=cutoff).annotate(num=Count('registration')).order_by('-num').select_related(),
+                               'past_month_issues': Issue.objects.filter(registration__received__gte=month_cutoff).annotate(num=Count('registration')).order_by('-num').select_related(),
                                'past_year_count': past_year_count,
+                               'past_month_count': sum([x[1] for x in registrations_by_day]),
                                'registrations_by_month': registrations_by_month,
+                               'registrations_by_day': registrations_by_day,
                                 },
                               context_instance=RequestContext(request))
 

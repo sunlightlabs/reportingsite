@@ -1,5 +1,9 @@
 from collections import defaultdict
+from operator import itemgetter
 import datetime
+import itertools
+import urllib
+import urllib2
 
 from django.db import models
 from django.template.defaultfilters import slugify
@@ -7,6 +11,22 @@ from django.template.defaultfilters import slugify
 from dateutil.relativedelta import relativedelta
 from picklefield.fields import PickledObjectField
 import MySQLdb
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
+
+
+def get_ie_data(name):
+    """Get data on an entity from Influence Explorer.
+    """
+    url = 'http://transparencydata.com/api/1.0/entities.json'
+    body = urllib.urlencode({'apikey': '***REMOVED***',
+                             'search': name, })
+    url = '%s?%s' % (url, body)
+    data = json.loads(urllib2.urlopen(url).read())
+    return data
 
 
 def create_counts_by_month(obj):
@@ -44,7 +64,7 @@ class Registrant(models.Model):
     display_name = models.CharField(max_length=255)
 
     slug = models.SlugField(unique=True)
-    ie_id = models.CharField(max_length=32)
+    ie_data = PickledObjectField()
 
     class Meta:
         ordering = ('display_name', )
@@ -56,6 +76,17 @@ class Registrant(models.Model):
     def get_absolute_url(self):
         return ('willard_registrant_detail', [self.slug, ])
 
+    @models.permalink
+    def get_rss_url(self):
+        return ('willard_registrant_detail_feed', [self.slug, ])
+
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            self.crp_name = self.get_crp_name()
+            self.display_name = self.crp_name or self.name
+            self.ie_data = get_ie_data(self.display_name)
+        super(Registrant, self).save(*args, **kwargs)
+
     def get_crp_name(self):
         cursor = MySQLdb.Connection('localhost', 'campfin', 'campfin', 'campfin').cursor()
         cursor.execute("SELECT registrant FROM lobbying WHERE registrant_raw = %s LIMIT 1",
@@ -63,6 +94,20 @@ class Registrant(models.Model):
         if not cursor.rowcount:
             return ''
         return cursor.fetchone()[0]
+
+    def get_ie_data(self):
+        return get_ie_data(self.display_name)
+
+    def ie_id(self):
+        if len(self.ie_data):
+            return self.ie_data[0]['id']
+        return None
+
+    def ie_url(self):
+        if not self.ie_id():
+            return ''
+        return 'http://influenceexplorer.com/organization/%s/%s' % (self.slug,
+                                                                    self.ie_id())
 
 
 class Client(models.Model):
@@ -76,7 +121,7 @@ class Client(models.Model):
 
     slug = models.SlugField(unique=True)
     status = models.BooleanField()
-    ie_id = models.CharField(max_length=32)
+    ie_data = PickledObjectField()
 
     class Meta:
         ordering = ('display_name', )
@@ -88,6 +133,17 @@ class Client(models.Model):
     def get_absolute_url(self):
         return ('willard_client_detail', [self.slug, ])
 
+    @models.permalink
+    def get_rss_url(self):
+        return ('willard_client_detail_feed', [self.slug, ])
+
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            self.crp_name = self.get_crp_name()
+            self.display_name = self.crp_name or self.name
+            self.ie_data = get_ie_data(self.display_name)
+        super(Client, self).save(*args, **kwargs)
+
     def get_crp_name(self):
         cursor = MySQLdb.Connection('localhost', 'campfin', 'campfin', 'campfin').cursor()
         cursor.execute("SELECT client FROM lobbying WHERE client_raw = %s LIMIT 1",
@@ -95,6 +151,21 @@ class Client(models.Model):
         if not cursor.rowcount:
             return ''
         return cursor.fetchone()[0]
+
+    def get_ie_data(self):
+        return get_ie_data(self.display_name)
+
+    def ie_id(self):
+        if not len(self.ie_data):
+            return None
+        return self.ie_data[0]['id']
+
+    def ie_url(self):
+        if not self.ie_id():
+            return ''
+        return 'http://influenceexplorer.com/organization/%s/%s' % (self.slug,
+                                                                    self.ie_id())
+
 
 
 class Issue(models.Model):
@@ -107,6 +178,16 @@ class Issue(models.Model):
     # A comma-separated list of the number of registrations
     # for this issue over the past 12 months.
     counts_by_month = models.CharField(max_length=100)
+
+    # Denormalizing counts by issue for the past 30 days.
+    past_month_count = models.IntegerField()
+
+    # A comma-separated list of the number of registrations
+    # for this issue over the past 30 days.
+    counts_by_day = models.CharField(max_length=200)
+
+    class Meta:
+        ordering = ('issue', )
 
     def __unicode__(self):
         return self.issue
@@ -143,6 +224,29 @@ class Issue(models.Model):
             curr += relativedelta(months=1)
         self.counts_by_month = ','.join([str(x) for x in issue_counts])
         self.save()
+
+    def create_counts_by_day(self):
+        last_date = Registration.objects.order_by('-received').values_list('received', flat=True)[0].date()
+        month_cutoff = last_date - datetime.timedelta(30)
+
+        registrations_by_day = dict()
+        for date, group in itertools.groupby(self.registration_set.filter(received__gte=month_cutoff).values_list('received', flat=True), lambda x: x.date()):
+            registrations_by_day[date] = len(list(group))
+
+        # Fill in any missing dates with 0
+        curr = month_cutoff
+        while curr <= last_date:
+            if curr not in registrations_by_day:
+                registrations_by_day[curr] = 0
+            curr += datetime.timedelta(1)
+
+        registrations_by_day = sorted(registrations_by_day.items(), key=itemgetter(0))
+        return ','.join([str(x[1]) for x in registrations_by_day])
+
+    def past_month_num(self):
+        last_date = Registration.objects.order_by('-received').values_list('received', flat=True)[0].date()
+        month_cutoff = last_date - datetime.timedelta(30)
+        return self.registration_set.filter(received__gte=month_cutoff).count()
 
     def denormalize_registration_count(self):
         cutoff = datetime.date.today() - relativedelta(months=12)
