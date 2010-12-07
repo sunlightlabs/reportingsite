@@ -23,7 +23,7 @@ class BlogdorModerator(CommentModerator):
         message = '\n\n'.join((comment.get_as_text(), appr_link))
         recipient_email = content_object.author.email
 
-        send_mail(subject, message, from_email, (recipient_email,), fail_silently=False)
+        #send_mail(subject, message, from_email, (recipient_email,), fail_silently=False)
 
 
     def moderate(self, comment, content_object, request):
@@ -44,6 +44,7 @@ class BlogdorModerator(CommentModerator):
         comment.save()
 
         if not is_spam:
-           self.email(comment, content_object, request)
+           pass
+           #self.email(comment, content_object, request)
 
         return True
