@@ -92,31 +92,15 @@ def save_filing(data):
             registrant = Registrant.objects.create(
                     slug=slug,
                     id=data['registrant']['RegistrantID'],
-                    name=data['registrant']['RegistrantName'],
-                    crp_name='')
-            try:
-                registrant.crp_name = registrant.get_crp_name()
-            except:
-                pass
-            registrant.display_name = registrant.crp_name or registrant.name
-            registrant.save()
+                    name=data['registrant']['RegistrantName'])
 
     client, created = Client.objects.get_or_create(
             slug=slugify(data['client']['ClientName'])[:50],
             defaults=dict(
                 name=data['client']['ClientName'],
                 client_id=data['client']['ClientID'],
-                crp_name='',
                 status=int(data['client']['ClientStatus']))
             )
-    if created:
-        try:
-            client.crp_name=client.get_crp_name()
-        except:
-            pass
-        client.display_name = client.crp_name or client.name
-        client.save()
-
 
     registration, created = Registration.objects.get_or_create(
             id=data['ID'],
@@ -196,6 +180,7 @@ class Command(BaseCommand):
 
         # Find any clients or registrants without a display_name
         # and create one.
+        """
         for model in [Client, Registrant, ]:
             for obj in model.objects.filter(display_name=''):
                 try:
@@ -204,5 +189,6 @@ class Command(BaseCommand):
                     pass
                 obj.display_name = obj.crp_name or obj.name
                 obj.save()
+        """
 
         denormalize()
