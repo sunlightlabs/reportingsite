@@ -18,10 +18,15 @@ cutoff = datetime.date(year=cutoff.year,
 
 urlpatterns = patterns('',
 
-        url(r'^issue\/(?P<slug>[-\w]+)\/rss\/?$',
-         IssueFeed(),
-         {},
-         name='willard_issue_detail_feed'),
+        url(r'^issue\/(?P<slug>[-\w]+)\.rss$',
+            IssueFeed(),
+            {},
+            name='willard_issue_detail_feed'),
+
+        url(r'^issue\/(?P<slug>[-\w]+)\.(?P<format>\w+)$',
+            'willard.views.detail_api',
+            {'model': Issue, },
+            name='willard_issue_detail_api'),
 
         url(r'^issue\/(?P<slug>[-\w]+)\/?$',
          'willard.views.issue_detail',
@@ -40,10 +45,15 @@ urlpatterns = patterns('',
               },
             name='willard_issue_list'),
 
-        url(r'^client\/(?P<slug>[-\w]+)\/rss\/?$',
+        url(r'^client\/(?P<slug>[-\w]+)\.rss$',
          ClientFeed(),
          {},
          name='willard_client_detail_feed'),
+
+        url(r'^client\/(?P<slug>[-\w]+)\.(?P<format>\w+)$',
+            'willard.views.detail_api',
+            {'model': Client, },
+            name='willard_client_detail_api'),
 
         url(r'^client\/?$',
             object_list,
@@ -55,10 +65,15 @@ urlpatterns = patterns('',
              },
             name='willard_client_list'),
 
-        url(r'^firm\/(?P<slug>[-\w]+)\/rss\/?$',
+        url(r'^firm\/(?P<slug>[-\w]+)\.rss$',
          RegistrantFeed(),
          {},
          name='willard_registrant_detail_feed'),
+
+        url(r'^firm\/(?P<slug>[-\w]+)\.(?P<format>\w+)$',
+            'willard.views.detail_api',
+            {'model': Registrant, },
+            name='willard_registrant_detail_api'),
 
         url(r'^firm\/?$',
             object_list,

@@ -1,14 +1,20 @@
 from collections import defaultdict
+import csv
 from operator import itemgetter
 import datetime
 import itertools
+
+try:
+    import json
+except ImportError:
+    import simplejson as json
 
 from django.shortcuts import render_to_response, get_object_or_404
 from django.template import RequestContext
 from django.db.models import *
 from django.views.generic.list_detail import object_detail
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
-from django.http import Http404
+from django.http import Http404, HttpResponse
 
 from dateutil.relativedelta import relativedelta
 
@@ -103,6 +109,45 @@ def issue_detail(request, slug):
                                'past_year_count': sum(counts.values()),
                                },
                               context_instance=RequestContext(request))
+
+
+def detail_api(request, model, slug, format):
+    obj = get_object_or_404(model, slug=slug)
+    registrations = obj.registration_set.order_by('-received').select_related()
+    data = {model._meta.verbose_name: obj.__unicode__(),
+            'path': obj.get_absolute_url(),
+            'registrations': [], }
+    return registrations_api(registrations, format, data)
+
+
+def registrations_api(registrations, format, data):
+    allowed_formats = ('csv', 'json', )
+    if format not in allowed_formats:
+        raise Http404
+
+    if format == 'json':
+        for registration in registrations:
+            data['registrations'].append(registration.as_dict())
+
+        return HttpResponse(json.dumps(data), mimetype='text/plain')
+
+    elif format == 'csv':
+        response = HttpResponse(mimetype='text/plain')
+        writer = csv.writer(response)
+        headers = ['senate_id',
+                   'registration_type',
+                   'client',
+                   'received',
+                   'issues',
+                   'specific_issue', ]
+
+        rows = [headers, ] + [x.as_csv() for x in registrations]
+
+        writer.writerows(rows)
+        return response
+
+
+
 
 def generic_pagination(request):
     order_options = ('received',

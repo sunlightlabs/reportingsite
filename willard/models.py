@@ -292,3 +292,27 @@ class Registration(models.Model):
 
     def pdf_url(self):
         return 'http://soprweb.senate.gov/index.cfm?event=getFilingDetails&filingID=%s' % self.id
+
+    def as_dict(self):
+        registration_dict = {'senate_id': self.id,
+                             'registration_type': self.reg_type,
+                             'registrant': {'name': self.registrant.display_name,
+                                            'path': self.registrant.get_absolute_url(), },
+                             'client': {'name': self.client.display_name,
+                                        'path': self.client.get_absolute_url(), },
+                             'received': str(self.received),
+                             'issues': [],
+                             'specific_issue': self.specific_issue, }
+        for issue in self.issues.all():
+            registration_dict['issues'].append({'issue': issue.issue,
+                                                'path': issue.get_absolute_url(), })
+        return registration_dict
+
+    def as_csv(self):
+        return [self.id,
+                self.reg_type,
+                self.registrant.display_name,
+                self.client.display_name,
+                str(self.received),
+                '|'.join([x.issue for x in self.issues.all()]),
+                self.specific_issue, ]
