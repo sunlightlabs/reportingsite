@@ -23,15 +23,14 @@
 
 {% for letter, registrants in by_letter %}
 <h3 id="{{ letter }}" class="browseHeading">{{ letter }}</h3>
-<table class="browseTable">
+<ol class="browseTable">
     {% for row in registrants|columns_across:3 %}
-    <tr>
         {% for registrant in row %}
-        <td><a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a></td>
+        <li class="{% cycle 'one' 'two' 'three' %}"><a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a></li>
         {% endfor %}
-    </tr>
     {% endfor %}
-</table>
+</ol>
+<div class="clear"></div>
 {% endfor %}
 
 {% endblock content %}

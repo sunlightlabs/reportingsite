@@ -41,12 +41,15 @@ ul.issueChart .count {
     display: none;
     z-index: 100;
 }
+
 ul.issueChart li:person .count {
     display: block;
 }
 ul.issueChart li:hover {
     background: #f3e7a4;
 }
+ul.issueChart li:hover .count { display: inline;}
+
 ul.issueChart .index {
     display: block; 
     position: absolute; 
@@ -97,3 +100,6 @@ div#pageMain #timeToggle label { width: auto; margin-right: 20px; color: #457B80
 
 .lobbyingBreadcrumbs { margin-top: 15px;}
 #issueChart { margin: 0 auto;}
+
+#issueChart1 { float: left; margin-right: 25px; width: 525px;}
+#issueChart2 { float: left; width: 347px;}

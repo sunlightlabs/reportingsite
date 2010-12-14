@@ -87,21 +87,26 @@
 <h3>Lobbying issue: {{ issue.issue }}</h3>
 
 <div id="issueChart">
-    <h4>{{ issue.issue }} Registrations</h4>
-    <span class="tip tipHeight">Past 12 Months</span>
-    <div id="monthLineChart"></div>
+    <div id="issueChart1">
+        <h4>{{ issue.issue }} Registrations</h4>
+        <span class="tip tipHeight">Past 12 Months</span>
+        <div id="monthLineChart"></div>
+    </div>
     {% if top_registrants %}
-    <h4>Top registrants</h4>
-    <ul class="issueChart">
-        {% for registrant in top_registrants %}
-        <li>
-            <a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a>
-            <span class="count">{{ registrant.num|intcomma }}</span>
-            <span class="index" style="width: {{ registrant.num|percentage:past_year_count|intcomma }}%"></span>
-        </li>
-        {% endfor %}
-    </ul>
+    <div id="issueChart2">
+        <h4>Top registrants</h4>
+        <ul class="issueChart">
+            {% for registrant in top_registrants %}
+            <li>
+                <a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a>
+                <span class="count">{{ registrant.num|intcomma }}</span>
+                <span class="index" style="width: {{ registrant.num|percentage:past_year_count|intcomma }}%"></span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
     {% endif %}
+    <div class="clear"></div>
 </div>
 
 
