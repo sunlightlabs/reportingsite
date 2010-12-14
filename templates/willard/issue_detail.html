@@ -84,7 +84,11 @@
     });
 </script>
 
-<h3>Lobbying issue: {{ issue.issue }}</h3>
+<div class="rssIcon">
+    <a href="{% url willard_issue_detail_feed slug=issue.slug %}">Subscribe</a>
+</div>
+
+<h3>{{ issue.issue }}</h3>
 
 <div id="issueChart">
     <div id="issueChart1">
