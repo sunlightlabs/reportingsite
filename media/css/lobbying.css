@@ -1,5 +1,8 @@
-.registrationList dt { font-weight: bold; width: 110px; float: left;}
-.registrationList dt, .registrationList dd { padding: 3px 5px; font-size: 95%;}
+.regTitle { font-weight: bold; width: 110px; float: left;}
+.regDescription { float: left; width: 190px;}
+#latestRegistrations { margin-left: 0;}
+#latestRegistrations li { padding: 3px 5px; font-size: 95%;}
+.registrationList .regDescription ul { margin-left: 0px;}
 
 .registrationList li { padding-bottom: 30px; margin-bottom: 30px; background: url("../img/break_module.png") repeat-x scroll left bottom transparent;}
 .registrationList li ul li { margin-bottom: 0; padding-bottom: 0; background: none;}
@@ -64,12 +67,12 @@ body.registrant #lobbyistFilter li.registrants a:hover, body.clients #lobbyistFi
 div#lobbyBar { background-color: #414042; height: 40px; width: 100%; margin-top: 15px; }
 div#lobbyBar li { float: left; border-right: 1px solid #739935; margin-right: 20px; padding-right: 20px; font-size: 110%; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; line-height: 18px;}
 .browseTable li { margin: 0 15px 0 0; padding: 5px; width: 270px; float: left;}
-.browseTable li:hover { background-color: #f9f9f9; -moz-border-radius: 3px; -webkit-border-radius: 3px; border: 1px solid #fff; width: 270px;}
-.browseTable li.1 { clear: both;}
+.browseTable li:hover { background-color: #f9f9f9; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px;}
+.browseTable li.one { clear: both;}
 h3.browseHeading { margin: 30px 0 10px 0; border-bottom: 1px solid #afafaf; }
 a.toggler { display: block; text-align: center; margin-top: -15px; margin-bottom: 20px; }
 
-#lobbyistFilter { background: #a5bfc2 url(../img/bg_lines.png) right bottom repeat-x; padding: 7px 15px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border: 1px solid #7b989b;}
+#lobbyistFilter { background: #a5bfc2 url(../img/bg_lines.png) right bottom repeat-x; padding: 7px 15px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; border: 1px solid #7b989b;}
 #lobbyistFilter a:link, #lobbyistFilter a:visited, #lobbyistFilter a:active { color: #fff; font-size: 110%; font-style: oblique;}
 #lobbyistFilter .clients { border: none;}
 #lobbyistFilter a:hover { text-decoration: underline;}
@@ -86,7 +89,7 @@ div#pageMain #lobbyingSearch input { padding: 4px 5px; width: 220px;}
 #lobbyLeftColumn { float: left; width: 500px; margin-right: 30px; padding-right: 30px; border-right: 1px solid #e3e0de;}
 .registrationList { width: 335px; float: left;}
 
-#timeToggle { background-color: #d0dedf; border: 1px solid #bbc7c8; padding: 5px 10px; margin-bottom: 40px; -moz-border-radius: 3px; -webkit-border-radius: 3px;}
+#timeToggle { background-color: #d0dedf; border: 1px solid #bbc7c8; padding: 5px 10px; margin-bottom: 40px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px;}
 #timeToggle span { float: left; margin-right: 20px;}
 div#pageMain #timeToggle label { width: auto; margin-right: 20px; color: #457B80;}
 .radio { margin-top: 5px;}

@@ -26,10 +26,11 @@
 <ol class="browseTable">
     {% for row in clients|columns_across:3 %}
         {% for client in row %}
-        <li><a href="{{ client.get_absolute_url }}">{{ client }}</a></li>
+        <li class="{% cycle 'one' 'two' 'three' %}"><a href="{{ client.get_absolute_url }}">{{ client }}</a></li>
         {% endfor %}
     {% endfor %}
 </ol>
+<div class="clear"></div>
 {% endfor %}
 
 {% endblock content %}
