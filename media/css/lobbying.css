@@ -1,7 +1,8 @@
 .regTitle { font-weight: bold; width: 110px; float: left;}
 .regDescription { float: left; width: 190px;}
 #latestRegistrations { margin-left: 0;}
-#latestRegistrations li { padding: 3px 5px; font-size: 95%;}
+#latestRegistrations li { padding: 3px 5px; font-size: 95%; line-height: 18px;}
+#latestRegistrations li.odd { background: #FAFAF8;}
 .registrationList .regDescription ul { margin-left: 0px;}
 
 .registrationList li { padding-bottom: 30px; margin-bottom: 30px; background: url("../img/break_module.png") repeat-x scroll left bottom transparent;}
