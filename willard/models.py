@@ -81,7 +81,7 @@ class Registrant(models.Model):
         return ('willard_registrant_detail_feed', [self.slug, ])
 
     def save(self, *args, **kwargs):
-        if self.id is None:
+        if not self.display_name:
             self.crp_name = self.get_crp_name()
             self.display_name = self.crp_name or self.name
             self.ie_data = get_ie_data(self.display_name)
