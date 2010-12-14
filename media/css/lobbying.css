@@ -103,3 +103,7 @@ div#pageMain #timeToggle label { width: auto; margin-right: 20px; color: #457B80
 
 #issueChart1 { float: left; margin-right: 25px; width: 525px;}
 #issueChart2 { float: left; width: 347px;}
+
+.lobbying_paginatorNext { text-align: right; display: block;}
+.lobbying_paginatorPrevious  { float: left;}
+.lobbying_paginatorPrevious, .lobbying_paginatorNext{ font-size: 115%; font-style: oblique; margin-top: 10px;} 
