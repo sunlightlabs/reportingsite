@@ -19,8 +19,8 @@
     <div id="timeToggle">
         <span>Show graphs for:</span>
         <form>
-            <label><input class="radio" type="radio" name="group1" value="30Days"> Last 30 days</label>
-            <label><input class="radio" type="radio" name="group2" value="12Months"> Last 12 Months</label>
+            <label><input class="radio" type="radio" name="group1" value="30Days" id="toggle_month" checked="checked"> Last 30 days</label>
+            <label><input class="radio" type="radio" name="group2" value="12Months" id="toggle_year"> Last 12 Months</label>
             <div class="clear"></div>
         </form>
     </div>
@@ -197,13 +197,17 @@
         var showMonth = function () {
             $("#registrations_year").hide();
             $("#registrations_month").show();
-            $.sparkline_display_visible()
+            $("#toggle_month").attr("checked", "checked");
+            $("#toggle_year").attr("checked", "");
+            $.sparkline_display_visible();
         }
 
         var showYear = function () {
             $("#registrations_month").hide();
             $("#registrations_year").show();
-            $.sparkline_display_visible()
+            $("#toggle_year").attr("checked", "checked");
+            $("#toggle_month").attr("checked", "");
+            $.sparkline_display_visible();
         }
 
         if (window.location.hash == '#year') {
