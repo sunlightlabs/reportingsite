@@ -1,5 +1,5 @@
 {% extends "willard/willard_base.html" %}
-{% block body %}reporting registrant fullWidth{% endblock %}
+{% block body %}reporting {{ plural|lower }} fullWidth{% endblock %}
 
 {% block breadcrumb %}
 {{ block.super }}
