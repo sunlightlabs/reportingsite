@@ -80,7 +80,12 @@ def index(request):
 
 def issue_detail(request, slug):
     issue = get_object_or_404(Issue, slug=slug)
-    registrations = issue.registration_set.order_by('-received').select_related()[:25]
+
+    order, given_order = generic_pagination(request)
+    registrations = issue.registration_set.order_by(*order).select_related()
+    page = make_paginator(request, registrations)
+
+    #registrations = issue.registration_set.order_by('-received').select_related()[:25]
 
     cutoff = datetime.date.today() - relativedelta(months=12)
     cutoff = datetime.date(year=cutoff.year,
@@ -104,9 +109,13 @@ def issue_detail(request, slug):
     return render_to_response('willard/issue_detail.html',
                               {'issue': issue,
                                'month_counts': month_counts,
-                               'registrations': registrations,
                                'top_registrants': orgs,
                                'past_year_count': sum(counts.values()),
+                               'order': given_order.strip('-'),
+                               'sort': 'desc' if given_order.startswith('-') else 'asc',
+                               'given_order': given_order,
+                               'object_list': page.object_list,
+                               'page_obj': page,
                                },
                               context_instance=RequestContext(request))
 
