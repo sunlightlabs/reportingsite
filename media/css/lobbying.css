@@ -1,8 +1,9 @@
 .registrationList dt { font-weight: bold; width: 110px; float: left;}
 .registrationList dt, .registrationList dd { padding: 3px 5px; font-size: 95%;}
 
-.registrationList li { padding-bottom: 20px; margin-bottom: 20px; background: url("../img/break_module.png") repeat-x scroll left bottom transparent;}
+.registrationList li { padding-bottom: 30px; margin-bottom: 30px; background: url("../img/break_module.png") repeat-x scroll left bottom transparent;}
 .registrationList li ul li { margin-bottom: 0; padding-bottom: 0; background: none;}
+.registrationList ul { margin-left: 25px;}
 
 ul.issueChart li {
     position: relative;
@@ -36,7 +37,7 @@ ul.issueChart .count {
     display: none;
     z-index: 100;
 }
-ul.issueChart li:hover .count {
+ul.issueChart li:person .count {
     display: block;
 }
 ul.issueChart li:hover {
@@ -62,8 +63,9 @@ body.registrant #lobbyistFilter li.registrants a:hover, body.clients #lobbyistFi
 
 div#lobbyBar { background-color: #414042; height: 40px; width: 100%; margin-top: 15px; }
 div#lobbyBar li { float: left; border-right: 1px solid #739935; margin-right: 20px; padding-right: 20px; font-size: 110%; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; line-height: 18px;}
-table.browseTable tr td { margin: 0 15px 0 0; padding: 5px; width: 30%; }
-table.browseTable tr td:hover { background-color: #f9f9f9; -moz-border-radius: 3px; -webkit-border-radius: 3px; border: 1px solid #fff; }
+.browseTable li { margin: 0 15px 0 0; padding: 5px; width: 270px; float: left;}
+.browseTable li:hover { background-color: #f9f9f9; -moz-border-radius: 3px; -webkit-border-radius: 3px; border: 1px solid #fff; width: 270px;}
+.browseTable li.1 { clear: both;}
 h3.browseHeading { margin: 30px 0 10px 0; border-bottom: 1px solid #afafaf; }
 a.toggler { display: block; text-align: center; margin-top: -15px; margin-bottom: 20px; }
 

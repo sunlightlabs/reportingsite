@@ -14,9 +14,12 @@
 
 <h3>Lobbying registrants</h3>
 
-{% for letter, registrants in by_letter %}
-<a href="#{{ letter }}">{{ letter }}</a>
-{% endfor %}
+<div id="timeToggle">
+    <span>Jump to:</span>
+    {% for letter, registrants in by_letter %}
+    <a href="#{{ letter }}">{{ letter }}</a>
+    {% endfor %}
+</div>
 
 {% for letter, registrants in by_letter %}
 <h3 id="{{ letter }}" class="browseHeading">{{ letter }}</h3>

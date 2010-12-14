@@ -17,7 +17,7 @@
 <ol class="browseTable">
 {% for row in object_list|columns_across:3 %}
     {% for issue in row %}
-    <li><a href="{{ issue.get_absolute_url }}">{{ issue }}</a></li>
+    <li class="{% cycle '1' '2' '3' %}"><a href="{{ issue.get_absolute_url }}">{{ issue }}</a></li>
     {% endfor %}
 {% endfor %}
 </ol>

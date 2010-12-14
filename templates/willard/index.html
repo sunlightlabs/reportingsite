@@ -27,11 +27,10 @@
     <div id="registrations_month" class="clear">
         <h3 class="withTip">Registrations</h3>
         <span class="tip tipHeight">Last 30 Days</span>
-        <a href="#year" class="toggler" id="toggle_year">View past 12 months</a>
         <div id="monthLineChart"></div>
         
         <h3 class="withTip">By issue</h3>
-        <span class="tip">Last 30 Days</span>
+        <span class="tip tipHeight">Last 30 Days</span>
         <ul class="issueChart">
             {% for issue in past_month_issues %}
             <li>
@@ -50,21 +49,22 @@
         <h3 class="withTip">Registrations</h3>
         <span class="tip tipHeight">Last 12 Months</span>
         <div id="yearLineChart"></div>
+        
+        <h3 class="withTip">By issue</h3>
+        <span class="tip tipHeight">Last 12 Months</span>
+        <ul class="issueChart">
+            {% for issue in issues %}
+            <li>
+                <a href="{{ issue.get_absolute_url }}">
+                    <span>{{ issue.issue }}</span>
+                    <span class="inlinesparkline" style="color:#f1f1ef;">{{ issue.counts_by_month }}</span>
+                </a>
+                <span class="count">{{ issue.num|intcomma }}</span>
+                <span class="index" style="width: {{ issue.num|percentage:past_year_count|intcomma }}%"></span>
+            </li>
+            {% endfor %}
+        </ul>
     </div>
-    <h3 class="withTip">By issue</h3>
-    <span class="tip">Last 12 Months</span>
-    <ul class="issueChart">
-        {% for issue in issues %}
-        <li>
-            <a href="{{ issue.get_absolute_url }}">
-                <span>{{ issue.issue }}</span>
-                <span class="inlinesparkline" style="color:#f1f1ef;">{{ issue.counts_by_month }}</span>
-            </a>
-            <span class="count">{{ issue.num|intcomma }}</span>
-            <span class="index" style="width: {{ issue.num|percentage:past_year_count|intcomma }}%"></span>
-        </li>
-        {% endfor %}
-    </ul>
 </div>
 
 
@@ -222,8 +222,10 @@
 
 
 <div class="registrationList">
-    <h3>Latest registrations</h3>
-    <a href="{% url willard_feed %}"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/feed-icon-14x14.png" alt="RSS" title="Subscribe to an RSS feed of the latest lobbyist registrations" style="border: 0;" /></a>
+    <h3 class="withTip">Latest registrations</h3>
+    <div class="rssIcon rssBlock">
+        <a href="{% url willard_feed %}">Subscribe</a>
+    </div>
     {% for dategroup in object_list %}
     <h4>{{ dategroup.date|date:"F j" }}</h4>
     <ul>

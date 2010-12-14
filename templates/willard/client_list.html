@@ -14,9 +14,12 @@
 
 <h3>Lobbying clients</h3>
 
+<div id="timeToggle">
+    <span>Jump to:</span>
 {% for letter, clients in by_letter %}
-<a href="#{{ letter }}">{{ letter }}</a>
+    <a href="#{{ letter }}">{{ letter }}</a>
 {% endfor %}
+</div>
 
 {% for letter, clients in by_letter %}
 <h3 id="{{ letter }}" class="browseHeading">{{ letter }}</h3>

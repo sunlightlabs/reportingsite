@@ -84,12 +84,14 @@
     });
 </script>
 
-<h2>Lobbying issue: {{ issue.issue }}</h2>
-<br />
+<h3>Lobbying issue: {{ issue.issue }}</h3>
 
 <div class="registrationList">
-    <a style="display: block; float: right;margin-top:10px;" href="{% url willard_issue_detail_feed slug=issue.slug %}"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/feed-icon-14x14.png" alt="RSS" title="Subscribe to an RSS feed of the latest lobbyist registrations" style="border: 0;" /></a>
-    <h2 style="font-size:1.75em;">Latest registrations &nbsp;&nbsp;<span style="font-size:.6em;">(<a href="{% url willard_issue_detail_all slug=issue.slug %}">View all</a>)</a></h2>
+    <h4>Latest registrations</h4>
+    <span>(<a href="{% url willard_issue_detail_all slug=issue.slug %}">View all</a>)</span>
+    <div class="rssIcon rssBlock">
+        <a href="{% url willard_issue_detail_feed slug=issue.slug %}">Subscribe</a>
+    </div>
     {% regroup registrations by received.date as date_list %}
     {% for dategroup in date_list %}
         <h3 style="margin-bottom: 8px;font-size:1.25em;">{{ dategroup.grouper|date:"F j" }}</h3>
@@ -102,19 +104,19 @@
 </div>
 
 <div style="width:500px;">
-<h3 style="text-align: center; font-size: 1.5em;">Past 12 months</h3>
-<div id="monthLineChart"></div>
-{% if top_registrants %}
-<h3 style="text-align: center; font-size: 1.25em;">Top registrants</h3>
-<ul class="issueChart">
-    {% for registrant in top_registrants %}
-    <li>
-        <a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a>
-        <span class="count">{{ registrant.num|intcomma }}</span>
-        <span class="index" style="width: {{ registrant.num|percentage:past_year_count|intcomma }}%"></span>
-    </li>
-{% endfor %}
-</ul>
+    <h4>Past 12 months</h4>
+    <div id="monthLineChart"></div>
+    {% if top_registrants %}
+    <h3 style="text-align: center; font-size: 1.25em;">Top registrants</h3>
+    <ul class="issueChart">
+        {% for registrant in top_registrants %}
+        <li>
+            <a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a>
+            <span class="count">{{ registrant.num|intcomma }}</span>
+            <span class="index" style="width: {{ registrant.num|percentage:past_year_count|intcomma }}%"></span>
+        </li>
+    {% endfor %}
+    </ul>
 </div>
 {% endif %}
 
