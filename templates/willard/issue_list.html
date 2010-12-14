@@ -1,5 +1,7 @@
 {% extends "willard/willard_base.html" %}
 
+{% block body %}reporting issues fullWidth{% endblock %}
+
 {% load humanize %}
 {% load partition %}
 
@@ -10,16 +12,14 @@
 
 {% block content %}
 
-<h2>Lobbying issues</h2>
+<h3>Lobbying issues</h3>
 
-<table class="browseTable">
+<ol class="browseTable">
 {% for row in object_list|columns_across:3 %}
-<tr>
     {% for issue in row %}
-    <td><a href="{{ issue.get_absolute_url }}">{{ issue }}</a></td>
+    <li><a href="{{ issue.get_absolute_url }}">{{ issue }}</a></li>
     {% endfor %}
-</tr>
 {% endfor %}
-</table>
+</ol>
 
 {% endblock content %}

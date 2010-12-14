@@ -26,9 +26,9 @@ div#pageMain{ width: 960px; margin: 0 auto; }
 h1 a { width: 800px; height: 214px; display: block; background: url(../img/logo_rollover4.png) top center no-repeat; text-indent: -9999em;}
 h1 { width: 800px; height: 214px; margin: 0 auto;}
 
-div#rssIcon { float: right; background: url(../img/feed-icon-14x14.png) left 15px no-repeat; padding: 10px 0 0 20px; }
-div#rssIcon a { color: #414042;}
-div#rssIcon a:hover { color: #457b80;}
+div.rssIcon { float: right; background: url(../img/feed-icon-14x14.png) left 15px no-repeat; padding: 10px 0 0 20px; }
+div.rssIcon a { color: #414042;}
+div.rssIcon a:hover { color: #457b80;}
 div#pageMain .rssBlock { float: none; margin-bottom: 10px;}
 
 div#nav li { float: left; margin-left: 10px; padding-left: 10px; border-left: 1px solid #b3b5b7; line-height: 15px; }
@@ -76,6 +76,7 @@ div#pageMain #featureHeader { font-size: 300%;  margin-bottom: 0; color: #394701
 body.expendituresAbout #featureHeader, expendituresTotals #featureHeader { position: relative; z-index: 2;}
 
 .tip, #breadcrumbs li { font-style: oblique; font-size: 90%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 16px;}#featureNav li, #featureMainNav li { float: left; border-right: 1px solid #739935; margin-right: 20px; padding-right: 20px; font-size: 110%; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; line-height: 18px;}
+.tipHeight { margin-bottom: 20px; display: block;}
 #featureNav li.last { border-right: none;}
 #featureMainNav { background: url(../img/bg_secondaryNav.png) top left no-repeat; margin: -22px 0 0 -35px; height: 46px; padding: 30px 35px 0;}
 #featureMainNav a:link, #featureMainNav a:active, #featureMainNav a:visited { color: #394701; }
@@ -93,12 +94,13 @@ div.otherProperty li a { color: #020000;}
 div.otherProperty li a:hover { color: #457b80;}
 
 div.features h2 { font-size: 240%; text-align: center; line-height: 37px;}
-h2 { font-size: 220%; font-weight: bold; margin-bottom: 5px; line-height: 35px; }
+h2 { font-size: 260%; font-weight: bold; margin-bottom: 5px; line-height: 35px; }
 body.fullWidth h2 { margin-bottom: 10px;}
 h2.withDetail { float: left; margin-right: 20px;}
 div#pageMain div.features h2, div#pageMain h3, div#pageMain div.features h2 a, div#pageMain h3 a, div#pageMain h2, div#pageMain h2 a, div.features h2:visited, h3:visited, div.features h2 a:visited, h3 a:visited, h2:visited, h2 a:visited { color: #414042;}
 div#pageMain div.features h2 a:hover, div#pageMain h3 a:hover, div#pageMain h4 a:hover, div#pageMain h2 a:hover { color: #457b80;}
 h3 { text-transform: uppercase; margin-bottom: 25px; font-weight: bold; font-size: 170%;}
+.withTip { margin-bottom: 5px;}
 
 body.fullWidth div#pageMain h2 a, body.fullWidth div#pageMain h2 a:link, body.fullWidth div#pageMain h2 a:hover, body.fullWidth div#pageMain h2 a:active, body.fullWidth div#pageMain h2 a:visited { color: #457B80;}
 
@@ -229,7 +231,7 @@ thead th { text-transform: uppercase; padding: 0 10px 15px; font-weight: bold;}
 
 div#pageMain #featureMainNav input#searchbox { width: 220px; }
 
-#breadcrumbs { margin-bottom: 30px;}
+#breadcrumbs { margin-bottom: 40px;}
 #breadcrumbs li { float: left; padding-left: 15px; background: url(../img/icon_breadcrumbs.png) left 3px no-repeat; margin-right: 15px;}
 
 .amountLine { font-size: 120%; margin-bottom: 40px; color: #5E5E5E;}

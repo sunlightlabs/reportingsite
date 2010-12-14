@@ -21,13 +21,13 @@
             });
         </script>
 
-        <h2 id="featureHeader">Lobbyist registration tracker</h2>
-        <div id="featureMainNav">
+        <h2 id="lobbyingTitle"><a href="/lobbying">Lobbyist registration tracker</a></h2>
+        <div id="lobbyistFilter">
             <ul>
                 <li class="issues"><a href="{% url willard_issue_list %}">Browse by issue</a></li>
                 <li class="registrants"><a href="{% url willard_registrant_list %}">Browse by registrant</a></li>
                 <li class="clients"><a href="{% url willard_client_list %}">Browse by client</a></li>
-                <form id="expenditureSearch" action="{% url willard_search %}" method="GET">
+                <form id="lobbyingSearch" action="{% url willard_search %}" method="GET">
                     <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Search for a registrant or client"{% endif %} type="text" name="q" />
                     <button class="goBtn" type="submit" value="Search" >
                         <span>Go</span>
@@ -36,8 +36,8 @@
                 <div class="clear"></div>
             </ul>
         </div>
-
-        <div id="breadcrumbs">
+        
+        <div id="breadcrumbs" class="lobbyingBreadcrumbs">
             <ul>
                 {% block breadcrumb %}
                 <li>
