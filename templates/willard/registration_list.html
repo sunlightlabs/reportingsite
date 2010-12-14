@@ -1,4 +1,5 @@
 {% extends "willard/willard_base.html" %}
+{% block body %}reporting registrant fullWidth{% endblock %}
 
 {% block breadcrumb %}
 {{ block.super }}
@@ -13,20 +14,21 @@
 {% block content %}
 
 {% if object.get_rss_url %}
-<a style="display: block; float: right;margin-top:10px;" href="{{ object.get_rss_url }}"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/feed-icon-14x14.png" alt="RSS" title="Subscribe to an RSS feed of this data" style="border: 0;" /></a>
+<div class="rssIcon">
+    <a href="{{ object.get_rss_url }}">Subscribe</a>
+</div>
 {% endif %}
 
-<h2>
+<h3>
     {% if object %}
     {{ object }}
     {% else %}
     All registrations
     {% endif %}
-</h2>
+</h3>
 {% if object.ie_id %}
-<p class="tip"><a href="{{ object.ie_url }}">Get more information at Influence Explorer</a></p>
+<a class="tip tipHeight" href="{{ object.ie_url }}">Get more information at Influence Explorer</a>
 {% endif %}
-<br />
 
 <table class="tablesorter">
     <thead>
@@ -40,7 +42,7 @@
     </thead>
     <tbody>
         {% for registration in object_list %}
-        <tr class="{% cycle 'even' 'odd' %}">
+        <tr class="{% cycle 'odd' 'even' %}">
             <td>{{ registration.received.date|date:"n/j/y" }}</td>
             <td><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></td>
             <td><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></td>

@@ -1,37 +1,30 @@
 <li>
-    <table class="registrationDetail">
+    <dl>
         {% if showdate %}
-        <tr class="odd">
-            <th>Filing date:</th>
-            <td>{{ registration.received|date:"F j, Y" }}</td>
-        </tr>
+        <dt class="odd">Filing date</dt>
+        <dd class="odd">{{ registration.received|date:"F j, Y" }}</dd>
         {% endif %}
-        <tr class="even">
-            <th>Registrant:</th>
-            <td><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></td>
-        </tr>
-        <tr class="odd">
-            <th>Client:</th>
-            <td><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></td>
-        </tr>
-        <tr class="even">
-            <th>Issues:</th>
-            <td>
+        
+        <dt>Registrant</dt>
+        <dd><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></dd>
+
+        <dt class="odd">Client</dt>
+        <dd class="odd"><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></dd>
+
+        <dt>Issues</dt>
+        <dd>
+            <ul>
                 {% for issue_code in registration.denormalized_issues %}
                 <li>&bull;&nbsp;<a href="{{ issue_code.get_absolute_url }}">{{ issue_code.issue }}</a></li>
                 {% endfor %}
-            </td>
-        </tr>
+            </ul>
+        </dd>
+
         {% if registration.specific_issue %}
-        <tr class="odd">
-            <th>Specific issue:</th>
-            <td>{{ registration.specific_issue }}</td>
-        </tr>
+            <dt class="odd">Specific issue</dt>
+            <dd class="odd">{{ registration.specific_issue }}</dd>
         {% endif %}
-        <tr>
-            <th></th>
-            <td style="text-align: right;"><a href="{{ registration.get_absolute_url }}">View registration &gt;&gt;</a></td>
-        </tr>
-    </table>
+    </dl>
+    <a href="{{ registration.get_absolute_url }}">View registration &gt;&gt;</a>
 </li>
 
