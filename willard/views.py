@@ -106,7 +106,7 @@ def issue_detail(request, slug):
         orgs = Registrant.objects.filter(pk__in=[x[0] for x in org_counts])
         for org in orgs:
             org.num = counts[org.pk]
-        orgs = sorted(list(orgs), lambda x, y: cmp(x.num, y.num), reverse=True)
+        orgs = sorted(list(orgs), lambda x, y: cmp(x.num, y.num), reverse=True)[:10]
     else:
         orgs = []
 
@@ -239,6 +239,7 @@ def generic_detail_all(request, model, slug):
                                'sort': 'desc' if given_order.startswith('-') else 'asc',
                                'object': obj,
                                'plural': model._meta.verbose_name_plural.title(),
+                               'singular': model._meta.verbose_name.lower(),
                               }, context_instance=RequestContext(request))
 
 
