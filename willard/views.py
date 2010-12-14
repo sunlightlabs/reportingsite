@@ -97,6 +97,7 @@ def issue_detail(request, slug):
     grouped = itertools.groupby(regs, lambda x: {'year': x['received'].year, 'month': x['received'].month})
     month_counts = [{'year': date['year'], 'month': date['month'], 'count': len(list(group))} for date, group in grouped]
     month_counts.reverse()
+    past_year_count = sum([x['count'] for x in month_counts])
 
     # Get top registrants for this issue over the past 12 months.
     org_counts = issue.registration_set.filter(received__gte=cutoff).values_list('registrant').annotate(num=Count('pk')).filter(num__gte=5).order_by('-num')[:20]
@@ -113,7 +114,7 @@ def issue_detail(request, slug):
                               {'issue': issue,
                                'month_counts': month_counts,
                                'top_registrants': orgs,
-                               'past_year_count': sum(counts.values()),
+                               'past_year_count': past_year_count,
                                'order': given_order.strip('-'),
                                'sort': 'desc' if given_order.startswith('-') else 'asc',
                                'given_order': given_order,
