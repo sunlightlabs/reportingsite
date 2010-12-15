@@ -1,9 +1,13 @@
 {% extends "willard/willard_base.html" %}
 
+{% block title %}{{ block.super }} - {{ object.registrant }} for {{ object.client }}{% endblock %}
+
 {% block body %}reporting registrant fullWidth{% endblock %}
 
 {% block content %}
-{{ object.form_id }}
+
+<h3>{{ object.registrant }} for {{ object.client }}</h3>
+
 <div id='embedded_doc'></div>
 
 

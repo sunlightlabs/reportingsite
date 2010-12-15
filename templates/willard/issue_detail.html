@@ -1,5 +1,7 @@
 {% extends "willard/willard_base.html" %}
 
+{% block title %}{{ block.super }} - {{ issue.issue }}{% endblock %}
+
 {% block body %}reporting issues fullWidth{% endblock %}
 
 {% load humanize %}

@@ -1,4 +1,7 @@
 {% extends "willard/willard_base.html" %}
+
+{% block title %}{{ block.super }} - {{ object }}{% endblock %}
+
 {% block body %}reporting {{ plural|lower }} fullWidth{% endblock %}
 
 {% block breadcrumb %}
