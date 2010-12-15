@@ -303,7 +303,7 @@ class Registration(models.Model):
                              'received': str(self.received),
                              'issues': [],
                              'specific_issue': self.specific_issue, }
-        for issue in self.issues.all():
+        for issue in self.denormalized_issues:
             registration_dict['issues'].append({'issue': issue.issue,
                                                 'path': issue.get_absolute_url(), })
         return registration_dict
@@ -314,5 +314,5 @@ class Registration(models.Model):
                 self.registrant.display_name,
                 self.client.display_name,
                 str(self.received),
-                '|'.join([x.issue for x in self.issues.all()]),
+                '|'.join([x.issue for x in self.denormalized_issues]),
                 self.specific_issue, ]
