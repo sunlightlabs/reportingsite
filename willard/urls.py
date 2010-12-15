@@ -1,53 +1,101 @@
 import datetime
+import itertools
 
 from django.db.models import *
 from django.conf.urls.defaults import *
 from django.views.generic.list_detail import object_list, object_detail
 
+from dateutil.relativedelta import relativedelta
+
 from willard.models import *
 from willard.feeds import *
+
+cutoff = datetime.date.today() - relativedelta(months=12)
+cutoff = datetime.date(year=cutoff.year,
+                       month=cutoff.month,
+                       day=1)
 
 
 urlpatterns = patterns('',
 
-        url(r'^issue\/(?P<code>\w{3})\/rss\/?$',
-         IssueFeed(),
-         {},
-         name='willard_issue_detail_feed'),
+        url(r'^issue\/(?P<slug>[-\w]+)\.rss$',
+            IssueFeed(),
+            {},
+            name='willard_issue_detail_feed'),
 
-        url(r'^issue\/(?P<code>\w{3})\/?$',
+        url(r'^issue\/(?P<slug>[-\w]+)\.(?P<format>\w+)$',
+            'willard.views.detail_api',
+            {'model': Issue, },
+            name='willard_issue_detail_api'),
+
+        url(r'^issue\/(?P<slug>[-\w]+)\/?$',
          'willard.views.issue_detail',
          {},
          name='willard_issue_detail'),
 
+        url(r'^issue\/(?P<slug>[-\w]+)\/all\/?$',
+            'willard.views.issue_detail_all',
+            {},
+            name='willard_issue_detail_all'),
+
         url(r'^issue\/?$',
             object_list,
-            {'queryset': IssueCode.objects.annotate(registration_count=Count('registration')).order_by('-registration_count'),
+            {
+              'queryset': Issue.objects.order_by('issue'),
               },
             name='willard_issue_list'),
 
+        url(r'^client\/(?P<slug>[-\w]+)\.rss$',
+         ClientFeed(),
+         {},
+         name='willard_client_detail_feed'),
+
+        url(r'^client\/(?P<slug>[-\w]+)\.(?P<format>\w+)$',
+            'willard.views.detail_api',
+            {'model': Client, },
+            name='willard_client_detail_api'),
+
         url(r'^client\/?$',
             object_list,
-            {'queryset': Client.objects.all(),
-                },
+            {
+                'queryset': Client.objects.all(),
+                'extra_context': {
+                    'by_letter': [(letter, list(clients)) for letter, clients in itertools.groupby(Client.objects.all(), lambda x: x.display_name[0].upper())],
+                    },
+             },
             name='willard_client_list'),
+
+        url(r'^firm\/(?P<slug>[-\w]+)\.rss$',
+         RegistrantFeed(),
+         {},
+         name='willard_registrant_detail_feed'),
+
+        url(r'^firm\/(?P<slug>[-\w]+)\.(?P<format>\w+)$',
+            'willard.views.detail_api',
+            {'model': Registrant, },
+            name='willard_registrant_detail_api'),
 
         url(r'^firm\/?$',
             object_list,
-            {'queryset': Organization.objects.annotate(registration_count=Count('registration')).order_by('-registration_count')
-                },
-            name='willard_organization_list'),
+            {
+                'queryset': Registrant.objects.all(),
+                'extra_context': {
+                    'by_letter': [(letter, list(clients)) for letter, clients in itertools.groupby(Registrant.objects.all(), lambda x: x.display_name[0].upper())],
+                    },
+             },
+            name='willard_registrant_list'),
 
-        url(r'^firm\/(?P<slug>[-\w]+)\/(?P<form_id>\d+)\/?$',
+        url(r'^firm\/(?P<slug>[-\w]+)\/(?P<id>[-0-9A-Z]+)\/?$',
             'willard.views.registration_detail',
             {},
             name='willard_registration_detail'),
 
         url(r'^firm\/(?P<slug>[-\w]+)\/?$',
-            object_detail,
-            {'queryset': Organization.objects.all(),
+            'willard.views.generic_detail_all',
+            {
+                'model': Registrant,
                 },
-            name='willard_organization_detail'),
+            name='willard_registrant_detail'),
 
         url(r'^client\/?$',
             object_list,
@@ -56,44 +104,25 @@ urlpatterns = patterns('',
             name='willard_client_list'),
 
         url(r'^client\/(?P<slug>[-\w]+)\/?$',
-            object_detail,
-            {'queryset': Client.objects.all(),
-                },
+            'willard.views.generic_detail_all',
+            {
+                'model': Client,
+            },
             name='willard_client_detail'),
 
-        url(r'^date\/?$',
-                'django.views.generic.date_based.archive_index',
-                {'queryset': Registration.objects.all(),
-                 'date_field': 'signed_date',
-                },
-                name='willard_date'),
-
-        url(r'^date\/(?P<year>\d{4})\/?$',
-                'django.views.generic.date_based.archive_year',
-                {'queryset': Registration.objects.all(),
-                 'date_field': 'signed_date',
-                 },
-                name='willard_date_year'),
-
-        url(r'^date\/(?P<year>\d{4})\/(?P<month>\d\d?)\/?$',
-                'django.views.generic.date_based.archive_month',
-                {'queryset': Registration.objects.all(),
-                 'date_field': 'signed_date',
-                 'month_format': '%m',
-                 },
-                name='willard_date_month'),
-
-        url(r'^date\/(?P<year>\d{4})\/(?P<month>\d\d?)\/(?P<day>\d\d?)\/?$',
-                'django.views.generic.date_based.archive_day',
-                {'queryset': Registration.objects.all(),
-                 'date_field': 'signed_date',
-                 'month_format': '%m',
-                 },
-                name='willard_date_day'),
-
-        url(r'rss\/?$',
+        url(r'^rss\/?$',
             RegistrationFeed(),
             name='willard_feed'),
+
+        url(r'^all\/?$',
+            'willard.views.registrations_all',
+            {},
+            name='willard_registrations_all'),
+
+        url(r'^search\/?$',
+            'willard.views.search',
+            {},
+            name='willard_search'),
 
         url(r'^$',
             'willard.views.index',

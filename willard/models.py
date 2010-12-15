@@ -1,22 +1,21 @@
 from collections import defaultdict
-from cStringIO import StringIO
 from operator import itemgetter
-import os
-import re
+import datetime
+import itertools
 import urllib
 import urllib2
+
+from django.db import models
+from django.template.defaultfilters import slugify
+
+from dateutil.relativedelta import relativedelta
+from picklefield.fields import PickledObjectField
+import MySQLdb
 
 try:
     import json
 except ImportError:
     import simplejson as json
-
-from django.conf import settings
-from django.contrib.sites.models import Site
-from django.db import models
-
-import pyPdf
-import scribd
 
 
 def get_ie_data(name):
@@ -30,286 +29,290 @@ def get_ie_data(name):
     return data
 
 
-class Organization(models.Model):
-    name = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
-    prefix = models.CharField(max_length=100)
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    address1 = models.CharField(max_length=100)
-    address2 = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=2)
-    zip = models.CharField(max_length=5)
-    country = models.CharField(max_length=100)
-    principal_city = models.CharField(max_length=100)
-    principal_state = models.CharField(max_length=2)
-    principal_zip = models.CharField(max_length=5)
-    principal_country = models.CharField(max_length=100)
-    general_description = models.CharField(max_length=255)
-    self_select = models.BooleanField()
+def create_counts_by_month(obj):
+    counts = []
+    cutoff = datetime.date.today() - relativedelta(months=12)
+    cutoff = datetime.date(cutoff.year, cutoff.month, 1)
+    curr = cutoff
+    while curr <= datetime.date.today():
+        counts.append(obj.registration_set.filter(received__month=curr.month,
+                                                  received__year=curr.year).count())
+        curr += relativedelta(months=1)
+    return ','.join([str(x) for x in counts])
 
-    ie_id = models.CharField(max_length=32)
-    ie_name = models.CharField(max_length=100)
+
+def combine_dupe_slugs(model):
+    slugs = defaultdict(list)
+    for obj in model.objects.all():
+        slugs[slugify(obj.__unicode__())].append(obj)
+    dupes = [(slug, objs) for slug, objs in slugs.items() if len(objs) > 1]
+    for slug, objs in dupes:
+        good = objs[0]
+        bad = objs[1:]
+        for obj in bad:
+            obj.registration_set.update(**{model._meta.verbose_name: good, })
+            obj.delete()
+
+
+class Registrant(models.Model):
+    id = models.IntegerField(primary_key=True)
+    name = models.CharField(max_length=255)
+    crp_name = models.CharField(max_length=255)
+
+    # For sorting; crp_name if it exists, otherwise
+    # name. This is also used to generate the slug.
+    display_name = models.CharField(max_length=255)
+
+    slug = models.SlugField(unique=True)
+    ie_data = PickledObjectField()
 
     class Meta:
-        #unique_together = (('name', 'address1', 'address2', 'city', 'state', 'zip', 'country', ), )
-        ordering = ('name', )
+        ordering = ('display_name', )
 
     def __unicode__(self):
-        return self.name
+        return self.display_name
 
     @models.permalink
     def get_absolute_url(self):
-        return ('willard_organization_detail', [self.slug, ])
+        return ('willard_registrant_detail', [self.slug, ])
+
+    @models.permalink
+    def get_rss_url(self):
+        return ('willard_registrant_detail_feed', [self.slug, ])
+
+    def save(self, *args, **kwargs):
+        if not self.display_name:
+            self.crp_name = self.get_crp_name()
+            self.display_name = self.crp_name or self.name
+            self.ie_data = get_ie_data(self.display_name)
+        super(Registrant, self).save(*args, **kwargs)
+
+    def get_crp_name(self):
+        cursor = MySQLdb.Connection('localhost', 'campfin', 'campfin', 'campfin').cursor()
+        cursor.execute("SELECT registrant FROM lobbying WHERE registrant_raw = %s LIMIT 1",
+                            self.name)
+        if not cursor.rowcount:
+            return ''
+        return cursor.fetchone()[0]
+
+    def get_ie_data(self):
+        return get_ie_data(self.display_name)
+
+    def ie_id(self):
+        if len(self.ie_data):
+            return self.ie_data[0]['id']
+        return None
 
     def ie_url(self):
-        if self.ie_id:
-            return 'http://influenceexplorer.com/organization/%s/%s' % (self.slug, self.ie_id)
-        suffixes = ['Inc', 'P.C.', 'LLC', 'PLLC', ]
-        plain_name = re.sub(r'(%s)' % '|'.join(suffixes), '', self.name)
-        plain_name = re.sub(r'(\.|\,)', '', plain_name).strip()
-        return 'http://influenceexplorer.com/search?query=%s' % plain_name
-
-    def issue_counts(self):
-        issues = defaultdict(int)
-        for registration in self.registration_set.all():
-            for issue_code in registration.issues.all():
-                issues[issue_code] += 1
-        return sorted(issues.items(), key=itemgetter(1), reverse=True)
+        if not self.ie_id():
+            return ''
+        return 'http://influenceexplorer.com/organization/%s/%s' % (self.slug,
+                                                                    self.ie_id())
 
 
 class Client(models.Model):
     name = models.CharField(max_length=255)
-    slug = models.SlugField(unique=True)
-    address = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=2)
-    zip = models.CharField(max_length=5)
-    principal_client_city = models.CharField(max_length=100)
-    principal_client_state = models.CharField(max_length=2)
-    principal_client_zip = models.CharField(max_length=5)
-    principal_client_country = models.CharField(max_length=100)
-    general_description = models.CharField(max_length=255)
+    client_id = models.IntegerField()
+    crp_name = models.CharField(max_length=255)
 
-    ie_id = models.CharField(max_length=32)
-    ie_name = models.CharField(max_length=100)
+    # For sorting; crp_name if it exists, otherwise
+    # name. This is also used to generate the slug.
+    display_name = models.CharField(max_length=255)
+
+    slug = models.SlugField(unique=True)
+    status = models.BooleanField()
+    ie_data = PickledObjectField()
 
     class Meta:
-        #unique_together = (('name', 'address', 'city', 'state', 'zip', ), )
-        ordering = ('name', )
+        ordering = ('display_name', )
 
     def __unicode__(self):
-        return self.name
+        return self.display_name
 
     @models.permalink
     def get_absolute_url(self):
         return ('willard_client_detail', [self.slug, ])
 
+    @models.permalink
+    def get_rss_url(self):
+        return ('willard_client_detail_feed', [self.slug, ])
+
+    def save(self, *args, **kwargs):
+        if self.id is None:
+            self.crp_name = self.get_crp_name()
+            self.display_name = self.crp_name or self.name
+            self.ie_data = get_ie_data(self.display_name)
+        super(Client, self).save(*args, **kwargs)
+
+    def get_crp_name(self):
+        cursor = MySQLdb.Connection('localhost', 'campfin', 'campfin', 'campfin').cursor()
+        cursor.execute("SELECT client FROM lobbying WHERE client_raw = %s LIMIT 1",
+                            self.name.strip())
+        if not cursor.rowcount:
+            return ''
+        return cursor.fetchone()[0]
+
+    def get_ie_data(self):
+        return get_ie_data(self.display_name)
+
+    def ie_id(self):
+        if not len(self.ie_data):
+            return None
+        return self.ie_data[0]['id']
+
     def ie_url(self):
-        if self.ie_id:
-            return 'http://influenceexplorer.com/organization/%s/%s' % (self.slug, self.ie_id)
-        suffixes = ['Inc', 'P.C.', 'LLC', 'PLLC', ]
-        plain_name = re.sub(r'(%s)' % '|'.join(suffixes), '', self.name)
-        plain_name = re.sub(r'(\.|\,)', '', plain_name).strip()
-        return 'http://influenceexplorer.com/search?query=%s' % plain_name
+        if not self.ie_id():
+            return ''
+        return 'http://influenceexplorer.com/organization/%s/%s' % (self.slug,
+                                                                    self.ie_id())
 
 
-class Lobbyist(models.Model):
-    first_name = models.CharField(max_length=100)
-    last_name = models.CharField(max_length=100)
-    suffix = models.CharField(max_length=100)
-    covered_position = models.CharField(max_length=100)
 
-    class Meta:
-        unique_together = (('first_name', 'last_name', 'suffix', ), )
-
-    def __unicode__(self):
-        return '%s %s %s' % (self.first_name, self.last_name, self.suffix)
-
-
-class IssueCode(models.Model):
-    code = models.CharField(max_length=3, unique=True)
+class Issue(models.Model):
     issue = models.CharField(max_length=100)
+    slug = models.SlugField(unique=True)
 
-    # Denormalizing counts by issue code for the past 12 months.
+    # Denormalizing counts by issue for the past 12 months.
     registration_count = models.IntegerField()
 
     # A comma-separated list of the number of registrations
     # for this issue over the past 12 months.
     counts_by_month = models.CharField(max_length=100)
 
+    # Denormalizing counts by issue for the past 30 days.
+    past_month_count = models.IntegerField()
+
+    # A comma-separated list of the number of registrations
+    # for this issue over the past 30 days.
+    counts_by_day = models.CharField(max_length=200)
+
+    class Meta:
+        ordering = ('issue', )
+
     def __unicode__(self):
-        return '%s (%s)' % (self.issue, self.code)
+        return self.issue
 
     @models.permalink
     def get_absolute_url(self):
-        return ('willard_issue_detail', [self.code, ])
+        return ('willard_issue_detail', [self.slug, ])
 
     def denormalize_by_month(self):
         month_counts = defaultdict(int)
-        for date in self.registration_set.exclude(signed_date=None).values_list('signed_date', flat=True):
+        for date in self.registration_set.values_list('received', flat=True):
             month_counts['-'.join([str(date.year), str(date.month)])] += 1
 
         for year_month, count in month_counts.items():
             year, month = year_month.split('-')
-            issue_code_by_month, created = IssueCodeByMonth.objects.get_or_create(
-                    issue_code=self,
+            issue_by_month, created = IssueByMonth.objects.get_or_create(
+                    issue=self,
                     month=month,
                     year=year,
                     defaults=dict(num=count)
                     )
-            issue_code_by_month.num = count
-            issue_code_by_month.save()
+            issue_by_month.num = count
+            issue_by_month.save()
 
     def create_counts_by_month(self):
-        by_month = self.issuecodebymonth_set.values('year', 'month', 'num')
+        by_month = self.issuebymonth_set.values('year', 'month', 'num')
         issue_counts = []
         cutoff = datetime.date.today() - relativedelta(months=12)
         cutoff = datetime.date(cutoff.year, cutoff.month, 1)
+        curr = cutoff
 
         while curr <= datetime.date.today():
             issue_counts.append(sum([x['num'] for x in by_month if x['year'] == str(curr.year) and x['month'] == str(curr.month)]))
             curr += relativedelta(months=1)
-        counts_by_month = ','.join([str(x) for x in issue_counts])
+        self.counts_by_month = ','.join([str(x) for x in issue_counts])
+        self.save()
+
+    def create_counts_by_day(self):
+        last_date = Registration.objects.order_by('-received').values_list('received', flat=True)[0].date()
+        month_cutoff = last_date - datetime.timedelta(30)
+
+        registrations_by_day = dict()
+        for date, group in itertools.groupby(self.registration_set.filter(received__gte=month_cutoff).values_list('received', flat=True), lambda x: x.date()):
+            registrations_by_day[date] = len(list(group))
+
+        # Fill in any missing dates with 0
+        curr = month_cutoff
+        while curr <= last_date:
+            if curr not in registrations_by_day:
+                registrations_by_day[curr] = 0
+            curr += datetime.timedelta(1)
+
+        registrations_by_day = sorted(registrations_by_day.items(), key=itemgetter(0))
+        return ','.join([str(x[1]) for x in registrations_by_day])
+
+    def past_month_num(self):
+        last_date = Registration.objects.order_by('-received').values_list('received', flat=True)[0].date()
+        month_cutoff = last_date - datetime.timedelta(30)
+        return self.registration_set.filter(received__gte=month_cutoff).count()
+
+    def denormalize_registration_count(self):
+        cutoff = datetime.date.today() - relativedelta(months=12)
+        cutoff = datetime.date(cutoff.year, cutoff.month, 1)
+        self.registration_count = self.registration_set.filter(received__gte=cutoff).count()
         self.save()
 
 
-
-class IssueCodeByMonth(models.Model):
-    """Denormalization of list of issue codes by month.
+class IssueByMonth(models.Model):
+    """Denormalization of list of issues by month.
     """
-    issue_code = models.ForeignKey(IssueCode, db_index=True)
+    issue = models.ForeignKey(Issue, db_index=True)
     month = models.CharField(max_length=2, db_index=True)
     year = models.CharField(max_length=4, db_index=True)
     num = models.IntegerField()
 
 
-class AffiliatedOrg(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)
-    address = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=2)
-    zip = models.CharField(max_length=5)
-    country = models.CharField(max_length=100)
-    principal_org_city = models.CharField(max_length=100)
-    principal_org_state = models.CharField(max_length=2)
-    principal_org_country = models.CharField(max_length=100)
-
-    class Meta:
-        #unique_together = (('name', 'address', 'city', 'state', 'zip', ), )
-        pass
-
-    def __unicode__(self):
-        return self.name
-
-
-class ForeignEntity(models.Model):
-    name = models.CharField(max_length=100)
-    slug = models.SlugField(unique=True)
-    address = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=2)
-    country = models.CharField(max_length=100)
-    principal_org_city = models.CharField(max_length=100)
-    principal_org_state = models.CharField(max_length=2)
-    principal_org_country = models.CharField(max_length=100)
-    contribution = models.DecimalField(max_digits=19, decimal_places=2, null=True)
-    ownership_percentage = models.DecimalField(max_digits=19, decimal_places=2, null=True)
-
-    class Meta:
-        #unique_together = (('name', 'address', 'city', 'state', ), )
-        pass
-
-    def __unicode__(self):
-        return self.name
-
-
 class Registration(models.Model):
-    reg_type = models.CharField(max_length=1)
-    organization = models.ForeignKey(Organization)
+    id = models.CharField(max_length=36, primary_key=True)
+    reg_type = models.CharField(max_length=24)
+    registrant = models.ForeignKey(Registrant)
     client = models.ForeignKey(Client)
-    senate_id = models.CharField(max_length=64)
-    house_id = models.CharField(max_length=64)
-    specific_issues = models.TextField()
-    report_year = models.CharField(max_length=4)
-    report_type = models.CharField(max_length=2)
-    effective_date = models.DateField(null=True)
-    signed_date = models.DateField(null=True, db_index=True)
-    signer_email = models.EmailField()
+    received = models.DateTimeField()
+    year = models.CharField(max_length=4)
+    issues = models.ManyToManyField(Issue)
+    specific_issue = models.TextField()
 
-    issues = models.ManyToManyField(IssueCode)
-    foreign_entities = models.ManyToManyField(ForeignEntity)
-    affiliated_orgs = models.ManyToManyField(AffiliatedOrg)
-    lobbyists = models.ManyToManyField(Lobbyist)
-
-    form_id = models.CharField(max_length=9, unique=True)
     xml = models.TextField()
 
-    scribd_id = models.IntegerField(blank=True, null=True)
-    scribd_url = models.URLField(u'Scribd URL', verify_exists=False, blank=True)
-    scribd_access_key = models.CharField(max_length=100)
+    # Denormalize the list of issues
+    denormalized_issues = PickledObjectField()
 
     class Meta:
-        unique_together = (('house_id', 'signed_date', ), )
-        ordering = ('-signed_date', 'organization__name', )
+        ordering = ('-received', )
 
     def __unicode__(self):
-        return self.organization.name
+        return self.registrant.name
 
     @models.permalink
     def get_absolute_url(self):
-        return ('willard_registration_detail', [self.organization.slug,
-                                                self.form_id, ])
+        return ('willard_registration_detail', [self.registrant.slug,
+                                                self.id, ])
 
-    def house_pdf_url(self):
-        return 'http://disclosures.house.gov/ld/pdfform.aspx?id=%s' % self.form_id
+    def pdf_url(self):
+        return 'http://soprweb.senate.gov/index.cfm?event=getFilingDetails&filingID=%s' % self.id
 
-    def upload_to_scribd(self):
-        scribd.config(settings.SCRIBD_KEY, settings.SCRIBD_SECRET)
-        filename = '/tmp/%s.pdf' % self.form_id
+    def as_dict(self):
+        registration_dict = {'senate_id': self.id,
+                             'registration_type': self.reg_type,
+                             'registrant': {'name': self.registrant.display_name,
+                                            'path': self.registrant.get_absolute_url(), },
+                             'client': {'name': self.client.display_name,
+                                        'path': self.client.get_absolute_url(), },
+                             'received': str(self.received),
+                             'issues': [],
+                             'specific_issue': self.specific_issue, }
+        for issue in self.issues.all():
+            registration_dict['issues'].append({'issue': issue.issue,
+                                                'path': issue.get_absolute_url(), })
+        return registration_dict
 
-        url = 'http://disclosures.house.gov/ld/pdfform.aspx?id=%s' % self.form_id
-        pdf = pyPdf.PdfFileReader(StringIO(urllib2.urlopen(url).read()))
-        pdf.decrypt('') # Encrypted with a blank password
-        output = pyPdf.PdfFileWriter()
-        for pagenum in range(pdf.getNumPages()):
-            output.addPage(pdf.getPage(pagenum))
-
-        outputStream = open(filename, 'wb')
-        output.write(outputStream)
-        outputStream.close()
-
-        fh = open(filename, 'rb')
-        doc = scribd.api_user.upload(fh, access='private')
-        fh.close()
-        os.remove(filename)
-
-        site = Site.objects.get_current()
-
-        params = {'title': 'Registration by %s to lobby for %s (%s)' % (self.organization.name,
-                                                                        self.client.name,
-                                                                        self.form_id),
-                  'description': 'This registration was filed with the House on %s' % self.signed_date.strftime('%B %d, %Y'),
-                  'link_back_url': 'http://%s%s' % (site.domain, self.get_absolute_url()),
-                  'category': 'Government Docs',
-                  'access': 'public',
-                  }
-        scribd.update([doc, ], **params)
-
-        collections = scribd.api_user.get_collections()
-        collection = [x for x in collections if x.collection_name == 'Lobbyist Registrations']
-        if collection:
-            collection = collection[0]
-            try:
-                doc.add_to_collection(collection)
-            except:
-                pass
-
-        self.scribd_id = doc.id
-        self.scribd_url = doc.get_scribd_url()
-        self.scribd_access_key = doc.get_attributes()['access_key']
-        self.save()
-
-        return doc
+    def as_csv(self):
+        return [self.id,
+                self.reg_type,
+                self.registrant.display_name,
+                self.client.display_name,
+                str(self.received),
+                '|'.join([x.issue for x in self.issues.all()]),
+                self.specific_issue, ]

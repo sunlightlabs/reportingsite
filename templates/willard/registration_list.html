@@ -1,0 +1,58 @@
+{% extends "willard/willard_base.html" %}
+{% block body %}reporting {{ plural|lower }} fullWidth{% endblock %}
+
+{% block breadcrumb %}
+{{ block.super }}
+{% if plural %}
+<li><a href="{{ object.get_absolute_url }}/../">{{ plural }}</a></li>
+{% if object %}
+<li>{{ object }}</li>
+{% endif %}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+
+{% if object.get_rss_url %}
+<div class="rssIcon">
+    <a href="{{ object.get_rss_url }}">Subscribe</a>
+</div>
+{% endif %}
+
+<h3>
+    {% if object %}
+    {{ object }}
+    {% else %}
+    All registrations
+    {% endif %}
+</h3>
+{% if object.ie_id %}
+<a class="tip tipHeight" href="{{ object.ie_url }}">Get more information at Influence Explorer</a>
+{% endif %}
+
+<table class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort header{% ifequal order 'received' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'received' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}received">Date</a></th>
+            <th class="sort header{% ifequal order 'registrant' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'registrant' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}registrant">Registrant</a></th>
+            <th class="sort header{% ifequal order 'client' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'client' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}client">Client</a></th>
+            <th style="width: 100px;">Issues</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for registration in object_list %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td>{{ registration.received.date|date:"n/j/y" }}</td>
+            <td><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></td>
+            <td><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></td>
+            <td>{% for issue in registration.denormalized_issues %}<a href="{{ issue.get_absolute_url }}">{{ issue }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+            <td><a href="{{ registration.get_absolute_url }}">View registration</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include "willard/pagination.html" %}
+
+{% endblock %}

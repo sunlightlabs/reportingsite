@@ -23,7 +23,7 @@ from dateutil.parser import parse as dateparse
 
 from buckley.models import *
 
-MIN_DATE = datetime.date(2009, 1, 1)
+MIN_DATE = datetime.date(2010, 11, 10)
 
 socket.setdefaulttimeout(100000)
 
@@ -244,8 +244,9 @@ class Command(BaseCommand):
                     except CommitteeId.DoesNotExist:
                         continue
                         #committee = IEOnlyCommittee.objects.get(id=cid)
-    
+
                     filing_number = result['fec_uri'].strip('/').split('/')[-1]
+                    print committee
                     committees.append((committee, filing_number))
 
         for committee, filing_number  in committees:

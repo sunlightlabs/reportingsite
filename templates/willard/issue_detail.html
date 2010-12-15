@@ -1,0 +1,142 @@
+{% extends "willard/willard_base.html" %}
+
+{% block body %}reporting issues fullWidth{% endblock %}
+
+{% load humanize %}
+{% load willard_filters %}
+
+{% block breadcrumb %}{{ block.super }}
+<li><a href="{% url willard_issue_list %}">Lobbying issues</a></li>
+<li>{{ issue.issue }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
+
+<script type="text/javascript">
+    var months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+    $(document).ready(function () {
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'monthLineChart',
+                width: '525',
+                height: '300',
+                backgroundColor: '#f1f1ef',
+                animation: false,
+                defaultSeriesType: 'line',
+                marginTop: -25,
+                marginLeft: 50,
+            },
+            title: { 
+                text: '',
+                style: {
+                    display: 'none',
+                    position: 'absolute',
+                    left: '0',
+                    top: '0',
+                }
+            },
+            tooltip: {
+                borderRadius: 0,
+                borderWidth: 0,
+                formatter: function() {
+                    return '<b>'+ this.y +' lobbyist registrations</b>';
+                }
+            },
+            xAxis: {
+                categories: [
+                {% for month in month_counts %}
+                    months[{{ month.month }}-1]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ],
+                    title: { text: 'Month', 
+                             style: { color: '#414042' } 
+                    }
+            },
+            yAxis: {
+                min: 0,
+                     title: { text: 'Number of registrations',
+                              style: { color: '#414042' }
+                     }
+            },
+            legend: { enabled: false },
+            credits: { enabled: false },
+            plotOptions: {
+                series: {
+                    cursor: 'pointer',
+                    marker: { 
+                        radius: 3
+                    },
+                    lineWidth: 2,
+                    color: '#eac80e',
+                    shadow: false
+                }
+            },
+            series: [{data: [
+            {% for month in month_counts %}
+                {y: {{ month.count }} }
+                {% if not forloop.last %},{% endif %} 
+            {% endfor %}
+            ]}]
+
+        });
+
+    });
+</script>
+
+<div class="rssIcon">
+    <a href="{% url willard_issue_detail_feed slug=issue.slug %}">Subscribe</a>
+</div>
+
+<h3>{{ issue.issue }}</h3>
+
+<div id="issueChart">
+    <div id="issueChart1">
+        <h4>{{ issue.issue }} Registrations</h4>
+        <span class="tip tipHeight">Past 12 Months</span>
+        <div id="monthLineChart"></div>
+    </div>
+    {% if top_registrants %}
+    <div id="issueChart2">
+        <h4>Top registrants</h4>
+        <ul class="issueChart">
+            {% for registrant in top_registrants %}
+            <li>
+                <a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a>
+                <span class="count">{{ registrant.num|intcomma }}</span>
+                <span class="index" style="width: {{ registrant.num|percentage:past_year_count|intcomma }}%"></span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <div class="clear"></div>
+</div>
+
+
+
+<table class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort header{% ifequal order 'received' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'received' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}received">Date</a></th>
+            <th class="sort header{% ifequal order 'registrant' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'registrant' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}registrant">Registrant</a></th>
+            <th class="sort header{% ifequal order 'client' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'client' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}client">Client</a></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for registration in object_list %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td>{{ registration.received.date|date:"n/j/y" }}</td>
+            <td><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></td>
+            <td><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></td>
+            <td><a href="{{ registration.get_absolute_url }}">View registration</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include "willard/pagination.html" %}
+
+
+{% endblock content %}
