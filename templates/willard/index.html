@@ -1,0 +1,118 @@
+{% extends "willard/willard_base.html" %}
+
+{% load media %}
+
+
+{% block content %}
+
+<style type="text/css">
+    table#issueList { margin-left: 75px; width: 350px; }
+    table.registrationDetail th,
+    table.registrationDetail td { padding: 3px; 0px; }
+    table.registrationDetail th { font-weight: bold; width: 100px; vertical-align: top; padding-right: 15px; }
+    table.registrationDetail { margin-bottom: 30px; }
+</style>
+
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+{% js "js/jquery.sparkline.min.js "%}
+
+<div style="float: right;">
+    <h3 style="text-align: center;">Top registration issues:<br/>past year</h2>
+    <div id="monthLineChart"></div>
+    <br/><br/>
+    <h3 style="text-align: center;">Browse lobbying issues</h2>
+    <table id="issueList">
+        {% for issue in issues %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td><a style="display: block;" href="{{ issue.get_absolute_url }}">{{ issue.issue }}</a></td>
+            <td class="sparkline"><a href="{{ issue.get_absolute_url }}"><span class="inlinesparkline">{{ issue.counts_by_month }}</span></a></td>
+        </tr>
+        {% endfor %}
+    </table>
+</div>
+
+<div id="registrationList" style="width: 350px;">
+    {% for dategroup in object_list %}
+    <h4 style="margin-bottom: 5px;">{{ dategroup.date|date:"F j" }}</h4>
+    <ul style="margin-bottom: 40px;">
+        {% for registration in dategroup.registrations %}
+            {% include "willard/registration_list_item.html" %}
+        {% endfor %}
+    </ul>
+    {% endfor %}
+</div>
+
+
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'monthLineChart',
+                width: '500',
+                height: '350',
+                defaultSeriesType: 'line',
+                marginTop: -40,
+                backgroundColor: '#f1f1ef'
+            },
+            credits: { enabled: false },
+            legend: { 
+                layout: 'horizontal',
+                borderWidth: 0,
+                itemWidth: 200,
+                width: 500
+            },
+            title: { 
+                //text: 'Top lobbyist registration issues - past year'
+                text: '',
+                style: {
+                    display: 'none',
+                    position: 'absolute',
+                    left: '0',
+                    top: '0',
+                }
+            },
+            tooltip: {
+                formatter: function() {
+                    return '<b>'+ this.y +' registrations</b>';
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: { text: 'Number of registrations' }
+            },
+            xAxis: {
+                categories: [
+                {% for month in months %}
+                '{{ month }}'{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ]
+            },
+
+            series: [
+            {% for issue, months in issue_counts %}
+            {
+                name: '{{ issue }}',
+                data: [
+                    {% for month in months %}
+                    {{ month }}{% if not forloop.last %},{% endif %}
+                    {% endfor %}
+                    ]
+            }{% if not forloop.last %},{% endif %}
+            {% endfor %}
+            ]
+
+        });
+
+        // Create inline sparklines
+        $('.inlinesparkline').sparkline('html', {
+                                fillColor: false,  
+                                spotRadius: 0,
+                                lineColor: '#414042'
+                            });
+
+    });
+</script>
+
+{% endblock content %}

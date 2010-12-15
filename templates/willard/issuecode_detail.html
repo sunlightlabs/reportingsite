@@ -1,0 +1,93 @@
+{% extends "willard/willard_base.html" %}
+
+{% block content %}
+<script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
+
+<script type="text/javascript">
+    var months = ['J', 'F', 'M', 'A', 'M', 'J', 'J', 'A', 'S', 'O', 'N', 'D'];
+    $(document).ready(function () {
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'monthLineChart',
+                width: '500',
+                height: '300',
+                backgroundColor: '#f1f1ef',
+                defaultSeriesType: 'line'
+            },
+            title: { 
+                text: '',
+                style: {
+                    display: 'none',
+                    position: 'absolute',
+                    left: '0',
+                    top: '0',
+                }
+            },
+            tooltip: {
+                formatter: function() {
+                    return '<b>'+ this.y +' lobbyist registrations</b>';
+                }
+            },
+            xAxis: {
+                categories: [
+                {% for month in month_counts %}
+                    months[{{ month.month }}-1]{% if not forloop.last %},{% endif %}
+                {% endfor %}
+                ],
+                title: { text: 'Month' }
+            },
+            yAxis: {
+                min: 0,
+                title: { text: 'Number of registrations' }
+            },
+            legend: { enabled: false },
+            credits: { enabled: false },
+            plotOptions: {
+                series: {
+                    cursor: 'pointer',
+                    point: {
+                        events: {
+                            click: function () {
+                                location.href = '#' + this.options.anchor;
+                            }
+                        }
+                    }
+                }
+            },
+            series: [{data: [
+            {% for month in month_counts %}
+                {y: {{ month.count }},
+                 anchor: {{ month.month }}{{ month.year }}
+                }
+                {% if not forloop.last %},{% endif %} 
+            {% endfor %}
+            ]}]
+
+        });
+
+    });
+</script>
+
+<h2>{{ issue_code.issue }}</h2>
+
+<div style="float: right;" id="monthLineChart"></div>
+<h5>Top registrants over the past year</h5>
+{% for registrant in top_registrants %}
+<li><a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a></li>
+{% endfor %}
+
+<div id="registrationList" style="width: 350px;">
+    <h2>Latest lobbyist registrations</h2>
+    {% regroup page_obj.object_list by signed_date as date_list %}
+    {% for dategroup in date_list %}
+        <h3 style="margin-bottom: 5px;">{{ dategroup.grouper|date:"F j" }}</h3>
+        <ul style="margin-bottom: 40px;">
+            {% for registration in dategroup.list %}
+                {% include "willard/registration_list_item.html" %}
+            {% endfor %}
+        </ul>
+    {% endfor %}
+</div>
+
+{% endblock content %}

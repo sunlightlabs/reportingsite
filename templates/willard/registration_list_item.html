@@ -1,0 +1,29 @@
+<li>
+    <table class="registrationDetail">
+        <tr>
+            <th>Registrant:</th>
+            <td><a href="{{ registration.organization.get_absolute_url }}">{{ registration.organization.name }}</a></td>
+        </tr>
+        <tr>
+            <th>Client:</th>
+            <td><a href="{{ registration.client.get_absolute_url }}">{{ registration.client.name }}</a></td>
+        </tr>
+        <tr>
+            <th>Issues:</th>
+            <td>
+                {% for issue_code in registration.issues.all %}
+                <li><a href="{{ issue_code.get_absolute_url }}">{{ issue_code.issue }}</a></li>
+                {% endfor %}
+            </td>
+        </tr>
+        <tr>
+            <th>Specific issue:</th>
+            <td>{{ registration.specific_issues }}</td>
+        </tr>
+        <tr>
+            <th></th>
+            <td style="text-align: right;"><a href="{{ registration.get_absolute_url }}">View registration &gt;&gt;</a></td>
+        </tr>
+    </table>
+</li>
+

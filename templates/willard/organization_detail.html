@@ -1,0 +1,14 @@
+{% extends "willard/willard_base.html" %}
+
+{% block content %}
+
+<h1>{{ object }}</h1>
+<ul>
+    {% for registration in object.registration_set.all %}
+    <li><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a> ({{ registration.signed_date }})
+    - {% for issue in registration.issues.all %}<a href="{{ issue.get_absolute_url }}">{{ issue }}</a>, {% endfor %}
+    </li>
+    {% endfor %}
+</ul>
+
+{% endblock %}
