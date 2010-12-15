@@ -65,8 +65,8 @@ ul.issueChart .index {
 body.fullWidth #lobbyingTitle a:active, body.fullWidth #lobbyingTitle a:link, body.fullWidth #lobbyingTitle a:visited { color: #414042; }
 body.fullWidth #lobbyingTitle a:hover { color: #457b80;}
 
-body.registrant li.registrants a, body.clients li.clients a, body.issues li.issues a { font-weight: bold; color: #414042;}
-body.registrant #lobbyistFilter li.registrants a:hover, body.clients #lobbyistFilter li.clients a:hover, body.issues #lobbyistFilter li.issues a:hover { text-decoration: none;}
+body.registrants li.registrants a, body.clients li.clients a, body.issues li.issues a { font-weight: bold; color: #414042;}
+body.registrants #lobbyistFilter li.registrants a:hover, body.clients #lobbyistFilter li.clients a:hover, body.issues #lobbyistFilter li.issues a:hover { text-decoration: none;}
 
 div#lobbyBar { background-color: #414042; height: 40px; width: 100%; margin-top: 15px; }
 div#lobbyBar li { float: left; border-right: 1px solid #739935; margin-right: 20px; padding-right: 20px; font-size: 110%; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; line-height: 18px;}

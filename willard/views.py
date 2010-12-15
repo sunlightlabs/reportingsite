@@ -69,7 +69,7 @@ def index(request):
                               {'object_list': registrations_by_date,
                                'months': months,
                                'issues': Issue.objects.filter(registration__received__gte=cutoff).annotate(num=Count('registration')).order_by('-num').select_related(),
-                               'past_month_issues': Issue.objects.filter(registration__received__gte=month_cutoff).annotate(num=Count('registration')).order_by('-num').select_related(),
+                               'past_month_issues': Issue.objects.filter(registration__received__gte=month_cutoff).annotate(num=Count('registration')).order_by('-past_month_count').select_related(),
                                'past_year_count': past_year_count,
                                'past_month_count': sum([x[1] for x in registrations_by_day]),
                                'registrations_by_month': registrations_by_month,
@@ -106,7 +106,7 @@ def issue_detail(request, slug):
         orgs = Registrant.objects.filter(pk__in=[x[0] for x in org_counts])
         for org in orgs:
             org.num = counts[org.pk]
-        orgs = sorted(list(orgs), lambda x, y: cmp(x.num, y.num), reverse=True)
+        orgs = sorted(list(orgs), lambda x, y: cmp(x.num, y.num), reverse=True)[:10]
     else:
         orgs = []
 
@@ -239,6 +239,7 @@ def generic_detail_all(request, model, slug):
                                'sort': 'desc' if given_order.startswith('-') else 'asc',
                                'object': obj,
                                'plural': model._meta.verbose_name_plural.title(),
+                               'singular': model._meta.verbose_name.lower(),
                               }, context_instance=RequestContext(request))
 
 

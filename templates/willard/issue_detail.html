@@ -1,5 +1,7 @@
 {% extends "willard/willard_base.html" %}
 
+{% block title %}{{ block.super }} - {{ issue.issue }}{% endblock %}
+
 {% block body %}reporting issues fullWidth{% endblock %}
 
 {% load humanize %}
@@ -84,7 +86,11 @@
     });
 </script>
 
-<h3>Lobbying issue: {{ issue.issue }}</h3>
+<div class="rssIcon">
+    <a href="{% url willard_issue_detail_feed slug=issue.slug %}">Subscribe</a>
+</div>
+
+<h3>{{ issue.issue }}</h3>
 
 <div id="issueChart">
     <div id="issueChart1">
@@ -95,6 +101,7 @@
     {% if top_registrants %}
     <div id="issueChart2">
         <h4>Top registrants</h4>
+        <span class="tip tipHeight">Past 12 Months</span>
         <ul class="issueChart">
             {% for registrant in top_registrants %}
             <li>

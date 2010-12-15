@@ -110,7 +110,7 @@ urlpatterns = patterns('',
             },
             name='willard_client_detail'),
 
-        url(r'^rss\/?$',
+        url(r'^all\.rss$',
             RegistrationFeed(),
             name='willard_feed'),
 
