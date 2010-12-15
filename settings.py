@@ -50,8 +50,8 @@ MEDIA_ROOT = '/media/'
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 #MEDIA_URL = '/media/'
-#http://assets.sunlightfoundation.com.s3.amazonaws.com/
-MEDIA_URL = 'http://reporting.sunlightlabs.com/media/'
+MEDIA_URL = 'http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/'
+#MEDIA_URL = 'http://reporting.sunlightlabs.com/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
 # trailing slash.
@@ -81,8 +81,8 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'reportingsite.urls'
 
 TEMPLATE_DIRS = (
-    'reportingsite/templates'
-    #'/projects/reportingsite/src/reportingsite/templates'
+    #'reportingsite/templates'
+    '/projects/reporting/src/reportingsite/templates'
 )
 
 INSTALLED_APPS = (
@@ -105,7 +105,6 @@ INSTALLED_APPS = (
     'haystack',
     'buckley',
     'gunicorn',
-    'willard',
 )
 
 INTERNAL_IPS = ('127.0.0.1','localhost')
@@ -157,8 +156,6 @@ HAYSTACK_SOLR_URL = 'http://morgan.sunlightlabs.org:8080/solr/core_reporting'
 HAYSTACK_SITECONF = 'search_sites'
 HAYSTACK_SEARCH_RESULTS_PER_PAGE = 20
 
-SCRIBD_KEY = '4hyu1j0cx5geo5wk8xyq1'
-SCRIBD_SECRET = 'sec-4to8x6dauoeegj87lpn7ib2fpm'
 
 try:
     from local_settings import *

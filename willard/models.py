@@ -5,7 +5,7 @@ import itertools
 import urllib
 import urllib2
 
-from django.db import models
+from django.db import models, connection
 from django.template.defaultfilters import slugify
 
 from dateutil.relativedelta import relativedelta
@@ -88,7 +88,7 @@ class Registrant(models.Model):
         super(Registrant, self).save(*args, **kwargs)
 
     def get_crp_name(self):
-        cursor = MySQLdb.Connection('localhost', 'campfin', 'campfin', 'campfin').cursor()
+	cursor = connection.cursor()
         cursor.execute("SELECT registrant FROM lobbying WHERE registrant_raw = %s LIMIT 1",
                             self.name)
         if not cursor.rowcount:
@@ -145,7 +145,7 @@ class Client(models.Model):
         super(Client, self).save(*args, **kwargs)
 
     def get_crp_name(self):
-        cursor = MySQLdb.Connection('localhost', 'campfin', 'campfin', 'campfin').cursor()
+	cursor = connection.cursor()
         cursor.execute("SELECT client FROM lobbying WHERE client_raw = %s LIMIT 1",
                             self.name.strip())
         if not cursor.rowcount:
