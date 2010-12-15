@@ -69,7 +69,7 @@ def index(request):
                               {'object_list': registrations_by_date,
                                'months': months,
                                'issues': Issue.objects.filter(registration__received__gte=cutoff).annotate(num=Count('registration')).order_by('-num').select_related(),
-                               'past_month_issues': Issue.objects.filter(registration__received__gte=month_cutoff).annotate(num=Count('registration')).order_by('-num').select_related(),
+                               'past_month_issues': Issue.objects.filter(registration__received__gte=month_cutoff).annotate(num=Count('registration')).order_by('-past_month_count').select_related(),
                                'past_year_count': past_year_count,
                                'past_month_count': sum([x[1] for x in registrations_by_day]),
                                'registrations_by_month': registrations_by_month,
