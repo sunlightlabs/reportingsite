@@ -81,8 +81,8 @@ MIDDLEWARE_CLASSES = (
 ROOT_URLCONF = 'reportingsite.urls'
 
 TEMPLATE_DIRS = (
-    #'reportingsite/templates'
-    '/projects/reportingsite/src/reportingsite/templates'
+    'reportingsite/templates'
+    #'/projects/reportingsite/src/reportingsite/templates'
 )
 
 INSTALLED_APPS = (
