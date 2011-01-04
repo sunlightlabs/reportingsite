@@ -107,3 +107,8 @@ div#pageMain #timeToggle label { width: auto; margin-right: 20px; color: #457B80
 .lobbying_paginatorNext { text-align: right; display: block;}
 .lobbying_paginatorPrevious  { float: left;}
 .lobbying_paginatorPrevious, .lobbying_paginatorNext{ font-size: 115%; font-style: oblique; margin-top: 10px;} 
+
+#lobbyShareBar { clear: all; margin: -50px 10px 20px 0; float: right; }
+#lobbyShareBar ul li { float: left; }
+#lobbyShareBar ul li:first-child { border-right: 1px solid #7b989b; padding-right: 10px; margin-right: 10px;}
+.at300bs { background: none; height: 1px; }
