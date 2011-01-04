@@ -26,9 +26,10 @@ div#pageMain{ width: 960px; margin: 0 auto; }
 h1 a { width: 800px; height: 214px; display: block; background: url(../img/logo_rollover4.png) top center no-repeat; text-indent: -9999em;}
 h1 { width: 800px; height: 214px; margin: 0 auto;}
 
-div.rssIcon { float: right; background: url(../img/feed-icon-14x14.png) left 15px no-repeat; padding: 10px 0 0 20px; }
-div.rssIcon a { color: #414042;}
-div.rssIcon a:hover { color: #457b80;}
+div.rssIcon { float: right; background: url(../img/feed-icon-14x14.png) left 15px no-repeat; padding: 10px 0 0 20px;}
+div.csvIcon { float: right; background: url(../img/icon_csv.gif) left 12px no-repeat; padding: 10px 0 0 20px;}
+div.rssIcon a, div.csvIcon a { color: #414042;}
+div.rssIcon a:hover, div.csvIcon a:hover { color: #457b80;}
 div#pageMain .rssBlock { float: none; margin-bottom: 10px;}
 
 div#nav li { float: left; margin-left: 10px; padding-left: 10px; border-left: 1px solid #b3b5b7; line-height: 15px; }

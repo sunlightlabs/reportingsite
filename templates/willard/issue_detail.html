@@ -86,8 +86,14 @@
     });
 </script>
 
-<div class="rssIcon">
-    <a href="{% url willard_issue_detail_feed slug=issue.slug %}">Subscribe</a>
+<div style="float: right;">
+    <div class="rssIcon">
+        <a href="{% url willard_issue_detail_feed slug=issue.slug %}">Subscribe</a>
+    </div>
+    <br/>
+    <div class="csvIcon">
+        <a href="{% url willard_issue_detail_api slug=issue.slug,format='csv' %}">Download</a>
+    </div>
 </div>
 
 <h3>{{ issue.issue }}</h3>

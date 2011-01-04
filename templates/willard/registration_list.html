@@ -16,11 +16,19 @@
 
 {% block content %}
 
-{% if object.get_rss_url %}
-<div class="rssIcon">
-    <a href="{{ object.get_rss_url }}">Subscribe</a>
+<div style="float: right;">
+    {% if object.get_rss_url %}
+    <div class="rssIcon">
+        <a href="{{ object.get_rss_url }}">Subscribe</a>
+    </div>
+    {% endif %}
+    <br/>
+    {% if object.get_csv_url %}
+    <div class="csvIcon">
+        <a href="{{ object.get_csv_url }}">Download</a>
+    </div>
+    {% endif %}
 </div>
-{% endif %}
 
 <h3>
     {% if object %}

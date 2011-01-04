@@ -80,6 +80,10 @@ class Registrant(models.Model):
     def get_rss_url(self):
         return ('willard_registrant_detail_feed', [self.slug, ])
 
+    @models.permalink
+    def get_csv_url(self):
+        return ('willard_registrant_detail_api', [self.slug, 'csv', ])
+
     def save(self, *args, **kwargs):
         if not self.display_name:
             self.crp_name = self.get_crp_name()
@@ -136,6 +140,10 @@ class Client(models.Model):
     @models.permalink
     def get_rss_url(self):
         return ('willard_client_detail_feed', [self.slug, ])
+
+    @models.permalink
+    def get_csv_url(self):
+        return ('willard_client_detail_api', [self.slug, 'csv', ])
 
     def save(self, *args, **kwargs):
         if self.id is None:
