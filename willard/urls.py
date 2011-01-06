@@ -89,6 +89,12 @@ urlpatterns = patterns('',
              },
             name='willard_registrant_list'),
 
+        url(r'^firm\.(?P<format>\w+)$',
+            object_list_api,
+            {'model': Registrant,
+                },
+            name='willard_registrant_list_api'),
+
         url(r'^firm\/(?P<slug>[-\w]+)\/(?P<id>[-0-9A-Z]+)\/?$',
             cache_page(registration_detail, 60*60*24, key_prefix=KEY_PREFIX),
             {},
@@ -106,6 +112,12 @@ urlpatterns = patterns('',
             {'queryset': Client.objects.all()
                 },
             name='willard_client_list'),
+
+        url(r'^client\.(?P<format>\w+)$',
+            object_list_api,
+            {'model': Client,
+                },
+            name='willard_client_list_api'),
 
         url(r'^client\/(?P<slug>[-\w]+)\/?$',
             cache_page(generic_detail_all, 60*60*24, key_prefix=KEY_PREFIX),
