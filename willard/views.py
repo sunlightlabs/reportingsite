@@ -123,6 +123,30 @@ def issue_detail(request, slug):
                                },
                               context_instance=RequestContext(request))
 
+def object_list_api(request, model, format):
+    allowed_formats = ('csv', 'json', )
+    if format not in allowed_formats:
+        raise Http404
+
+    object_list = []
+    for obj in model.objects.all():
+        object_list.append({'name': obj.display_name,
+                            'url': obj.get_absolute_url(),
+                            'slug': obj.slug,
+                            'transparencydata_id': obj.ie_id(), })
+
+    if format == 'json':
+        return HttpResponse(json.dumps(object_list), mimetype='text/plain')
+
+    elif format == 'csv':
+        response = HttpResponse(mimetype='text/plain')
+        fieldnames = ['name', 'slug', 'url', 'transparencydata_id', ]
+        writer = csv.DictWriter(response, fieldnames=fieldnames)
+        writer.writerow(dict(zip(fieldnames, fieldnames)))
+        writer.writerows(object_list)
+        return response
+
+
 
 def detail_api(request, model, slug, format):
     obj = get_object_or_404(model, slug=slug)
