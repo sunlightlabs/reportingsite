@@ -148,7 +148,7 @@ class Command(BaseCommand):
             make_option('--years',
                         action='store',
                         dest='years',
-                        default='2010',
+                        default='2011',
                         help="Years for which to import data. If multiple years are entered, all data for those years will be imported."),
             make_option('--filename',
                         action='store',
