@@ -323,4 +323,4 @@ class Registration(models.Model):
                 self.client.display_name,
                 str(self.received),
                 '|'.join([x.issue for x in self.denormalized_issues]),
-                self.specific_issue, ]
+                self.specific_issue.replace('\n', ' '), ]
