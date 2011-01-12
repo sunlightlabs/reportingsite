@@ -5,6 +5,7 @@ import urllib2
 import zipfile
 
 from django.core.management.base import BaseCommand
+from django.db import connection
 from django.template.defaultfilters import slugify
 
 from willard.models import *
@@ -75,6 +76,12 @@ def parse_xml(xml):
         else:
             data['specific_issue'] = ''
 
+        lobbyists = filing.find('Lobbyists')
+        if lobbyists:
+            data['lobbyists'] = [x.attrib for x in lobbyists.iterchildren()]
+        else:
+            data['lobbyists'] = []
+
         yield data
 
 
@@ -122,6 +129,68 @@ def save_filing(data):
                     counts_by_month='')
                 )
         registration.issues.add(issue)
+
+    lobbyist = None
+
+    for lobbyist_dict in data['lobbyists']:
+        covered_position = None
+        if lobbyist_dict.get('OfficialPosition'):
+            covered_position, created = CoveredPosition.objects.get_or_create(
+                    position=lobbyist_dict.get('OfficialPosition', '')
+                    )
+        # Check whether the lobbyist name line is blank
+        # or refers to the lobbyist name listed above it.
+        # If so, use the previous lobbyist name.
+        name = lobbyist_dict['LobbyistName']
+        if name.find('*') > -1: # used for notes
+            continue
+        if name and name not in (' ',
+                                 "(CONT'D), (CONT'D)",
+                                 '(CONTINUED), (CONTINUED)',
+                                 '(CONTINUED), (CONTINUED',
+                                 '-, -',
+                                 '-----, -----',
+                                 'ABOVE), (SEE',
+                                 "'', ''",
+                                 '", "',
+                                 ):
+
+            crp_id, crp_name = get_lobbyist_crp_name(lobbyist_dict['LobbyistName'])
+
+            lobbyist, created = Lobbyist.objects.get_or_create(
+                    slug=slugify(crp_name or lobbyist_dict['LobbyistName'])[:50],
+                    defaults=dict(
+                        display_name=crp_name or lobbyist_dict['LobbyistName'],
+                        crp_name=crp_name,
+                        crp_id=crp_id,
+                        name=lobbyist_dict['LobbyistName'],
+                        registration_count=0,
+                        latest_registration_date=dateparse(data['Received']),
+                        )
+                    )
+            registration.lobbyists.add(lobbyist)
+
+        if not lobbyist:
+            continue
+
+        if covered_position:
+            lobbyist.covered_positions.add(covered_position)
+
+        if created:
+            lobbyist.denormalized_registrants = set([self.registrant, ])
+        else:
+            lobbyist.denormalized_registrants = lobbyist.denormalized_registrants.union(set([self.registrant, ]))
+
+        lobbyist.registration_count += 1
+
+        latest_registration = lobbyist.registration_set.order_by('-received')[0]
+        lobbyist.latest_registration = {'client': latest_registration.client,
+                                        'received': latest_registration.received,
+                                        'url': latest_registration.get_absolute_url(), }
+        lobbyist.denormalized_covered_positions = [x.position for x in lobbyist.covered_positions.all()]
+
+        lobbyist.save()
+
     
     # Denormalize list of issues
     registration.denormalized_issues = list(registration.issues.all())
@@ -135,6 +204,15 @@ def denormalize():
         issue.denormalize_by_month()
         issue.create_counts_by_month()
         issue.denormalize_registration_count()
+
+
+def get_lobbyist_crp_name(raw_name):
+    cursor = connection.cursor()
+    cursor.execute("SELECT lobbyist_id, lobbyist FROM lobbyists where lobbyist_raw = %s LIMIT 1",
+            [raw_name, ])
+    if not cursor.rowcount:
+        return '', ''
+    return cursor.fetchone()
 
 
 class Command(BaseCommand):
@@ -168,27 +246,5 @@ class Command(BaseCommand):
                 print filename
                 for filing in parse_xml(xml):
                     save_filing(filing)
-                    """
-                    try:
-                        save_filing(filing)
-                    except Exception, e:
-                        print Exception
-                        print e
-                        print filing
-                        print
-                    """
-
-        # Find any clients or registrants without a display_name
-        # and create one.
-        """
-        for model in [Client, Registrant, ]:
-            for obj in model.objects.filter(display_name=''):
-                try:
-                    obj.crp_name = obj.get_crp_name()
-                except:
-                    pass
-                obj.display_name = obj.crp_name or obj.name
-                obj.save()
-        """
 
         denormalize()

@@ -23,8 +23,8 @@ KEY_PREFIX = 'willard_2_'
 urlpatterns = patterns('',
 
         url(r'^issue\/(?P<slug>[-\w]+)\.rss$',
-            cache_page(IssueFeed(), 60*60*24, key_prefix=KEY_PREFIX),
-            {},
+            cache_page(GenericLobbyingFeed(), 60*60*24, key_prefix=KEY_PREFIX),
+            {'model': Issue, },
             name='willard_issue_detail_feed'),
 
         url(r'^issue\/(?P<slug>[-\w]+)\.(?P<format>\w+)$',
@@ -50,9 +50,9 @@ urlpatterns = patterns('',
             name='willard_issue_list'),
 
         url(r'^client\/(?P<slug>[-\w]+)\.rss$',
-         cache_page(ClientFeed(), 60*60*24, key_prefix=KEY_PREFIX),
-         {},
-         name='willard_client_detail_feed'),
+            cache_page(GenericLobbyingFeed(), 60*60*24, key_prefix=KEY_PREFIX),
+            {'model': Client, },
+            name='willard_client_detail_feed'),
 
         url(r'^client\/(?P<slug>[-\w]+)\.(?P<format>\w+)$',
             cache_page(detail_api, 60*60*24, key_prefix=KEY_PREFIX),
@@ -70,9 +70,9 @@ urlpatterns = patterns('',
             name='willard_client_list'),
 
         url(r'^firm\/(?P<slug>[-\w]+)\.rss$',
-            cache_page(RegistrantFeed(), 60*60*24, key_prefix=KEY_PREFIX),
-         {},
-         name='willard_registrant_detail_feed'),
+            cache_page(GenericLobbyingFeed(), 60*60*24, key_prefix=KEY_PREFIX),
+            {'model': Registrant, },
+            name='willard_registrant_detail_feed'),
 
         url(r'^firm\/(?P<slug>[-\w]+)\.(?P<format>\w+)$',
             cache_page(detail_api, 60*60*24, key_prefix=KEY_PREFIX),
@@ -125,6 +125,29 @@ urlpatterns = patterns('',
                 'model': Client,
             },
             name='willard_client_detail'),
+
+        url(r'^lobbyist\/(?P<slug>[-\w]+)\.rss$',
+            cache_page(GenericLobbyingFeed(), 60*60*24, key_prefix=KEY_PREFIX),
+            {'model': Lobbyist, },
+            name='willard_lobbyist_detail_feed'),
+
+        url(r'^lobbyist\/(?P<slug>[-\w]+)\.(?P<format>\w+)$',
+            cache_page(detail_api, 60*60*24, key_prefix=KEY_PREFIX),
+            {'model': Lobbyist, },
+            name='willard_lobbyist_detail_api'),
+
+        url(r'^lobbyist\/(?P<slug>[-\w]+)\/?$',
+            object_detail,
+            {
+                'queryset': Lobbyist.objects.all(),
+                'slug_field': 'slug',
+            },
+            name='willard_lobbyist_detail'),
+
+        url(r'^lobbyist\/?$',
+            lobbyist_list,
+            {},
+            name='willard_lobbyist_list'),
 
         url(r'^all\.rss$',
             cache_page(RegistrationFeed(), 60*60*24, key_prefix=KEY_PREFIX),

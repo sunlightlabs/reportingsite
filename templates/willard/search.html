@@ -27,6 +27,25 @@
         <li><a href="{{ client.get_absolute_url }}">{{ client }}</a></li>
     {% endfor %}
     </ul>
+    <br /><br />
+    {% endif %}
+
+    {% if lobbyists %}
+    <h4>Lobbyists</h4>
+    <ul>
+    {% for lobbyist in lobbyists %}
+        <li><a href="{{ lobbyist.get_absolute_url }}">{{ lobbyist }}</a></li>
+    {% endfor %}
+    </ul>
+    {% endif %}
+
+    {% if covered_position_lobbyists %}
+    <h4>Covered positions</h4>
+    <ul>
+        {% for lobbyist in covered_position_lobbyists %}
+            <li><a href="{{ lobbyist.get_absolute_url }}">{{ lobbyist }}</a> ({{ lobbyist.positions|join:"; " }})</li>
+        {% endfor %}
+    </ul>
     {% endif %}
 
 {% else %}

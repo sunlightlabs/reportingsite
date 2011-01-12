@@ -8,6 +8,28 @@
 
 <h3>{{ object.registrant }} for {{ object.client }}</h3>
 
+<p>
+<strong>Issues:</strong>
+{% for issue in object.denormalized_issues %}
+<a href="{{ issue.get_absolute_url }}">{{ issue }}</a>{% if not forloop.last %}; {% endif %}
+{% endfor %}
+</p>
+<p><strong>Specific issue:</strong> {{ object.specific_issue }}</p>
+<p><strong>Lobbyists:</strong>
+<br/>
+{% for lobbyist in object.lobbyists.all %}
+<a href="{{ lobbyist.get_absolute_url }}">{{ lobbyist }}</a>
+{% if lobbyist.denormalized_covered_positions %}
+(covered positions: 
+{% for position in lobbyist.positions %}
+{{ position }}{% if not forloop.last %}; {% endif %}
+{% endfor %})
+{% endif %}
+<br/>
+{% endfor %}
+
+<br/>
+
 <div id='embedded_doc'></div>
 
 
