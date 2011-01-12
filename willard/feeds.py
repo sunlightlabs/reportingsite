@@ -17,7 +17,7 @@ def make_item_description(item):
 class RegistrationFeed(Feed):
     title = 'Latest lobbyist registrations'
     link = '/lobbying/rss'
-    description = 'The latest lobbyist registrations submitted to the House of Representatives'
+    description = 'The latest lobbyist registrations submitted to the U.S. Senate'
 
     def items(self):
         return Registration.objects.order_by('-received')[:50]
@@ -36,16 +36,13 @@ class RegistrationFeed(Feed):
         return '%s registered to lobby for %s' % (item.registrant,
                                                   item.client)
 
-class IssueFeed(Feed):
 
-    def get_object(self, request, slug):
-        return get_object_or_404(Issue, slug=slug)
+class GenericLobbyingFeed(Feed):
+    def get_object(self, request, slug, model):
+        return get_object_or_404(model, slug=slug)
 
     def title(self, obj):
-        return 'Lobbyist registrations: %s' % obj.issue
-
-    def link(self, obj):
-        return obj.get_absolute_url()
+        return 'Lobbyist registrations: %s' % obj
 
     def item_description(self, item):
         return make_item_description(item)
@@ -60,52 +57,6 @@ class IssueFeed(Feed):
     def item_pubdate(self, item):
         return item.received
 
-
-class RegistrantFeed(Feed):
-
-    def get_object(self, request, slug):
-        return get_object_or_404(Registrant, slug=slug)
-
-    def title(self, obj):
-        return 'Lobbyist registrations by %s' % obj
-
-    def item_description(self, item):
-        return make_item_description(item)
-
-    def items(self, obj):
-        return obj.registration_set.order_by('-received')[:50]
-
-    def item_titele(self, item):
-        return '%s registered to lobby for %s' % (item.registrant,
-                                                  item.client)
-
-    def item_pubdate(self, item):
-        return item.received
-
     def link(self, obj):
         return obj.get_absolute_url()
 
-
-class ClientFeed(Feed):
-
-    def get_object(self, request, slug):
-        return get_object_or_404(Client, slug=slug)
-
-    def title(self, obj):
-        return 'Lobbyist registrations for %s' % obj
-
-    def item_description(self, item):
-        return make_item_description(item)
-
-    def items(self, obj):
-        return obj.registration_set.order_by('-received')[:50]
-
-    def item_titele(self, item):
-        return '%s registered to lobby for %s' % (item.registrant,
-                                                  item.client)
-
-    def item_pubdate(self, item):
-        return item.received
-
-    def link(self, obj):
-        return obj.get_absolute_url()
