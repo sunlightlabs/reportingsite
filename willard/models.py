@@ -367,6 +367,11 @@ class Lobbyist(models.Model):
 
 
 
+class RegistrationManager(models.Manager):
+    def get_query_set(self):
+        return super(RegistrationManager, self).get_query_set().filter(amended=False)
+
+
 class Registration(models.Model):
     id = models.CharField(max_length=36, primary_key=True)
     reg_type = models.CharField(max_length=24)
@@ -384,11 +389,30 @@ class Registration(models.Model):
 
     lobbyists = models.ManyToManyField(Lobbyist)
 
+    # This registration has been amended
+    amended = models.BooleanField(default=False)
+
+    objects = RegistrationManager()
+
     class Meta:
         ordering = ('-received', )
 
     def __unicode__(self):
         return self.registrant.name
+
+    def save(self, *args, **kwargs):
+        """If this is an amendment, mark the
+        amended filing as such.
+        """
+        if self.reg_type == 'REGISTRATION AMENDMENT':
+            amended = Registration.objects.filter(registrant=self.registrant,
+                                                  client=self.client,
+                                                  received__lt=self.received
+                                              ).exclude(pk=self.pk)
+            for registration in amended:
+                registration.amended = True
+                registration.save()
+        super(Registration, self).save(*args, **kwargs)
 
     @models.permalink
     def get_absolute_url(self):
