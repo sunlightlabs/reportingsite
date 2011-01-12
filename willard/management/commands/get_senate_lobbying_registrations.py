@@ -177,9 +177,9 @@ def save_filing(data):
             lobbyist.covered_positions.add(covered_position)
 
         if created:
-            lobbyist.denormalized_registrants = set([self.registrant, ])
+            lobbyist.denormalized_registrants = set([registrant, ])
         else:
-            lobbyist.denormalized_registrants = lobbyist.denormalized_registrants.union(set([self.registrant, ]))
+            lobbyist.denormalized_registrants = lobbyist.denormalized_registrants.union(set([registrant, ]))
 
         lobbyist.registration_count += 1
 
