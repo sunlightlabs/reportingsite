@@ -269,10 +269,10 @@ def generic_detail_all(request, model, slug):
 
 def registration_detail(request, slug, id):
     registrant = get_object_or_404(Registrant, slug=slug)
-    registration = get_object_or_404(Registration, id=id, registrant=registrant)
+    registration = get_object_or_404(Registration.all_objects, id=id, registrant=registrant)
 
     return object_detail(request,
-                         Registration.objects.all(),
+                         Registration.all_objects.all(),
                          object_id=registration.pk)
 
 

@@ -12,13 +12,21 @@ from dateutil.relativedelta import relativedelta
 from picklefield.fields import PickledObjectField
 import lxml.etree
 import MySQLdb
-from willard.management.commands.get_senate_lobbying_registrations import get_lobbyist_crp_name
 
 
 try:
     import json
 except ImportError:
     import simplejson as json
+
+
+def get_lobbyist_crp_name(raw_name):
+    cursor = connection.cursor()
+    cursor.execute("SELECT lobbyist_id, lobbyist FROM lobbyists where lobbyist_raw = %s LIMIT 1",
+            [raw_name, ])
+    if not cursor.rowcount:
+        return '', ''
+    return cursor.fetchone()
 
 
 def get_ie_data(name):
@@ -393,6 +401,9 @@ class Registration(models.Model):
     amended = models.BooleanField(default=False)
 
     objects = RegistrationManager()
+
+    # All objects, even those that have been amended.
+    all_objects = models.Manager()
 
     class Meta:
         ordering = ('-received', )

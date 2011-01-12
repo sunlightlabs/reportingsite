@@ -86,7 +86,7 @@ def parse_xml(xml):
 
 
 def save_filing(data):
-    if Registration.objects.filter(id=data['ID']):
+    if Registration.all_objects.filter(id=data['ID']):
         return
 
     slug = slugify(data['registrant']['RegistrantName'])[:50]
@@ -109,7 +109,7 @@ def save_filing(data):
                 status=int(data['client']['ClientStatus']))
             )
 
-    registration, created = Registration.objects.get_or_create(
+    registration, created = Registration.all_objects.get_or_create(
             id=data['ID'],
             defaults=dict(
                 reg_type=data['Type'],
