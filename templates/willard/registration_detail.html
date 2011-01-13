@@ -28,6 +28,13 @@
 <br/>
 {% endfor %}
 
+{% if object.affiliated_organizations.all %}
+<p><strong>Affiliated organizations:</strong>
+{% for org in object.affiliated_organizations.all %}
+<a href="{{ org.get_absolute_url }}">{{ org }}</a><br/>
+{% endfor %}
+{% endif %}
+
 <br/>
 
 <div id='embedded_doc'></div>
