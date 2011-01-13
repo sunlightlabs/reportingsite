@@ -375,6 +375,27 @@ class Lobbyist(models.Model):
 
 
 
+class AffiliatedOrganization(models.Model):
+    slug = models.SlugField()
+    name = models.CharField(max_length=255)
+    country = models.CharField(max_length=100)
+    ppb_country = models.CharField(max_length=100)
+
+    registration_count = models.IntegerField()
+    latest_registration = PickledObjectField()
+
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name', )
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('willard_affiliated_detail', [self.slug, ])
+
+
 class RegistrationManager(models.Manager):
     def get_query_set(self):
         return super(RegistrationManager, self).get_query_set().filter(amended=False)
@@ -396,6 +417,8 @@ class Registration(models.Model):
     denormalized_issues = PickledObjectField()
 
     lobbyists = models.ManyToManyField(Lobbyist)
+
+    affiliated_organizations = models.ManyToManyField(AffiliatedOrganization)
 
     # This registration has been amended
     amended = models.BooleanField(default=False)
@@ -533,3 +556,32 @@ class Registration(models.Model):
             lobbyist.denormalized_covered_positions = [x.position for x in lobbyist.covered_positions.all()]
 
             lobbyist.save()
+
+
+    def save_affiliated(self):
+        if self.affiliated_organizations.count():
+            return
+
+        filing = lxml.etree.fromstring(self.xml)
+        for org in filing.xpath('//Org'):
+            name = org.attrib['AffiliatedOrgName']
+            slug = slugify(name)[:50]
+            country = org.attrib['AffiliatedOrgCountry']
+            ppb_country = org.attrib['AffiliatedOrgPPBCcountry']
+
+            affiliated, created = AffiliatedOrganization.objects.get_or_create(
+                    slug=slug,
+                    defaults=dict(
+                        name=name,
+                        slug=slug,
+                        ppb_country=ppb_country,
+                        country=country,
+                        registration_count=0
+                        )
+                    )
+
+            self.affiliated_organizations.add(affiliated)
+
+            affiliated.registration_count += 1
+            affiliated.latest_registration = self
+            affiliated.save()
