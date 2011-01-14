@@ -269,10 +269,10 @@ def generic_detail_all(request, model, slug):
 
 def registration_detail(request, slug, id):
     registrant = get_object_or_404(Registrant, slug=slug)
-    registration = get_object_or_404(Registration, id=id, registrant=registrant)
+    registration = get_object_or_404(Registration.all_objects, id=id, registrant=registrant)
 
     return object_detail(request,
-                         Registration.objects.all(),
+                         Registration.all_objects.all(),
                          object_id=registration.pk)
 
 
@@ -310,16 +310,74 @@ def search(request):
     if term:
         registrants = Registrant.objects.filter(display_name__icontains=term)
         clients = Client.objects.filter(display_name__icontains=term)
+        lobbyists = Lobbyist.objects.filter(display_name__icontains=term)
+        positions = CoveredPosition.objects.filter(position__icontains=term)
+        covered_position_lobbyists = Lobbyist.objects.none()
+        for position in positions:
+            covered_position_lobbyists = covered_position_lobbyists | position.lobbyist_set.all()
+        covered_position_lobbyists = covered_position_lobbyists.distinct()
     else:
         registrants = None
         clients = None
+        lobbyists = None
+        positions = None
 
-    num_results = registrants.count() + clients.count()
+    num_results = registrants.count() + clients.count() + lobbyists.count() + positions.count()
 
     return render_to_response('willard/search.html',
                               {'registrants': registrants,
                                'clients': clients,
+                               'lobbyists': lobbyists,
+                               'covered_position_lobbyists': covered_position_lobbyists,
                                'term': term, 
                                'num_results': num_results,
                                },
                               context_instance=RequestContext(request))
+
+
+def lobbyist_list(request):
+    order_options = ('name',
+                     'covered',
+                     'registrants',
+                     'date',
+                     'registrations', )
+
+    default_order = 'name'
+    given_order = request.GET.get('order', default_order)
+    if given_order.strip('-') not in order_options:
+        given_order = default_order
+
+    if given_order == 'name':
+        order = ('display_name', 'name')
+    elif given_order == '-name':
+        order = ('-display_name', '-name')
+    elif given_order == 'covered':
+        order = ('denormalized_covered_positions', )
+    elif given_order == '-covered':
+        order = ('-denormalized_covered_positions', )
+    elif given_order == 'registrants':
+        order = ('denormalized_registrants', )
+    elif given_order == '-registrants':
+        order = ('-denormalized_registrants', )
+    elif given_order == 'date':
+        order = ('latest_registration_date', )
+    elif given_order == '-date':
+        order = ('-latest_registration_date', )
+    elif given_order == 'registrations':
+        order = ('registration_count', )
+    elif given_order == '-registrations':
+        order = ('-registration_count', )
+
+    object_list = Lobbyist.objects.order_by(*order).select_related()
+    page = make_paginator(request, object_list)
+
+    return render_to_response('willard/lobbyist_list.html',
+               {'object_list': page.object_list,
+                'order': order,
+                'given_order': given_order,
+                'page_obj': page,
+                'order': given_order.strip('-'),
+                'given_order': given_order,
+                'sort': 'desc' if given_order.startswith('-') else 'asc',
+                },
+            context_instance=RequestContext(request))

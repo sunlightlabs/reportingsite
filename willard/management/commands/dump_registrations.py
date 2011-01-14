@@ -50,4 +50,3 @@ class Command(BaseCommand):
         key.set_contents_from_string(filedata, headers=headers, md5=(hexdigest, b64digest))
 
         print key.generate_url(60*60*24*8).split('?')[0].replace('https', 'http')
-

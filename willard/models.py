@@ -10,12 +10,23 @@ from django.template.defaultfilters import slugify
 
 from dateutil.relativedelta import relativedelta
 from picklefield.fields import PickledObjectField
+import lxml.etree
 import MySQLdb
+
 
 try:
     import json
 except ImportError:
     import simplejson as json
+
+
+def get_lobbyist_crp_name(raw_name):
+    cursor = connection.cursor()
+    cursor.execute("SELECT lobbyist_id, lobbyist FROM lobbyists where lobbyist_raw = %s LIMIT 1",
+            [raw_name, ])
+    if not cursor.rowcount:
+        return '', ''
+    return cursor.fetchone()
 
 
 def get_ie_data(name):
@@ -92,9 +103,9 @@ class Registrant(models.Model):
         super(Registrant, self).save(*args, **kwargs)
 
     def get_crp_name(self):
-	cursor = connection.cursor()
+        cursor = connection.cursor()
         cursor.execute("SELECT registrant FROM lobbying WHERE registrant_raw = %s LIMIT 1",
-                            self.name)
+                            [self.name, ])
         if not cursor.rowcount:
             return ''
         return cursor.fetchone()[0]
@@ -153,9 +164,9 @@ class Client(models.Model):
         super(Client, self).save(*args, **kwargs)
 
     def get_crp_name(self):
-	cursor = connection.cursor()
+        cursor = connection.cursor()
         cursor.execute("SELECT client FROM lobbying WHERE client_raw = %s LIMIT 1",
-                            self.name.strip())
+                            [self.name.strip(), ])
         if not cursor.rowcount:
             return ''
         return cursor.fetchone()[0]
@@ -272,6 +283,124 @@ class IssueByMonth(models.Model):
     num = models.IntegerField()
 
 
+class CoveredPosition(models.Model):
+    position = models.TextField()
+
+    def __unicode__(self):
+        return self.position
+
+
+class Lobbyist(models.Model):
+    name = models.CharField(max_length=255)
+    covered_positions = models.ManyToManyField(CoveredPosition)
+    crp_name = models.CharField(max_length=255)
+    crp_id = models.CharField(max_length=255)
+    display_name = models.CharField(max_length=255)
+    slug = models.SlugField(unique=True)
+    ie_data = PickledObjectField()
+
+    denormalized_registrants = PickledObjectField()
+    denormalized_covered_positions = PickledObjectField()
+    registration_count = models.IntegerField()
+    latest_registration = PickledObjectField()
+    latest_client_name = models.CharField(max_length=255)
+    latest_registration_date = models.DateField()
+
+    class Meta:
+        ordering = ('display_name', )
+
+    def __unicode__(self):
+        return self.display_name
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('willard_lobbyist_detail', [self.slug, ])
+
+
+    def save(self, *args, **kwargs):
+        if not self.display_name:
+            self.crp_id, self.crp_name = self.get_crp_name()
+            self.display_name = self.crp_name or self.name
+            #self.ie_data = get_ie_data(self.display_name)
+        super(Lobbyist, self).save(*args, **kwargs)
+
+    def get_crp_name(self):
+        cursor = connection.cursor()
+        cursor.execute("SELECT lobbyist_id, lobbyist FROM lobbyists where lobbyist_raw = %s LIMIT 1",
+                [self.name.strip(), ])
+        if not cursor.rowcount:
+            return '', ''
+        return cursor.fetchone()
+
+    def get_ie_data(self):
+        return get_ie_data(self.display_name)
+
+    def ie_id(self):
+        if not len(self.ie_data):
+            return None
+        return self.ie_data[0]['id']
+
+    def ie_url(self):
+        if not self.ie_id():
+            return ''
+        return 'http://influenceexplorer.com/individual/%s/%s' % (self.slug,
+                                                                    self.ie_id())
+    def registrants(self):
+        registrants = Registrant.objects.none()
+        for registration in self.registration_set.all():
+            registrants = registrants | registration.registrant
+        return registrants.distinct()
+
+    def positions(self):
+        """Check each covered position against
+        each other position to try to determine
+        whether they're actually different positions
+        or just written differently.
+        """
+        from Levenshtein import distance
+        positions = self.denormalized_covered_positions
+        if not positions:
+            return []
+
+        distinct = [positions[0], ]
+        for position1 in positions:
+            min_distance = min([distance(position1, x) for x in distinct])
+            if min_distance > 20:
+                distinct.append(position1)
+        if 'n/a' in distinct:
+            del(distinct[distinct.index('n/a')])
+        if 'None' in distinct:
+            del(distinct[distinct.index('None')])
+        return distinct
+
+
+
+class AffiliatedOrganization(models.Model):
+    slug = models.SlugField()
+    name = models.CharField(max_length=255)
+    country = models.CharField(max_length=100)
+    ppb_country = models.CharField(max_length=100)
+
+    registration_count = models.IntegerField()
+    latest_registration = PickledObjectField()
+
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('name', )
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('willard_affiliated_detail', [self.slug, ])
+
+
+class RegistrationManager(models.Manager):
+    def get_query_set(self):
+        return super(RegistrationManager, self).get_query_set().filter(amended=False)
+
+
 class Registration(models.Model):
     id = models.CharField(max_length=36, primary_key=True)
     reg_type = models.CharField(max_length=24)
@@ -287,11 +416,37 @@ class Registration(models.Model):
     # Denormalize the list of issues
     denormalized_issues = PickledObjectField()
 
+    lobbyists = models.ManyToManyField(Lobbyist)
+
+    affiliated_organizations = models.ManyToManyField(AffiliatedOrganization)
+
+    # This registration has been amended
+    amended = models.BooleanField(default=False)
+
+    objects = RegistrationManager()
+
+    # All objects, even those that have been amended.
+    all_objects = models.Manager()
+
     class Meta:
         ordering = ('-received', )
 
     def __unicode__(self):
         return self.registrant.name
+
+    def save(self, *args, **kwargs):
+        """If this is an amendment, mark the
+        amended filing as such.
+        """
+        if self.reg_type == 'REGISTRATION AMENDMENT':
+            amended = Registration.objects.filter(registrant=self.registrant,
+                                                  client=self.client,
+                                                  received__lt=self.received
+                                              ).exclude(pk=self.pk)
+            for registration in amended:
+                registration.amended = True
+                registration.save()
+        super(Registration, self).save(*args, **kwargs)
 
     @models.permalink
     def get_absolute_url(self):
@@ -324,3 +479,109 @@ class Registration(models.Model):
                 str(self.received),
                 '|'.join([x.issue for x in self.denormalized_issues]),
                 self.specific_issue.replace('\n', ' '), ]
+
+    def save_lobbyists(self):
+        """Because the lobbyist fields were added after
+        some registrations had already been saved, we need
+        to go back and add lobbyists for the registrations
+        that already exist.
+        """
+        if self.lobbyists.count():
+            return
+
+        filing = lxml.etree.fromstring(self.xml)
+        lobbyists = filing.find('Lobbyists')
+        if lobbyists is None:
+            return
+
+        lobbyist = None
+
+        for lobbyist_item in lobbyists.iterchildren():
+            lobbyist_dict = lobbyist_item.attrib
+            covered_position = None
+            if lobbyist_dict.get('OfficialPosition'):
+                covered_position, created = CoveredPosition.objects.get_or_create(
+                        position=lobbyist_dict.get('OfficialPosition', '')
+                        )
+
+            # Check whether the lobbyist name line is blank
+            # or refers to the lobbyist name listed above it.
+            # If so, use the previous lobbyist name.
+            name = lobbyist_dict['LobbyistName']
+            if name.find('*') > -1: # used for notes
+                continue
+            if name and name not in (' ',
+                                     "(CONT'D), (CONT'D)",
+                                     '(CONTINUED), (CONTINUED)',
+                                     '(CONTINUED), (CONTINUED',
+                                     '-, -',
+                                     '-----, -----',
+                                     'ABOVE), (SEE',
+                                     "'', ''",
+                                     '", "',
+                                     ):
+
+                crp_id, crp_name = get_lobbyist_crp_name(lobbyist_dict['LobbyistName'])
+
+                lobbyist, created = Lobbyist.objects.get_or_create(
+                        slug=slugify(crp_name or lobbyist_dict['LobbyistName'])[:50],
+                        defaults=dict(
+                            display_name=crp_name or lobbyist_dict['LobbyistName'],
+                            crp_name=crp_name,
+                            crp_id=crp_id,
+                            name=lobbyist_dict['LobbyistName'],
+                            registration_count=0,
+                            latest_registration_date=self.received
+                            )
+                        )
+                self.lobbyists.add(lobbyist)
+
+            if not lobbyist:
+                continue
+
+            if covered_position:
+                lobbyist.covered_positions.add(covered_position)
+
+            if created:
+                lobbyist.denormalized_registrants = set([self.registrant, ])
+            else:
+                lobbyist.denormalized_registrants = lobbyist.denormalized_registrants.union(set([self.registrant, ]))
+
+            lobbyist.registration_count += 1
+
+            latest_registration = lobbyist.registration_set.order_by('-received')[0]
+            lobbyist.latest_registration = {'client': latest_registration.client,
+                                            'received': latest_registration.received,
+                                            'url': latest_registration.get_absolute_url(), }
+            lobbyist.denormalized_covered_positions = [x.position for x in lobbyist.covered_positions.all()]
+
+            lobbyist.save()
+
+
+    def save_affiliated(self):
+        if self.affiliated_organizations.count():
+            return
+
+        filing = lxml.etree.fromstring(self.xml)
+        for org in filing.xpath('//Org'):
+            name = org.attrib['AffiliatedOrgName']
+            slug = slugify(name)[:50]
+            country = org.attrib['AffiliatedOrgCountry']
+            ppb_country = org.attrib['AffiliatedOrgPPBCcountry']
+
+            affiliated, created = AffiliatedOrganization.objects.get_or_create(
+                    slug=slug,
+                    defaults=dict(
+                        name=name,
+                        slug=slug,
+                        ppb_country=ppb_country,
+                        country=country,
+                        registration_count=0
+                        )
+                    )
+
+            self.affiliated_organizations.add(affiliated)
+
+            affiliated.registration_count += 1
+            affiliated.latest_registration = self
+            affiliated.save()
