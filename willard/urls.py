@@ -177,7 +177,7 @@ urlpatterns = patterns('',
             name='willard_search'),
 
         url(r'^$',
-            cache_page(index, 60*60*24, key_prefix=KEY_PREFIX),
+            cache_page(index, 60*5, key_prefix=KEY_PREFIX),
             {},
             name='willard_index'),
 
