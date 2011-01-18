@@ -601,9 +601,9 @@ class PostEmploymentNotice(models.Model):
         unique_together = (('body', 'first', 'last', 'office_name', ))
 
     def __unicode__(self):
-        return '%s, %s %s' % (self.last,
-                              self.first,
-                              self.middle)
+        return '%s, %s %s' % (self.last.title(),
+                              self.first.title(),
+                              self.middle.title())
                                 
 
     def get_absolute_url(self):

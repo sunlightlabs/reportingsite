@@ -47,9 +47,9 @@ This page combines those Senate and House lists and makes it easier to see indiv
     <tbody>
     {% for object in object_list %}
     <tr class="{% cycle 'odd' 'even' %}" id="{{ object.pk }}">
-            <td>{{ object.last }}, {{ object.first }} {{ object.middle }}</td>
+            <td>{{ object }}</td>
             <td>{{ object.body }}</td>
-            <td>{{ object.office_name }}</td>
+            <td>{{ object.office_name|title }}</td>
             <td>{{ object.begin_date|date:"n/j/y" }}</td>
             <td>{{ object.end_date|date:"n/j/y" }}</td>
             <td>{{ object.days_left }}</td>
@@ -59,9 +59,9 @@ This page combines those Senate and House lists and makes it easier to see indiv
     {% endfor %}
     {% for object in passed %}
     <tr class="{% cycle 'odd' 'even' %}" id="{{ object.pk }}">
-            <td>{{ object.last }}, {{ object.first }} {{ object.middle }}</td>
+            <td>{{ object }}</td>
             <td>{{ object.body }}</td>
-            <td>{{ object.office_name }}</td>
+            <td>{{ object.office_name|title }}</td>
             <td>{{ object.begin_date|date:"n/j/y" }}</td>
             <td>{{ object.end_date|date:"n/j/y" }}</td>
             <td>{{ object.days_left }}</td>
