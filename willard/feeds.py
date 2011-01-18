@@ -69,7 +69,7 @@ class PostEmploymentFeed(Feed):
 
     def items(self):
         cutoff = datetime.date.today() + datetime.timedelta(7)
-        return PostEmploymentNotice.objects.filter(end_date__gte=datetime.date.today(), end_date__lte=cutoff)
+        return PostEmploymentNotice.objects.filter(end_date__gte=datetime.date.today(), end_date__lte=cutoff).order_by('end_date')
 
     def item_link(self, item):
         return item.get_absolute_url()
