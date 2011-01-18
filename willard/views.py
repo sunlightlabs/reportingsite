@@ -147,6 +147,34 @@ def object_list_api(request, model, format):
         return response
 
 
+def willard_postemployment_api(request, format):
+    allowed_formats = ('csv', 'json', )
+    if format not in allowed_formats:
+        raise Http404
+
+    object_list = []
+    for obj in PostEmploymentNotice.objects.all():
+        object_list.append({'last': obj.last,
+                            'first': obj.first,
+                            'middle': obj.middle,
+                            'body': obj.body,
+                            'office': obj.office_name,
+                            'restriction_start': obj.begin_date,
+                            'restriction_end': obj.end_date,
+                            })
+
+    if format == 'json':
+        return HttpResponse(json.dumps(object_list), mimetype='text/plain')
+
+    elif format == 'csv':
+        response = HttpResponse(mimetype='text/plain')
+        fieldnames = ['last', 'first', 'middle', 'body',
+                        'office', 'restriction_start', 'restriction_end', ]
+        writer = csv.DictWriter(response, fieldnames=fieldnames)
+        writer.writerow(dict(zip(fieldnames, fieldnames)))
+        writer.writerows(object_list)
+        return response
+
 
 def detail_api(request, model, slug, format):
     obj = get_object_or_404(model, slug=slug)
@@ -381,3 +409,4 @@ def lobbyist_list(request):
                 'sort': 'desc' if given_order.startswith('-') else 'asc',
                 },
             context_instance=RequestContext(request))
+
