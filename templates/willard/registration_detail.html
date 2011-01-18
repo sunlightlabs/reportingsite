@@ -19,7 +19,7 @@
 <br/>
 {% for lobbyist in object.lobbyists.all %}
 <a href="{{ lobbyist.get_absolute_url }}">{{ lobbyist }}</a>
-{% if lobbyist.denormalized_covered_positions %}
+{% if lobbyist.positions %}
 (covered positions: 
 {% for position in lobbyist.positions %}
 {{ position }}{% if not forloop.last %}; {% endif %}
