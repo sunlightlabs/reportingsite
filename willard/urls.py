@@ -176,6 +176,26 @@ urlpatterns = patterns('',
             {},
             name='willard_search'),
 
+        url(r'^postemployment\/?$',
+            object_list,
+            {
+                'queryset': PostEmploymentNotice.objects.filter(end_date__gte=datetime.date.today()).order_by('end_date'),
+                'extra_context': {
+                    'passed': PostEmploymentNotice.objects.filter(end_date__lt=datetime.date.today()).order_by('-end_date'), 
+                    },
+            },
+            name='willard_postemployment_list'),
+
+        url(r'^postemployment\.rss$',
+            PostEmploymentFeed(),
+            {},
+            name='willard_postemployment_feed'),
+
+        url(r'^postemployment\.(?P<format>\w+)$',
+            willard_postemployment_api,
+            {},
+            name='willard_postemployment_api'),
+
         url(r'^$',
             cache_page(index, 60*60*24, key_prefix=KEY_PREFIX),
             {},
