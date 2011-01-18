@@ -1,0 +1,87 @@
+{% extends "willard/willard_base.html" %}
+
+{% block title %}{{ block.super }} - Post-Employment Notifications{% endblock %}
+
+{% block body %}reporting postemployment fullWidth{% endblock %}
+
+
+{% block breadcrumb %}
+{{ block.super }}
+<li>Post-Employment Notifications</li>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+
+<div style="float: right;">
+    <div class="rssIcon">
+        <a href="{% url willard_postemployment_feed %}">Subscribe</a>
+    </div>
+    <br/>
+    <div class="csvIcon">
+        <a href="{% url willard_postemployment_api format="csv" %}">Download</a>
+    </div>
+</div>
+
+
+<h3>Post-Employment Notifications</h3>
+
+<p>
+The <a href="http://www.gpo.gov/fdsys/pkg/PLAW-110publ81/html/PLAW-110publ81.htm">Honest Leadership and Open Government Act of 2007</a> requires the House clerk and the secretary of the Senate to notify departing members and staffers of any applicable post-employment restrictions and to post on their websites a list of these notifications.</p>
+<p>
+This page combines those Senate and House lists and makes it easier to see individuals whose restriction periods are ending soon. In addition, <a href="{% url willard_postemployment_feed %}">an RSS feed</a> is available to keep track of whose restrictions will be expiring.</p>
+
+<br/>
+
+<table class="tablesorter" id="expendituresData">
+    <thead>
+        <tr>
+            <th class="sort header">Name</th>
+            <th class="sort header">Body</th>
+            <th class="sort header">Office</th>
+            <th class="sort header">Begin</th>
+            <th class="sort header">End</th>
+            <th class="sort header">Days left</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for object in object_list %}
+    <tr class="{% cycle 'odd' 'even' %}" id="{{ object.pk }}">
+            <td>{{ object.last }}, {{ object.first }} {{ object.middle }}</td>
+            <td>{{ object.body }}</td>
+            <td>{{ object.office_name }}</td>
+            <td>{{ object.begin_date|date:"n/j/y" }}</td>
+            <td>{{ object.end_date|date:"n/j/y" }}</td>
+            <td>{{ object.days_left }}</td>
+            <td><a href="#{{ object.pk }}">#</a></td>
+            <td>
+        </tr>
+    {% endfor %}
+    {% for object in passed %}
+    <tr class="{% cycle 'odd' 'even' %}" id="{{ object.pk }}">
+            <td>{{ object.last }}, {{ object.first }} {{ object.middle }}</td>
+            <td>{{ object.body }}</td>
+            <td>{{ object.office_name }}</td>
+            <td>{{ object.begin_date|date:"n/j/y" }}</td>
+            <td>{{ object.end_date|date:"n/j/y" }}</td>
+            <td>{{ object.days_left }}</td>
+            <td><a href="#{{ object.pk }}">#</a></td>
+            <td>
+        </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% load media %}
+{% js "js/jquery.tablesorter.min.js" %}
+<script type="text/javascript">
+$(document).ready(function() {
+    $("#expendituresData").tablesorter({
+        widgets: ['zebra'],
+    });
+});
+</script>
+
+
+
+{% endblock content %}
