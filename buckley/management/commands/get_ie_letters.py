@@ -63,6 +63,12 @@ def get_committee_name(page):
         return match.groups()[0]
     return None
 
+
+def save_checked_url(url):
+    with open(r'/projects/reporting/log/fec_pdfs_checked.log', 'a') as fh:
+        fh.write(url + '\n')
+
+
 class Command(NoArgsCommand):
     help = """Get a list of independent expenditure committees that have submitted
     a letter saying they will raise unlimited contributions."""
@@ -74,6 +80,8 @@ class Command(NoArgsCommand):
         request = urllib2.Request(url, body)
         response = urllib2.urlopen(request)
         page = response.read()
+
+        checked = [x.strip() for x in open(r'/projects/reporting/log/fec_pdfs_checked.log', 'r')]
 
         already = get_already_submitted()
         committee_ids = set(re.findall(r'C\d{8}', page)).difference(already)
@@ -87,6 +95,8 @@ class Command(NoArgsCommand):
                 continue
 
             for url, date in get_pdf_urls(page):
+                if url in checked:
+                    continue
                 mentions_speechnow = parse_pdf(url)
                 if mentions_speechnow:
                     IEOnlyCommittee.objects.create(
@@ -95,3 +105,5 @@ class Command(NoArgsCommand):
                             date_letter_submitted=date,
                             pdf_url=url)
                     print id, url, get_committee_name(page), date
+
+                save_checked_url(url)
