@@ -177,7 +177,7 @@ urlpatterns = patterns('',
             name='willard_search'),
 
         url(r'^postemployment\/?$',
-            object_list,
+            cache_page(object_list, 60*15, key_prefix=KEY_PREFIX),
             {
                 'queryset': PostEmploymentNotice.objects.filter(end_date__gte=datetime.date.today()).order_by('end_date'),
                 'extra_context': {
@@ -192,7 +192,7 @@ urlpatterns = patterns('',
             name='willard_postemployment_feed'),
 
         url(r'^postemployment\.(?P<format>\w+)$',
-            willard_postemployment_api,
+            cache_page(willard_postemployment_api, 60*15, key_prefix=KEY_PREFIX),
             {},
             name='willard_postemployment_api'),
 
