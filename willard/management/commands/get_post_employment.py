@@ -113,11 +113,9 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
-        """
         for employee in self.get_senate('2010'):
             print employee
             self.save_employee(employee)
-        """
         for employee in self.get_house():
             print employee
             self.save_employee(employee)
