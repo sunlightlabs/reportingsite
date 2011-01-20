@@ -5,6 +5,7 @@ import itertools
 import urllib
 import urllib2
 
+from django.core.urlresolvers import reverse
 from django.db import models, connection
 from django.template.defaultfilters import slugify
 
@@ -585,3 +586,32 @@ class Registration(models.Model):
             affiliated.registration_count += 1
             affiliated.latest_registration = self
             affiliated.save()
+
+
+class PostEmploymentNotice(models.Model):
+    body = models.CharField(max_length=10)
+    first = models.CharField(max_length=100)
+    middle = models.CharField(max_length=50)
+    last = models.CharField(max_length=100)
+    office_name = models.CharField(max_length=100)
+    begin_date = models.DateField()
+    end_date = models.DateField()
+
+    class Meta:
+        unique_together = (('body', 'first', 'last', 'office_name', ))
+
+    def __unicode__(self):
+        return '%s, %s %s' % (self.last.title(),
+                              self.first.title(),
+                              self.middle.title())
+                                
+
+    def get_absolute_url(self):
+        return '%s#%s' % (reverse('willard_postemployment_list'),
+                          self.pk)
+
+    def days_left(self):
+        diff = (self.end_date - datetime.date.today()).days
+        if diff < 0:
+            return ''
+        return diff

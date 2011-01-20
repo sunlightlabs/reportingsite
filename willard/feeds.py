@@ -1,6 +1,7 @@
 import datetime
 
 from django.contrib.syndication.views import Feed
+from django.core.urlresolvers import reverse
 from django.shortcuts import get_object_or_404
 
 from willard.models import *
@@ -60,3 +61,32 @@ class GenericLobbyingFeed(Feed):
     def link(self, obj):
         return obj.get_absolute_url()
 
+
+class PostEmploymentFeed(Feed):
+    title = 'Upcoming lobbying restriction expirations'
+    link = '/lobbying/postemployment.rss'
+    description = 'Upcoming expirations of lobbying restrictions for Senate and House members and staffers'
+
+    def items(self):
+        cutoff = datetime.date.today() + datetime.timedelta(7)
+        return PostEmploymentNotice.objects.filter(end_date__gte=datetime.date.today(), end_date__lte=cutoff).order_by('end_date')
+
+    def item_link(self, item):
+        return item.get_absolute_url()
+
+    def item_description(self, item):
+        return '%s left the office "%s" in the %s on %s. The lobbying restriction ends on %s' % (
+                                    str(item),
+                                    item.office_name,
+                                    item.body,
+                                    item.begin_date.strftime('%m/%d/%Y'),
+                                    item.end_date.strftime('%m/%d/%Y')
+                                )
+
+    def item_pubdate(self, item):
+        date = item.end_date - datetime.timedelta(7)
+        return datetime.datetime(date.year, date.month, date.day)
+
+    def item_title(self, item):
+        return 'Lobbying restriction on %s ends %s' % (str(item),
+                                                       item.end_date.strftime('%m/%d/%Y'))
