@@ -44,7 +44,7 @@ def get_pdf_urls(page):
         filed = re.search(r'\d\d\/\d\d\/\d\d\d\d', row)
         if filed:
             date = dateparse(filed.group()).date()
-            if date > datetime.date.today() - datetime.timedelta(15):
+            if date > datetime.date.today() - datetime.timedelta(30):
                 match = re.search(r'\/pdf.*?\.pdf', row)
                 if match:
                     yield 'http://images.nictusa.com%s' % match.group(), date
