@@ -17,7 +17,7 @@ try:
 except Post.DoesNotExist:
     pass
 
-KEY_PREFIX = '1'
+KEY_PREFIX = '2'
 
 
 urlpatterns = patterns('',
@@ -186,7 +186,7 @@ urlpatterns = patterns('',
             name='buckley_ie_list'),
 
         url(r'letters\/?$',
-            cache_page(object_list, 60*60*24),
+            cache_page(object_list, 60*5, key_prefix=KEY_PREFIX),
             {'queryset': IEOnlyCommittee.objects.all(), },
             name='buckley_letter_list'),
 

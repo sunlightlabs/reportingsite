@@ -76,8 +76,26 @@ This page combines those Senate and House lists and makes it easier to see indiv
 {% js "js/jquery.tablesorter.min.js" %}
 <script type="text/javascript">
 $(document).ready(function() {
+$.tablesorter.addParser({
+    id: 'IsANumber',
+    is: function (s) {
+        return false;
+    },
+    format: function (s) {
+        s = '' + s;
+        s = s.replace(new RegExp(/\D/g), "");
+        s = $.tablesorter.formatInt(s);
+        return s;
+    },
+    type: 'numeric'
+});
     $("#expendituresData").tablesorter({
-        widgets: ['zebra'],
+        headers: { 
+		5: { 
+			sorter: "IsANumber" 
+		} 
+	},
+        widgets: ['zebra']
     });
 });
 </script>
