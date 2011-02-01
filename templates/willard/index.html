@@ -10,6 +10,63 @@
 
 
 {% block breadcrumb %}{% endblock %}
+
+            <div id="halfColumn_lt">
+                <a href="{% url willard_registrations_home %}"><img id="registrationImg" alt="Image of footsteps" src="{% media_url %}/img/bg_registration.png" /></a>
+                <div class="lobbyingHeader">
+                    <h3 class="withTip"><a href="{% url willard_registrations_home %}">Lobbying Registration Tracker</a></h3>
+                    <p class="tip tipLg">The Lobbyist Registration Tracker, updated weekly, shows which special interests have hired new lobbyists within the last 45 days and includes all registrants since 2008.</p>
+                </div>
+                <h4>June 20, 2011</h4>
+                <a class="readMoreRT" href="{% url willard_registrations_all %}">View All Registrations »</a>
+            </div>    
+
+            <div id="halfColumn_rt">
+                <a href="/lobbying/postemployment"><img id="employmentImg" alt="Image of briefcase" src="{% media_url %}/img/bg_employment.png" /></a>
+                <div class="lobbyingHeader">
+                    <h3 class="withTip"><a href="/lobbying/postemployment">Post Employment Tracker</a></h3>
+                    <p class="tip tipLg">The Post Employment Tracker shows when covered congressional officials—former members and high-ranking staffers—can legally begin to lobby their old colleagues, though note that not everyone listed has become a lobbyist.</p>
+                </div>
+                <h4>Legal to Lobby as of January 31, 2011</h4>
+                <ul class="definedList" id="employmentList">
+                    <li>
+                        <a href="#">Kardon, Joshua Robert</a>
+                        <span>Senate, Office of Senator Wyden</span>
+                    </li>
+                    <li>
+                        <a href="#">Kardon, Joshua Robert</a>
+                        <span>Senate, Office of Senator Wyden</span>
+                    </li>
+                    <li>
+                        <a href="#">Kardon, Joshua Robert</a>
+                        <span>Senate, Office of Senator Wyden</span>
+                    </li>
+                    <li>
+                        <a href="#">Kardon, Joshua Robert</a>
+                        <span>Senate, Office of Senator Wyden</span>
+                    </li>
+                    <li>
+                        <a href="#">Kardon, Joshua Robert</a>
+                        <span>Senate, Office of Senator Wyden</span>
+                    </li>
+                </ul>
+                <a class="readMoreRT" href="/lobbying/postemployment">View the Next Congressional Members or Staffers up for Legal Lobbying »</a>
+            </div>    
+            <div class="clear"></div>
+            <div id="lobbyingOther">
+                <h3>Other Lobbying Resources</h3>
+                <div id="partyTime">
+                    <img alt="party time icon" src="{% media_url %}/img/icon_partyTime.png"/>
+                    <div id="partyDetails">
+                        <h4><a href="http://politicalpartytime.org/">PartyTime</a></h4>
+                        <p class="tip tipLg">Party Time contains invitations to fundraisers for members of Congress sent to lobbyists; registered lobbyists sometimes host these events.</p>
+                        <a class="readMoreRT" href="#">Learn More »</a>
+                    </div>
+                </div>
+            </div>    
+
+
+{% comment %}
 <div id="lobbyFeature_wrapper">
     <div id="lobbyFeature">
         <p>The Lobbying Disclosure Act requires lobbyists and lobbying firms to register with the House and the Senate within 45 days of being hired by a client. The registrations list the issue areas that will be covered by the lobbying. This database allows users to see those registrations as they're submitted, to browse by issue, registrant and client, and to see the trends in issues and registrations over time. The database is updated weekly based on Senate records and includes all registrations starting in 2009.</p>
@@ -249,4 +306,6 @@
     {% endfor %}
     <a class="lobbying_paginatorNext" href="{% url willard_registrations_all %}">View all registrations »</a>
 </div>
+{% endcomment %}
+
 {% endblock content %}
