@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+
+{% load media %}
+
+{% block title %}{{ block.super }}: Lobbyist registrations{% endblock %}
+
+{% block body %}fullWidth{% endblock %}
+{% block main_content %}
+{% css "css/lobbying.css" %}
+
+<div id="columns">
+    <div id="fullColumn" style="overflow:hidden;">
+
+        <script type="text/javascript">
+            $(document).ready(function () {
+                $("#searchbox").focus(function () {
+                    if ($(this)[0].value === 'Registrant, client, lobbyist or position') {
+                        $(this).val('');
+                    }
+                });
+            });
+        </script>
+
+        <h2 id="lobbyingTitle"><a href="/lobbying">Lobbyist registration tracker</a></h2>
+        <div id="lobbyistFilter">
+            <ul>
+                <li class="issues"><a href="{% url willard_issue_list %}">Browse issues</a></li>
+                <li class="registrants"><a href="{% url willard_registrant_list %}">Browse registrants</a></li>
+                <li class="lobbyists"><a href="{% url willard_lobbyist_list %}">Browse lobbyists</a></li>
+                <li class="clients"><a href="{% url willard_client_list %}">Browse clients</a></li>
+                <form id="lobbyingSearch" action="{% url willard_search %}" method="GET">
+                    <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Registrant, client, lobbyist or position"{% endif %} type="text" name="q" />
+                    <button class="goBtn" type="submit" value="Search" >
+                        <span>Go</span>
+                    </button>
+                </form>
+                <div class="clear"></div>
+            </ul>
+        </div>
+        
+        <div id="breadcrumbs" class="lobbyingBreadcrumbs">
+            <ul>
+                {% block breadcrumb %}
+                <li>
+                    <a href="{% url willard_index %}">Lobbyist registrations home</a>
+                </li>
+                {% endblock breadcrumb %}
+            </ul>
+            <div class="clear"></div>
+        </div>
+
+        {% block content %}{% endblock content %}
+    </div>
+</div>
+{% endblock main_content %}
