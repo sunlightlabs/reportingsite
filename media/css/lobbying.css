@@ -112,3 +112,16 @@ div#pageMain #timeToggle label { width: auto; margin-right: 20px; color: #457B80
 #lobbyShareBar ul li { float: left; }
 #lobbyShareBar ul li:first-child { border-right: 1px solid #7b989b; padding-right: 10px; margin-right: 10px;}
 .at300bs { background: none; height: 1px; }
+
+
+#halfColumn_lt img, #halfColumn_rt img { border: none;}
+.lobbyingHeader { text-align: center; margin-top: -95px;}
+#lobbyHeader { text-transform: uppercase; font-size: 300%; background: url(../img/bg_line.jpg) bottom left no-repeat; color: #292726;}
+#lobbyingDescript { width: 650px; }
+#employmentList a { display: block; font-weight: bold;}
+
+#lobbyingOther { margin: 50px 0;}
+#partyTime img { float: left; margin-right: 15px; border: none;}
+#partyDetails { float: left; width: 520px;}
+#partyDetails .tip { margin-bottom: 20px;}
+
