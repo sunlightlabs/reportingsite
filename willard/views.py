@@ -21,7 +21,7 @@ from dateutil.relativedelta import relativedelta
 from willard.models import *
 
 
-def index(request):
+def index(request, template='index.html'):
     registrations = Registration.objects.filter(received__lte=datetime.date.today(), received__gte=datetime.date.today()-relativedelta(months=1)).select_related()
     registrations_by_date = [{'date': date, 'registrations': list(regs)} for date, regs in itertools.groupby(registrations, lambda x: x.received.date())][:5]
 
@@ -65,7 +65,7 @@ def index(request):
 
     registrations_by_day = sorted(registrations_by_day.items(), key=itemgetter(0))
 
-    return render_to_response('willard/index.html',
+    return render_to_response('willard/%s' % template,
                               {'object_list': registrations_by_date,
                                'months': months,
                                'issues': Issue.objects.filter(registration__received__gte=cutoff).annotate(num=Count('registration')).order_by('-num').select_related(),
