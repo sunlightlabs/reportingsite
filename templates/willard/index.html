@@ -20,33 +20,42 @@
 
                 {% for dategroup in registrations %}
                 <h4>{{ dategroup.date|date:"F j" }}</h4>
-                <ul>
+                <ul class="smDefinedList">
                     {% for registration in dategroup.registrations %}
-                    <li>
-                        <span class="regTitle">Registrant</span>
-                        <span class="regDescription"><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></span>
-                        <div class="clear"></div>
-                    </li>
-                    <li>
-                        <span class="regTitle">Client</span>
-                        <span class="regDescription"><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></span>
-                        <div class="clear"></div>
-                    </li>
-                    <li>
-                        <span class="regTitle">Issues</span>
-                        <span class="regDescription">
-                            {% for issue in registration.denormalized_issues %}
-                            <a href="{{ issue.get_absolute_url }}">{{ issue.issue }}</a>{% if not forloop.last %}, {% endif %}
-                            {% endfor %}
-                        </span>
+                        <li>
+                            <ul class="interiorList">
+                                <li>
+                                    <span class="regTitle">Registrant</span>
+                                    <span class="regDescriptionLg"><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></span>
+                                    <div class="clear"></div>
+                                </li>
+                                <li>
+                                    <span class="regTitle">Client</span>
+                                    <span class="regDescriptionLg"><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></span>
+                                    <div class="clear"></div>
+                                </li>
+                                <li>
+                                    <span class="regTitle">Issues</span>
+                                    <span class="regDescriptionLg">
+                                        <ul class="alignedList">
+                                        {% for issue in registration.denormalized_issues %}
+                                            <li>
+                                                <a href="{{ issue.get_absolute_url }}">{{ issue.issue }}</a>{% if not forloop.last %}, {% endif %}
+                                            </li>
+                                        {% endfor %}
+                                        </ul>
+                                    </span>
+                                    
+                                    <div class="clear"></div>
+                                </li>
+                                <li>
+                                    <a href="{{ registration.get_absolute_url }}">View registration</a>
+                                </li>
+                            </ul>
+                        </li>
                     {% endfor %}
-                    <div class="clear"></div>
-                    <li>
-                    <a href="{{ registration.get_absolute_url }}">View registration</a>
-                    </li>
                 </ul>
                 {% endfor %}
-
                 <a class="readMoreRT" href="{% url willard_registrations_all %}">View All Registrations »</a>
 
             </div>    
@@ -59,7 +68,7 @@
                 </div>
                 {% for dategroup in postemployment %}
                 <h4>Legal to Lobby as of {{ dategroup.date|date:"F j" }}</h4>
-                <ul class="definedList" id="employmentList">
+                <ul class="smDefinedList definedList" id="employmentList">
                     {% for notice in dategroup.notices %}
                     <li>
                         <a href="{{ notice.get_absolute_url }}">{{ notice }}</a>

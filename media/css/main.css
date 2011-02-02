@@ -207,7 +207,10 @@ body.home #brandingbar a#sllink, body.theblog #brandingbar a#sllink, body.about 
 div.features ul, div.about ul, div.posts ul { list-style-type: disc; padding-left: 30px; margin-bottom: 20px; color: #58595B; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 div.features ol, div.about ol, div.posts ol{ list-style-type: decimal; padding-left: 30px; margin-bottom: 20px; color: #58595B; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 
-.definedList li { list-style-type: disc; margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #dfe2e1; margin-left: 40px;}
+.definedList li { list-style-type: disc; margin-left: 40px;}
+.smDefinedList li {  margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #dfe2e1; }
+.smDefinedList .interiorList li{ border: none; margin-bottom: 5px; padding-bottom: 0;}
+.alignedList li { float: left; margin-right: 7px;}
 
 .clear { clear: both;}
 
