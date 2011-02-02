@@ -63,7 +63,7 @@ ul.issueChart .index {
 }
 
 body.fullWidth #lobbyingTitle a:active, body.fullWidth #lobbyingTitle a:link, body.fullWidth #lobbyingTitle a:visited { color: #414042; }
-body.fullWidth #lobbyingTitle a:hover { color: #457b80;}
+body.fullWidth #lobbyingTitle a:hover { color: #457b80; }
 
 body.registrants li.registrants a, body.clients li.clients a, body.issues li.issues a, body.lobbyists li.lobbyists a { font-weight: bold; color: #414042;}
 body.registrants #lobbyistFilter li.registrants a:hover, body.clients #lobbyistFilter li.clients a:hover, body.issues #lobbyistFilter li.issues a:hover { text-decoration: none;}
@@ -76,10 +76,10 @@ div#lobbyBar li { float: left; border-right: 1px solid #739935; margin-right: 20
 h3.browseHeading { margin: 30px 0 10px 0; border-bottom: 1px solid #afafaf; }
 a.toggler { display: block; text-align: center; margin-top: -15px; margin-bottom: 20px; }
 
-#lobbyistFilter { background: #a5bfc2 url(../img/bg_lines.png) right bottom repeat-x; padding: 7px 15px; -moz-border-radius: 3px; -webkit-border-radius: 3px; border-radius: 3px; border: 1px solid #7b989b;}
-#lobbyistFilter a:link, #lobbyistFilter a:visited, #lobbyistFilter a:active { color: #fff; font-size: 110%; font-style: oblique;}
+#lobbyistFilter { background: url(../img/bg_interiorNav.png) center bottom repeat-x; padding: 7px 15px; border-bottom: 1px solid #E1DFDD; margin-bottom: 30px;}
+#lobbyistFilter a:link, #lobbyistFilter a:visited, #lobbyistFilter a:active { font-style: oblique;}
 #lobbyistFilter .clients { border: none;}
-#lobbyistFilter a:hover { text-decoration: underline;}
+#lobbyistFilter a:hover { text-decoration: under line;}
 #lobbyistFilter li { float: left; padding-right: 15px; margin-right: 15px; border-right: 1px solid #d2dedf; margin-top: 2px;}
 div#pageMain #lobbyistFilter input { border: 1px solid #aab1b2;}
 
@@ -108,9 +108,9 @@ div#pageMain #timeToggle label { width: auto; margin-right: 20px; color: #457B80
 .lobbying_paginatorPrevious  { float: left;}
 .lobbying_paginatorPrevious, .lobbying_paginatorNext{ font-size: 115%; font-style: oblique; margin-top: 10px;} 
 
-#lobbyShareBar { clear: all; margin: -50px 10px 20px 0; float: right; }
+#lobbyShareBar { clear: all; margin: -50px 10px 20px 0; float: right; text-transform: uppercase;}
 #lobbyShareBar ul li { float: left; }
-#lobbyShareBar ul li:first-child { border-right: 1px solid #7b989b; padding-right: 10px; margin-right: 10px;}
+#lobbyShareBar ul li:first-child { border-right: 1px solid #E1DFDD; padding-right: 10px; margin-right: 10px; margin-top: -1px;}
 .at300bs { background: none; height: 1px; }
 
 
@@ -120,8 +120,17 @@ div#pageMain #timeToggle label { width: auto; margin-right: 20px; color: #457B80
 #lobbyingDescript { width: 650px; }
 #employmentList a { display: block; font-weight: bold;}
 
-#lobbyingOther { margin: 50px 0;}
+#lobbyingOther { margin: 50px 0; background: url(../img/bg_otherResources.png) top left repeat; padding: 20px; border-top: 1px solid #E1DFDD; border-bottom: 1px solid #E1DFDD;}
 #partyTime img { float: left; margin-right: 15px; border: none;}
 #partyDetails { float: left; width: 520px;}
 #partyDetails .tip { margin-bottom: 20px;}
 
+.lobbyingIcon { border: none; float: left; margin-right: 15px;}
+.lobbyingInteriorTitle { padding-top: 40px; padding-bottom: 10px; background: url(../img/bg_lobbyingInterior.png) bottom left no-repeat; float: left; width: 600px;}
+
+#lobbyingTitle { margin-bottom: 5px;}
+
+#employmentDescript { width: 685px; float: left; margin-bottom: 40px;}
+
+#download_btn { display: block; text-indent: -9999em; background: url(../img/btn_download.png) top left no-repeat; width: 117px; height: 68px; float: left; margin-left: 60px; margin-top: 25px;}
+#download_btn:hover { background: url(../img/btn_download.png) bottom left no-repeat;}

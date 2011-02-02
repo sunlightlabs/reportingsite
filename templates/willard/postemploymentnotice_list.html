@@ -1,7 +1,7 @@
 {% extends "willard/willard_base.html" %}
 
 {% block title %}{{ block.super }} - Post-Employment Notifications{% endblock %}
-
+{% load media %}
 {% block body %}reporting postemployment fullWidth{% endblock %}
 
 
@@ -13,25 +13,18 @@
 
 {% block content %}
 
-<div style="float: right;">
-    <div class="rssIcon">
-        <a href="{% url willard_postemployment_feed %}">Subscribe</a>
-    </div>
-    <br/>
-    <div class="csvIcon">
-        <a href="{% url willard_postemployment_api format="csv" %}">Download</a>
-    </div>
+<img class="lobbyingIcon" alt="icon of briefcase" src="{% media_url %}/img/icon_employment.png" />
+<h3 class="lobbyingInteriorTitle">Post-Employment Notifications</h3>
+<div class="rssIcon">
+    <a href="{% url willard_postemployment_feed %}">Subscribe</a>
 </div>
+<div class="clear"></div>
 
-
-<h3>Post-Employment Notifications</h3>
-
-<p>
-The <a href="http://www.gpo.gov/fdsys/pkg/PLAW-110publ81/html/PLAW-110publ81.htm">Honest Leadership and Open Government Act of 2007</a> requires the House clerk and the secretary of the Senate to notify departing members and staffers of any applicable post-employment restrictions and to post on their websites a list of these notifications.</p>
-<p>
-This page combines those Senate and House lists and makes it easier to see individuals whose restriction periods are ending soon. In addition, <a href="{% url willard_postemployment_feed %}">an RSS feed</a> is available to keep track of whose restrictions will be expiring.</p>
-
-<br/>
+<div id="employmentDescript">
+    <p>The <a href="http://www.gpo.gov/fdsys/pkg/PLAW-110publ81/html/PLAW-110publ81.htm">Honest Leadership and Open Government Act of 2007</a> requires the House clerk and the secretary of the Senate to notify departing members and staffers of any applicable post-employment restrictions and to post on their websites a list of these notifications.</p>
+    <p>This page combines those Senate and House lists and makes it easier to see individuals whose restriction periods are ending soon. In addition, <a href="{% url willard_postemployment_feed %}">an RSS feed</a> is available to keep track of whose restrictions will be expiring.</p>
+</div>
+<a id="download_btn" href="{% url willard_postemployment_api format="csv" %}">Download</a>
 
 <table class="tablesorter" id="expendituresData">
     <thead>

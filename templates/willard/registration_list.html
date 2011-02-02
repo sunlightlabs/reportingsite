@@ -31,13 +31,13 @@
     {% endif %}
 </div>
 
-<h3>
+<h4>
     {% if object %}
     {{ object }}
     {% else %}
     All registrations
     {% endif %}
-</h3>
+</h4>
 {% if object.ie_id %}
 <a class="tip tipHeight" href="{{ object.ie_url }}">Get more information at Influence Explorer</a>
 {% endif %}

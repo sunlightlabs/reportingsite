@@ -1,4 +1,8 @@
-<h2 id="lobbyingTitle"><a href="/lobbying">Lobbyist registrations</a></h2>
+{% load media %}
+
+<img class="lobbyingIcon" alt="icon of briefcase" src="{% media_url %}/img/icon_registration.png" />
+<h3  class="lobbyingInteriorTitle" id="lobbyingTitle"><a href="/lobbying/registrations">Lobbyist registrations</a></h3>
+<div class="clear"></div>
         <div id="lobbyistFilter">
             <ul>
                 <li class="issues"><a href="{% url willard_issue_list %}">Browse issues</a></li>
