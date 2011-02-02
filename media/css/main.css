@@ -10,7 +10,7 @@ a { text-decoration: none;}
 
 a:link { outline: none; color: #457b80; }
 a:visited { outline: none; color: #457b80; }
-a:hover { outline: none; color: #457b80; }
+a:hover { outline: none; color: #124a50; }
 a:active { outline: none; color: #457b80; }
 
 body{
@@ -54,6 +54,9 @@ div#fullColumn { padding: 40px 30px 0;}
 body.home div#rtColumn { width: 525px; }
 div#fullWidth h3 { padding-left: 15px;}
 
+#halfColumn_lt { width: 415px; margin-right: 30px; padding-right: 30px; border-right: 1px solid #e1dfdd; float: left;}
+#halfColumn_rt { width: 415px; float: left;}
+
 body.fullWidth div#header{ background: url(../img/header_full.png) left 154px no-repeat;}
 body.fullWidth div#columns { background: url(../img/column_ltFull.png) top left repeat-y;}
 body.fullWidth div#mainContent { padding: 0 0 0 3px;}
@@ -76,8 +79,10 @@ body.home div#pageMain #featureHeader { padding-top: 40px; margin-left: 25px; te
 div#pageMain #featureHeader { font-size: 300%;  margin-bottom: 0; color: #394701; }
 body.expendituresAbout #featureHeader, expendituresTotals #featureHeader { position: relative; z-index: 2;}
 
-.tip, #breadcrumbs li { font-style: oblique; font-size: 90%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 16px;}#featureNav li, #featureMainNav li { float: left; border-right: 1px solid #739935; margin-right: 20px; padding-right: 20px; font-size: 110%; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; line-height: 18px;}
+.tip, #breadcrumbs li { font-style: oblique; font-size: 95%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 18px; color: #7e7774;}
+#featureNav li, #featureMainNav li { float: left; border-right: 1px solid #739935; margin-right: 20px; padding-right: 20px; font-size: 110%; font-style: oblique; font-family: Georgia, Times New Roman, Times, serif; line-height: 18px;}
 .tipHeight { margin-bottom: 20px; display: block;}
+.tipLg { font-size: 105%; line-height: 20px; margin-bottom: 40px; }
 #featureNav li.last { border-right: none;}
 #featureMainNav { background: url(../img/bg_secondaryNav.png) top left no-repeat; margin: -22px 0 0 -35px; height: 46px; padding: 30px 35px 0;}
 #featureMainNav a:link, #featureMainNav a:active, #featureMainNav a:visited { color: #394701; }
@@ -88,19 +93,18 @@ body.separateNav #rtColumn { padding-top: 160px;}
 .fullWidth_columns { float: left; width: 440px; }
 
 div.otherProperty { float: left; width: 208px; padding: 0 15px;}
-h4, .h4 { font-size: 140%; font-weight: bold; margin-bottom: 10px; text-transform: capitalize;}
-h4 a { color: #424140; }
+h4, .h4 { font-size: 140%; margin-bottom: 10px; text-transform: capitalize; color: #67605d; font-style: oblique;}
+h4 a { color: #67605d; }
 div.otherProperty li { margin-bottom: 10px; line-height: 20px;}
 div.otherProperty li a { color: #020000;}
 div.otherProperty li a:hover { color: #457b80;}
 
-div.features h2 { font-size: 240%; text-align: center; line-height: 37px;}
-h2 { font-size: 260%; font-weight: bold; margin-bottom: 5px; line-height: 35px; }
+h2 { font-size: 260%; margin-bottom: 5px; line-height: 39px; }
 body.fullWidth h2 { margin-bottom: 10px;}
 h2.withDetail { float: left; margin-right: 20px;}
 div#pageMain div.features h2, div#pageMain h3, div#pageMain div.features h2 a, div#pageMain h3 a, div#pageMain h2, div#pageMain h2 a, div.features h2:visited, h3:visited, div.features h2 a:visited, h3 a:visited, h2:visited, h2 a:visited { color: #414042;}
 div#pageMain div.features h2 a:hover, div#pageMain h3 a:hover, div#pageMain h4 a:hover, div#pageMain h2 a:hover { color: #457b80;}
-h3 { text-transform: uppercase; margin-bottom: 25px; font-weight: bold; font-size: 170%;}
+h3 { margin-bottom: 25px; font-size: 200%;}
 .withTip { margin-bottom: 5px;}
 
 body.fullWidth div#pageMain h2 a, body.fullWidth div#pageMain h2 a:link, body.fullWidth div#pageMain h2 a:hover, body.fullWidth div#pageMain h2 a:active, body.fullWidth div#pageMain h2 a:visited { color: #457B80;}
@@ -203,6 +207,11 @@ body.home #brandingbar a#sllink, body.theblog #brandingbar a#sllink, body.about 
 div.features ul, div.about ul, div.posts ul { list-style-type: disc; padding-left: 30px; margin-bottom: 20px; color: #58595B; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 div.features ol, div.about ol, div.posts ol{ list-style-type: decimal; padding-left: 30px; margin-bottom: 20px; color: #58595B; font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 
+.definedList li { list-style-type: disc; margin-left: 40px;}
+.smDefinedList li {  margin-bottom: 15px; padding-bottom: 15px; border-bottom: 1px solid #dfe2e1; }
+.smDefinedList .interiorList li{ border: none; margin-bottom: 5px; padding-bottom: 0;}
+.alignedList li { float: left; margin-right: 7px;}
+
 .clear { clear: both;}
 
 div#pageMain #expenditureSearch label { width: 240px;}
@@ -304,5 +313,5 @@ div#pageMain #featureMainNav input#searchbox { width: 220px; }
 #party-pieWrapper { width: 275px; margin-right: 30px; float: left;}
 .expenditureNumber { color: #5a8705;}
 
-.readMoreRT { font-size: 115%; font-style: oblique; display: block; margin-top: 10px;}
+.readMoreRT { font-size: 115%; font-style: oblique; display: block; margin-top: 10px; }
 .expenditureDate { display: block; margin-bottom: 5px; color: #9F9F9F;}

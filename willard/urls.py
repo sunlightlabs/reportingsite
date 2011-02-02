@@ -196,6 +196,11 @@ urlpatterns = patterns('',
             {},
             name='willard_postemployment_api'),
 
+        url(r'^registrations$',
+            cache_page(registrations, 60*5, key_prefix=KEY_PREFIX),
+            { },
+            name='willard_registrations_home'),
+
         url(r'^$',
             cache_page(index, 60*5, key_prefix=KEY_PREFIX),
             {},

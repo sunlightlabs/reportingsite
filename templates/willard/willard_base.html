@@ -2,54 +2,34 @@
 
 {% load media %}
 
-{% block title %}{{ block.super }}: Lobbyist registrations{% endblock %}
+{% block title %}{{ block.super }}: Lobbying Tracker{% endblock %}
 
 {% block body %}fullWidth{% endblock %}
 {% block main_content %}
 {% css "css/lobbying.css" %}
 
+{% block lobbyheader %}
 <div id="columns">
     <div id="fullColumn" style="overflow:hidden;">
-
-        <script type="text/javascript">
-            $(document).ready(function () {
-                $("#searchbox").focus(function () {
-                    if ($(this)[0].value === 'Registrant, client, lobbyist or position') {
-                        $(this).val('');
-                    }
-                });
-            });
-        </script>
-
-        <h2 id="lobbyingTitle"><a href="/lobbying">Lobbyist registration tracker</a></h2>
-        <div id="lobbyistFilter">
-            <ul>
-                <li class="issues"><a href="{% url willard_issue_list %}">Browse issues</a></li>
-                <li class="registrants"><a href="{% url willard_registrant_list %}">Browse registrants</a></li>
-                <li class="lobbyists"><a href="{% url willard_lobbyist_list %}">Browse lobbyists</a></li>
-                <li class="clients"><a href="{% url willard_client_list %}">Browse clients</a></li>
-                <form id="lobbyingSearch" action="{% url willard_search %}" method="GET">
-                    <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Registrant, client, lobbyist or position"{% endif %} type="text" name="q" />
-                    <button class="goBtn" type="submit" value="Search" >
-                        <span>Go</span>
-                    </button>
-                </form>
-                <div class="clear"></div>
-            </ul>
-        </div>
         
-        <div id="breadcrumbs" class="lobbyingBreadcrumbs">
+        <h2 id="lobbyHeader"><a href="/lobbying">Lobbying Tracker</a></h2>
+        <div id="lobbyShareBar">
             <ul>
-                {% block breadcrumb %}
-                <li>
-                    <a href="{% url willard_index %}">Lobbyist registrations home</a>
+                <li><a href="http://www.addthis.com/bookmark.php?v=250&username=sunlightfoundation" class="addthis_button_compact">Share</a>
+                <script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script> 
+                <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=sunlightfoundation"></script>
                 </li>
-                {% endblock breadcrumb %}
+                <li><a href="http://sunlightfoundation.com/contact/">Feedback</a></li>
             </ul>
-            <div class="clear"></div>
         </div>
+        <p id="lobbyingDescript" class="tip tipLg">Follow Washington influence using Sunlight’s Lobbying Tracker tools for keeping up with K street. Keep checking this page as we add more resources and tools to LobbyTrack.</p>
+{% endblock %}
 
-        {% block content %}{% endblock content %}
+        {% block content %}
+        {% endblock %}
+        
+
+
     </div>
 </div>
 {% endblock main_content %}
