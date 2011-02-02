@@ -1,28 +1,28 @@
 <li class="registrationItem">
-    <ul class="latestRegistrations">
+    <ul class="interiorList">
         {% if showdate %}
         <li class="odd">
             <span class="regTitle">Filing date</span>
-            <span class="regDescription">{{ registration.received|date:"F j, Y" }}</span>
+            <span class="regDescriptionLg">{{ registration.received|date:"F j, Y" }}</span>
             <div class="clear"></div>
         </li>
         {% endif %}
         <li>
             <span class="regTitle">Registrant</span>
-            <span class="regDescription"><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></span>
+            <span class="regDescriptionLg"><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></span>
             <div class="clear"></div>
         </li>
         <li class="odd">
             <span class="regTitle">Client</span>
-            <span class="regDescription"><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></span>
+            <span class="regDescriptionLg"><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></span>
             <div class="clear"></div>
         </li>
         <li>
             <span class="regTitle">Issues</span>
-            <span class="regDescription">
-                <ul>
+            <span class="regDescriptionLg">
+                <ul class="alignedList">
                     {% for issue_code in registration.denormalized_issues %}
-                    <li>&bull;&nbsp;<a href="{{ issue_code.get_absolute_url }}">{{ issue_code.issue }}</a></li>
+                    <li><a href="{{ issue_code.get_absolute_url }}">{{ issue_code.issue }}</a>,</li>
                     {% endfor %}
                 </ul>
             </span>
@@ -32,7 +32,7 @@
         {% if registration.specific_issue %}
         <li class="odd">
             <span class="regTitle">Specific issue</span>
-            <span class="regDescription">{{ registration.specific_issue }}</span>
+            <span class="regDescriptionLg">{{ registration.specific_issue }}</span>
             <div class="clear"></div>
         </li>
         {% endif %}

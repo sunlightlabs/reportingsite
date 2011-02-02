@@ -239,7 +239,7 @@
     </div>
     {% for dategroup in object_list %}
     <h4>{{ dategroup.date|date:"F j" }}</h4>
-    <ul>
+    <ul class="smDefinedList">
         {% for registration in dategroup.registrations %}
             {% include "willard/registration_list_item.html" %}
         {% endfor %}
