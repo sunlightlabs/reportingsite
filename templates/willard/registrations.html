@@ -81,12 +81,12 @@
     $(document).ready(function () {
 
         // Create inline sparklines
-        $('.inlinesparkline').sparkline('html', { fillColor: false,  spotRadius: 0, lineColor: '#414042' });
+        $('.inlinesparkline').sparkline('html', { fillColor: false,  spotRadius: 0, lineColor: '#414042', width: '70px' });
 
         chart = new Highcharts.Chart({
             chart: {
                 renderTo: 'yearLineChart',
-                width: '525',
+                width: '415',
                 height: '300',
                 defaultSeriesType: 'line',
                 marginTop: -25,

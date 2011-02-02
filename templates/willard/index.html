@@ -17,8 +17,38 @@
                     <h3 class="withTip"><a href="{% url willard_registrations_home %}">Lobbying Registration Tracker</a></h3>
                     <p class="tip tipLg">The Lobbyist Registration Tracker, updated weekly, shows which special interests have hired new lobbyists within the last 45 days and includes all registrants since 2008.</p>
                 </div>
-                <h4>June 20, 2011</h4>
+
+                {% for dategroup in registrations %}
+                <h4>{{ dategroup.date|date:"F j" }}</h4>
+                <ul>
+                    {% for registration in dategroup.registrations %}
+                    <li>
+                        <span class="regTitle">Registrant</span>
+                        <span class="regDescription"><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></span>
+                        <div class="clear"></div>
+                    </li>
+                    <li>
+                        <span class="regTitle">Client</span>
+                        <span class="regDescription"><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></span>
+                        <div class="clear"></div>
+                    </li>
+                    <li>
+                        <span class="regTitle">Issues</span>
+                        <span class="regDescription">
+                            {% for issue in registration.denormalized_issues %}
+                            <a href="{{ issue.get_absolute_url }}">{{ issue.issue }}</a>{% if not forloop.last %}, {% endif %}
+                            {% endfor %}
+                        </span>
+                    {% endfor %}
+                    <div class="clear"></div>
+                    <li>
+                    <a href="{{ registration.get_absolute_url }}">View registration</a>
+                    </li>
+                </ul>
+                {% endfor %}
+
                 <a class="readMoreRT" href="{% url willard_registrations_all %}">View All Registrations »</a>
+
             </div>    
 
             <div id="halfColumn_rt">
@@ -27,30 +57,18 @@
                     <h3 class="withTip"><a href="/lobbying/postemployment">Post Employment Tracker</a></h3>
                     <p class="tip tipLg">The Post Employment Tracker shows when covered congressional officials—former members and high-ranking staffers—can legally begin to lobby their old colleagues, though note that not everyone listed has become a lobbyist.</p>
                 </div>
-                <h4>Legal to Lobby as of January 31, 2011</h4>
+                {% for dategroup in postemployment %}
+                <h4>Legal to Lobby as of {{ dategroup.date|date:"F j" }}</h4>
                 <ul class="definedList" id="employmentList">
+                    {% for notice in dategroup.notices %}
                     <li>
-                        <a href="#">Kardon, Joshua Robert</a>
-                        <span>Senate, Office of Senator Wyden</span>
+                        <a href="{{ notice.get_absolute_url }}">{{ notice }}</a>
+                        <span>{{ notice.office_name|title }}</span>
                     </li>
-                    <li>
-                        <a href="#">Kardon, Joshua Robert</a>
-                        <span>Senate, Office of Senator Wyden</span>
-                    </li>
-                    <li>
-                        <a href="#">Kardon, Joshua Robert</a>
-                        <span>Senate, Office of Senator Wyden</span>
-                    </li>
-                    <li>
-                        <a href="#">Kardon, Joshua Robert</a>
-                        <span>Senate, Office of Senator Wyden</span>
-                    </li>
-                    <li>
-                        <a href="#">Kardon, Joshua Robert</a>
-                        <span>Senate, Office of Senator Wyden</span>
-                    </li>
+                    {% endfor %}
                 </ul>
-                <a class="readMoreRT" href="/lobbying/postemployment">View the Next Congressional Members or Staffers up for Legal Lobbying »</a>
+                {% endfor %}
+                <a class="readMoreRT" href="{% url willard_postemployment_list %}">View the Next Congressional Members or Staffers up for Legal Lobbying »</a>
             </div>    
             <div class="clear"></div>
             <div id="lobbyingOther">

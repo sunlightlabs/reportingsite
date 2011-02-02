@@ -21,7 +21,22 @@ from dateutil.relativedelta import relativedelta
 from willard.models import *
 
 
-def index(request, template='index.html'):
+def index(request):
+    registrations = Registration.objects.filter(received__lte=datetime.date.today()).select_related()[:3]
+    registrations_by_date = [{'date': date, 'registrations': list(regs)} for date, regs in itertools.groupby(registrations, lambda x: x.received.date())]
+
+    postemployment = PostEmploymentNotice.objects.filter(end_date__gte=datetime.date.today()).order_by('end_date')[:5]
+    postemployment_by_date = [{'date': date, 'notices': list(notices)} for date, notices in itertools.groupby(postemployment, lambda x: x.end_date)]
+    print postemployment_by_date
+
+    return render_to_response('willard/index.html',
+                              {'registrations': registrations_by_date,
+                               'postemployment': postemployment_by_date,
+                              },
+                              context_instance=RequestContext(request))
+
+
+def registrations(request):
     registrations = Registration.objects.filter(received__lte=datetime.date.today(), received__gte=datetime.date.today()-relativedelta(months=1)).select_related()
     registrations_by_date = [{'date': date, 'registrations': list(regs)} for date, regs in itertools.groupby(registrations, lambda x: x.received.date())][:5]
 
@@ -65,7 +80,7 @@ def index(request, template='index.html'):
 
     registrations_by_day = sorted(registrations_by_day.items(), key=itemgetter(0))
 
-    return render_to_response('willard/%s' % template,
+    return render_to_response('willard/registrations.html',
                               {'object_list': registrations_by_date,
                                'months': months,
                                'issues': Issue.objects.filter(registration__received__gte=cutoff).annotate(num=Count('registration')).order_by('-num').select_related(),
