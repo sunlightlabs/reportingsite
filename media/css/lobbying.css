@@ -133,7 +133,7 @@ div#pageMain #timeToggle label { width: auto; margin-right: 20px; color: #457B80
 
 #employmentDescript { width: 685px; float: left; margin-bottom: 40px;}
 
-#download_btn { display: block; text-indent: -9999em; background: url(../img/btn_download.png) top left no-repeat; width: 117px; height: 68px; float: left; margin-left: 60px; margin-top: 25px;}
+#download_btn { display: block; text-indent: -9999em; background: url(../img/btn_download.png) top left no-repeat; width: 160px; height: 66px; float: left; margin-left: 30px; margin-top: 25px;}
 #download_btn:hover { background: url(../img/btn_download.png) bottom left no-repeat;}
 
 li.registrationItem { margin-bottom: 30px; }
