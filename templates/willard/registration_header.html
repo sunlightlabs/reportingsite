@@ -15,6 +15,21 @@
                         <span>Go</span>
                     </button>
                 </form>
+                <script type="text/javascript">
+                    $(document).ready(function () {
+                            var defaultSearchText = 'Registrant, client, lobbyist or position';
+                            $("#searchbox").focus(function () {
+                                if ($(this)[0].value === defaultSearchText) {
+                                    $(this).val('');
+                                }
+                            });
+                            $("#searchbox").blur(function () {
+                                if ($(this)[0].value === '') {
+                                    $(this).val(defaultSearchText);
+                                }
+                            });
+                    });
+                </script>
                 <div class="clear"></div>
             </ul>
         </div>
