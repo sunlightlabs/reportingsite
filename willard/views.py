@@ -37,7 +37,7 @@ def index(request):
 
 
 def registrations(request):
-    registrations = Registration.objects.filter(received__lte=datetime.date.today(), received__gte=datetime.date.today()-relativedelta(months=1)).select_related()
+    registrations = Registration.objects.filter(received__lte=datetime.date.today(), received__gte=datetime.date.today()-relativedelta(months=1)).select_related()[:15]
     registrations_by_date = [{'date': date, 'registrations': list(regs)} for date, regs in itertools.groupby(registrations, lambda x: x.received.date())][:5]
 
     top_issue_ids = Issue.objects.values_list('pk', flat=True).order_by('-registration_count')[:5]
