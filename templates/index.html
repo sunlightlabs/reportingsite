@@ -17,7 +17,7 @@
                     <img style="float: left; border: none; width: 98px; margin-right: 20px;" src="{% media_url %}/img/feature_lobbying.png" %} />
                     <div style="float: left; width: 500px;" class="featureDetails">
                         <h2><a href="/lobbying">Lobbying Tracker</a></h2>
-			<p>Follow Washington influence using Sunlight’s Lobbying Tracker tools for keeping up with K street.</p>
+			<p>Follow Washington influence using Sunlight’s Lobbying Tracker tools <br/>for keeping up with K street.</p>
                         <a href="/lobbying" class="readMoreRT">Check out Our Lobbying Tools</a>
                     </div>
                     <div class="clear"></div>
@@ -129,6 +129,7 @@
  
   </div>
 
+{% comment %}
 {% cache 43200 reporting_calendar %}
 <div class="mainModule calendar lastItem">      
   <h3>Dates we're watching</h3>
@@ -145,5 +146,6 @@
     </ol>  
 </div>
 {% endcache %}
+{% endcomment %}
 
 {% endblock %}
