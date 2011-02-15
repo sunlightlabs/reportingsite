@@ -201,6 +201,11 @@ urlpatterns = patterns('',
             { },
             name='willard_registrations_home'),
 
+        url(r'^registrations\/widget$',
+            cache_page(registrations_widget, 60*30, key_prefix=KEY_PREFIX),
+            {},
+            name='willard_registrations_widget'),
+
         url(r'^$',
             cache_page(index, 60*5, key_prefix=KEY_PREFIX),
             {},

@@ -1,0 +1,51 @@
+<!doctype html>  
+<!--[if lt IE 7 ]> <html lang="en" class="no-js ie6"> <![endif]-->
+<!--[if IE 7 ]>    <html lang="en" class="no-js ie7"> <![endif]-->
+<!--[if IE 8 ]>    <html lang="en" class="no-js ie8"> <![endif]-->
+<!--[if IE 9 ]>    <html lang="en" class="no-js ie9"> <![endif]-->
+<!--[if (gt IE 9)|!(IE)]><!--> <html lang="en" class="no-js"> <!--<![endif]-->
+<head>
+	<meta charset="utf-8">
+	<title>Sunlight Foundation</title>
+	<meta name="description" content="">
+    {% load media %}
+    <!--<link rel="stylesheet" href="{% css "css/lobbywidget.css" %}" type="text/css" media="screen" />//-->
+    {% css "css/lobbywidget.css" %}
+</head>
+<body>	
+    <div id="lobbyingWidget">
+    	<header>
+            <span id="foundationLogo">Sunlight Foundation</span>
+            <h1><a href="">Latest Lobbying Registrations</a></h1>
+        </header>
+        <div id="container">
+            {% for dategroup in registrations_by_date %}
+            <h2>{{ dategroup.date|date:"F j" }}</h2>
+            <ul class="firstList">
+                {% for registration in dategroup.registrations %}
+                <li>
+                <ul class="secondList">
+                    <li>
+                    <a class="listTitle" href="{{ registration.get_absolute_url }}">{{ registration.registrant }}</a>
+                    </li>
+                    <li>
+                        <span class="title">Client:</span>
+                        <span><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></span>
+                    </li>
+                    <li>
+                        <span class="title titleFloat">Issues:</span>
+                        <ul class="thirdList">
+                            {% for issue in registration.denormalized_issues|slice:"2" %}
+                            <li><a href="{{ issue.get_absolute_url }}">{{ issue.issue }}</a>{% if not forloop.last %}, {% endif %}</li>
+                            {% endfor %}
+                        </ul>   
+                        <div class="clear"></div>  
+                    </li>
+                </ul>
+                </li>
+                {% endfor %}
+            </ul>
+            {% endfor %}
+        </div> 
+   </div>
+</body>

@@ -425,3 +425,12 @@ def lobbyist_list(request):
                 },
             context_instance=RequestContext(request))
 
+
+def registrations_widget(request):
+    cutoff = datetime.date.today() - datetime.timedelta(14)
+    registrations = Registration.objects.filter(received__gte=cutoff).select_related()
+    registrations_by_date = [{'date': date, 'registrations': list(regs)} for date, regs in itertools.groupby(registrations, lambda x: x.received.date())]
+    return render_to_response('willard/widget.html',
+                              {'registrations_by_date': registrations_by_date,
+                              },
+                              context_instance=RequestContext(request))
