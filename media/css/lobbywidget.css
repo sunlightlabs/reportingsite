@@ -101,7 +101,7 @@ button, .buttonLink { width: auto; text-indent: -9999em; display: block; border:
 
 #lobbyingWidget a { text-decoration: none;}
 #lobbyingWidget h2 { background-color: #f3efef; color: #7d7979; font-family: Georgia, "Times New Roman", Times, serif; display: block; font-weight: normal; margin: 3px 2px 7px; padding: 2px 3px; }
-#lobbyingWidget #container { background-color: #fff; border: 1px solid #dad4d4; margin: 0 5px; font-size: 93%; line-height: 14px;}
+#lobbyingWidget #container { background-color: #fff; border: 1px solid #dad4d4; margin: 0 5px; font-size: 93%; line-height: 14px; overflow-y: scroll; max-height: 312px;}
 
 #lobbyingWidget .listTitle:link, #lobbyingWidget .listTitle:visited, #lobbyingWidget .listTitle:active { color: #403a3a; font-weight: bold; text-decoration: underline;}
 

@@ -9,14 +9,13 @@
 	<title>Sunlight Foundation</title>
 	<meta name="description" content="">
     {% load media %}
-    <!--<link rel="stylesheet" href="{% css "css/lobbywidget.css" %}" type="text/css" media="screen" />//-->
     {% css "css/lobbywidget.css" %}
 </head>
 <body>	
     <div id="lobbyingWidget">
     	<header>
             <span id="foundationLogo">Sunlight Foundation</span>
-            <h1><a href="">Latest Lobbying Registrations</a></h1>
+            <h1><a target="_top" href="">Latest Lobbying Registrations</a></h1>
         </header>
         <div id="container">
             {% for dategroup in registrations_by_date %}
@@ -26,20 +25,11 @@
                 <li>
                 <ul class="secondList">
                     <li>
-                    <a class="listTitle" href="{{ registration.get_absolute_url }}">{{ registration.registrant }}</a>
+                    <a class="listTitle" target="_top" href="{{ registration.get_absolute_url }}">{{ registration.registrant }}</a>
                     </li>
                     <li>
                         <span class="title">Client:</span>
-                        <span><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></span>
-                    </li>
-                    <li>
-                        <span class="title titleFloat">Issues:</span>
-                        <ul class="thirdList">
-                            {% for issue in registration.denormalized_issues|slice:"2" %}
-                            <li><a href="{{ issue.get_absolute_url }}">{{ issue.issue }}</a>{% if not forloop.last %}, {% endif %}</li>
-                            {% endfor %}
-                        </ul>   
-                        <div class="clear"></div>  
+                        <span><a target="_top" href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></span>
                     </li>
                 </ul>
                 </li>
@@ -48,4 +38,75 @@
             {% endfor %}
         </div> 
    </div>
+
+   <!-- Analytics idea borrowed from Politiwidgets //-->
+
+<script type="text/javascript"> 
+  var embedder, embedder_host;
+ 
+  var matches_embedder_host = location.search.match(/embedder_host=([^&\?]+)/);
+  if (matches_embedder_host)
+    embedder_host = unescape(matches_embedder_host[1]);
+ 
+  var matches_embedder = location.search.match(/embedder=([^&\?]+)/);
+  if (matches_embedder)
+    embedder = unescape(matches_embedder[1]);
+  
+  var overriddenReferrer = null;
+</script> 
+ 
+<script type="text/javascript"> 
+  var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+  document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+</script> 
+<script type="text/javascript"> 
+  try {
+    var pageTracker = _gat._getTracker("UA-1265484-45");
+    
+    // if the widget is embedded in an iframe, and on an iframe hosted elsewhere, 
+    // override the referer so we can track this like a regular link
+    overriddenReferrer = false;
+    if (embedder && (embedder_host != location.host)) {
+      pageTracker._setReferrerOverride(embedder);
+      overriddenReferrer = true; // for debugging purposes
+      
+      pageTracker._setCustomVar(
+        1, // slot 1
+        "Embedder Host",
+        embedder_host,
+        2 // session-level
+      );
+      
+      pageTracker._setCustomVar(
+        2, // slot 2
+        "Embedder URL",
+        embedder,
+        2 // session-level
+      );
+    }
+    
+    pageTracker._setDomainName("none");
+    pageTracker._setAllowLinker(true);
+    pageTracker._trackPageview();
+  } catch(err) {}
+</script> 
+  <script type="text/javascript"> 
+var _sf_async_config={uid:980,domain:"reporting.sunlightfoundation.com"};
+(function(){
+  function loadChartbeat() {
+    window._sf_endpt=(new Date()).getTime();
+    var e = document.createElement('script');
+    e.setAttribute('language', 'javascript');
+    e.setAttribute('type', 'text/javascript');
+    e.setAttribute('src',
+       (("https:" == document.location.protocol) ? "https://s3.amazonaws.com/" : "http://") +
+       "static.chartbeat.com/js/chartbeat.js");
+    document.body.appendChild(e);
+  }
+  var oldonload = window.onload;
+  window.onload = (typeof window.onload != 'function') ?
+     loadChartbeat : function() { oldonload(); loadChartbeat(); };
+})();
+ 
+</script> 
 </body>
