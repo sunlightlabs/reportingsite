@@ -18,7 +18,7 @@ cutoff = datetime.date(year=cutoff.year,
                        day=1)
 
 
-KEY_PREFIX = 'willard_9_'
+KEY_PREFIX = 'willard_11_'
 
 urlpatterns = patterns('',
 
