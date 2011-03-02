@@ -21,7 +21,7 @@ class RegistrationFeed(Feed):
     description = 'The latest lobbyist registrations submitted to the U.S. Senate'
 
     def items(self):
-        return Registration.objects.order_by('-received')[:50]
+        return Registration.objects.order_by('-received')[:100]
 
     def item_link(self, item):
         return '/lobbying'
