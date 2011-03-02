@@ -31,8 +31,8 @@ class Command(BaseCommand):
     )
 
     def get_senate(self, year):
-        if year == '2010':
-            url = 'http://senate.gov/legislative/termination_disclosure/report2010.xml'
+        if year == '2011':
+            url = 'http://senate.gov/legislative/termination_disclosure/report2011.xml'
         else:
             url = 'http://senate.gov/legislative/termination_disclosure/%s/report%s.xml' % (year, year)
 
@@ -113,7 +113,7 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
-        for employee in self.get_senate('2010'):
+        for employee in self.get_senate('2011'):
             print employee
             self.save_employee(employee)
         for employee in self.get_house():
