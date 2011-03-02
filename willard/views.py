@@ -25,13 +25,16 @@ def index(request):
     registrations = Registration.objects.filter(received__lte=datetime.date.today()).select_related()[:3]
     registrations_by_date = [{'date': date, 'registrations': list(regs)} for date, regs in itertools.groupby(registrations, lambda x: x.received.date())]
 
-    postemployment = PostEmploymentNotice.objects.filter(end_date__gte=datetime.date.today()).order_by('end_date')[:5]
+    postemployment = PostEmploymentNotice.objects.filter(end_date__gte=datetime.date.today()).order_by('end_date')[:10]
     postemployment_by_date = [{'date': date, 'notices': list(notices)} for date, notices in itertools.groupby(postemployment, lambda x: x.end_date)]
-    print postemployment_by_date
+
+    fara = ForeignLobbying.objects.order_by('-stamped')[:3]
+    fara_by_date = [{'date': date, 'filings': list(filings)} for date, filings in itertools.groupby(fara, lambda x: x.stamped)]
 
     return render_to_response('willard/index.html',
                               {'registrations': registrations_by_date,
                                'postemployment': postemployment_by_date,
+                               'fara': fara_by_date,
                               },
                               context_instance=RequestContext(request))
 
