@@ -37,6 +37,7 @@
         <li><a href="{{ lobbyist.get_absolute_url }}">{{ lobbyist }}</a></li>
     {% endfor %}
     </ul>
+    <br /><br />
     {% endif %}
 
     {% if covered_position_lobbyists %}
@@ -46,6 +47,18 @@
             <li><a href="{{ lobbyist.get_absolute_url }}">{{ lobbyist }}</a> ({{ lobbyist.positions|join:"; " }})</li>
         {% endfor %}
     </ul>
+    <br /><br />
+    {% endif %}
+
+    {% if specific_issue_registrations %}
+    <h4>Specific issues</h4>
+    <ul>
+        {% for registration in specific_issue_registrations %}
+            <li style="margin-bottom:15px;"><a href="{{ registration.get_absolute_url }}">{{ registration.registrant }} for {{ registration.client }}</a> ({{ registration.received|date:"n/j/Y" }})<br/>
+            <strong>Specific issues:</strong> {{ registration.specific_issue }}</li>
+        {% endfor %}
+    </ul>
+    <br /><br />
     {% endif %}
 
 {% else %}

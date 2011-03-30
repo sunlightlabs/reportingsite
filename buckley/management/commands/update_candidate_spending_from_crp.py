@@ -100,7 +100,7 @@ def update_spending(data):
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        for state in STATES:
+        for state in states:
             print state
             time.sleep(1)
             for row in get_state_races(state):
