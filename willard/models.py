@@ -11,7 +11,7 @@ from django.template.defaultfilters import slugify
 
 from dateutil.relativedelta import relativedelta
 from picklefield.fields import PickledObjectField
-import lxml.etree
+#import lxml.etree
 import MySQLdb
 
 
