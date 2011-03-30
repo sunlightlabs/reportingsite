@@ -88,7 +88,7 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'django.contrib.comments',
     'django.contrib.markup',
-    'tagging',
+    #'tagging',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
@@ -103,8 +103,9 @@ INSTALLED_APPS = (
     'storages',
     'debug_toolbar',
     'haystack',
-    'buckley',
+    #'buckley',
     'gunicorn',
+    'willard',
 )
 
 INTERNAL_IPS = ('127.0.0.1','localhost')
