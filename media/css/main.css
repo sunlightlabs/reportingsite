@@ -140,7 +140,7 @@ div.otherProperty span { text-align: center;}
 
 form li { margin-bottom: 15px;}
 div#pageMain label { width: 100px; display: block; float: left; }
-div#pageMain input { background: none; border: none; border-bottom: 1px solid #B8B9B9; width: 400px;}
+div#pageMain input { background: none; border: none; border-bottom: 1px solid #B8B9B9; width: 400px; font-family: Georgia, "Times New Roman", Times, serif; font-style: oblique;}
 
 div#pageMain input#searchbox { width: 160px; float: left; margin-right: 20px; background: #FFFFFF; padding: 5px; border: 1px solid #d2d2cc; -moz-border-radius: 3px; -webkit-border-radius: 3px; color: #a7a9ac;}
 textarea { background: url(../img/comment_lines.png) top left no-repeat; border: none; width: 400px; height: 100px; line-height: 24px;}
@@ -165,7 +165,7 @@ button.submitBtn { background: url(../img/btn_submit.png) top left no-repeat; ma
 button.searchBtn { background: url(../img/btn_search.png) top left no-repeat; margin-top: 20px; width: 87px; height: 27px;}
 button.searchBtn:hover { background: url(../img/btn_search.png) left -27px no-repeat; }
 
-button.goBtn { background: url(../img/btn_go.png) top left no-repeat; width: 51px; float: left; height: 27px;}
+button.goBtn { background: url(../img/btn_go.png) top left no-repeat; width: 52px; float: left; height: 27px;}
 button.goBtn:hover { background: url(../img/btn_go.png) left -27px no-repeat; }
 
 div.calendarDate { background: url(../img/calendar_bg.png) top left no-repeat; width: 63px; height: 62px; float: left; margin-right: 20px;}
