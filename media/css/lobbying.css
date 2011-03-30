@@ -119,7 +119,7 @@ div#pageMain #timeToggle label { width: auto; margin-right: 20px; color: #457B80
 .lobbyingHeader { text-align: center; margin-top: -95px;}
 #lobbyHeader { text-transform: uppercase; font-size: 300%; background: url(../img/bg_line.jpg) bottom left no-repeat; color: #292726;}
 #lobbyingDescript { width: 650px; }
-#employmentList a { display: block; font-weight: bold;}
+.employmentList a { display: block; font-weight: bold;}
 
 #lobbyingOther { margin: 50px 0; background: url(../img/bg_otherResources.png) top left repeat; padding: 20px; border-top: 1px solid #E1DFDD; border-bottom: 1px solid #E1DFDD;}
 #partyTime img { float: left; margin-right: 15px; border: none;}
