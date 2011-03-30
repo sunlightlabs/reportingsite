@@ -315,3 +315,5 @@ div#pageMain #featureMainNav input#searchbox { width: 220px; }
 
 .readMoreRT { font-size: 115%; font-style: oblique; display: block; margin-top: 10px; }
 .expenditureDate { display: block; margin-bottom: 5px; color: #9F9F9F;}
+
+del { text-decoration: line-through; }
