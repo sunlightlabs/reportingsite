@@ -37,7 +37,7 @@
                                     </li>
                                     <li>
                                         <span class="regTitle">Issues</span>
-                                        <span class="regDescriptionLg">
+                                        <div class="regDescriptionLg">
                                             <ul class="alignedList">
                                             {% for issue in registration.denormalized_issues %}
                                                 <li>
@@ -45,7 +45,7 @@
                                                 </li>
                                             {% endfor %}
                                             </ul>
-                                        </span>
+                                        </div>
                                     
                                         <div class="clear"></div>
                                     </li>
@@ -76,9 +76,8 @@
                     </ul>
                     <p class="tip tipLg readMoreRT">Visit <a href="http://foreignlobbying.org">the Foreign Lobbying Influence Tracker</a> for more details.</p>
                 </div>
-                {% endfor %}
-
-            </div>    
+                {% endfor %} 
+            </div>
 
             <div id="halfColumn_rt">
                 <a href="/lobbying/postemployment"><img id="employmentImg" alt="Image of briefcase" src="{% media_url %}/img/bg_employment.png" /></a>
@@ -88,7 +87,7 @@
                 </div>
                 {% for dategroup in postemployment %}
                 <h4>Legal to Lobby as of {{ dategroup.date|date:"F j" }}</h4>
-                <ul class="smDefinedList definedList" id="employmentList">
+                <ul class="smDefinedList definedList employmentList" >
                     {% for notice in dategroup.notices %}
                     <li>
                         <a href="{{ notice.get_absolute_url }}">{{ notice }}</a>
