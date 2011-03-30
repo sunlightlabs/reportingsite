@@ -12,7 +12,7 @@ from django.db.models import signals
 
 from dateutil.relativedelta import relativedelta
 from picklefield.fields import PickledObjectField
-import lxml.etree
+#import lxml.etree
 import MySQLdb
 
 
