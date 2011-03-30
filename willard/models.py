@@ -8,6 +8,7 @@ import urllib2
 from django.core.urlresolvers import reverse
 from django.db import models, connection
 from django.template.defaultfilters import slugify
+from django.db.models import signals
 
 from dateutil.relativedelta import relativedelta
 from picklefield.fields import PickledObjectField
@@ -615,3 +616,100 @@ class PostEmploymentNotice(models.Model):
         if diff < 0:
             return ''
         return diff
+
+
+class ForeignLobbying(models.Model):
+    registration_number = models.IntegerField()
+    registrant_name = models.CharField(max_length=255)
+    registrant_status = models.CharField(max_length=255)
+    registration_date = models.DateField()
+    registrant_termination_date = models.DateField(null=True)
+    alias = models.CharField(max_length=255)
+    doing_business_as = models.CharField(max_length=255)
+
+    document_type = models.CharField(max_length=255)
+    stamped = models.DateField()
+
+    short_form_name = models.CharField(max_length=255)
+    short_form_registration_date = models.DateField(null=True)
+    short_form_status = models.CharField(max_length=255)
+    short_form_termination_date = models.DateField(null=True)
+
+    supplemental_end_date = models.DateField(null=True)
+
+    foreign_principal_country = models.CharField(max_length=255)
+    foreign_principal_name = models.CharField(max_length=255)
+    fp_registration_date = models.DateField(null=True)
+    fp_termination_date = models.DateField(null=True)
+    fp_status = models.CharField(max_length=255)
+
+    pdf_url = models.URLField(verify_exists=False, unique=True)
+
+    doc_id = models.CharField(max_length=255) # For DocumentCloud id
+
+    def __unicode__(self):
+        return '%s: %s (%s)' % (self.registrant_name,
+                                self.document_type,
+                                self.stamped.strftime('%Y-%m-%d'))
+
+    @models.permalink
+    def get_absolute_url(self):
+        return ('willard_fara_filing', [self.id, ])
+
+    def indefinite_article(self):
+        if self.document_type[0].lower() in ['a', 'e', 'i', 'o', 'u', ]:
+            return 'an'
+        return 'a'
+
+
+import base64
+import json
+import socket
+import time
+import urllib2
+from cStringIO import StringIO
+
+from buckley import MultipartPostHandler
+
+
+USERNAME = '***REMOVED***'
+PASSWORD = '***REMOVED***'
+
+def doccloud_upload(sender, **kwargs):
+    """Via http://www.muckrock.com/blog/using-the-documentcloud-api/
+    """
+    filing = kwargs['instance']
+    if filing.doc_id:
+        return
+
+    filename = r'/tmp/fara.pdf'
+    tf = open(filename, 'wb')
+    tf.write(urllib2.urlopen(filing.pdf_url).read())
+    tf.close()
+
+    socket.setdefaulttimeout(25)
+
+    params = {'title': '%s Foreign Agents Registration Act filing' % filing.registrant_name,
+              'source': 'FARA Registration Unit',
+              'file': open(filename, 'rb'), #StringIO(urllib2.urlopen(filing.pdf_url).read()),
+              'access': 'public',
+              }
+    url = '/upload.json'
+    opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
+    request = urllib2.Request('https://www.documentcloud.org/api/%s' % url, params)
+    auth = base64.encodestring('%s:%s' % (USERNAME, PASSWORD))[:-1]
+    request.add_header('Authorization', 'Basic %s' % auth)
+
+    try:
+        ret = opener.open(request).read()
+        info = json.loads(ret)
+        filing.doc_id = info['id']
+        filing.save()
+    except urllib2.URLError, exc:
+        print 'url error'
+        print exc
+        pass
+
+    time.sleep(1)
+
+signals.post_save.connect(doccloud_upload, sender=ForeignLobbying, dispatch_uid='reporting.willard')

@@ -5,6 +5,7 @@ from django.db.models import *
 from django.conf.urls.defaults import *
 from django.views.decorators.cache import cache_page
 from django.views.generic.list_detail import object_list, object_detail
+from django.views.generic.simple import direct_to_template
 
 from dateutil.relativedelta import relativedelta
 
@@ -200,6 +201,23 @@ urlpatterns = patterns('',
             cache_page(registrations, 60*5, key_prefix=KEY_PREFIX),
             { },
             name='willard_registrations_home'),
+
+        url(r'^registrations\/widget\/?$',
+            cache_page(registrations_widget, 60*30, key_prefix=KEY_PREFIX),
+            {},
+            name='willard_registrations_widget'),
+
+        url(r'^registrations\/widget\.js',
+                direct_to_template,
+                {'template': 'willard/widget.js', 
+                 'mimetype': 'text/javascript',
+                },
+            name='willard_registrations_widget_js'),
+
+        url(r'^fara\/(?P<object_id>\d+)\/?$',
+            object_detail,
+            {'queryset': ForeignLobbying.objects.all(), },
+            name='willard_fara_filing'),
 
         url(r'^$',
             cache_page(index, 60*5, key_prefix=KEY_PREFIX),

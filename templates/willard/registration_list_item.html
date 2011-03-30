@@ -22,7 +22,7 @@
             <span class="regDescriptionLg">
                 <ul class="alignedList">
                     {% for issue_code in registration.denormalized_issues %}
-                    <li><a href="{{ issue_code.get_absolute_url }}">{{ issue_code.issue }}</a>,</li>
+                    <li><a href="{{ issue_code.get_absolute_url }}">{{ issue_code.issue }}</a>{% if not forloop.last %},{% endif %}</li>
                     {% endfor %}
                 </ul>
             </span>
