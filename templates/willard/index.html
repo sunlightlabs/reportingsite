@@ -67,7 +67,23 @@
                 <h4>Filings on {{ dategroup.date|date:"F j" }}</h4>
                 <ul class="smDefinedList">
                     {% for filing in dategroup.filings %}
-                    <li><strong>{{ filing.registrant_name }}</strong> submitted {{ filing.indefinite_article }} {{ filing.document_type }}. <a href="{{ filing.get_absolute_url }}">View filing » </a></li>
+<li>
+<ul class="interiorList">
+    <li>
+         <span class="regTitle">Registrant</span>
+         <span class="regDescriptionLg">{{ filing.registrant_name }}</span>
+         <div class="clear"></div>
+    </li>
+    <li>
+         <span class="regTitle">Filing type:</span>
+         <span class="regDescriptionLg">{{ filing.document_type }}</span>
+         <div class="clear"></div>
+    </li>
+    <li>
+        <a href="{{ filing.get_absolute_url }}">View filing » </a>
+    </li>
+</ul>
+</li>
                     {% endfor %}
                 </ul>
                 <p class="tip tipLg">Visit <a href="http://foreignlobbying.org">the Foreign Lobbying Influence Tracker</a> for more details.</p>
