@@ -28,7 +28,7 @@ def index(request):
     postemployment = PostEmploymentNotice.objects.filter(end_date__gte=datetime.date.today()).order_by('end_date')[:10]
     postemployment_by_date = [{'date': date, 'notices': list(notices)} for date, notices in itertools.groupby(postemployment, lambda x: x.end_date)]
 
-    fara = ForeignLobbying.objects.order_by('-stamped')[:3]
+    fara = ForeignLobbying.objects.order_by('-stamped')[:12]
     fara_by_date = [{'date': date, 'filings': list(filings)} for date, filings in itertools.groupby(fara, lambda x: x.stamped)]
 
     return render_to_response('willard/index.html',
