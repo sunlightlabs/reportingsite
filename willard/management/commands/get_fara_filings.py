@@ -32,7 +32,7 @@ class Command(BaseCommand):
                     continue
                 data.append((input.attrib['name'], input.attrib['value']))
 
-        start_date = datetime.date.today() - datetime.timedelta(10)
+        start_date = datetime.date.today() - datetime.timedelta(2)
         end_date = datetime.date.today()
 
         data += [('p_t01', 'ALL'),
