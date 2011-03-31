@@ -94,7 +94,7 @@
                     <h4>Filings on {{ dategroup.date|date:"F j" }}</h4>
                     <ul class="smDefinedList">
                         {% for filing in dategroup.filings %}
-                        <li><strong>{{ filing.registrant_name }}</strong> submitted {{ filing.indefinite_article }} {{ filing.document_type }}. <a href="{{ filing.get_absolute_url }}">View filing » </a></li>
+                        <li><strong>{{ filing.registrant_name }}</strong> submitted {{ filing.indefinite_article }} <abbr title="{{ filing.document_type|form_definition }}">{{ filing.document_type }}</abbr>. <a href="{{ filing.get_absolute_url }}">View filing » </a></li>
                         {% endfor %}
                     </ul>
                     {% endfor %}

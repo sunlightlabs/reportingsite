@@ -140,3 +140,4 @@ li.registrationItem { margin-bottom: 30px; }
 
 #foreignLobby_column { margin-top: 50px;}
 .lobbyingModule { margin-bottom: 50px;}
+abbr { border-bottom: 1px dotted gray;}
