@@ -359,6 +359,7 @@ def search(request):
         for position in positions:
             covered_position_lobbyists = covered_position_lobbyists | position.lobbyist_set.all()
         covered_position_lobbyists = covered_position_lobbyists.distinct()
+        specific_issue_registrations = Registration.objects.filter(specific_issue__icontains=term)
     else:
         registrants = None
         clients = None
@@ -372,6 +373,7 @@ def search(request):
                                'clients': clients,
                                'lobbyists': lobbyists,
                                'covered_position_lobbyists': covered_position_lobbyists,
+                               'specific_issue_registrations': specific_issue_registrations,
                                'term': term, 
                                'num_results': num_results,
                                },
