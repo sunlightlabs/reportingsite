@@ -12,74 +12,98 @@
 {% block breadcrumb %}{% endblock %}
 
             <div id="halfColumn_lt">
-                <a href="{% url willard_registrations_home %}"><img id="registrationImg" alt="Image of footsteps" src="{% media_url %}/img/bg_registration.png" /></a>
-                <div class="lobbyingHeader">
-                    <h3 class="withTip"><a href="{% url willard_registrations_home %}">Lobbying Registration Tracker</a></h3>
-                    <p class="tip tipLg">The Lobbyist Registration Tracker, updated weekly, shows which special interests have hired new lobbyists within the last 45 days and includes all registrants since 2008.</p>
+                <div class="lobbyingModule">
+                    <a href="{% url willard_registrations_home %}"><img id="registrationImg" alt="Image of footsteps" src="{% media_url %}/img/bg_registration.png" /></a>
+                    <div class="lobbyingHeader">
+                        <h3 class="withTip"><a href="{% url willard_registrations_home %}">Lobbying Registration Tracker</a></h3>
+                        <p class="tip tipLg">The Lobbyist Registration Tracker, updated weekly, shows which special interests have hired new lobbyists within the last 45 days and includes all registrants since 2008.</p>
+                    </div>
+
+                    {% for dategroup in registrations %}
+                    <h4>{{ dategroup.date|date:"F j" }}</h4>
+                    <ul class="smDefinedList">
+                        {% for registration in dategroup.registrations %}
+                            <li>
+                                <ul class="interiorList">
+                                    <li>
+                                        <span class="regTitle">Registrant</span>
+                                        <span class="regDescriptionLg"><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></span>
+                                        <div class="clear"></div>
+                                    </li>
+                                    <li>
+                                        <span class="regTitle">Client</span>
+                                        <span class="regDescriptionLg"><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></span>
+                                        <div class="clear"></div>
+                                    </li>
+                                    <li>
+                                        <span class="regTitle">Issues</span>
+                                        <div class="regDescriptionLg">
+                                            <ul class="alignedList">
+                                            {% for issue in registration.denormalized_issues %}
+                                                <li>
+                                                    <a href="{{ issue.get_absolute_url }}">{{ issue.issue }}</a>{% if not forloop.last %}, {% endif %}
+                                                </li>
+                                            {% endfor %}
+                                            </ul>
+                                        </div>
+                                    
+                                        <div class="clear"></div>
+                                    </li>
+                                    <li>
+                                        <a href="{{ registration.get_absolute_url }}">View registration</a>
+                                    </li>
+                                </ul>
+                            </li>
+                        {% endfor %}
+                    </ul>
+                    {% endfor %}
+                    <a class="readMoreRT" href="{% url willard_registrations_all %}">View All Registrations »</a>
                 </div>
 
-                {% for dategroup in registrations %}
-                <h4>{{ dategroup.date|date:"F j" }}</h4>
-                <ul class="smDefinedList">
-                    {% for registration in dategroup.registrations %}
+                {# fara #}
+                <div class="lobbyingModule">
+                    <a href="/lobbying/postemployment"><img id="employmentImg" alt="Image of briefcase" src="{% media_url %}/img/bg_employment.png" /></a>
+                    <div class="lobbyingHeader">
+                        <h3 class="withTip"><a href="/lobbying/postemployment">Post Employment Tracker</a></h3>
+                        <p class="tip tipLg">The Post Employment Tracker shows when covered congressional officials—former members and high-ranking staffers—can legally begin to lobby their old colleagues, though note that not everyone listed has become a lobbyist.</p>
+                    </div>
+                    {% for dategroup in postemployment|slice:"2" %}
+                    <h4>Legal to Lobby as of {{ dategroup.date|date:"F j" }}</h4>
+                    <ul class="smDefinedList definedList employmentList" >
+                        {% for notice in dategroup.notices %}
                         <li>
-                            <ul class="interiorList">
-                                <li>
-                                    <span class="regTitle">Registrant</span>
-                                    <span class="regDescriptionLg"><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></span>
-                                    <div class="clear"></div>
-                                </li>
-                                <li>
-                                    <span class="regTitle">Client</span>
-                                    <span class="regDescriptionLg"><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></span>
-                                    <div class="clear"></div>
-                                </li>
-                                <li>
-                                    <span class="regTitle">Issues</span>
-                                    <span class="regDescriptionLg">
-                                        <ul class="alignedList">
-                                        {% for issue in registration.denormalized_issues %}
-                                            <li>
-                                                <a href="{{ issue.get_absolute_url }}">{{ issue.issue }}</a>{% if not forloop.last %}, {% endif %}
-                                            </li>
-                                        {% endfor %}
-                                        </ul>
-                                    </span>
-                                    
-                                    <div class="clear"></div>
-                                </li>
-                                <li>
-                                    <a href="{{ registration.get_absolute_url }}">View registration</a>
-                                </li>
-                            </ul>
+                            <a href="{{ notice.get_absolute_url }}">{{ notice }}</a>
+                            <span>{{ notice.office_name|title }}</span>
                         </li>
+                        {% endfor %}
+                    </ul>
                     {% endfor %}
-                </ul>
-                {% endfor %}
-                <a class="readMoreRT" href="{% url willard_registrations_all %}">View All Registrations »</a>
+                    <a class="readMoreRT" href="{% url willard_postemployment_list %}">View the Next Congressional Members or Staffers up for Legal Lobbying » </a>
 
-            </div>    
+                </div>    
+            </div>
 
             <div id="halfColumn_rt">
-                <a href="/lobbying/postemployment"><img id="employmentImg" alt="Image of briefcase" src="{% media_url %}/img/bg_employment.png" /></a>
-                <div class="lobbyingHeader">
-                    <h3 class="withTip"><a href="/lobbying/postemployment">Post Employment Tracker</a></h3>
-                    <p class="tip tipLg">The Post Employment Tracker shows when covered congressional officials—former members and high-ranking staffers—can legally begin to lobby their old colleagues, though note that not everyone listed has become a lobbyist.</p>
-                </div>
-                {% for dategroup in postemployment %}
-                <h4>Legal to Lobby as of {{ dategroup.date|date:"F j" }}</h4>
-                <ul class="smDefinedList definedList" id="employmentList">
-                    {% for notice in dategroup.notices %}
-                    <li>
-                        <a href="{{ notice.get_absolute_url }}">{{ notice }}</a>
-                        <span>{{ notice.office_name|title }}</span>
-                    </li>
+
+                    <a id="foreignLobby_column" href="http://foreignlobbying.org"><img id="foreignLobbyingImg" alt="Image of globe" src="{% media_url %}/img/bg_foreignLobbying.png" /></a>
+                    <div class="lobbyingHeader">
+                        <h3 class="withTip"><a href="http://foreignlobbying.org">Foreign Lobbying Filings</a></h3>
+                        <p class="tip tipLg">Representatives of foreign governments, political parties and government-controlled entities must disclose detailed information about their work to influence U.S. policy. These are the latest filings submitted under the Foreign Agent Registration Act.</p>
+                    </div>
+                    {% for dategroup in fara %}
+                    <h4>Filings on {{ dategroup.date|date:"F j" }}</h4>
+                    <ul class="smDefinedList">
+                        {% for filing in dategroup.filings %}
+                        <li><strong>{{ filing.registrant_name }}</strong> submitted {{ filing.indefinite_article }} <abbr title="{{ filing.document_type|form_definition }}">{{ filing.document_type }}</abbr>. <a href="{{ filing.get_absolute_url }}">View filing » </a></li>
+                        {% endfor %}
+                    </ul>
                     {% endfor %}
-                </ul>
-                {% endfor %}
-                <a class="readMoreRT" href="{% url willard_postemployment_list %}">View the Next Congressional Members or Staffers up for Legal Lobbying »</a>
+    	            <p class="tip tipLg readMoreRT">Visit <a href="http://foreignlobbying.org">the Foreign Lobbying Influence Tracker</a> for more details.</p>
+
             </div>    
             <div class="clear"></div>
+            
+
             <div id="lobbyingOther">
                 <h3>Other Lobbying Resources</h3>
                 <div id="partyTime">
@@ -93,247 +117,5 @@
                 </div>
             </div>    
 
-
-{% comment %}
-<div id="lobbyFeature_wrapper">
-    <div id="lobbyFeature">
-        <p>The Lobbying Disclosure Act requires lobbyists and lobbying firms to register with the House and the Senate within 45 days of being hired by a client. The registrations list the issue areas that will be covered by the lobbying. This database allows users to see those registrations as they're submitted, to browse by issue, registrant and client, and to see the trends in issues and registrations over time. The database is updated weekly based on Senate records and includes all registrations starting in 2009.</p>
-    </div>
-</div>
-<div id="lobbyShareBar">
-    <ul>
-        <li><a href="http://www.addthis.com/bookmark.php?v=250&username=sunlightfoundation" class="addthis_button_compact">Share</a>
-        <script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script> 
-        <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=sunlightfoundation"></script>
-        </li>
-        <li><a href="http://sunlightfoundation.com/contact/">Feedback</a></li>
-    </ul>
-</div>
-<div id="lobbyLeftColumn">
-    <div id="timeToggle">
-        <span>Show graphs for:</span>
-        <form>
-            <label><input class="radio" type="radio" name="group1" value="30Days" id="toggle_month" checked="checked"> Last 30 days</label>
-            <label><input class="radio" type="radio" name="group2" value="12Months" id="toggle_year"> Last 12 Months</label>
-            <div class="clear"></div>
-        </form>
-    </div>
-    <div id="registrations_month" class="clear">
-        <h3 class="withTip">Registrations</h3>
-        <span class="tip tipHeight">Last 30 Days</span>
-        <div id="monthLineChart"></div>
-        
-        <h3 class="withTip">By issue</h3>
-        <span class="tip tipHeight">Last 30 Days</span>
-        <ul class="issueChart">
-            {% for issue in past_month_issues %}
-            <li>
-                <a href="{{ issue.get_absolute_url }}">
-                    <span>{{ issue.issue }}</span>
-                    <span class="inlinesparkline">{{ issue.counts_by_day }}</span>
-                </a>
-                <span class="count">{{ issue.past_month_count|intcomma }}</span>
-                <span class="index" style="width: {{ issue.past_month_count|percentage:past_month_count|intcomma }}%"></span>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-
-    <div id="registrations_year" style="display: none;">
-        <h3 class="withTip">Registrations</h3>
-        <span class="tip tipHeight">Last 12 Months</span>
-        <div id="yearLineChart"></div>
-        
-        <h3 class="withTip">By issue</h3>
-        <span class="tip tipHeight">Last 12 Months</span>
-        <ul class="issueChart">
-            {% for issue in issues %}
-            <li>
-                <a href="{{ issue.get_absolute_url }}">
-                    <span>{{ issue.issue }}</span>
-                    <span class="inlinesparkline" style="color:#f1f1ef;">{{ issue.counts_by_month }}</span>
-                </a>
-                <span class="count">{{ issue.num|intcomma }}</span>
-                <span class="index" style="width: {{ issue.num|percentage:past_year_count|intcomma }}%"></span>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-</div>
-
-
-<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
-
-<script type="text/javascript">
-    $(document).ready(function () {
-
-        // Create inline sparklines
-        $('.inlinesparkline').sparkline('html', { fillColor: false,  spotRadius: 0, lineColor: '#414042' });
-
-        chart = new Highcharts.Chart({
-            chart: {
-                renderTo: 'yearLineChart',
-                width: '525',
-                height: '300',
-                defaultSeriesType: 'line',
-                marginTop: -25,
-                marginLeft: 50,
-                animation: false,
-                backgroundColor: 'none'
-            },
-            credits: { enabled: false },
-            plotOptions: {
-                series: {
-                    cursor: 'pointer',
-                    marker: { 
-                        radius: 3
-                    },
-                    lineWidth: 2,
-                    color: '#eac80e',
-                    shadow: false
-                }
-            },
-            legend: {
-                        enabled: false
-            },
-            title: {
-                text: '',
-                style: { display: 'none', position: 'absolute', left: '0', top: '0', }
-            },
-            tooltip: {
-                borderRadius: 0,
-                borderWidth: 0,
-                formatter: function() {
-                    return '<b>' + this.point.name + ': ' + this.y + ' registrations</b>';
-                }
-            },
-            yAxis: {
-                min: 0,
-                     title: { text: 'Number of registrations',
-                              style: { color: '#414042' }
-                     }
-            },
-            xAxis: {
-                categories: [ {% for month, registrations in registrations_by_month %} '{{ month.month_initial }}'{% if not forloop.last %},{% endif %} {% endfor %} ],
-                    title: { text: 'Month',
-                        style: { color: '#414042' }
-                    }
-            },
-
-            series: [
-            {
-                name: 'Lobbyist registrations',
-                data: [ {% for month, registrations in registrations_by_month %} { y: {{ registrations }}, name: '{{ month.month_name }} {{ month.year }}' }{% if not forloop.last %},{% endif %} {% endfor %} ]
-            }
-            ]
-        });
-
-
-        chart = new Highcharts.Chart({
-            chart: {
-                renderTo: 'monthLineChart',
-                width: '525',
-                height: '300',
-                defaultSeriesType: 'line',
-                marginTop: -25,
-                marginLeft: 50,
-                animation: false,
-                backgroundColor: '#f1f1ef'
-            },
-            credits: { enabled: false },
-            plotOptions: {
-                series: {
-                    cursor: 'pointer',
-                    marker: { 
-                        radius: 3
-                    },
-                    lineWidth: 2,
-                    color: '#eac80e',
-                    shadow: false
-                }
-            },
-            legend: {
-                        enabled: false
-            },
-            title: {
-                text: '',
-                style: { display: 'none', position: 'absolute', left: '0', top: '0', }
-            },
-            tooltip: {
-                borderRadius: 0,
-                borderWidth: 0,
-                formatter: function() {
-                    return '<b>' + this.point.name + ': ' + this.y + ' registrations</b>';
-                }
-            },
-            yAxis: {
-                min: 0,
-                     title: { text: 'Number of registrations',
-                              style: { color: '#414042' }
-                     }
-            },
-            xAxis: {
-                categories: [ {% for day, registrations in registrations_by_day %} '{% cycle day|date:"n/j" " " " " " " " " %}'{% if not forloop.last %},{% endif %} {% endfor %} ],
-                    title: { text: 'Date',
-                        style: { color: '#414042' }
-                    }
-            },
-
-            series: [
-            {
-                name: 'Lobbyist registrations',
-                data: [ {% for day, registrations in registrations_by_day %} { y: {{ registrations }}, name: '{{ day|date:"n/j" }}' }{% if not forloop.last %},{% endif %} {% endfor %} ]
-            }
-            ]
-
-        });
-
-        var showMonth = function () {
-            $("#registrations_year").hide();
-            $("#registrations_month").show();
-            $("#toggle_month").attr("checked", "checked");
-            $("#toggle_year").attr("checked", "");
-            $.sparkline_display_visible();
-        }
-
-        var showYear = function () {
-            $("#registrations_month").hide();
-            $("#registrations_year").show();
-            $("#toggle_year").attr("checked", "checked");
-            $("#toggle_month").attr("checked", "");
-            $.sparkline_display_visible();
-        }
-
-        if (window.location.hash == '#year') {
-            showYear();
-        }
-
-        $("#toggle_year").bind('click', function() {
-            showYear();
-        });
-        $("#toggle_month").bind('click', function() {
-            showMonth();
-        });
-
-    });
-</script>
-
-
-<div class="registrationList">
-    <h3 class="withTip">Latest registrations</h3>
-    <div class="rssIcon rssBlock">
-        <a href="{% url willard_feed %}">Subscribe</a>
-    </div>
-    {% for dategroup in object_list %}
-    <h4>{{ dategroup.date|date:"F j" }}</h4>
-    <ul>
-        {% for registration in dategroup.registrations %}
-            {% include "willard/registration_list_item.html" %}
-        {% endfor %}
-    </ul>
-    {% endfor %}
-    <a class="lobbying_paginatorNext" href="{% url willard_registrations_all %}">View all registrations »</a>
-</div>
-{% endcomment %}
 
 {% endblock content %}

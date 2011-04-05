@@ -19,7 +19,7 @@ cutoff = datetime.date(year=cutoff.year,
                        day=1)
 
 
-KEY_PREFIX = 'willard_9_'
+KEY_PREFIX = 'willard_11_'
 
 urlpatterns = patterns('',
 
@@ -213,6 +213,11 @@ urlpatterns = patterns('',
                  'mimetype': 'text/javascript',
                 },
             name='willard_registrations_widget_js'),
+
+        url(r'^fara\/(?P<object_id>\d+)\/?$',
+            object_detail,
+            {'queryset': ForeignLobbying.objects.all(), },
+            name='willard_fara_filing'),
 
         url(r'^$',
             cache_page(index, 60*5, key_prefix=KEY_PREFIX),
