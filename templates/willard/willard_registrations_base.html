@@ -17,7 +17,7 @@
                 <li class="lobbyists"><a href="{% url willard_lobbyist_list %}">Browse lobbyists</a></li>
                 <li class="clients"><a href="{% url willard_client_list %}">Browse clients</a></li>
                 <form id="lobbyingSearch" action="{% url willard_search %}" method="GET">
-                    <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Registrant, client, lobbyist or position"{% endif %} type="text" name="q" />
+                    <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Registrant, client, lobbyist, position or specific issue"{% endif %} type="text" name="q" />
                     <button class="goBtn" type="submit" value="Search" >
                         <span>Go</span>
                     </button>

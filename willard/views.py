@@ -377,6 +377,7 @@ def search(request):
                                'lobbyists': lobbyists,
                                'specific_issue_registrations': specific_issue_registrations,
                                'covered_position_lobbyists': covered_position_lobbyists,
+                               'specific_issue_registrations': specific_issue_registrations,
                                'term': term, 
                                'num_results': num_results,
                                },
