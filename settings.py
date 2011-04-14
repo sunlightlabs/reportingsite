@@ -103,7 +103,7 @@ INSTALLED_APPS = (
     'storages',
     'debug_toolbar',
     'haystack',
-    #'buckley',
+    'buckley',
     'gunicorn',
     'willard',
 )
