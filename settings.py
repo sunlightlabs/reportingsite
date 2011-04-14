@@ -88,7 +88,7 @@ TEMPLATE_DIRS = (
 INSTALLED_APPS = (
     'django.contrib.comments',
     'django.contrib.markup',
-    #'tagging',
+    'tagging',
     'django.contrib.auth',
     'django.contrib.contenttypes',
     'django.contrib.sessions',
