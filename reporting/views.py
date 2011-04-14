@@ -39,7 +39,9 @@ def post_detail(request, year, slug, month=None, day=None):
     key = 'reporting:%s:%s' % (year, slug)
     post = cache.get(key)
     if not post:
-        post = get_object_or_404(Post, date_published__year=year, slug=slug, is_published=True)
+        post = get_object_or_404(Post, date_published__year=year, slug=slug)
+        if not post.is_published and not request.user.is_staff:
+            raise Http404
         cache.set(key, post, 60*60)
 
     # Check whether the post is published. If so, show it.
