@@ -116,8 +116,13 @@ class Registrant(models.Model):
         return get_ie_data(self.display_name)
 
     def ie_id(self):
-        if len(self.ie_data):
+        if not len(self.ie_data):
+            return None
+        if len(self.ie_data) == 1:
             return self.ie_data[0]['id']
+        m = [x for x in self.ie_data if x['name'] == self.display_name]
+        if len(m):
+            return m[0]['id']
         return None
 
     def ie_url(self):
@@ -179,7 +184,12 @@ class Client(models.Model):
     def ie_id(self):
         if not len(self.ie_data):
             return None
-        return self.ie_data[0]['id']
+        if len(self.ie_data) == 1:
+            return self.ie_data[0]['id']
+        m = [x for x in self.ie_data if x['name'] == self.display_name]
+        if len(m):
+            return m[0]['id']
+        return None
 
     def ie_url(self):
         if not self.ie_id():
