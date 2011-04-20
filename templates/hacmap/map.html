@@ -19,6 +19,17 @@
     clear:both;
   }
 
+div#key {
+   float: right;
+   width: 400px; 
+   margin-left: 70px;
+}
+div#key img {
+   border: 0;
+   width: 15px;
+   margin-right: 5px;
+}
+
 #address { border: 1px solid gray !important; width: 200px !important;}
 #addressButton { width: 100px !important; 
 }
@@ -44,7 +55,8 @@
     var marker_layers = {};
     var infoWindow = null;
     var COLORS = ['ffffff', 'aaaaaa', '00aa00', 'aaaa00', '0000aa', 'ffaa00', 'aa0000'];
-    var MARKER_ICONS = ['zero.png', 'no_data.png', 'lowest.png', 'lower.png', 'normal.png', 'high.png', 'highest.png'];
+
+    var MARKER_ICONS = ['gray.png', 'white.png', 'green.png', 'lightblue.png', 'blue.png', 'orange.png', 'red.png'];
     var LAYER_NAMES = ['catheter_uti', 'falls_and_trauma', 'foreign_objects', 'poor_glycemic', 'ulcers', 'vascular'];
     
     function MapIconUrl(marker_color_bitmask) {
@@ -156,7 +168,7 @@ function Initialize() {
     $.each(data, function(index, val) {   
       var marker = new google.maps.Marker({
       			position: new google.maps.LatLng(parseFloat(val[2]), parseFloat(val[1])),
-      			title: 'Marker ' + val[2],	
+      			title: val[4],	
       			icon: MapIconUrl(val[3]),
   		});  
   		marker.marker_id = val[0];
@@ -228,14 +240,47 @@ function codeAddress() {
 
 </script>
 
-  <div id="map" style="width:950px; height:800px;">
+
+  <div id="map" style="width:950px; height:1000px; padding: 15px;">
+<div style="width: 900px; margin-left: 15px; margin-bottom: 15px;">
+<h2>Mapping Hospital Acquired Conditions</h2>
+
+<div id="key">
+<h5 style="font-size: 1em;">Hospital's rate of HACs is:</h5>
+<!--
+<img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/"
+Hospital's rate of HACs is...
+Green: Far lower than the national average
+Yellow: Lower than the national average
+Blue: Near the national average
+Orange: Above the national average
+Red: Far above the national average
+White: No HACs reported
+Gray: Not applicable
+//-->
+<ul style="float: right;">
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/white.png"/>No HACs reported</li>
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/gray.png"/>Not applicable</li>
+</ul>
+<ul>
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/green.png"/>Far lower than national average</li>
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/lightblue.png"/>Lower than national average</li>
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/blue.png"/>Near national average</li>
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/orange.png"/>Above national average</li>
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/red.png"/>Far above national average</li>
+</ul>
+</div>
+
+<div>A hospital-acquired condition (HAC) is where a patient suffers from a health problem due to being in the hospital, for example, an infection following surgery. To see how your local hospital stacks up to others or the national average when it comes to these so-called HACs, use the dropdown menu below to select a condition, zoom into your area to see individual hospitals, and select a placemark to see how each rates. To see a different condition, reselect from the dropdown menu.</div>
+
+</div>
 <!--
     <div>
       <input id="address" type="textbox" value=""> <input id="addressButton" type="button" value="Find a location" onclick="codeAddress()">
     </div>
 //-->
 
-    <div>
+    <div style="margin-left: 10px;">
       <select id="selectMapType">
         <option value="test">
           Select data to map:
