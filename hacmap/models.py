@@ -42,3 +42,10 @@ class Marker(models.Model):
     hospitalname = models.CharField(max_length=255)
     type = models.CharField(max_length=100)
 
+
+class MarkerList(models.Model):
+    marker_id = models.CharField(max_length=32)
+    lon = models.CharField(max_length=100)
+    lat = models.CharField(max_length=100)
+    bitmask = models.IntegerField()
+    hospital_name = models.CharField(max_length=255)
