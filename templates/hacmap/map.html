@@ -1,9 +1,7 @@
-<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN"
-"http://www.w3.org/TR/html4/loose.dtd">
 
-<html>
-<head>
-  <title>HAC Maps</title>
+{% extends "base.html" %}
+
+{% block main_content %}
   <style type="text/css">
 
   #container {
@@ -21,10 +19,12 @@
     clear:both;
   }
 
-  html { height: 100% }
-  body { height: 100%; margin: 0px; padding: 0px }
-  .note { font-size:11px; color:#666666; }
-  #map_canvas { width:600px; height:600px; margin-bottom:12px; }
+#address { border: 1px solid gray !important; width: 200px !important;}
+#addressButton { width: 100px !important; 
+}
+.note { font-size:11px; color:#666666; }
+#map { background-color: #f1f1ed; }
+  #map_canvas { width:900px; height:600px; margin-bottom:12px; margin-left: auto; margin-right: auto;}
   #map_canvas span { color:#666666; font-size:12px; display:inline; }
   #map_canvas h4 { color: #666666; font-size: 12px; }
   #credit_line p { font-size: 10px; font-weight:bold; font-style:italic; color:#666666; text-align:right; }
@@ -212,6 +212,7 @@ function RedoMarkerColors() {
 
 function codeAddress() {
   var address = document.getElementById("address").value;
+  geocoder = new google.maps.Geocoder();
   geocoder.geocode( { 'address': address}, function(results, status) {
     if (status == google.maps.GeocoderStatus.OK) {
       map.setCenter(results[0].geometry.location);
@@ -226,13 +227,13 @@ function codeAddress() {
 }
 
 </script>
-</head>
 
-<body>
-  <div id="map" style="width:615px; height:800px;">
+  <div id="map" style="width:950px; height:800px;">
+<!--
     <div>
-      <input id="address" type="textbox" value=""> <input type="button" value="Find a location" onclick="codeAddress()">
+      <input id="address" type="textbox" value=""> <input id="addressButton" type="button" value="Find a location" onclick="codeAddress()">
     </div>
+//-->
 
     <div>
       <select id="selectMapType">
@@ -271,6 +272,4 @@ function codeAddress() {
     <div id="map_canvas"></div>
   </div><br>
   <!--end google map-->
-</body>
-</html>
-
+{% endblock main_content %}
