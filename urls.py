@@ -49,6 +49,9 @@ urlpatterns = patterns(
     url(r'^independent-expenditures/', include('buckley.urls')),
 
     url(r'^lobbying/', include('willard.urls')),
+
+    url(r'^hac/', include('hacmap.urls')),
+
 )
 
 
