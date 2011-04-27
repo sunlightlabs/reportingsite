@@ -7,11 +7,14 @@ from django.views.decorators.cache import cache_page
 from django.views.generic.list_detail import object_list, object_detail
 from django.views.generic.simple import direct_to_template
 
+from tastypie.api import Api
+
 from dateutil.relativedelta import relativedelta
 
 from willard.models import *
 from willard.feeds import *
 from willard.views import *
+from willard.api import *
 
 cutoff = datetime.date.today() - relativedelta(months=12)
 cutoff = datetime.date(year=cutoff.year,
@@ -224,5 +227,13 @@ urlpatterns = patterns('',
             {},
             name='willard_index'),
 
+)
+
+# FARA API
+v1_api = Api(api_name='v1')
+v1_api.register(ForeignLobbyingResource())
+
+urlpatterns += patterns('',
+        (r'^fara\/api/', include(v1_api.urls))
 )
 
