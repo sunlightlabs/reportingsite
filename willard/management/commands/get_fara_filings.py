@@ -32,7 +32,7 @@ class Command(BaseCommand):
                     continue
                 data.append((input.attrib['name'], input.attrib['value']))
 
-        start_date = datetime.date.today() - datetime.timedelta(2)
+        start_date = datetime.date.today() - datetime.timedelta(14)
         end_date = datetime.date.today()
 
         data += [('p_t01', 'ALL'),
@@ -88,6 +88,7 @@ class Command(BaseCommand):
             cells = row.cssselect('td')
             filing['pdf_url'] = cells[0].cssselect('a')[0].attrib.get('href')
             if ForeignLobbying.objects.filter(pdf_url=filing['pdf_url']):
+                print 'Already exists: %s' % filing['pdf_url']
                 continue
 
             fields = ['registration_number',
@@ -97,6 +98,7 @@ class Command(BaseCommand):
             filing.update(dict(zip(fields, [x.text_content() for x in cells[1:]])))
             metadata = self.get_metadata(filing)
             if metadata is None:
+                print 'No metadata found: %s' % filing['pdf_url']
                 continue
 
             filing.update(metadata)
