@@ -42,6 +42,7 @@ import urllib
 import urllib2
 import mimetools, mimetypes
 import os, stat
+from cStringIO import StringIO
 
 class Callable:
     def __init__(self, anycallable):
@@ -86,22 +87,23 @@ class MultipartPostHandler(urllib2.BaseHandler):
         if boundary is None:
             boundary = mimetools.choose_boundary()
         if buffer is None:
-            buffer = ''
+            buffer = StringIO()
         for(key, value) in vars:
-            buffer += '--%s\r\n' % boundary
-            buffer += 'Content-Disposition: form-data; name="%s"' % key
-            buffer += '\r\n\r\n' + value + '\r\n'
+            buffer.write('--%s\r\n' % boundary)
+            buffer.write('Content-Disposition: form-data; name="%s"' % key)
+            buffer.write('\r\n\r\n' + value + '\r\n')
         for(key, fd) in files:
             file_size = os.fstat(fd.fileno())[stat.ST_SIZE]
             filename = fd.name.split('/')[-1]
             contenttype = mimetypes.guess_type(filename)[0] or 'application/octet-stream'
-            buffer += '--%s\r\n' % boundary
-            buffer += 'Content-Disposition: form-data; name="%s"; filename="%s"\r\n' % (key, filename)
-            buffer += 'Content-Type: %s\r\n' % contenttype
+            buffer.write('--%s\r\n' % boundary)
+            buffer.write('Content-Disposition: form-data; name="%s"; filename="%s"\r\n' % (key, filename))
+            buffer.write('Content-Type: %s\r\n' % contenttype)
             # buffer += 'Content-Length: %s\r\n' % file_size
             fd.seek(0)
-            buffer += '\r\n' + fd.read() + '\r\n'
-        buffer += '--%s--\r\n\r\n' % boundary
+            buffer.write('\r\n' + fd.read() + '\r\n')
+        buffer.write('--%s--\r\n\r\n' % boundary)
+        buffer = buffer.getvalue()
         return boundary, buffer
     multipart_encode = Callable(multipart_encode)
 
