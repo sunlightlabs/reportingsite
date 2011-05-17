@@ -222,6 +222,13 @@ urlpatterns = patterns('',
             {'queryset': ForeignLobbying.objects.all(), },
             name='willard_fara_filing'),
 
+        url(r'^fara\/?$',
+                object_list,
+                {'queryset': ForeignLobbying.objects.order_by('-stamped'), 
+                 'paginate_by': 50,
+                },
+                name='willard_fara_list'),
+
         url(r'^$',
             cache_page(index, 60*5, key_prefix=KEY_PREFIX),
             {},
