@@ -14,7 +14,21 @@
 {% block content %}
     {% include "buckley/tabs.html" %}
 
-<h2>Committees</h2>
+<h2>
+    {% if cycle %}
+    Committees: {{ cycle }} cycle
+    {% else %}
+    Committees
+    {% endif %}
+</h2>
+
+
+{% if not cycle %}
+Previous cycles: <a href="{% url buckley_cycle_committee_list 2010 %}">2010</a>
+{% endif %}
+
+{% if object_list %}
+
 <p class="tip">Select a committee to see details.</p>
 <p style="font-weight: bold;"><a href="{% url buckley_letter_list %}">View all committes intending to accept unlimited contributions.</a></p>
 <table id="expendituresData" class="tablesorter">
@@ -52,5 +66,9 @@
 {% with '[1,1]' as sortdir %}
 {% include "buckley/tablesorter.html" %}
 {% endwith %}
+
+{% else %}
+<br/><br/>No spending has been reported for this cycle.
+{% endif %}
 
 {% endblock content %}

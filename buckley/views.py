@@ -43,13 +43,22 @@ def expenditure_detail(request, committee_slug, object_id):
                                 context_instance=RequestContext(request))
 
 
-def races():
-    races = set([x.race() for x in Candidate.objects.all()])
+def races(cycle=None):
+    if cycle:
+        candidates = Candidate.objects.filter(cycle=cycle)
+        start, end = CYCLE_DATES[cycle]
+        cycle_filter = {'expenditure_date__gte': start,
+                        'expenditure_date__lte': end, }
+    else:
+        candidates = Candidate.objects.current_cycle()
+        cycle_filter = {}
+
+    races = set([x.race() for x in candidates])
     race_amts = []
     for race in races:
         state, district = race.split('-')
 
-        amounts = Expenditure.objects.filter(race=race).values('election_type').annotate(amount=Sum('expenditure_amount'))
+        amounts = Expenditure.objects.filter(race=race).filter(**cycle_filter).values('election_type').annotate(amount=Sum('expenditure_amount'))
         amounts = dict([(x['election_type'], x['amount']) for x in amounts])
         for k in ('P', 'G',):
             if k not in amounts:
@@ -68,31 +77,13 @@ def races():
             office = 'H'
             full_race = '%s %s' % (STATE_CHOICES[state], ordinal(district))
 
-        # Get amounts from electioneering communications
-        # where there is no race set on the expenditure.
-        """
-        filter = {'office': office, 'state': state, }
-        if office == 'H':
-            filter['district'] = district
-        candidates = Candidate.objects.filter(**filter)
-        already_included = [] # So we don't double count electioneering communications in the same race
-        for candidate in candidates:
-            expenditures = candidate.electioneering_expenditures.filter(race='')
-            for expenditure in expenditures:
-                if expenditure not in already_included:
-                    already_included.append(expenditure)
-                    if expenditure.election_type not in ('P', 'G'):
-                        amounts['other'] += expenditure.expenditure_amount
-                    else:
-                        amounts[expenditure.election_type] += expenditure.expenditure_amount
-        """
-
         amounts['total'] = sum([amounts['G'], amounts['P'], amounts['other']])
 
         race_amts.append({'race': race,
                           'full_race': full_race,
                           'amounts': amounts,
                           'total': amounts['total'], # For easier sorting
+                          'cycle': cycle or '2012',
                           })
 
     race_amts.sort(key=itemgetter('total'), reverse=True)
@@ -101,15 +92,16 @@ def races():
 
 
 @cache_page(60*60*24)
-def race_list(request, return_raw_data=False):
-    race_amts = races()
+def race_list(request, return_raw_data=False, cycle=None):
+    race_amts = races(cycle)
     return render_to_response('buckley/race_list.html',
                               {'races': race_amts,
+                              'cycle': cycle,
                                }, context_instance=RequestContext(request))
 
 
 @cache_page(60*60*24, key_prefix=KEY_PREFIX)
-def race_expenditures(request, race, election_type=None):
+def race_expenditures(request, race, election_type=None, cycle=None):
 
     try:
         state, district = race.split('-')
@@ -138,7 +130,12 @@ def race_expenditures(request, race, election_type=None):
         candidates = get_list_or_404(Candidate, office='H', state=state, district=district)
         full_race = '%s %s' % (STATE_CHOICES[state.upper()], ordinal(district))
 
-    expenditures = Expenditure.objects.filter(race=race).filter(**filter).exclude(exclude).order_by('-expenditure_date')
+    if cycle:
+        expenditures = Expenditure.objects.all()
+    else:
+        expenditures = Expenditure.objects.current_cycle()
+
+    expenditures = expenditures.filter(race=race).filter(**filter).exclude(exclude).order_by('-expenditure_date')
 
     # Check whether there are any electioneering
     # communications. For electioneering communications
@@ -195,19 +192,21 @@ def race_expenditures(request, race, election_type=None):
                                'election_types': election_types,
                                'election_type': election_type,
                                'includes_electioneering': includes_electioneering,
+                               'cycle': cycle,
                               }, context_instance=RequestContext(request))
 
 @cache_page(60*60*24)
-def candidate_committee_detail(request, candidate_slug, committee_slug):
+def candidate_committee_detail(request, candidate_slug, committee_slug, cycle=None):
     if candidate_slug == 'no-candidate-listed':
         raise Http404
 
-
     committee = get_object_or_404(Committee, slug=committee_slug)
+
+    cycle = cycle or sorted(CYCLE_DATES.keys())[-1]
 
     if candidate_slug.find(',') > 0:
         candidate_slugs = candidate_slug.split(',')
-        candidates = Candidate.objects.filter(slug__in=candidate_slugs)
+        candidates = Candidate.objects.filter(slug__in=candidate_slugs, cycle=cycle)
         if not candidates:
             raise Http404
 
@@ -220,7 +219,10 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
         candidate = None
 
     else:
-        candidate = get_object_or_404(Candidate, slug=candidate_slug)
+        filter = {'slug': candidate_slug, }
+        if cycle:
+            filter['cycle'] = cycle
+        candidate = get_object_or_404(Candidate, **filter)
 
         expenditures = Expenditure.objects.filter(candidate=candidate,
                                                     committee=committee
@@ -254,6 +256,7 @@ def candidate_committee_detail(request, candidate_slug, committee_slug):
                                'candidate_count': len(candidates),
                                'candidate': candidate,
                                'total': expenditures.aggregate(total=Sum('expenditure_amount'))['total'],
+                               'cycle': cycle,
                                }, context_instance=RequestContext(request))
 
 def widget():
@@ -1007,3 +1010,88 @@ def api_race_detail(request, race):
         race['race'] = '%s %s' % (STATE_CHOICES[race['state']], ordinal(race['district']))
 
     return HttpResponse(json.dumps(race), mimetype='text/plain')
+
+
+def cycle_index(request, cycle):
+    start, end = CYCLE_DATES[cycle]
+    filter = {'expenditure_date__gte': start,
+              'expenditure_date__lte': end, }
+    expenditures = Expenditure.objects.filter(**filter)
+    paginator = Paginator(expenditures, 25, orphans=5)
+    pagenum = request.GET.get('page', 1)
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+    return render_to_response('buckley/index.html',
+                              {'object_list': page.object_list,
+                               'page_obj': page,
+                               'cycle': cycle,
+                               }, context_instance=RequestContext(request))
+
+
+def cycle_candidate_list(request, cycle):
+    candidates = get_list_or_404(Candidate, cycle=cycle)
+    return render_to_response('buckley/candidate_list.html',
+                              {'object_list': candidates,
+                               'cycle': cycle,
+                               },
+                              context_instance=RequestContext(request))
+
+
+def cycle_committee_list(request, cycle):
+    start, end = CYCLE_DATES[cycle]
+    filter = {'expenditure_date__gte': start,
+              'expenditure_date__lte': end, }
+    committee_ids = Expenditure.objects.filter(**filter).values_list('committee', flat=True).distinct()
+    committees = Committee.objects.filter(id__in=committee_ids)
+    return render_to_response('buckley/committee_list.html',
+                              {'object_list': committees,
+                               'cycle': cycle,
+                               },
+                              context_instance=RequestContext(request))
+
+
+def cycle_spending(request, cycle, title, description, body_class, electioneering=False, hide_support_oppose=False):
+    start, end = CYCLE_DATES[cycle]
+    filter = {'expenditure_date__gte': start,
+              'expenditure_date__lte': end, 
+              'electioneering_communication': electioneering,
+              }
+    expenditures = Expenditure.objects.filter(**filter)
+    paginator = Paginator(expenditures, 25, orphans=5)
+    pagenum = request.GET.get('page', 1)
+    try:
+        page = paginator.page(pagenum)
+    except (EmptyPage, InvalidPage):
+        raise Http404
+    return render_to_response('buckley/expenditure_list.html',
+                                {'title': title,
+                                 'description': description,
+                                 'body_class': body_class,
+                                 'object_list': page.object_list,
+                                 'page_obj': page,
+                                 'cycle': cycle,
+                                 'hide_support_oppose': hide_support_oppose,
+                                 'electioneering': electioneering,
+                                 }, context_instance=RequestContext(request))
+
+
+def cycle_candidate_detail(request, cycle, slug):
+    candidate = get_object_or_404(Candidate, cycle=cycle, slug=slug)
+    return render_to_response('buckley/candidate_detail.html',
+                              {'object': candidate,
+                               'cycle': cycle, 
+                               }, context_instance=RequestContext(request))
+
+
+def cycle_committee_detail(request, cycle, slug):
+    committee = get_object_or_404(Committee, slug=slug)
+    candidate_amounts = committee.combined_all_candidates_with_amounts(cycle)
+    committee.combined_all_candidates_with_amounts = candidate_amounts
+    return render_to_response('buckley/committee_detail.html',
+                              {'candidate_amounts': candidate_amounts,
+                               'object': committee,
+                               'cycle': cycle,
+                               }, context_instance=RequestContext(request))
+

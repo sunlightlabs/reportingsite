@@ -1,3 +1,6 @@
+import re
+
+from django.http import HttpResponse, HttpResponsePermanentRedirect
 from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.views.static import serve
@@ -5,6 +8,9 @@ import settings
 
 
 admin.autodiscover()
+
+def buckley_redirect(request, *args, **kwargs):
+    return HttpResponsePermanentRedirect(re.sub(r'independent-expenditures', 'outside-spending', request.path))
 
 
 urlpatterns = patterns(
@@ -46,7 +52,9 @@ urlpatterns = patterns(
 
     url(r'^editing/', 'admin_editing', name='admin_editing'),
 
-    url(r'^independent-expenditures/', include('buckley.urls')),
+    url(r'^independent-expenditures/.*', buckley_redirect),
+
+    url(r'^outside-spending/', include('buckley.urls')),
 
     url(r'^lobbying/', include('willard.urls')),
 
