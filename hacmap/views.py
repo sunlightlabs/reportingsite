@@ -1,6 +1,7 @@
 from django.shortcuts import get_object_or_404
 from django.http import HttpResponse
 from django.core import serializers
+from django.views.decorators.cache import cache_page
 
 import json
 
@@ -14,6 +15,7 @@ def marker_detail(request, layer_name, marker_id):
     return HttpResponse(json.dumps(data))
 
 
+@cache_page(60*60)
 def markers(request):
     markers = MarkerList.objects.all()
     data = []
