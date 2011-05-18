@@ -17,7 +17,7 @@ try:
 except Post.DoesNotExist:
     pass
 
-KEY_PREFIX = '2'
+KEY_PREFIX = '3'
 
 
 urlpatterns = patterns('',
@@ -340,7 +340,7 @@ urlpatterns = patterns('',
             name='buckley_cycle_index'),
 
         url(r'^\/?$',
-            cache_page(object_list, 60*60*24),
+            cache_page(object_list, 60*5, key_prefix=KEY_PREFIX),
             {'queryset': Expenditure.objects.current_cycle(),
              'template_name': 'buckley/index.html',
              'paginate_by': 25,
