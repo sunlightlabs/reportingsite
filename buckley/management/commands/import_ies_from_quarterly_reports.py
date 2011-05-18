@@ -264,6 +264,7 @@ class Command(BaseCommand):
             return None
 
         candidate = Candidate.objects.create(
+                        cycle=2012,
                         fec_id=result['candidate_id'],
                         fec_name=result['candidate_name'],
                         crp_id='',
