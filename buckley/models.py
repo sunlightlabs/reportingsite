@@ -340,13 +340,17 @@ class Candidate(models.Model):
         return ('buckley_cycle_candidate_detail', [self.cycle, self.slug, ])
 
     def race(self):
-        if self.office == 'S' or self.district.startswith('S'):
+        if self.office == 'P':
+            return 'President'
+        elif self.office == 'S' or self.district.startswith('S'):
             return '%s-Senate' % self.state
         else:
             return '%s-%s' % (self.state, self.district.lstrip('0'))
 
     def full_race_name(self):
-        if self.office == 'S' or self.district.startswith('S'):
+        if self.office == 'P':
+            return 'President'
+        elif self.office == 'S' or self.district.startswith('S'):
             return '%s Senate' % STATE_CHOICES[self.state]
         else:
             return '%s %s' % (STATE_CHOICES[self.state], ordinal(self.district))
