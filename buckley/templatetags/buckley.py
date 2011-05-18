@@ -70,3 +70,7 @@ def total_sole_electioneering_by_election_type(candidate, election_type):
         return candidate.sole_electioneering_total(election_type='G')
     else:
         return candidate.sole_electioneering_total('O')
+
+@register.filter
+def committee_total_by_cycle(committee, cycle):
+    return committee.total(cycle=cycle)

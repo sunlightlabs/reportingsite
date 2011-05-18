@@ -110,10 +110,19 @@ class Committee(models.Model):
     def candidates_opposed(self):
         return self.candidates('O')
 
-    def total(self, support_oppose=None):
+    def total(self, support_oppose=None, cycle=None):
         filter = {}
         if support_oppose:
             filter.update({'support_oppose': support_oppose})
+
+        if not cycle:
+            latest_cycle = sorted(CYCLE_DATES.keys())[-1]
+            start, end = CYCLE_DATES[latest_cycle]
+        else:
+            start, end = CYCLE_DATES[cycle]
+
+        filter.update({'expenditure_date__gte': start,
+                       'expenditure_date__lte': end, })
 
         return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
