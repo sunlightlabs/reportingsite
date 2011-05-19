@@ -77,10 +77,8 @@ def committee_total_by_cycle(committee, cycle):
 
 @register.filter
 def committee_ie_total_by_cycle(committee, cycle):
-    return committee.ie_total()
-    #return committee.ie_total(cycle)
+    return committee.ie_total(cycle)
 
 @register.filter
 def committee_ec_total_by_cycle(committee, cycle):
-    return committee.ec_total()
-    #return committee.ec_total(cycle)
+    return committee.ec_total(cycle)

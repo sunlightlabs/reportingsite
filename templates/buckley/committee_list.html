@@ -2,6 +2,7 @@
 
 {% load humanize %}
 {% load media %}
+{% load buckley %}
 
 {% block title %}Committees - {{ block.super }}{% endblock %}
 
@@ -49,12 +50,8 @@ Previous cycles: <a href="{% url buckley_cycle_committee_list 2010 %}">2010</a>
                     <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
 
                     {% if cycle %}
-<td></td><td></td>
-
-{% comment %}
                     <td>${{ committee|committee_ie_total_by_cycle:cycle|intcomma }}</td>
                     <td>${{ committee|committee_ec_total_by_cycle:cycle|intcomma }}</td>
-{% endcomment %}
 
                     {% else %}
                     <td>${{ committee.ie_total|intcomma }}</td>
