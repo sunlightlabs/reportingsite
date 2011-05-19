@@ -52,7 +52,7 @@
                 {% endfor %}
             </ul>
         {% endfor %}
-        <a class="viewAll" href="/independent-expenditures/">View All Outside Spending</a>
+        <a class="viewAll" href="{% url buckley_index %}">View All Outside Spending</a>
 
     </div>
     <div class="mainModule sideStories">
@@ -62,6 +62,6 @@
             <li><a href="{{ story.get_absolute_url }}">{{ story.title }}</a></li>
         {% endfor %}
         </ul>
-        <a class="viewAll" href="/independent-expenditures/stories/">View All Stories</a>
+        <a class="viewAll" href="{% url buckley_stories %}">View All Stories</a>
     </div>
 {% endblock sidebar %}

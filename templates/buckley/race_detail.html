@@ -22,7 +22,7 @@
 
     <a style="display: block; float: right;" href="{% url buckley_race_detail_feed race=short_race %}"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/feed-icon-14x14.png" alt="RSS" title="Subscribe to an RSS feed of outside spending in the {{ race }} race" style="border: 0;" /></a>
 
-<h2>Outside spending - {{ race }}{% if election_type %} ({{ election_type }}){% endif %}</h2>
+    <h2>Outside spending - {{ race }}{% if election_type %} ({{ election_type }}){% endif %}{% if cycle %} - {{ cycle }} cycle {% endif %}</h2>
 
 <h3 class="h5">Candidates</h3>
 
@@ -64,7 +64,13 @@
 <tr class="{% cycle 'odd' 'even' %}">
     <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
     <td>{{ expenditure.election_type_for_detail_page }}</td>
-    <td><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a></td>
+    <td>
+        {% if cycle %}
+        <a href="{% url buckley_cycle_committee_detail cycle=cycle slug=expenditure.committee.slug %}">{{ expenditure.committee }}</a>
+        {% else %}
+        <a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a>
+        {% endif %}
+    </td>
     <td>{% if expenditure.electioneering_communication %}<a href="#asterisk">*</a>{% else %}{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}{% endif %}</td>
     <td>{% spaceless %}
         {% if expenditure.electioneering_communication %}

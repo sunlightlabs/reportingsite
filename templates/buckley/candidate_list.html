@@ -15,6 +15,13 @@
     {% include "buckley/tabs.html" %}
 
     <h2>Candidates</h2>
+
+{% if not cycle %}
+Previous cycles: <a href="{% url buckley_cycle_candidate_list 2010 %}">2010</a>
+{% endif %}
+
+{% if object_list %}
+
     <p>Select a candidate to see details.
     <br>
     <table id="expendituresData" class="tablesorter">
@@ -50,5 +57,9 @@
     {% endwith %}
 
     {% include "buckley/electioneering_asterisk.html" %}
+
+{% else %}
+<br/><br/>No spending has been reported for this cycle.
+{% endif %}
 
 {% endblock content %}

@@ -1,4 +1,5 @@
 from collections import defaultdict
+from copy import deepcopy
 from decimal import Decimal
 import re
 import socket
@@ -22,12 +23,11 @@ import MySQLdb
 import name_tools
 from doccloud_uploader import doccloud_upload
 
-"""
-class CommitteeManager(models.Manager):
-    def get_query_set(self):
-        #Committee.objects.exclude(expenditure__candidate__slug='')
-        return super(CommitteeManager, self).get_query_set().exclude(expenditure__candidate__slug='')
-"""
+
+CYCLE_DATES = {'2010': ('2009-01-01', '2010-12-31', ),
+               '2012': ('2011-01-01', '2012-12-31', ),
+               }
+
 
 class IEOnlyCommittee(models.Model):
     """For committees that have submitted a letter saying
@@ -58,8 +58,17 @@ class IEOnlyCommittee(models.Model):
 signals.post_save.connect(doccloud_upload, sender=IEOnlyCommittee, dispatch_uid='reporting.buckley')
 
 
+class CommitteeManager(models.Manager):
+    def current_cycle(self):
+        cycle = sorted(CYCLE_DATES.keys())[-1]
+        start, end = CYCLE_DATES[cycle]
+        filter = {'expenditure_date__gte': start,
+                  'expenditure_date__lte': end, }
+        ids = Expenditure.objects.filter(**filter).values_list('committee', flat=True).distinct()
+        return super(CommitteeManager, self).get_query_set().filter(id__in=ids)
+
+
 class Committee(models.Model):
-    #id = models.CharField(max_length=9, primary_key=True)
     name = models.CharField(max_length=255)
     slug = models.SlugField()
     description = models.TextField()
@@ -77,9 +86,7 @@ class Committee(models.Model):
 
     has_donors = models.BooleanField()
 
-    #transparencydata_id = models.CharField(max_length=40)
-
-    #objects = CommitteeManager()
+    objects = CommitteeManager()
 
     class Meta:
         ordering = ('name', )
@@ -103,10 +110,19 @@ class Committee(models.Model):
     def candidates_opposed(self):
         return self.candidates('O')
 
-    def total(self, support_oppose=None):
+    def total(self, support_oppose=None, cycle=None):
         filter = {}
         if support_oppose:
             filter.update({'support_oppose': support_oppose})
+
+        if not cycle:
+            latest_cycle = sorted(CYCLE_DATES.keys())[-1]
+            start, end = CYCLE_DATES[latest_cycle]
+        else:
+            start, end = CYCLE_DATES[cycle]
+
+        filter.update({'expenditure_date__gte': start,
+                       'expenditure_date__lte': end, })
 
         return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
@@ -159,7 +175,7 @@ class Committee(models.Model):
 
         return candidates
 
-    def combined_all_candidates_with_amounts(self):
+    def combined_all_candidates_with_amounts(self, cycle=None):
         """Combine same electioneering comm. mentioning
         multiple candidates onto one line.
         """
@@ -172,7 +188,14 @@ class Committee(models.Model):
         # queryset of expenditures
         expenditures = defaultdict(list)
 
-        for expenditure in self.expenditure_set.all():
+        if not cycle:
+            cycle = sorted(CYCLE_DATES.keys())[-1]
+
+        start, end = CYCLE_DATES[cycle]
+        filter = {'expenditure_date__gte': start,
+                  'expenditure_date__lte': end, }
+
+        for expenditure in self.expenditure_set.filter(**filter):
             if expenditure.electioneering_communication:
                 expenditures[tuple(expenditure.electioneering_candidates.all())].append(expenditure)
             else:
@@ -273,11 +296,6 @@ class CommitteeId(models.Model):
 
 class Payee(models.Model):
     name = models.CharField(max_length=255)
-    #street1 = models.CharField(max_length=255)
-    #street2 = models.CharField(max_length=255)
-    #city = models.CharField(max_length=255)
-    #state = models.CharField(max_length=2)
-    #zipcode = models.CharField(max_length=9)
     slug = models.SlugField(unique=True)
 
     def __unicode__(self):
@@ -292,8 +310,13 @@ class CandidateManager(models.Manager):
     def get_query_set(self):
         return super(CandidateManager, self).get_query_set().exclude(slug='no-candidate-listed')
 
+    def current_cycle(self):
+        latest_cycle = sorted(CYCLE_DATES.keys())[-1]
+        return super(CandidateManager, self).get_query_set().filter(cycle=latest_cycle)
+
 
 class Candidate(models.Model):
+    cycle = models.CharField(max_length=4)
     fec_id = models.CharField(max_length=9)
     fec_name = models.CharField(max_length=255)
     crp_id = models.CharField(max_length=9, blank=True)
@@ -323,19 +346,29 @@ class Candidate(models.Model):
 
     @models.permalink
     def get_absolute_url(self):
-        return ('buckley_candidate_detail', [self.slug, ])
+        return ('buckley_cycle_candidate_detail', [self.cycle, self.slug, ])
 
     def race(self):
-        if self.office == 'S' or self.district.startswith('S'):
+        if self.office == 'P':
+            return 'President'
+        elif self.office == 'S' or self.district.startswith('S'):
             return '%s-Senate' % self.state
         else:
             return '%s-%s' % (self.state, self.district.lstrip('0'))
 
     def full_race_name(self):
-        if self.office == 'S' or self.district.startswith('S'):
-            return '%s Senate' % STATE_CHOICES[self.state]
+        if self.office == 'P':
+            return 'President'
+        elif self.office == 'S' or self.district.startswith('S'):
+            try:
+                return '%s Senate' % STATE_CHOICES[self.state]
+            except KeyError:
+                return 'Senate'
         else:
-            return '%s %s' % (STATE_CHOICES[self.state], ordinal(self.district))
+            try:
+                return '%s %s' % (STATE_CHOICES[self.state], ordinal(self.district))
+            except KeyError:
+                return ''
 
     def last_first(self):
         prefix, first, last, suffix = name_tools.split(self.__unicode__())
@@ -570,12 +603,18 @@ class Candidate(models.Model):
         return False
 
 
+class ExpenditureManager(models.Manager):
+    def current_cycle(self, *args, **kwargs):
+        latest_cycle = sorted(CYCLE_DATES.keys())[-1]
+        start, end = CYCLE_DATES[latest_cycle]
+        filter = {'expenditure_date__gte': start,
+                  'expenditure_date__lte': end, }
+        return super(ExpenditureManager, self).get_query_set().filter(**filter).filter(**kwargs)
+
 class Expenditure(models.Model):
     image_number = models.BigIntegerField()
-    #form_type = models.CharField(max_length=10)
     committee = models.ForeignKey(Committee)
     payee = models.ForeignKey(Payee)
-    #expenditure_form = models.CharField(max_length=3, blank=True)
     expenditure_purpose = models.CharField(max_length=255)
     expenditure_date = models.DateField(null=True)
     expenditure_amount = models.DecimalField(max_digits=19, decimal_places=2)
@@ -587,13 +626,9 @@ class Expenditure(models.Model):
                                       )
     candidate = models.ForeignKey(Candidate, blank=True, null=True) # NULL for electioneering
     transaction_id = models.CharField(max_length=32)
-    #memo_code = models.CharField(max_length=1, blank=True)
-    #memo_text = models.CharField(max_length=255)
     receipt_date = models.DateField()
     filing_number = models.IntegerField()
     amendment = models.CharField(max_length=2)
-    #election_type = models.CharField(max_length=5)
-    #election_year = models.CharField(max_length=4)
 
     race = models.CharField(max_length=16) # denormalizing
     pdf_url = models.URLField(verify_exists=False)
@@ -606,6 +641,8 @@ class Expenditure(models.Model):
     electioneering_candidates = models.ManyToManyField(Candidate, related_name='electioneering_expenditures')
 
     timestamp = models.DateTimeField()
+
+    objects = ExpenditureManager()
 
 
     class Meta:

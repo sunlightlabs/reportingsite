@@ -7,7 +7,18 @@
 
 {% block content %}
 
-<h2>Latest outside spending</h2>
+<h2>
+{% if cycle %}
+Outside spending: {{ cycle }} cycle
+{% else %}
+Latest outside spending
+{% endif %}
+</h2>
+
+{% if not cycle %}
+Previous cycles: <a href="{% url buckley_cycle_index 2010 %}">2010</a>
+{% endif %}
+
 {% include "buckley/tabs.html" %}
 
 {% include "buckley/expenditure_table.html" %}
