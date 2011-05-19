@@ -17,7 +17,7 @@ try:
 except Post.DoesNotExist:
     pass
 
-KEY_PREFIX = '3'
+KEY_PREFIX = '7'
 
 
 urlpatterns = patterns('',
@@ -38,7 +38,7 @@ urlpatterns = patterns('',
 
         url(r'^committee\/(?P<slug>[-\w]+)\/contributions\/?$',
             #'buckley.views.committee_contribution_list',
-            cache_page(committee_contribution_list, 60*60*24),
+            cache_page(committee_contribution_list, 60*5, key_prefix=KEY_PREFIX),
             name='buckley_committee_contribution_list'),
 
         url(r'^committee\/(?P<committee_slug>[-\w]+)\/(?P<candidate_slug>[-\w]+)\/?$',
@@ -47,7 +47,7 @@ urlpatterns = patterns('',
             name='buckley_committee_candidate_detail'),
 
         url(r'^committee/(?P<slug>[-\w]+)\/?$', 
-            cache_page(object_detail, 60*60*24),
+            cache_page(object_detail, 60*5, key_prefix=KEY_PREFIX),
             {'queryset': Committee.objects.all(),
              },
             name='buckley_committee_detail'),
@@ -58,7 +58,7 @@ urlpatterns = patterns('',
             name='buckley_cycle_committee_list'),
 
         url(r'^committee\/?$',
-            cache_page(object_list, 60*60*24),
+            cache_page(object_list, 60*5, key_prefix=KEY_PREFIX),
             {'queryset': Committee.objects.current_cycle(), },
             name='buckley_committee_list'),
 
@@ -98,7 +98,7 @@ urlpatterns = patterns('',
 
 
         url(r'^candidate\/(?P<slug>[-\w]+)\/?$',
-            cache_page(object_detail, 60*60*24, key_prefix=KEY_PREFIX),
+            cache_page(object_detail, 60*5, key_prefix=KEY_PREFIX),
             {'queryset': Candidate.objects.current_cycle(), },
             name='buckley_candidate_detail'),
 
@@ -108,7 +108,7 @@ urlpatterns = patterns('',
             name='buckley_cycle_candidate_list'),
 
         url(r'candidate\/?$',
-            cache_page(object_list, 60*60*24, key_prefix=KEY_PREFIX),
+            cache_page(object_list, 60*5, key_prefix=KEY_PREFIX),
             {'queryset': Candidate.objects.current_cycle(), },
             name='buckley_candidate_list'),
 
@@ -196,7 +196,7 @@ urlpatterns = patterns('',
                 name='buckley_stories'),
 
         url(r'^electioneering\/?$',
-             cache_page(object_list, 60*60*24),
+             cache_page(object_list, 60*5, key_prefix=KEY_PREFIX),
              {'queryset': Expenditure.objects.current_cycle(electioneering_communication=True),
                  'paginate_by': 25,
                  'template_name': 'buckley/expenditure_list.html',
@@ -211,7 +211,7 @@ urlpatterns = patterns('',
              name='buckley_electioneering_list'),
 
         url(r'^ie\/?$',
-            cache_page(object_list, 60*60*24),
+            cache_page(object_list, 60*5, key_prefix=KEY_PREFIX),
             {'queryset': Expenditure.objects.current_cycle(electioneering_communication=False), 
              'paginate_by': 25,
              'template_name': 'buckley/expenditure_list.html',

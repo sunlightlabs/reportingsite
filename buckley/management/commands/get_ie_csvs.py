@@ -185,6 +185,7 @@ class Command(BaseCommand):
                                 candidate_name = fec_name
 
                             candidate = Candidate.objects.create(
+                                    cycle=2012,
                                     fec_id=row['candidate_id'],
                                     fec_name=fec_name,
                                     crp_id=row.get('CID', ''),
@@ -216,7 +217,27 @@ class Command(BaseCommand):
                             candidate=candidate,
                             committee=committee)
                     print 'Found %s' % expenditure
+
+                except Expenditure.MultipleObjectsReturned:
+                    continue
+
                 except Expenditure.DoesNotExist:
+                    special_elections = (('NY', 26, ),
+                                         ('CA', 36, ), )
+                    special = (candidate.state in [x[0] for x in special_elections] 
+                                and
+                               candidate.district in [x[1] for x in special_elections])
+                    election_type = ('O' if special else 'P')
+
+                    if row['expenditure_date'].year >= 2011:
+                        cycle = '2012'
+                    else:
+                        cycle = '2010'
+                    if candidate.cycle != cycle:
+                        candidate = deepcopy(candidate)
+                        candidate.id = None
+                        candidate.cycle = cycle
+                        candidate.save()
 
                     try:
                         expenditure = Expenditure.objects.create(
@@ -227,7 +248,7 @@ class Command(BaseCommand):
                                 expenditure_date=row['expenditure_date'],
                                 expenditure_amount=Decimal(row['expenditure_amount']),
                                 support_oppose=row['support_oppose'],
-                                election_type='G', # Only using this script on new filings; all G
+                                election_type=election_type, # Only using this script on new filings; all G
                                 candidate=candidate,
                                 transaction_id=row['transaction_id'],
                                 filing_number=filing_number,

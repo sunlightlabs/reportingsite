@@ -360,9 +360,15 @@ class Candidate(models.Model):
         if self.office == 'P':
             return 'President'
         elif self.office == 'S' or self.district.startswith('S'):
-            return '%s Senate' % STATE_CHOICES[self.state]
+            try:
+                return '%s Senate' % STATE_CHOICES[self.state]
+            except KeyError:
+                return 'Senate'
         else:
-            return '%s %s' % (STATE_CHOICES[self.state], ordinal(self.district))
+            try:
+                return '%s %s' % (STATE_CHOICES[self.state], ordinal(self.district))
+            except KeyError:
+                return ''
 
     def last_first(self):
         prefix, first, last, suffix = name_tools.split(self.__unicode__())

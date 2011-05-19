@@ -33,10 +33,10 @@ except ImportError:
     import simplejson as json
 
 
-KEY_PREFIX = '1'
+KEY_PREFIX = '10'
 
 
-@cache_page(60*60*24)
+@cache_page(60*5, key_prefix=KEY_PREFIX)
 def expenditure_detail(request, committee_slug, object_id):
     expenditure = get_object_or_404(Expenditure, committee__slug=committee_slug, pk=object_id)
     return render_to_response('buckley/expenditure_detail.html', {'object': expenditure, },
@@ -56,7 +56,10 @@ def races(cycle=None):
     races = set([x.race() for x in candidates])
     race_amts = []
     for race in races:
-        state, district = race.split('-')
+        try:
+            state, district = race.split('-')
+        except ValueError:
+            continue
 
         amounts = Expenditure.objects.filter(race=race).filter(**cycle_filter).values('election_type').annotate(amount=Sum('expenditure_amount'))
         amounts = dict([(x['election_type'], x['amount']) for x in amounts])
@@ -75,7 +78,10 @@ def races(cycle=None):
             except ValueError:
                 continue
             office = 'H'
-            full_race = '%s %s' % (STATE_CHOICES[state], ordinal(district))
+            try:
+                full_race = '%s %s' % (STATE_CHOICES[state], ordinal(district))
+            except KeyError:
+                full_race = ''
 
         amounts['total'] = sum([amounts['G'], amounts['P'], amounts['other']])
 
@@ -91,7 +97,7 @@ def races(cycle=None):
     return race_amts
 
 
-@cache_page(60*60*24)
+@cache_page(60*5, key_prefix=KEY_PREFIX)
 def race_list(request, return_raw_data=False, cycle=None):
     race_amts = races(cycle)
     return render_to_response('buckley/race_list.html',
@@ -100,7 +106,7 @@ def race_list(request, return_raw_data=False, cycle=None):
                                }, context_instance=RequestContext(request))
 
 
-@cache_page(60*60*24, key_prefix=KEY_PREFIX)
+@cache_page(60*5, key_prefix=KEY_PREFIX)
 def race_expenditures(request, race, election_type=None, cycle=None):
 
     try:
@@ -135,7 +141,7 @@ def race_expenditures(request, race, election_type=None, cycle=None):
     else:
         expenditures = Expenditure.objects.current_cycle()
 
-    expenditures = expenditures.filter(race=race).filter(**filter).exclude(exclude).order_by('-expenditure_date')
+    expenditures = expenditures.filter(race=race).filter(**filter).exclude(exclude).order_by('-expenditure_date', '-pk')
 
     # Check whether there are any electioneering
     # communications. For electioneering communications
@@ -195,7 +201,7 @@ def race_expenditures(request, race, election_type=None, cycle=None):
                                'cycle': cycle,
                               }, context_instance=RequestContext(request))
 
-@cache_page(60*60*24)
+@cache_page(60*5, key_prefix=KEY_PREFIX)
 def candidate_committee_detail(request, candidate_slug, committee_slug, cycle=None):
     if candidate_slug == 'no-candidate-listed':
         raise Http404
