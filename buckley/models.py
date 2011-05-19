@@ -126,11 +126,25 @@ class Committee(models.Model):
 
         return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
-    def ie_total(self):
-        return self.expenditure_set.filter(electioneering_communication=False).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+    def ie_total(self, cycle=None):
+        filter = {'electioneering_communication': False, }
+        if not cycle:
+            latest_cycle = sorted(CYCLE_DATES.keys())[-1]
+            start, end = CYCLE_DATES[latest_cycle]
+        else:
+            start, end = CYCLE_DATES[cycle]
+        filter.update({'expenditure_date__gte': start, 'expenditure_date__lte': end, })
+        return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
-    def ec_total(self):
-        return self.expenditure_set.filter(electioneering_communication=True).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+    def ec_total(self, cycle=None):
+        filter = {'electioneering_communication': True, }
+        if not cycle:
+            latest_cycle = sorted(CYCLE_DATES.keys())[-1]
+            start, end = CYCLE_DATES[latest_cycle]
+        else:
+            start, end = CYCLE_DATES[cycle]
+        filter.update({'expenditure_date__gte': start, 'expenditure_date__lte': end, })
+        return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
     def money_spent_on_candidate(self, candidate, support_oppose=None):
         filter = {'candidate': candidate}
