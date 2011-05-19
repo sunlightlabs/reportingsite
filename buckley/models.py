@@ -609,7 +609,7 @@ class ExpenditureManager(models.Manager):
         start, end = CYCLE_DATES[latest_cycle]
         filter = {'expenditure_date__gte': start,
                   'expenditure_date__lte': end, }
-        return super(ExpenditureManager, self).get_query_set().filter(**filter).filter(**kwargs)
+        return super(ExpenditureManager, self).get_query_set().filter(**filter).filter(**kwargs).order_by('-expenditure_date', '-pk')
 
 class Expenditure(models.Model):
     image_number = models.BigIntegerField()
