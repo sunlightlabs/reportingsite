@@ -225,12 +225,12 @@ class Command(BaseCommand):
                     continue
 
                 except Expenditure.DoesNotExist:
-                    special_elections = (('NY', 26, ),
-                                         ('CA', 36, ), )
-                    special = (candidate.state in [x[0] for x in special_elections] 
-                                and
-                               candidate.district in [x[1] for x in special_elections])
-                    election_type = ('O' if special else 'P')
+                    special_elections = ['NY-26', 
+                                         'CA-36', ]
+                    if candidate.race() in special_elections:
+                        election_type = 'O'
+                    else:
+                        election_type = 'P'
 
                     if row['expenditure_date'].year >= 2011:
                         cycle = '2012'
@@ -251,7 +251,7 @@ class Command(BaseCommand):
                                 expenditure_date=row['expenditure_date'],
                                 expenditure_amount=Decimal(row['expenditure_amount']),
                                 support_oppose=row['support_oppose'],
-                                election_type=election_type, # Only using this script on new filings; all G
+                                election_type=election_type,
                                 candidate=candidate,
                                 transaction_id=row['transaction_id'],
                                 filing_number=filing_number,
