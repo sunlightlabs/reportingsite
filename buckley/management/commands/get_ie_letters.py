@@ -51,9 +51,11 @@ def get_pdf_urls(page):
 
 def parse_pdf(url):
     pdf = pyPdf.PdfFileReader(StringIO(urllib2.urlopen(url).read()))
-    first_page = pdf.getPage(0).extractText()
-    if re.search('speech\s?now', first_page, re.I | re.S):
-        return True
+    for pagenum in range(pdf.numPages):
+        page = pdf.getPage(pagenum).extractText()
+    #first_page = pdf.getPage(0).extractText()
+        if re.search('speech\s?now', page, re.I | re.S):
+            return True
 
     return False
 

@@ -126,11 +126,25 @@ class Committee(models.Model):
 
         return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
-    def ie_total(self):
-        return self.expenditure_set.filter(electioneering_communication=False).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+    def ie_total(self, cycle=None):
+        filter = {'electioneering_communication': False, }
+        if not cycle:
+            latest_cycle = sorted(CYCLE_DATES.keys())[-1]
+            start, end = CYCLE_DATES[latest_cycle]
+        else:
+            start, end = CYCLE_DATES[cycle]
+        filter.update({'expenditure_date__gte': start, 'expenditure_date__lte': end, })
+        return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
-    def ec_total(self):
-        return self.expenditure_set.filter(electioneering_communication=True).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
+    def ec_total(self, cycle=None):
+        filter = {'electioneering_communication': True, }
+        if not cycle:
+            latest_cycle = sorted(CYCLE_DATES.keys())[-1]
+            start, end = CYCLE_DATES[latest_cycle]
+        else:
+            start, end = CYCLE_DATES[cycle]
+        filter.update({'expenditure_date__gte': start, 'expenditure_date__lte': end, })
+        return self.expenditure_set.filter(**filter).aggregate(amount=models.Sum('expenditure_amount'))['amount'] or 0
 
     def money_spent_on_candidate(self, candidate, support_oppose=None):
         filter = {'candidate': candidate}
@@ -360,9 +374,15 @@ class Candidate(models.Model):
         if self.office == 'P':
             return 'President'
         elif self.office == 'S' or self.district.startswith('S'):
-            return '%s Senate' % STATE_CHOICES[self.state]
+            try:
+                return '%s Senate' % STATE_CHOICES[self.state]
+            except KeyError:
+                return 'Senate'
         else:
-            return '%s %s' % (STATE_CHOICES[self.state], ordinal(self.district))
+            try:
+                return '%s %s' % (STATE_CHOICES[self.state], ordinal(self.district))
+            except KeyError:
+                return ''
 
     def last_first(self):
         prefix, first, last, suffix = name_tools.split(self.__unicode__())
@@ -603,7 +623,7 @@ class ExpenditureManager(models.Manager):
         start, end = CYCLE_DATES[latest_cycle]
         filter = {'expenditure_date__gte': start,
                   'expenditure_date__lte': end, }
-        return super(ExpenditureManager, self).get_query_set().filter(**filter).filter(**kwargs)
+        return super(ExpenditureManager, self).get_query_set().filter(**filter).filter(**kwargs).order_by('-expenditure_date', '-pk')
 
 class Expenditure(models.Model):
     image_number = models.BigIntegerField()

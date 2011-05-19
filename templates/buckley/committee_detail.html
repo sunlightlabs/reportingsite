@@ -3,7 +3,7 @@
 {% load buckley %}
 {% load humanize %}
 
-{% block title %}{{ block.super }} - {{ object }}{% endblock %}
+{% block title %}{{ object }} - {{ block.super }}{% endblock %}
 
 {% block body %}{{ block.super }} expendituresCommittee{% endblock %}
 
@@ -55,7 +55,9 @@
             <th class="sort">Candidate</th>
             <th class="sort">Support/oppose</th>
             <th class="sort">Amount</th>
+{% if not cycle %}
             <th class="sort">Winner</th>
+{% endif %}
         </tr>
     </thead>
     <tbody>
@@ -89,6 +91,7 @@
                 {% endspaceless %}</td>
             <td>{% ifequal data.support_oppose '*' %}<a href="#asterisk">{{ data.support_oppose }}</a>{% else %}{{ data.support_oppose }}{% endifequal %}</td>
             <td>${{ data.amount|intcomma }}</td>
+{% if not cycle %}
             <td>
                 {% if candidates %}
                 {% for candidate in candidates %}
@@ -97,6 +100,7 @@
                 {% endfor %}
                 {% endif %}
             </td>
+{% endif %}
         </tr>
         {% endfor %}
     </tbody>

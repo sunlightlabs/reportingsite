@@ -74,3 +74,11 @@ def total_sole_electioneering_by_election_type(candidate, election_type):
 @register.filter
 def committee_total_by_cycle(committee, cycle):
     return committee.total(cycle=cycle)
+
+@register.filter
+def committee_ie_total_by_cycle(committee, cycle):
+    return committee.ie_total(cycle)
+
+@register.filter
+def committee_ec_total_by_cycle(committee, cycle):
+    return committee.ec_total(cycle)

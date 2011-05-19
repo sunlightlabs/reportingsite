@@ -3,7 +3,7 @@
 {% load humanize %}
 {% load media %}
 
-{% block title %}{{ block.super }} - Candidates{% endblock %}
+{% block title %}Candidates - {{ block.super }}{% endblock %}
 
 {% block body %}{{ block.super }} expendituresCandidate{% endblock %}
 
@@ -33,7 +33,9 @@ Previous cycles: <a href="{% url buckley_cycle_candidate_list 2010 %}">2010</a>
                 <th class="sort">Total outside spending</th>
                 <th class="sort">Supporting</th>
                 <th class="sort">Opposing</th>
+{% if not cycle %}
                 <th class="sort">Winner</th>
+{% endif %}
             </tr>
         </thead>
         <tbody>
@@ -46,7 +48,9 @@ Previous cycles: <a href="{% url buckley_cycle_candidate_list 2010 %}">2010</a>
         <td>${{ candidate.total_expenditures|intcomma }}{% if candidate.electioneering_total %} <a href="#asterisk">*</a>{% endif %}</td>
         <td>${{ candidate.expenditures_supporting|intcomma }}</td>
         <td>${{ candidate.expenditures_opposing|intcomma }}</td>
+{% if not cycle %}
         <td>{% if candidate.winner %}Winner{% endif %}</td>
+{% endif %}
     </tr>
     {% endfor %}
     </tbody>
