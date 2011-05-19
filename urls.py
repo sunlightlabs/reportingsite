@@ -4,6 +4,7 @@ from django.http import HttpResponse, HttpResponsePermanentRedirect
 from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.views.static import serve
+from django.views.generic.simple import direct_to_template
 import settings
 
 
@@ -26,6 +27,13 @@ urlpatterns = patterns(
     url(r'^tag/admin/$', 'tag_list_admin', name='blogdor_tag_list'),
     url(r'^tag/(?P<tag>[^/]+)/$', 'tag', name='blogdor_tag'),
     url(r'^tag/$', 'tag_list', name='blogdor_tag_list'),
+
+    # documents
+    url(r'^docs/',
+        direct_to_template,
+        {'template': 'dc.html',
+            },
+        name='reporting_document'),
     
     # archives
     url(r'^(?P<year>\d{4})/$', 'archive_year', name='blogdor_archive_year'),
@@ -59,6 +67,7 @@ urlpatterns = patterns(
     url(r'^lobbying/', include('willard.urls')),
 
     url(r'^hac/', include('hacmap.urls')),
+
 
 )
 
