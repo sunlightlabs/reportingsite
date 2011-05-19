@@ -158,7 +158,10 @@ class Command(BaseCommand):
                             else:
                                 candidate = Candidate.objects.get(slug=slugify(' '.join([row['candidate_first'], row['candidate_last']])))
                         except Candidate.DoesNotExist:
-                            continue
+                            candidate = get_candidate(row)
+                            #print candidate
+                            #print 'Candidate.DoesNotExist'
+                            #continue
                     else:
                         row.update(candidate)
                         crp_name = re.sub(r'\s\([A-Z0-9]\)', '', row.get('FirstLastP', ''))
@@ -261,6 +264,7 @@ class Command(BaseCommand):
 
                 print expenditure.id
 
+        return
         # Get rid of duplicate candidate slugs
         print 'removing duplicate candidate slugs'
         noparty = Candidate.objects.filter(party='')
@@ -348,4 +352,97 @@ class Command(BaseCommand):
         cache.delete('buckley:totals')
 
         print 'caching totals'
-        cache_totals()
+        #cache_totals()
+
+
+def get_candidate(data):
+    #data = self.handle_special_cases(data)
+
+    if not data['candidate_id']:
+        candidate = lookup_candidate_by_name(data)
+        if not candidate:
+            return None
+        else:
+            return candidate
+
+    candidate = lookup_candidate_in_crp_table(data['candidate_id'])
+    if candidate:
+        try:
+            try:
+                return Candidate.objects.get(crp_id=candidate['CID'])
+            except Candidate.MultipleObjectsReturned:
+                return Candidate.objects.get(crp_id=candidate['CID'],
+                                             office=data['candidate_office'])
+        except Candidate.DoesNotExist:
+            return create_candidate_from_crp(candidate, data)
+
+    try:
+        try:
+            return Candidate.objects.get(fec_id=data['candidate_id'])
+        except Candidate.MultipleObjectsReturned:
+            return Candidate.objects.get(fec_id=data['candidate_id'],
+                                         office=data['candidate_office'])
+    except Candidate.DoesNotExist:
+        return create_candidate_from_fec(data)
+
+    print 'could not find/create:', data['candidate_id'], data['candidate_first'], data['candidate_last']
+
+
+def lookup_candidate_by_name(data):
+    lf_fec_name = ('%(candidate_last)s, %(candidate_first)s %(candidate_middle)s' % data).strip()
+    fl_fec_name = ('%(candidate_first)s %(candidate_last)s' % data).strip()
+    try:
+        return Candidate.objects.get(Q(fec_name=lf_fec_name) | Q(fec_name=fl_fec_name))
+    except Candidate.DoesNotExist:
+        pass
+
+    # Fuzzy lookup of previously added candidates by first and last name
+    candidates = Candidate.objects.filter(fec_name__icontains=data['candidate_first']) \
+                                  .filter(fec_name__icontains=data['candidate_last'])
+    if candidates:
+        return candidates[0]
+    else:
+        # Fuzzy lookup of candidates in CRP database by first and last name.
+        # If we find one, we can create a Candidate object.
+        cursor.execute("""SELECT * FROM candidates
+                            WHERE firstlastp LIKE %s
+                            AND   firstlastp LIKE %s""", ['%%%(candidate_first)s%%' % data,
+                                                          '%%%(candidate_last)s%%' % data, ])
+        if cursor.rowcount:
+            candidate = create_candidate_from_crp(dict(zip([x[0] for x in cursor.description], cursor.fetchone())), data)
+        else:
+            print 'not found:', data
+
+        return None
+
+
+def create_candidate_from_crp(candidate, data):
+    '''Creates a Candidate object based on data from
+    CRP and the FEC.
+    '''
+    fec_name = generic_querier("SELECT candidate_name FROM fec_candidate_master WHERE candidate_id = %s",
+                                [candidate['FECCandID'], ])['candidate_name']
+    crp_name = re.sub(r'\s\([A-Z0-9]\)', '', candidate.get('FirstLastP', ''))
+    try:
+        return Candidate.objects.get(crp_name=crp_name)
+    except Candidate.DoesNotExist:
+        pass
+
+    party = re.search(r'\s\(([A-Z0-9])\)$', candidate.get('FirstLastP', ''))
+    if party:
+        party = party.groups()[0]
+    else:
+        party = ''
+
+    candidate = Candidate.objects.create(
+                    fec_id=candidate['FECCandID'],
+                    fec_name=fec_name,
+                    crp_id=candidate['CID'],
+                    crp_name=crp_name,
+                    party=party,
+                    office=data['candidate_office'],
+                    state=data['candidate_state'],
+                    district=data['candidate_district'],
+                    slug=slugify(crp_name)[:50]
+            )
+    return candidate
