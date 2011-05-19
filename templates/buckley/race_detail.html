@@ -3,7 +3,7 @@
 {% load humanize %}
 {% load buckley %}
 
-{% block title %}{{ block.super }} - {{ race }}{% endblock %}
+{% block title %}{{ race }} - {{ block.super }}{% endblock %}
 
 {% block body %}{{ block.super }} expendituresRace{% endblock %}
 
@@ -27,7 +27,7 @@
 <h3 class="h5">Candidates</h3>
 
 {% for candidate in candidates %}
-<a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}{% if candidate.winner %}<span style="font-style: oblique;font-size: 12px;"> - winner</span>{% endif %}:
+<a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}{% if not cycle %}{% if candidate.winner %}<span style="font-style: oblique;font-size: 12px;"> - winner</span>{% endif %}{% endif %}:
 <div class="amountLine">
     <ul>
     <li>Independent expenditures in support: <span class="amount">${{ candidate|total_support_by_election_type:election_type|intcomma }}</span></li>

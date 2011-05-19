@@ -3,7 +3,7 @@
 {% load humanize %}
 {% load media %}
 
-{% block title %}{{ block.super }} - Committees{% endblock %}
+{% block title %}Committees - {{ block.super }}{% endblock %}
 
 {% block body %}{{ block.super }} expendituresCommittee{% endblock %}
 
@@ -47,8 +47,20 @@ Previous cycles: <a href="{% url buckley_cycle_committee_list 2010 %}">2010</a>
             {% if committee.total %}
                 <tr class="{% cycle 'odd' 'even' %}">
                     <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
+
+                    {% if cycle %}
+<td></td><td></td>
+
+{% comment %}
+                    <td>${{ committee|committee_ie_total_by_cycle:cycle|intcomma }}</td>
+                    <td>${{ committee|committee_ec_total_by_cycle:cycle|intcomma }}</td>
+{% endcomment %}
+
+                    {% else %}
                     <td>${{ committee.ie_total|intcomma }}</td>
                     <td>${{ committee.ec_total|intcomma }}</td>
+                    {% endif %}
+
                     {#<td>{% if committee.ieonly_url %}<a href="{{ committee.ieonly_url }}">Yes</a>{% endif %}</td>#}
                     {% if committee.slug %}
                     {#<td>{% if committee.contribution_set.count %}<a href="{% url buckley_committee_contribution_list slug=committee.slug %}">Donors</a>{% endif %}</td>#}
