@@ -20,7 +20,7 @@ from dateutil.parser import parse as dateparse
 from buckley.models import *
 from buckley.management.commands.cache_totals import cache_totals
 from get_donors import get_form_urls, parse_donor_csv, save_contribution
-from import_ies import committee_lookup, candidate_lookup_by_id
+from import_ies import committee_lookup, candidate_lookup_by_id, cursor
 
 
 def make_row_dict(row, fields):
@@ -389,6 +389,8 @@ def get_candidate(data):
 
 
 def lookup_candidate_by_name(data):
+    if data['candidate_last'] == 'Hochul':
+        data['candidate_first'] = 'Kathleen'
     lf_fec_name = ('%(candidate_last)s, %(candidate_first)s %(candidate_middle)s' % data).strip()
     fl_fec_name = ('%(candidate_first)s %(candidate_last)s' % data).strip()
     try:
