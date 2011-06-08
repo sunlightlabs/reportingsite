@@ -45,7 +45,7 @@ Previous cycles: <a href="{% url buckley_cycle_committee_list 2010 %}">2010</a>
     </thead>
     <tbody>
         {% for committee in object_list %}
-            {% if committee.total %}
+            {#{% if committee.total %}#}
                 <tr class="{% cycle 'odd' 'even' %}">
                     <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
 
@@ -67,7 +67,7 @@ Previous cycles: <a href="{% url buckley_cycle_committee_list 2010 %}">2010</a>
                     {% endif %}
                     <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</a></td>
                 </tr>
-            {% endif %}
+            {#{% endif %}#}
         {% endfor %}
     </tbody>
 </table>
