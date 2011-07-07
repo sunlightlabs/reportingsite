@@ -329,4 +329,4 @@ body.organizations div#doddFrankNav li a.organizations,
 body.cftc div#doddFrankNav li a.cftc,
 body.treasury div#doddFrankNav li a.treasury { font-weight: bold; border-bottom: 1px dotted gray; }
 
-
+/*div#doddFrankNav input { width: 140px !important; margin-right: 0px !important; padding: 4px !important; }*/
