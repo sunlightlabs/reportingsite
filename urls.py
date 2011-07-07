@@ -68,6 +68,10 @@ urlpatterns = patterns(
 
     url(r'^hac/', include('hacmap.urls')),
 
+    url(r'^aors/', include('aors.urls')),
+
+    url(r'^doddfrank/', include('doddfrank.urls')),
+
 
 )
 
