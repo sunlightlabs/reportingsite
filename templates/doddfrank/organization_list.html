@@ -1,0 +1,14 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% block body %}{{ block.super }} organizations{% endblock %}
+
+{% block content %}
+<ul>
+    {% for organization in organizations %}
+        {% if organization|slugify %}
+            <li><a href="{% url doddfrank_organization_detail organization_slug=organization|slugify %}">{{ organization }}</a></li>
+        {% endif %}
+    {% endfor %}
+</ul>
+
+{% endblock content %}

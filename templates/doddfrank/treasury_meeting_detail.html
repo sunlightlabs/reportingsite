@@ -1,0 +1,57 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% block body %}{{ block.super }} treasury{% endblock %}
+
+{% block content %}
+
+<h2>Agency: {{ meeting.agency }}</h2>
+<h3>{{ meeting.meeting_time|date:"F j, Y" }}</h3>
+
+{% if meeting.description %}
+<h4 style="float: left;">Topics</h4>
+<ul style="float: right; width: 70%">
+    {% for topic in meeting.description %}
+    <li>{{ topic }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+            <div class="clear"></div>
+            <hr/>
+
+{% if meeting.organizations %}
+<h4 style="float: left;">Participating organizations</h4>
+<ul style="float: right; width: 70%">
+    {% for organization in meeting.organizations %}
+    <li><a href="{% url doddfrank_organization_detail organization_slug=organization|slugify %}">{{ organization }}</a></li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+            <div class="clear"></div>
+            <hr/>
+
+{% if meeting.visitors %}
+<h4 style="float: left;">Participants</h4>
+<ul style="float: right; width: 70%">
+{% for visitor in meeting.visitors %}
+<li>{{ visitor.name }}{% if visitor.org %} (<a href="{% url doddfrank_organization_detail organization_slug=visitor.org|slugify %}">{{ visitor.org }}</a>){% endif %}</li>
+{% endfor %}
+</ul>
+{% endif %}
+
+            <div class="clear"></div>
+            <hr/>
+
+{% if meeting.treasury_officials %}
+<h4 style="float: left;">Treasury staff members</h3>
+<ul style="float: right; width: 70%">
+    {% for official in meeting.treasury_officials %}
+    <li>{{ official }}
+    {% endfor %}
+</ul>
+{% endif %}
+
+            <div class="clear"></div>
+
+{% endblock %}

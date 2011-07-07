@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+
+{% block title %}Dodd-Frank Meeting Logs - {{ block.super }}{% endblock %}
+
+{% block body %}fullWidth{%endblock %}
+
+{% block main_content %}
+<div id="columns">
+    <div id="fullColumn">
+        <a href="{% url doddfrank_index %}"><h2 id="featureHeader">Dodd-Frank Meeting Logs</h2></a>
+        <div id="doddFrankNav">
+            <ul>
+                <li><a class="organizations" href="{% url doddfrank_organization_list %}">Browse Organizations</a></li>
+                <li>Browse by agency:
+                <li><a class="cftc" href="{% url doddfrank_agency_detail agency_slug='cftc' %}">CFTC</a></li>
+                <li><a class="fdic" href="{% url doddfrank_agency_detail agency_slug='fdic' %}">FDIC</a></li>
+                <li><a class="federalReserve" href="{% url doddfrank_agency_detail agency_slug='federal-reserve' %}">Federal Reserve</a></li>
+                <li><a class="sec" href="{% url doddfrank_agency_detail agency_slug='sec' %}">SEC</a></li>
+                <li><a class="treasury" href="{% url doddfrank_agency_detail agency_slug='treasury' %}">Treasury</a></li>
+            </ul>
+        </div>
+
+    {% block content %}
+    {% endblock content %}
+
+</div>
+
+{% endblock main_content %}
+

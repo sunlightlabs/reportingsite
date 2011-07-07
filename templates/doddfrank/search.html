@@ -1,0 +1,25 @@
+{% load doddfrank %}
+
+<h2>Search{% if q %} results{% endif %}</h2>
+{{ meetings.count }} meeting{{ meetings.count|pluralize }} found
+
+{% if meetings %}
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Agency</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for meeting in meetings %}
+        <tr>
+            <td>{{ meeting.meeting_time|date:"F j, Y" }}</td>
+            <td>{{ meeting.agency }}</td>
+            <td><a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency|slugify id=meeting|get_id %}">Details</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endif %}

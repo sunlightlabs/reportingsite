@@ -1,0 +1,44 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% block body %}{{ block.super }} federalReserve{% endblock %}
+
+{% block content %}
+
+<h2>Agency: {{ meeting.agency }}</h2>
+<h3>{{ meeting.meeting_time|date:"F j, Y" }}</h3>
+<p><strong>Type</strong>: {{ meeting.type|title }}</p>
+{% if meeting.title %}
+    <p>{{ meeting.title }}</p>
+{% endif %}
+
+{% if meeting.summary %}
+<h4 style="float: left;">Summary</h4>
+<p style="float: right; width: 65%">{{ meeting.summary }}</p>
+{% endif %}
+
+
+{% if meeting.participants %}
+<!--<h3>Participants</h3>//-->
+{% for participant_group in meeting.participants %}
+            <div class="clear"></div>
+            <hr/>
+<h4 style="float: left;">{{ participant_group.organization }}</h4>
+<ul style="float: right; width: 65%">
+    {% for participant in participant_group.names %}
+    <li>{{ participant }}</li>
+    {% endfor %}
+</ul>
+{% endfor %}
+{% endif %}
+
+            <div class="clear"></div>
+            <hr/>
+
+{% if meeting.url %}
+<h4 style="float: left;">Documents</h4>
+<ul style="float: right; width: 65%">
+    <li><a href="{{ meeting.url }}">{{ meeting.type }} information</a></li>
+</ul>
+{% endif %}
+
+{% endblock content %}
