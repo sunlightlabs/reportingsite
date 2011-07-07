@@ -40,7 +40,7 @@ def search(request):
     meeting_ids +=  _collection().find({'visitors.name': {'$regex': regex, '$options': 'i'}}).distinct(key='_id')
     meeting_ids += _collection().find({'organizations': {'$regex': regex, '$options': 'i'}}).distinct(key='_id')
 
-    meetings = _collection().find({'_id': {'$in': meeting_ids, }, })
+    meetings = _collection().find({'_id': {'$in': meeting_ids, }, }).sort([('meeting_time', -1)])
 
     return render_to_response('doddfrank/search.html',
                              {'meetings': meetings,
