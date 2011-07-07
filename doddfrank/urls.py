@@ -21,6 +21,11 @@ urlpatterns = patterns('',
                            {},
                            name='doddfrank_organization_list'),
 
+                       url(r'^organization\/list_of_orgs\/?$',
+                           organization_cleanup_csv,
+                           {},
+                           name='doddfrank_organization_cleanup_csv'),
+
                        url(r'^organization\/(?P<organization_slug>[-\w]+)\/?$',
                            organization_detail,
                            {},
