@@ -1,6 +1,9 @@
 from django.core.management.base import BaseCommand, CommandError
 
+from optparse import make_option
+
 from scrapers import *
+
 
 class Command(BaseCommand):
 
@@ -15,6 +18,15 @@ Valid agencies are:
     sec
 """
 
+    option_list = BaseCommand.option_list + (
+            make_option('--special',
+                action='store_true',
+                dest='special',
+                default=False,
+                help='Use special parser',
+            ),
+        )
+
     def handle(self, *args, **options):
         if not args:
             raise CommandError('You must supply at least one agency name')
@@ -23,8 +35,9 @@ Valid agencies are:
                     'cftc': CFTCScraper,
                     'sec': SECScraper,
                     'federal_reserve': FedreserveScraper,
-                    'treasury': TreasuryScraper, }
+                    'treasury': TreasuryScraper, 
+                    }
 
         for agency in args:
             scraper = scrapers.get(agency)()
-            scraper.scrape()
+            scraper.scrape(options.get('special', False))

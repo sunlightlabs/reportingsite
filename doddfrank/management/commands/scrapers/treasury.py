@@ -17,14 +17,17 @@ class TreasuryScraper(Scraper):
     def __init__(self):
         self.agency = 'Treasury'
 
-    def scrape(self):
+    def scrape(self, special=False):
         page = lxml.html.fromstring(sys.stdin.read())
-        for data in self.parse_meeting_page(page):
+        for data in self.parse_meeting_page(page, special):
+            #print data
+            #continue
             self.save_data(data)
 
-    def parse_meeting_page(self, page):
-        table = page.cssselect('table')[0]
-        rows = table.cssselect('tr')
+    def parse_meeting_page(self, page, special=False):
+        #table = page.cssselect('table')[0]
+        #rows = table.cssselect('tr')
+        rows = page.cssselect('tr')
         for row in rows:
             datefield = row.cssselect('nobr')
             if not len(datefield):
@@ -38,13 +41,20 @@ class TreasuryScraper(Scraper):
 
             rowdata = dict(zip(['treasury_officials', 'description', 'visitors'], row.cssselect('td')[1:]))
 
+            # Special cases
+            if special == True:
+                rowdata['visitors'] = [x.text_content() for x in rowdata['visitors'].cssselect('font')]
+
             for k, v in rowdata.iteritems():
+                if special == True and k == 'visitors':
+                    continue
                 rowdata[k] = [lxml.html.fromstring(x).text_content().strip()
                                 for x in
                                 lxml.html.tostring(v).split('<br>')]
 
             visitor_orgs = []
             organizations = set([])
+
             for visitor in rowdata['visitors']:
                 if ',' not in visitor:
                     visitor_orgs.append({'name': visitor, 'org': None, })
