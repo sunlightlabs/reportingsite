@@ -51,9 +51,16 @@
 <h4 style="float: left;">Rulemakings</h4>
 <ul style="float: right; width: 70%;">
 {% for rulemaking in meeting.rulemaking %}
-    <li><a href="{{ rulemaking|get_cftc_rulemaking_link }}">{{ rulemaking }}</a></li>
+<li>
+{% if rulemaking|get_cftc_rulemaking_link %}
+<a href="{{ rulemaking|get_cftc_rulemaking_link }}">{{ rulemaking }}</a>
+{% else %}
+{{ rulemaking }}
+{% endif %}
+</li>
 {% endfor %}
 </ul>
 {% endif %}
+            <div class="clear"></div>
 
 {% endblock content %}

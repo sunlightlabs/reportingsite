@@ -47,8 +47,11 @@ def get_cftc_rulemaking_link(rulemaking):
                        'XX', 'XXI', 'XXII', 'XXIII', 'XXIV', 'XXV', 'XXVI', 'XXVII',
                        'XXVIII', 'XXIX', 'XXX', 'XXXI', 'XXXII', ]
 
-     rulemaking_numeral = rulemaking.split('.')[0]
-     rulemaking_number = roman_numerals.index(rulemaking_numeral)
+     rulemaking_numeral = rulemaking.strip().split('.')[0]
+     try:
+         rulemaking_number = roman_numerals.index(rulemaking_numeral)
+     except ValueError:
+         return ''
      return links[rulemaking_number]
 
 @register.filter

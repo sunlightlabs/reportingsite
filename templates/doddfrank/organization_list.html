@@ -6,7 +6,9 @@
 <ul>
     {% for organization in organizations %}
         {% if organization|slugify %}
+        {% if organization|slugify != 'none' %}
             <li><a href="{% url doddfrank_organization_detail organization_slug=organization|slugify %}">{{ organization }}</a></li>
+            {% endif %}
         {% endif %}
     {% endfor %}
 </ul>

@@ -9,6 +9,14 @@
     <div id="fullColumn">
         <a href="{% url doddfrank_index %}"><h2 id="featureHeader">Dodd-Frank Meeting Logs</h2></a>
         <div id="doddFrankNav">
+
+            <form id="expenditureSearch" action="{% url doddfrank_search %}" method="GET" style="width: 28%;margin-bottom: 15px;">
+                <input id="searchbox" {% if q %}value="{{ q }}"{% else %}value="Search for participants"{% endif %} type="text" name="q" />
+                <button class="goBtn" type="submit" value="Search" >
+                  <span>Go</span>
+                </button>
+            </form>
+            <div class="clear"></div>
             <ul>
                 <li><a class="organizations" href="{% url doddfrank_organization_list %}">Browse Organizations</a></li>
                 <li>Browse by agency:
@@ -18,12 +26,23 @@
                 <li><a class="sec" href="{% url doddfrank_agency_detail agency_slug='sec' %}">SEC</a></li>
                 <li><a class="treasury" href="{% url doddfrank_agency_detail agency_slug='treasury' %}">Treasury</a></li>
             </ul>
+
         </div>
 
     {% block content %}
     {% endblock content %}
 
 </div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for participants') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
 
 {% endblock main_content %}
 

@@ -121,11 +121,12 @@ import codecs
 
 def organization_cleanup_csv(request):
     organizations = _list_organizations()
-    response = HttpResponse(mimetype='text/plain')
+    response = HttpResponse(mimetype='text/csv')
     writer = UnicodeWriter(response)
     writer.writerow(('a', 'b'))
     for organization in organizations:
-        writer.writerow((organization, organization))
+        if organization:
+            writer.writerow((organization, organization))
 
     return response
 

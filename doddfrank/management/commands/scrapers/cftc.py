@@ -16,6 +16,7 @@ from scraper import Scraper
 class CFTCScraper(Scraper):
     def __init__(self, *args, **kwargs):
         default_url = 'http://www.cftc.gov/LawRegulation/DoddFrankAct/ExternalMeetings/MeetingsAddedinLast7Days/index.htm'
+        default_url = 'http://www.cftc.gov/LawRegulation/DoddFrankAct/ExternalMeetings/index.htm'
         self.url = kwargs.get('url', default_url)
         self.agency = 'CFTC'
 
@@ -36,6 +37,7 @@ class CFTCScraper(Scraper):
         rows = doc.cssselect('div.row')
         for row in rows:
             url = row.cssselect('a')[0].attrib['href']
+            print url
             yield ('http://www.cftc.gov/%s' % url).replace('../', '')
 
     def parse_meeting_page(self, url):
