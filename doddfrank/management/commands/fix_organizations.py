@@ -49,13 +49,18 @@ class Command(BaseCommand):
         reader.next()
         for row in reader:
             print row
-            old, new = row
+            try:
+                old, new = row
+            except ValueError:
+                old = row[0]
+                new = ''
 
             meetings = collection.find({'organizations': old})
             for meeting in meetings:
                 orgs = meeting['organizations']
                 del(orgs[orgs.index(old)])
-                orgs.append(new)
+                if new:
+                    orgs.append(new)
                 orgs.sort()
                 collection.update({'_id': meeting['_id']}, meeting)
 
