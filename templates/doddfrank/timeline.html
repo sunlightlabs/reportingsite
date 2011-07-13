@@ -1,0 +1,28 @@
+{% load media %}
+{% css "css/df.css" %}
+
+{% comment %}
+<table class="dfTimeline">
+    {% for timeline in timelines %}
+    <tr>
+        <th>{{ timeline.org }}</th>
+        {% for day in timeline.timeline %}
+            {% for agency in day.1 %}
+            <td class="{{ agency.0|slugify }}{% if agency.1 %} true{% endif %}">{{ day.0 }}</td>
+            {% endfor %}
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>
+{% endcomment %}
+
+<table class="dfTimeline">
+    {% for timeline in timelines %}
+    <tr>
+        <th>{{ timeline.org }}</th>
+        {% for day in timeline.timeline %}
+        <td{% if day.1 %} class="{{ day.1 }}"{% endif %}>{{ day.0 }}</td>
+        {% endfor %}
+    </tr>
+    {% endfor %}
+</table>

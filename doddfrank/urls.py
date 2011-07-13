@@ -39,7 +39,12 @@ urlpatterns = patterns('',
                        url(r'^agency\/(?P<agency_slug>[-\w]+)\/(?P<id>\w+)\/?$',
                              meeting_detail,
                              {},
-                             name='doddfrank_meeting_detail')
+                             name='doddfrank_meeting_detail'),
+
+                       url(r'^timeline\/?$',
+                           'django.views.generic.simple.direct_to_template',
+                           {'template': 'doddfrank/test_timeline.html', },
+                           name='doddfrank_test_timeline')
 
 )
 
