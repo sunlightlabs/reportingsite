@@ -1,0 +1,37 @@
+body {
+    font-family: Helvetica, Arial, sans-serif;
+}
+table.dfTimeline {
+    border-collapse: collapse;
+}
+table.dfTimeline th {
+    font-weight: normal;
+    text-align: left; 
+    font-size: 90%;
+    padding: 5px;
+    border-bottom: 5px solid #fff;
+    width: 200px;
+}
+table.dfTimeline td { 
+    font-size: 0; 
+    border-bottom: 5px solid #fff;
+    width: 5px;
+}
+table.dfTimeline td.cftc {
+    background-color: red;
+}
+table.dfTimeline td.fdic {
+    background-color: blue;
+}
+table.dfTimeline td.federal-reserve {
+    background-color: green;
+}
+table.dfTimeline td.sec {
+    background-color: yellow;
+}
+table.dfTimeline td.treasury {
+    background-color: purple;
+}
+table.dfTimeline td.multiple {
+    background-color: gray;
+}
