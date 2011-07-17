@@ -1,9 +1,12 @@
 from collections import defaultdict
 from operator import itemgetter
+import sys
 
 from pymongo import Connection
 
 from django.core.management.base import BaseCommand, CommandError
+
+from doddfrank.views import UnicodeWriter
 
 
 class Command(BaseCommand):
@@ -14,10 +17,10 @@ class Command(BaseCommand):
         companies = defaultdict(int)
 
         for meeting in collection.find():
-            if meeting.has_key('type') and meeting.get('type') != 'Meeting':
-                continue
-            for org in meeting.get('organizations', []):
+            for org in set(meeting.get('organizations', [])):
                 companies[org] += 1
 
+        writer = UnicodeWriter(sys.stdout)
+        writer.writerow(('organization','meetings'))
         for company, count in sorted(companies.items(), key=itemgetter(1), reverse=True):
-            print company, count
+            writer.writerow((company, str(count)))

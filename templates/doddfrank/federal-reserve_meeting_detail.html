@@ -4,7 +4,9 @@
 
 {% block content %}
 
-<h2>Agency: {{ meeting.agency }}</h2>
+<h2>Federal Reserve</h2>
+<p class="tip">The Federal Reserve's main responsibilities are conducting the nation's monetary policy by influencing money and credit conditions; supervising and regulating banks and other financial institutions; maintaining the stability of the financial system and containing systemic risk; and providing financial services to the government and financial institutions. (<a href="http://www.federalreserve.gov/faqs/about_12594.htm">source</a>)</p>
+
 <h3>{{ meeting.meeting_time|date:"F j, Y" }}</h3>
 <p><strong>Type</strong>: {{ meeting.type|title }}</p>
 {% if meeting.title %}
@@ -40,5 +42,7 @@
     <li><a href="{{ meeting.url }}">{{ meeting.type }} information</a></li>
 </ul>
 {% endif %}
+
+{% include "doddfrank/federal-reserve_source.html" %}
 
 {% endblock content %}

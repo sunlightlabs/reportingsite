@@ -4,7 +4,9 @@
 
 {% block content %}
 
-<h2>Agency: {{ meeting.agency }}</h2>
+<h2>Department of Treasury</h2>
+<p class="tip">The Treasury Department is the executive agency responsible for promoting economic prosperity and ensuring the financial security of the United States. (<a href="http://www.treasury.gov/about/role-of-treasury/Pages/default.aspx">source</a>)</p>
+
 <h3>{{ meeting.meeting_time|date:"F j, Y" }}</h3>
 
 {% if meeting.description %}
@@ -54,4 +56,5 @@
 
             <div class="clear"></div>
 
+{% include "doddfrank/treasury_source.html" %}
 {% endblock %}

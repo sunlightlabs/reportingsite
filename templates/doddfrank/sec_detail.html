@@ -4,7 +4,9 @@
 
 {% block content %}
 {% load doddfrank %}
-<h2>Agency: {{ agency }}</h2>
+<h2>Security and Exchange Commission</h2>
+<p class="tip">The SEC oversees the key participants in the securities world, including securities exchanges, securities brokers and dealers, investment advisors, and mutual funds. Here the SEC is concerned primarily with promoting the disclosure of important market-related information, maintaining fair dealing, and protecting against fraud. (<a href="http://sec.gov/about/whatwedo.shtml">source</a>)</p>
+<p class="tip">Updated monthly</p>
 
 <table class="agencyTable">
     <thead>
@@ -22,4 +24,6 @@
     </tr>
     {% endfor %}
 </table>
+            <div class="clear"></div>
+{% include "doddfrank/sec_source.html" %}
 {% endblock content %}

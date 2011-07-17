@@ -6,7 +6,9 @@
 
 {% block content %}
 
-<h2>Agency: {{ meeting.agency }}</h2>
+<h2>Commodity Futures Trading Commission</h2>
+<p class="tip">The CFTC's mission is to protect market users and the public from fraud, manipulation, abusive practices and systemic risk related to derivatives that are subject to the Commodity Exchange Act, and to foster open, competitive, and financially sound markets. (<a href="http://www.cftc.gov/About/MissionResponsibilities/index.htm">source</a>)</p>
+
 <h3>{{ meeting.meeting_time|date:"F j, Y" }}</h3>
 <p>{{ meeting.description }}</p>
 <p><a href="{{ meeting.url }}">View on CFTC website</a></p>
@@ -62,5 +64,7 @@
 </ul>
 {% endif %}
             <div class="clear"></div>
+
+{% include "doddfrank/cftc_source.html" %}
 
 {% endblock content %}

@@ -4,7 +4,8 @@
 {% block body %}{{ block.super }} federalReserve{% endblock %}
 
 {% block content %}
-<h2>Agency: {{ agency }}</h2>
+<h2>Federal Reserve</h2>
+<p class="tip">The Federal Reserve's main responsibilities are conducting the nation's monetary policy by influencing money and credit conditions; supervising and regulating banks and other financial institutions; maintaining the stability of the financial system and containing systemic risk; and providing financial services to the government and financial institutions. (<a href="http://www.federalreserve.gov/faqs/about_12594.htm">source</a>)</p>
 
 <table class="agencyTable">
     <thead>
@@ -22,5 +23,7 @@
     </tr>
     {% endfor %}
 </table>
+
+{% include "doddfrank/federal-reserve_source.html" %}
 
 {% endblock content %}

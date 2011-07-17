@@ -1,27 +1,33 @@
 {% load media %}
 {% css "css/df.css" %}
 
-{% comment %}
-<table class="dfTimeline">
-    {% for timeline in timelines %}
+<table id="key">
     <tr>
-        <th>{{ timeline.org }}</th>
-        {% for day in timeline.timeline %}
-            {% for agency in day.1 %}
-            <td class="{{ agency.0|slugify }}{% if agency.1 %} true{% endif %}">{{ day.0 }}</td>
-            {% endfor %}
-        {% endfor %}
-    </tr>
-    {% endfor %}
+        <td class="cftc"></td>
+        <td>CFTC</td>
+        <td></td>
+        <td class="fdic"></td>
+        <td>FDIC</td>
+        <td></td>
+        <td class="federal-reserve"></td>
+        <td>Federal Reserve</td>
+        <td></td>
+        <td class="sec"></td>
+        <td>SEC</td>
+        <td></td>
+        <td class="treasury"></td>
+        <td>Treasury</td>
+        <td></td>
+        <td class="multiple"></td>
+        <td>Multiple agencies</td>
 </table>
-{% endcomment %}
 
 <table class="dfTimeline">
     {% for timeline in timelines %}
     <tr>
         <th>{{ timeline.org }}</th>
         {% for day in timeline.timeline %}
-        <td{% if day.1 %} class="{{ day.1 }}"{% endif %}>{{ day.0 }}</td>
+        <td{% if day.1 %} class="{{ day.1 }}"{% endif %}><span class="date">{{ day.0 }}</span></td>
         {% endfor %}
     </tr>
     {% endfor %}

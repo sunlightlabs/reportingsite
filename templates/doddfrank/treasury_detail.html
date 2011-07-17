@@ -4,7 +4,9 @@
 {% block body %}{{ block.super }} treasury{% endblock %}
 
 {% block content %}
-<h2>Agency: {{ agency }}</h2>
+<h2>Department of Treasury</h2>
+<p class="tip">The Treasury Department is the executive agency responsible for promoting economic prosperity and ensuring the financial security of the United States. (<a href="http://www.treasury.gov/about/role-of-treasury/Pages/default.aspx">source</a>)</p>
+<p class="tip">Updated monthly</p>
 
 <table class="agencyTable">
     <thead>
@@ -25,4 +27,5 @@
     {% endfor %}
 </table>
 
+{% include "doddfrank/treasury_source.html" %}
 {% endblock content %}

@@ -6,7 +6,7 @@ from optparse import make_option
 from django.core.management.base import BaseCommand, CommandError
 from django.template import loader, Context
 
-from doddfrank.views import _collection
+from doddfrank.views import _collection, _list_organizations
 
 
 class Command(BaseCommand):
@@ -20,12 +20,15 @@ class Command(BaseCommand):
             make_option('--orgs',
                         action='store',
                         dest='orgs',
+                        default='',
                         help='Organizations to create timelines for.'),
         )
 
     def handle(self, *args, **options):
-        orgs = options.get('orgs', '').split(',')
         collection = _collection()
+        orgs = options.get('orgs', '').split(',')
+        if orgs == ['']:
+            orgs = _list_organizations()
 
         agencies = collection.distinct(key='agency')
 
