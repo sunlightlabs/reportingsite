@@ -52,24 +52,36 @@
         <thead>
             <tr>
                 <th>Committee</th>
-                <th>Total outside spending</th>
+                {#<th>Total outside spending</th>#}
                 <th></th>
             </tr>
         </thead>
         <tbody>
             {% for committee in committees %}
-                {% if committee.total %}
+{#                {% if committee.total %}#}
                     <tr class="{% cycle 'odd' 'even' %}">
                         <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
-                        <td>${{ committee.total|intcomma }}</td>
+                        {#<td>${{ committee.total|intcomma }}</td>#}
                         <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</a></td>
                     </tr>
-                {% endif %}
+{#                {% endif %}#}
             {% endfor %}
         </tbody>
     </table>
 
     {% endif %}
+
+<br><br>
+{% if ieonly %}
+<h3>Super PAC letters</h3>
+<table>
+{% for committee in ieonly %}
+<tr class="{% cycle 'odd' 'even' %}">
+<td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
 
     {% else %}
     <h3>Please enter a search term</h3>
