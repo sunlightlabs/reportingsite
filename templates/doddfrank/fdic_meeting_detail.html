@@ -1,0 +1,46 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+{% load doddfrank %}
+
+{% block body %}{{ block.super }} fdic{% endblock %}
+
+{% block content %}
+
+<h2>Federal Deposit Insurance Corporation</h2>
+<p class="tip">The FDIC is an independent agency created by the Congress to maintain stability and public confidence in the nation's financial system by insuring deposits; examining and supervising financial institutions for safety and soundness and consumer protection; and managing receiverships. (<a href="http://www.fdic.gov/about/mission/index.html">source</a>)</p>
+
+<h3>{{ meeting.meeting_time|date:"F j, Y" }}</h3>
+<p><strong>Description</strong>: {{ meeting.description }}</p>
+
+<h4 style="float: left;">Participating organizations</h4>
+<ul style="float: right; width: 70%">
+    {% for organization in meeting.organizations %}
+    <li><a href="{% url doddfrank_organization_detail organization_slug=organization|slugify %}">{{ organization }}</a></li>
+    {% endfor %}
+</ul>
+            <div class="clear"></div>
+            <hr/>
+
+<h4 style="float: left;">Participants</h4>
+<ul style="float: right; width: 70%">
+    {% for participant in meeting.visitors %}
+        {% if participant.name %}
+            <li>{{ participant.name }} {% if participant.org %}(<a href="{% url doddfrank_organization_detail organization_slug=participant.org|slugify %}">{{ participant.org }}</a>){% endif %}</li>
+        {% endif %}
+    {% endfor %}
+</ul>
+
+{% if meeting.staff %}
+            <div class="clear"></div>
+            <hr/>
+<h4 style="float: left;">FDIC staff members</h4>
+<ul style="float: right; width: 70%">
+    {% for staffer in meeting.staff %}
+        <li>{{ staffer }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+            <div class="clear"></div>
+
+{% include "doddfrank/fdic_source.html" %}
+
+{% endblock content %}

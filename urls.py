@@ -70,6 +70,8 @@ urlpatterns = patterns(
 
     url(r'^aors/', include('aors.urls')),
 
+    url(r'^doddfrank/', include('doddfrank.urls')),
+
 
 )
 

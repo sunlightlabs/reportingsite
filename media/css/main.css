@@ -317,3 +317,16 @@ div#pageMain #featureMainNav input#searchbox { width: 220px; }
 .expenditureDate { display: block; margin-bottom: 5px; color: #9F9F9F;}
 
 del { text-decoration: line-through; }
+
+div#doddFrankNav { margin-bottom: 60px; margin-top: 10px; }
+
+div#doddFrankNav ul li { float: left; margin-right: 20px; font-size: 120%; }
+div#doddFrankNav ul li a { font-style: italic; }
+body.sec li.sec a,
+body.fdic li.fdic a,
+body.federalReserve li.federalReserve a,
+body.organizations li.organizations a,
+body.cftc li.cftc a,
+body.treasury li.treasury a { font-weight: bold; color: #414042; }
+
+/*div#doddFrankNav input { width: 140px !important; margin-right: 0px !important; padding: 4px !important; }*/

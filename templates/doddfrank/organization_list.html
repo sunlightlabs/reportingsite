@@ -1,0 +1,32 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% load partition %}
+
+{% block body %}{{ block.super }} organizations{% endblock %}
+
+{% block content %}
+
+<div id="timeToggle">
+    <span>Jump to:</span>
+    {% for grouper, organizations in grouped %}
+        <a href="#{{ grouper }}">{{ grouper }}</a>
+    {% endfor %}
+</div>
+
+{% for grouper, organizations in grouped %}
+<h3 id="{{ grouper }}" class="browseHeading">{{ grouper }}</h3>
+{% spaceless %}
+<ol class="browseTable">
+    {% for row in organizations|columns_across:3 %}
+        {% for organization in row %}
+        {% if organization %}
+        <li class="{% cycle 'one' 'two' 'three' %}"><a href="{% url doddfrank_organization_detail organization_slug=organization|slugify %}">{{ organization }}</a></li>
+        {% endif %}
+        {% endfor %}
+    {% endfor %}
+</ol>
+<div class="clear"></div>
+{% endspaceless %}
+{% endfor %}
+
+{% endblock content %}

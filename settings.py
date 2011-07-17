@@ -103,11 +103,14 @@ INSTALLED_APPS = (
     'storages',
     'debug_toolbar',
     'haystack',
+    'south',
     'buckley',
     'gunicorn',
     'willard',
     'hacmap',
     'aors',
+    #'valeo',
+    'doddfrank',
 )
 
 INTERNAL_IPS = ('127.0.0.1','localhost')
