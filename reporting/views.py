@@ -36,8 +36,9 @@ WHICHSITE_CHOICES = getattr(settings, "WHICHSITE_CHOICES", False)
 
 
 def post_detail(request, year, slug, month=None, day=None):
-    key = 'reporting:%s:%s' % (year, slug)
+    key = 'reporting:%s:%s-1' % (year, slug)
     post = cache.get(key)
+    post = None
     if not post:
         post = get_object_or_404(Post, date_published__year=year, slug=slug)
         if not post.is_published and not request.user.is_staff:
