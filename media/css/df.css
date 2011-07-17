@@ -13,25 +13,31 @@ table.dfTimeline th {
     width: 200px;
 }
 table.dfTimeline td { 
-    font-size: 0; 
     border-bottom: 5px solid #fff;
     width: 5px;
 }
-table.dfTimeline td.cftc {
+table.dfTimeline td span.date {
+    display: none;
+}
+.cftc {
     background-color: red;
 }
-table.dfTimeline td.fdic {
+.fdic {
     background-color: blue;
 }
-table.dfTimeline td.federal-reserve {
+.federal-reserve {
     background-color: green;
 }
-table.dfTimeline td.sec {
+.sec {
     background-color: yellow;
 }
-table.dfTimeline td.treasury {
+.treasury {
     background-color: purple;
 }
-table.dfTimeline td.multiple {
+.multiple {
     background-color: gray;
+}
+
+table#key td {
+    width: 20px;
 }
