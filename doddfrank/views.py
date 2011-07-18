@@ -8,7 +8,16 @@ from pymongo.objectid import ObjectId
 from django.shortcuts import render_to_response
 from django.template.defaultfilters import slugify
 from django.http import Http404, HttpResponse
+from django.views.decorators.cache import cache_page
 
+
+def _cache_prefix():
+    c = Connection()
+    coll = c.test.cache_prefixes
+    m = coll.find_one({'key': 'doddfrank'})
+    if not m:
+        return ''
+    return m['prefix']
 
 def _collection():
     c = Connection()
@@ -21,6 +30,7 @@ def _list_agencies():
 def _list_organizations():
     return sorted(list(set(sum(_collection().distinct(key='organizations'), []))))
 
+@cache_page(60*5, key_prefix=_cache_prefix())
 def index(request):
     collection = _collection()
     
@@ -87,6 +97,7 @@ def _organization_lookup(organization_slug):
     return dict([(slugify(organization), organization) for organization in organizations]).get(organization_slug)
 
 
+@cache_page(60*5, key_prefix=_cache_prefix())
 def agency_detail(request, agency_slug):
     collection = _collection()
     agency = _agency_lookup(agency_slug)
@@ -102,6 +113,7 @@ def agency_detail(request, agency_slug):
                                'meetings': meetings, }
                               )
 
+@cache_page(60*5, key_prefix=_cache_prefix())
 def organization_detail(request, organization_slug):
     collection = _collection()
     organization = _organization_lookup(organization_slug)
@@ -114,6 +126,7 @@ def organization_detail(request, organization_slug):
                                'meetings': meetings, }
                               )
 
+@cache_page(60*5, key_prefix=_cache_prefix())
 def organization_list(request):
     organizations = _list_organizations()
 
@@ -132,6 +145,7 @@ def organization_list(request):
                              )
 
 
+@cache_page(60*5, key_prefix=_cache_prefix())
 def meeting_detail(request, agency_slug, id):
     agency = _agency_lookup(agency_slug)
     if not agency:
