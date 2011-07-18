@@ -25,9 +25,17 @@ class CFTCScraper(Scraper):
         page = self.get_index()
         meeting_urls = self.parse_index(page)
         for url in meeting_urls:
+            if self.exists(url):
+                continue
             data = self.parse_meeting_page(url)
             self.save_data(data)
             time.sleep(.15)
+
+    def exists(self, url):
+        collection = Connection().test.meetings
+        if collection.find_one({'url': url}):
+            return True
+        return False
 
     def get_index(self):
         return requests.get(self.url).content

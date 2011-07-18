@@ -40,4 +40,4 @@ Valid agencies are:
 
         for agency in args:
             scraper = scrapers.get(agency)()
-            scraper.scrape(options.get('special', False))
+            scraper.scrape()
