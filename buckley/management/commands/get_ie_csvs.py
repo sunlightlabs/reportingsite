@@ -20,7 +20,7 @@ from dateutil.parser import parse as dateparse
 from buckley.models import *
 from buckley.management.commands.cache_totals import cache_totals
 from get_donors import get_form_urls, parse_donor_csv, save_contribution
-from import_ies import committee_lookup, candidate_lookup_by_id, cursor
+from import_ies import committee_lookup, candidate_lookup_by_id, cursor, generic_querier
 
 
 def make_row_dict(row, fields):
@@ -146,7 +146,7 @@ class Command(BaseCommand):
 
                 try:
                     if row['candidate_id']:
-                        candidate = Candidate.objects.get(fec_id=row['candidate_id'])
+                        candidate = Candidate.objects.get(fec_id=row['candidate_id'], cycle=2012)
                     else:
                         raise Candidate.DoesNotExist
                 except Candidate.DoesNotExist:
@@ -166,7 +166,7 @@ class Command(BaseCommand):
                         row.update(candidate)
                         crp_name = re.sub(r'\s\([A-Z0-9]\)', '', row.get('FirstLastP', ''))
                         try:
-                            candidate = Candidate.objects.get(slug=slugify(crp_name)[:50])
+                            candidate = Candidate.objects.get(slug=slugify(crp_name)[:50], cycle=2012)
                         except Candidate.DoesNotExist:
 
                             if crp_name:
@@ -416,6 +416,9 @@ def lookup_candidate_by_name(data):
             print 'not found:', data
 
         return None
+
+def lookup_candidate_in_crp_table(fec_id):
+    return generic_querier("SELECT * FROM candidates WHERE FECCandID = %s", [fec_id, ])
 
 
 def create_candidate_from_crp(candidate, data):

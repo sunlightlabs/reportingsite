@@ -36,7 +36,7 @@ class Command(BaseCommand):
 
     def parse_page(self):
         aors = re.findall(r'<a href="javascript:ao\(&quot;(\d+)&quot;\)"><strong>(.*?)<\/a><\/strong> <a href="javascript:ao\(&quot;\d+&quot;\)"><strong>(.*?)<\/a><\/strong>.*?<br>(.*?)<ul>', self.page, re.S)
-        linkdata = re.findall(r'<A HREF\="javascript:ao1\((\d+), &quot;(\d+)\.pdf&quot;\)">(.*?)<\/A>', self.page)
+        linkdata = re.findall(r'<A HREF\="javascript:ao1\((\d+), &quot;([\d\w]+)\.pdf&quot;\)">(.*?)<\/A>', self.page)
         docurl = 'http://saos.nictusa.com/aodocs/%s.pdf'
 
         data = {}

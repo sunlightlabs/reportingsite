@@ -15,6 +15,7 @@ from django.db.models import *
 from django.views.generic.list_detail import object_detail
 from django.core.paginator import Paginator, EmptyPage, InvalidPage
 from django.http import Http404, HttpResponse
+from django.views.decorators.cache import cache_page
 
 from dateutil.relativedelta import relativedelta
 
@@ -432,6 +433,7 @@ def lobbyist_list(request):
             context_instance=RequestContext(request))
 
 
+@cache_page(60*60)
 def registrations_widget(request):
     cutoff = datetime.date.today() - datetime.timedelta(14)
     registrations = Registration.objects.filter(received__gte=cutoff).select_related()
