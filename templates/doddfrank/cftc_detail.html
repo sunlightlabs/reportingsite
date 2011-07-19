@@ -4,7 +4,9 @@
 {% block body %}{{ block.super }} cftc{% endblock %}
 
 {% block content %}
-<h2>{{ agency }}</h2>
+<h2>Commodity Futures Trading Commission</h2>
+<p class="tip">The CFTC's mission is to protect market users and the public from fraud, manipulation, abusive practices and systemic risk related to derivatives that are subject to the Commodity Exchange Act, and to foster open, competitive, and financially sound markets. (<a href="http://www.cftc.gov/About/MissionResponsibilities/index.htm">source</a>)</p>
+<p class="tip">Updated daily</p>
 
 <table class="agencyTable">
     <thead>
@@ -24,5 +26,7 @@
     </tr>
     {% endfor %}
 </table>
+
+{% include "doddfrank/cftc_source.html" %}
 
 {% endblock content %}

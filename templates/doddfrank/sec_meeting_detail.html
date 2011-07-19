@@ -4,7 +4,9 @@
 
 {% block content %}
 
-<h2>Agency: {{ meeting.agency }}</h2>
+<h2>Security and Exchange Commission</h2>
+<p class="tip">The SEC oversees the key participants in the securities world, including securities exchanges, securities brokers and dealers, investment advisors, and mutual funds. Here the SEC is concerned primarily with promoting the disclosure of important market-related information, maintaining fair dealing, and protecting against fraud. (<a href="http://sec.gov/about/whatwedo.shtml">source</a>)</p>
+
 <h3>{{ meeting.meeting_time|date:"F j, Y" }}</h3>
 <p><strong>Type</strong>: {{ meeting.type|title }}</p>
 <p>{{ meeting.description }}</p>
@@ -25,5 +27,7 @@
 {% endif %}
 
             <div class="clear"></div>
+
+{% include "doddfrank/sec_source.html" %}
 
 {% endblock content %}

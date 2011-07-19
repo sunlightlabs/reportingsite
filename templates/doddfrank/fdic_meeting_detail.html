@@ -5,7 +5,9 @@
 
 {% block content %}
 
-<h2>Agency: {{ meeting.agency }}</h2>
+<h2>Federal Deposit Insurance Corporation</h2>
+<p class="tip">The FDIC is an independent agency created by the Congress to maintain stability and public confidence in the nation's financial system by insuring deposits; examining and supervising financial institutions for safety and soundness and consumer protection; and managing receiverships. (<a href="http://www.fdic.gov/about/mission/index.html">source</a>)</p>
+
 <h3>{{ meeting.meeting_time|date:"F j, Y" }}</h3>
 <p><strong>Description</strong>: {{ meeting.description }}</p>
 
@@ -37,5 +39,8 @@
     {% endfor %}
 </ul>
 {% endif %}
+            <div class="clear"></div>
+
+{% include "doddfrank/fdic_source.html" %}
 
 {% endblock content %}

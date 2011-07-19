@@ -56,5 +56,4 @@ def get_cftc_rulemaking_link(rulemaking):
 
 @register.filter
 def length(i):
-    print i
     return len(i)

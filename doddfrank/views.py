@@ -1,3 +1,4 @@
+from itertools import groupby
 from collections import defaultdict
 import re
 
@@ -7,7 +8,16 @@ from pymongo.objectid import ObjectId
 from django.shortcuts import render_to_response
 from django.template.defaultfilters import slugify
 from django.http import Http404, HttpResponse
+from django.views.decorators.cache import cache_page
 
+
+def _cache_prefix():
+    c = Connection()
+    coll = c.test.cache_prefixes
+    m = coll.find_one({'key': 'doddfrank'})
+    if not m:
+        return ''
+    return m['prefix']
 
 def _collection():
     c = Connection()
@@ -20,6 +30,7 @@ def _list_agencies():
 def _list_organizations():
     return sorted(list(set(sum(_collection().distinct(key='organizations'), []))))
 
+@cache_page(60*5, key_prefix=_cache_prefix())
 def index(request):
     collection = _collection()
     
@@ -31,14 +42,37 @@ def index(request):
                                'meetings': latest_meetings, }
                               )
 
+def _organization_search(regex):
+    matches = _collection().find({'organizations': {'$regex': regex, '$options': 'i'}}, fields=['organizations', ])
+    organizations = [x for x in set(sum([x['organizations'] for x in matches], [])) if re.match(regex, x, re.I)]
+    return organizations
+
+def _visitor_search(regex):
+    matches = _collection().find({'visitors.name': {'$regex': regex, '$options': 'i'}}, fields=['visitors.name', 'visitors.org', ])
+    visitors = [x for x in set(sum([[(x['name'], x['org']) for x in m['visitors']] for m in matches], [])) if re.match(regex, x[0], re.I)]
+    return visitors
+
+def _staff_search(regex):
+    cftc = _collection().find({'cftc_staff': {'$regex': regex, '$options': 'i'}}, fields=['cftc_staff', ])
+    fdic = _collection().find({'agency': 'FDIC', 'staff': {'$regex': regex, '$options': 'i'}}, fields=['staff', ])
 
 def search(request):
     q = request.GET.get('q')
 
     regex = '.*%s.*' % q
+
+    re_query = {'$regex': regex, '$options': 'i'}
+    fields = ['visitors.name', 
+              'organizations', 
+              'description', 
+              'summary', 
+              'staff', 
+              'cftc_staff', 
+              'treasury_officials',
+              'participants.names', ]
     meeting_ids = []
-    meeting_ids +=  _collection().find({'visitors.name': {'$regex': regex, '$options': 'i'}}).distinct(key='_id')
-    meeting_ids += _collection().find({'organizations': {'$regex': regex, '$options': 'i'}}).distinct(key='_id')
+    for field in fields:
+        meeting_ids += _collection().find({field: re_query}).distinct(key='_id')
 
     meetings = _collection().find({'_id': {'$in': meeting_ids, }, }).sort([('meeting_time', -1)])
 
@@ -63,6 +97,7 @@ def _organization_lookup(organization_slug):
     return dict([(slugify(organization), organization) for organization in organizations]).get(organization_slug)
 
 
+@cache_page(60*5, key_prefix=_cache_prefix())
 def agency_detail(request, agency_slug):
     collection = _collection()
     agency = _agency_lookup(agency_slug)
@@ -78,6 +113,7 @@ def agency_detail(request, agency_slug):
                                'meetings': meetings, }
                               )
 
+@cache_page(60*5, key_prefix=_cache_prefix())
 def organization_detail(request, organization_slug):
     collection = _collection()
     organization = _organization_lookup(organization_slug)
@@ -90,14 +126,26 @@ def organization_detail(request, organization_slug):
                                'meetings': meetings, }
                               )
 
+@cache_page(60*5, key_prefix=_cache_prefix())
 def organization_list(request):
     organizations = _list_organizations()
+
+    def grouper(x):
+        if not re.search(r'^[A-Za-z]', x):
+            return '0-9'
+        return x[0].upper()
+
+    grouped = groupby(organizations, grouper)
+    grouped = [(grouper, list(organizations)) for grouper, organizations in grouped]
+
     return render_to_response('doddfrank/organization_list.html',
                               {'organizations': organizations, 
+                               'grouped': grouped,
                               }
                              )
 
 
+@cache_page(60*5, key_prefix=_cache_prefix())
 def meeting_detail(request, agency_slug, id):
     agency = _agency_lookup(agency_slug)
     if not agency:

@@ -4,7 +4,9 @@
 {% block body %}{{ block.super }} fdic{% endblock %}
 
 {% block content %}
-<h2>{{ agency }}</h2>
+<h2>Federal Deposit Insurance Corporation</h2>
+<p class="tip">The FDIC is an independent agency created by the Congress to maintain stability and public confidence in the nation's financial system by insuring deposits; examining and supervising financial institutions for safety and soundness and consumer protection; and managing receiverships. (<a href="http://www.fdic.gov/about/mission/index.html">source</a>)</p>
+<p class="tip">Updated biweekly</p>
 
 <table class="agencyTable">
     <thead>
@@ -24,4 +26,7 @@
     </tr>
     {% endfor %}
 </table>
+
+{% include "doddfrank/fdic_source.html" %}
+
 {% endblock content %}
