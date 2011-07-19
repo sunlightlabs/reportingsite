@@ -34,6 +34,12 @@ urlpatterns = patterns(
         {'template': 'dc.html',
             },
         name='reporting_document'),
+
+    url(r'^fincen\/?$',
+        direct_to_template,
+        {'template': 'fincen/index.html',
+        },
+        name='reporting_fincen'),
     
     # archives
     url(r'^(?P<year>\d{4})/$', 'archive_year', name='blogdor_archive_year'),
