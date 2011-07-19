@@ -49,7 +49,10 @@ class Command(BaseCommand):
         reader.next()
         for row in reader:
             print row
-            old, new = row
+            try:
+                old, new = row
+            except ValueError:
+                continue
 
             meetings = collection.find({'organizations': old})
             for meeting in meetings:
