@@ -44,7 +44,20 @@ urlpatterns = patterns('',
                        url(r'^timeline\/?$',
                            'django.views.generic.simple.direct_to_template',
                            {'template': 'doddfrank/test_timeline.html', },
-                           name='doddfrank_test_timeline')
+                           name='doddfrank_test_timeline'),
+
+                       url(r'^widget\/?$',
+                           meetings_widget,
+                           {},
+                           name='doddfrank_meetings_widget'),
+
+                       url(r'^widget\.js',
+                           'django.views.generic.simple.direct_to_template',
+                           {'template': 'doddfrank/widget.js',
+                            'mimetype': 'text/javascript',
+                           },
+                           name='doddfrank_meetings_widget_js')
+
 
 )
 

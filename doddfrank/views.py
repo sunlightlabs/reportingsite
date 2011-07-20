@@ -1,3 +1,4 @@
+import datetime
 from itertools import groupby
 from collections import defaultdict
 import re
@@ -9,6 +10,7 @@ from django.shortcuts import render_to_response
 from django.template.defaultfilters import slugify
 from django.http import Http404, HttpResponse
 from django.views.decorators.cache import cache_page
+from django.template import RequestContext
 
 
 def _cache_prefix():
@@ -161,6 +163,16 @@ def meeting_detail(request, agency_slug, id):
                               {'agency': agency,
                                'meeting': meeting, }
                              )
+
+
+def meetings_widget(request):
+    cutoff = datetime.datetime.now() - datetime.timedelta(60)
+    meetings = _collection().find({'meeting_time': {'$gt': cutoff}}, fields=['meeting_time', 'agency', 'organizations',])
+    meetings_by_date = [{'date': grouper, 'meetings': list(meetings)} for grouper, meetings in groupby(meetings, lambda x: x['meeting_time'].date())]
+    return render_to_response('doddfrank/widget.html',
+                              {'meetings_by_date': meetings_by_date,
+                              },
+                              context_instance=RequestContext(request))
 
 
 import csv
