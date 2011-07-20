@@ -94,8 +94,8 @@ button, .buttonLink { width: auto; text-indent: -9999em; display: block; border:
 #lobbyingWidget { width: 248px; height: 398px; border: 1px solid #d3c780; background-color: #e6da96; -moz-border-radius: 5px; -webkit-border-radius: 5px; border-radius: 5px; }
 #lobbyingWidget header { background: url(../img/bg_dodd_w_stars.jpg) bottom right no-repeat; padding-left: 5px;}
 #lobbyingWidget h1 { width: 178px; height: 34px; padding-bottom: 15px;}
-#lobbyingWidget h1 a { width: 178px; height: 34px; background: url(../img/title_main.png) top left no-repeat; text-indent: -9999em; display: block;}
-#lobbyingWidget h1 a:hover { background: url(../img/title_main.png) bottom left no-repeat; }
+#lobbyingWidget h1 a { width: 178px; height: 34px; background: url(../img/df_title_main.png) top left no-repeat; text-indent: -9999em; display: block;}
+#lobbyingWidget h1 a:hover { background: url(../img/df_title_main.png) bottom left no-repeat; }
 
 #lobbyingWidget #foundationLogo { display: block; text-indent: -9999em; background: url(../img/df_foundationLogo.jpg) left 10px no-repeat; width: 112px; height: 13px; padding: 10px 0 5px;}
 
