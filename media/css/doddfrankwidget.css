@@ -97,7 +97,7 @@ button, .buttonLink { width: auto; text-indent: -9999em; display: block; border:
 #lobbyingWidget h1 a { width: 178px; height: 34px; background: url(../img/title_main.png) top left no-repeat; text-indent: -9999em; display: block;}
 #lobbyingWidget h1 a:hover { background: url(../img/title_main.png) bottom left no-repeat; }
 
-#lobbyingWidget #foundationLogo { display: block; text-indent: -9999em; background: url(../img/foundationLogo.jpg) left 10px no-repeat; width: 112px; height: 13px; padding: 10px 0 5px;}
+#lobbyingWidget #foundationLogo { display: block; text-indent: -9999em; background: url(../img/df_foundationLogo.jpg) left 10px no-repeat; width: 112px; height: 13px; padding: 10px 0 5px;}
 
 #lobbyingWidget a { text-decoration: none;}
 #lobbyingWidget h2 { background-color: #eff2f3; color: #7d7979; font-family: Georgia, "Times New Roman", Times, serif; display: block; font-weight: normal; margin: 3px 2px 7px; padding: 2px 3px; }
