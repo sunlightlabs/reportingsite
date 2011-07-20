@@ -1,6 +1,7 @@
 import datetime
 from itertools import groupby
 from collections import defaultdict
+from operator import itemgetter
 import re
 
 from pymongo import Connection
@@ -168,7 +169,7 @@ def meeting_detail(request, agency_slug, id):
 def meetings_widget(request):
     cutoff = datetime.datetime.now() - datetime.timedelta(60)
     meetings = _collection().find({'meeting_time': {'$gt': cutoff}}, fields=['meeting_time', 'agency', 'organizations',])
-    meetings_by_date = [{'date': grouper, 'meetings': list(meetings)} for grouper, meetings in groupby(meetings, lambda x: x['meeting_time'].date())]
+    meetings_by_date = sorted([{'date': grouper, 'meetings': list(meetings)} for grouper, meetings in groupby(meetings, lambda x: x['meeting_time'].date())], key=itemgetter('date'), reverse=True)
     return render_to_response('doddfrank/widget.html',
                               {'meetings_by_date': meetings_by_date,
                               },
