@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html>
+    <head>
+            <link rel="stylesheet" href="fincen.css" media="screen, projection">
+            <!--<link rel="stylesheet" href="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/fincen/fincen.css" media="screen, projection">//-->
+    </head>
+    <body>
+
+        <div id="tooltip"></div>
+
+
+    <div id="nav">
+    <span id="prevQ">&laquo;&nbsp;Previous Quarter</span> <span id="currQuarter">&nbsp;</span><span id="nextQ">Next Quarter&nbsp;&raquo;</span> 
+    </div>
+
+    <div id="countyInfo"></div>
+
+    <div id="key">
+        <table>
+            <tr>
+                <th>Key:</th>
+                <td class="color" style="background-color: #F1EEF6">&lt; 24.8</td>
+                <td class="color" style="background-color: #D4B9DA">&lt; 67.6</td>
+                <td class="color" style="background-color: #C994C7">&lt; 136.3</td>
+                <td class="color" style="background-color: #DF65B0">&lt; 243.8</td>
+                <td class="color" style="background-color: #DD1C77">&lt; 467.4</td>
+                <td class="color" style="background-color: #980043">&lt; 1085.8</td>
+            </tr>
+        </table>
+    </div>
+    <div id="map_canvas"></div>
+
+    <div id="table_div"></div>
+
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <script type="text/javascript">
+    google.load('visualization', '1', {packages: ['table']});
+    </script>
+    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.5.1/jquery.min.js"></script>
+    <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false">
+
+    <script type="text/javascript" src="https://www.google.com/jsapi"></script>
+    <!--<script type="text/javascript" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/fincen/fincen.js"></script>//-->
+    <script type="text/javascript" src="http://reporting.sunlightlabs.com/fincen.js"></script>
+  </body>
+</html>
+
