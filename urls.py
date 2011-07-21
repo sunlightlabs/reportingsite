@@ -40,6 +40,13 @@ urlpatterns = patterns(
         {'template': 'fincen/index.html',
         },
         name='reporting_fincen'),
+
+    url(r'^fincen\.js\/?$',
+        direct_to_template,
+        {'template': 'fincen/fincen.js',
+         'mimetype': 'text/javascript',
+        },
+        name='reporting_fincen_js'),
     
     # archives
     url(r'^(?P<year>\d{4})/$', 'archive_year', name='blogdor_archive_year'),
