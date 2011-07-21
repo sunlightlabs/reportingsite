@@ -41,6 +41,12 @@ urlpatterns = patterns(
         },
         name='reporting_fincen'),
 
+    url(r'^fincen\.html\/?$',
+        direct_to_template,
+        {'template': 'fincen/fincen.html',
+        },
+        name='reporting_fincen'),
+
     url(r'^fincen\.js\/?$',
         direct_to_template,
         {'template': 'fincen/fincen.js',
