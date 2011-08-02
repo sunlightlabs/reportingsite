@@ -73,7 +73,7 @@ var drawTable = function (rows) {
     var data = new google.visualization.DataTable();
     data.addColumn('string', 'County');
     data.addColumn('string', 'State');
-    data.addColumn('number', 'SARs per capita');
+    data.addColumn('number', 'SARs rate');
     data.addColumn('number', 'FIPS');
     data.addRows(rows.length);
     rows.sort(function (a, b) {
@@ -210,7 +210,7 @@ var makeInfoboxContent = function (fips, chartUrl) {
 
     var data = fipsData[fips];
     //var th = '<thead><tr><th>Yr.</th><th>Qtr.</th><th>Value</th></tr></thead>';
-    var th = '<thead><tr><th>Year</th><th>Quarter</th><th>SARs per capita</th></tr></thead>';
+    var th = '<thead><tr><th>Year</th><th>Quarter</th><th>SARs rate</th></tr></thead>';
     var content = '<h1>' + data['county'] + ', ' + data['state'] + '</h1>';
     content += '<img style="height:130px;width:225px;" src="' + chartUrl + '"/>';
     //content += '<table style="float: left; margin-right: 15px;">' + th + '<tbody>';
@@ -220,7 +220,8 @@ var makeInfoboxContent = function (fips, chartUrl) {
     var year;
     var q;
 
-    for (i=quarters.length-1; i >= 0; i--) {
+    //for (i=quarters.length-1; i >= 0; i--) {
+    for (i=0, ql=quarters.length; i<ql; i++) {
         if (i % 2 === 0) {
             klass = 'even';
         } else {
@@ -438,7 +439,7 @@ var showMap = function (rows) {
                 var projection = overlay.getProjection();
                 var pos = projection.fromLatLngToContainerPixel(event.latLng);
                 $("#tooltip").html(data['county'] + ', ' + data['state']);
-                $("#tooltip").css({'top': pos.y + 275 + 'px', //pos.y + 'px',
+                $("#tooltip").css({'top': pos.y + 290 + 'px', //pos.y + 'px',
                                    'left': pos.x + 25 + 'px'}); //pos.x + 'px'});
                 $("#tooltip").show();
             }
