@@ -438,7 +438,7 @@ var showMap = function (rows) {
                 var projection = overlay.getProjection();
                 var pos = projection.fromLatLngToContainerPixel(event.latLng);
                 $("#tooltip").html(data['county'] + ', ' + data['state']);
-                $("#tooltip").css({'top': pos.y + 50 + 'px', //pos.y + 'px',
+                $("#tooltip").css({'top': pos.y + 275 + 'px', //pos.y + 'px',
                                    'left': pos.x + 25 + 'px'}); //pos.x + 'px'});
                 $("#tooltip").show();
             }
