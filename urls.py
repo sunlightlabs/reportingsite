@@ -35,7 +35,7 @@ urlpatterns = patterns(
             },
         name='reporting_document'),
 
-    url(r'^fincen\/?$',
+    url(r'^mortgage-fraud\/?$',
         direct_to_template,
         {'template': 'fincen/index.html',
         },
