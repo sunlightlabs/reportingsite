@@ -1,3 +1,4 @@
+from optparse import make_option
 import datetime
 from cStringIO import StringIO
 import logging
@@ -6,7 +7,7 @@ import socket
 import time
 import urllib2
 
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand, CommandError
 
 from buckley.models import IEOnlyCommittee
 
@@ -71,12 +72,20 @@ def save_checked_url(url):
         fh.write(url + '\n')
 
 
-class Command(NoArgsCommand):
+class Command(BaseCommand):
     help = """Get a list of independent expenditure committees that have submitted
     a letter saying they will raise unlimited contributions."""
     requires_model_validation = False
 
-    def handle_noargs(self, **options):
+    option_list = BaseCommand.option_list + (
+            make_option('--cids',
+                action='store',
+                dest='cids',
+                default=None,
+                help='Comma-separated list of committees to check for IE-only letters.'),
+    ) 
+
+    def handle(self, *args, **options):
         body = 'filerid=&name=&treas=&city=&img_num=&state=&party=&type=I&submit=Send+Query'
         url = 'http://images.nictusa.com/cgi-bin/fecimg/'
         request = urllib2.Request(url, body)
@@ -85,8 +94,11 @@ class Command(NoArgsCommand):
 
         checked = [x.strip() for x in open(r'/projects/reporting/log/fec_pdfs_checked.log', 'r')]
 
-        already = get_already_submitted()
-        committee_ids = set(re.findall(r'C\d{8}', page)).difference(already)
+        if options.get('cids'):
+            committee_ids = options.get('cids').split(',')
+        else:
+            already = get_already_submitted()
+            committee_ids = set(re.findall(r'C\d{8}', page)).difference(already)
 
         for id in committee_ids:
 
