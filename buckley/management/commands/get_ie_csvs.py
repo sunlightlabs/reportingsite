@@ -451,3 +451,24 @@ def create_candidate_from_crp(candidate, data):
                     slug=slugify(crp_name)[:50]
             )
     return candidate
+
+def create_candidate_from_fec(data):
+	result = generic_querier("SELECT * FROM fec_candidate_master WHERE candidate_id = %s",
+				 [data['candidate_id'], ])
+	if not result:
+	    return None
+
+	candidate = Candidate.objects.create(
+			cycle=2012,
+			fec_id=result['candidate_id'],
+			fec_name=result['candidate_name'],
+			crp_id='',
+			crp_name='',
+			party=result['party'][0],
+			office=data['candidate_office'],
+			state=data['candidate_state'],
+			district=data.get('candidate_district'),
+			slug=slugify(result['candidate_name'])[:50]
+		    )
+	return candidate
+
