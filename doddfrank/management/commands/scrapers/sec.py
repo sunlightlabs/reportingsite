@@ -17,6 +17,7 @@ class SECScraper(Scraper):
     def __init__(self):
         self.base_url = 'http://sec.gov'
         self.agency = 'SEC'
+        self.collection = Connection().test.meetings
 
     def get_homepage(self):
         url = 'http://sec.gov/spotlight/regreformcomments.shtml'
@@ -29,8 +30,12 @@ class SECScraper(Scraper):
         page = self.get_homepage()
         comment_urls = self.get_comment_urls(page)
 
+        max_meeting_time = self.collection.find({'agency': 'SEC'}, fields=['meeting_time']).sort([('meeting_time', -1),]).next().get('meeting_time')
+
         for url in comment_urls:
             for data in self.parse_comment_page(url):
+                if data['meeting_time'] <= max_meeting_time:
+                    continue
                 self.save_data(data)
 
     def get_category(self, page):

@@ -13,8 +13,10 @@ class FDICScraper(Scraper):
     def __init__(self):
         self.url = 'http://www.fdic.gov/regulations/meetings/vlog.csv'
         self.agency = 'FDIC'
+        self.collection = Connection().test.meetings
 
     def scrape(self):
+        max_meeting_time = self.collection.find({'agency': 'FDIC'}, fields=['meeting_time']).sort([('meeting_time', -1),]).next().get('meeting_time')
         reader = csv.DictReader(urllib2.urlopen(self.url))
         for row in reader:
             data = {'staff': self.parse_staff(row['Person Visited']),
@@ -24,6 +26,8 @@ class FDICScraper(Scraper):
                     'material_provided': row['Material <br />Provided'],
                     'description': row['Issues Discussed'].replace(':', '; '),
                     }
+            if data['meeting_time'] <= max_meeting_time:
+                continue
             self.save_data(data)
 
     def parse_staff(self, staff):

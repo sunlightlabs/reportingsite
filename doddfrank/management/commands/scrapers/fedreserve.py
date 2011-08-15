@@ -25,13 +25,17 @@ class FedreserveScraper(Scraper):
 
     def __init__(self):
         self.agency = 'Federal Reserve'
+        self.collection = Connection().test.meetings
 
     def scrape(self):
+        max_meeting_time = self.collection.find({'agency': 'Federal Reserve'}, fields=['meeting_time']).sort([('meeting_time', -1),]).next()['meeting_time']
         url = 'http://www.federalreserve.gov/newsevents/%s'
         for pagename in self.pages:
             page = requests.get(url % pagename).content
             doc = lxml.html.fromstring(page)
             for data in self.parse_page(doc):
+                if data['meeting_time'] <= max_meeting_time:
+                    continue
                 self.save_data(data)
 
     def parse_page(self, doc):
