@@ -1,0 +1,23 @@
+<table class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort header{% ifequal order 'received' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'received' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}received">Date</a></th>
+            <th class="sort header{% ifequal order 'registrant' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'registrant' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}registrant">Registrant</a></th>
+            <th class="sort header{% ifequal order 'client' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'client' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}client">Client</a></th>
+            <th style="width: 100px;">Issues</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for registration in object_list %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td>{{ registration.received.date|date:"n/j/y" }}</td>
+            <td><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></td>
+            <td><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></td>
+            <td>{% for issue in registration.denormalized_issues %}<a href="{{ issue.get_absolute_url }}">{{ issue }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+            <td><a href="{{ registration.get_absolute_url }}">View registration</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
