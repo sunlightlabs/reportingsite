@@ -29,7 +29,9 @@
 <h2>{{ object.registrant_name }}</h2>
 <ul>
     <li><strong>Date:</strong> {{ object.stamped|date:"F j, Y" }}</li>
+    {% if object.registrant_status %}
     <li><strong>Registrant status:</strong> {{ object.registrant_status }}</li>
+    {% endif %}
     {% if object.foreign_principal_name %}
     <li><strong>Foreign principal:</strong> {{ object.foreign_principal_name }}</li>
     {% endif %}
