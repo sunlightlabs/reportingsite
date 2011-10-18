@@ -693,6 +693,7 @@ def doccloud_upload(sender, **kwargs):
         return
 
     filename = r'/tmp/fara.pdf'
+    print filing.pdf_url
     tf = open(filename, 'wb')
     tf.write(urllib2.urlopen(filing.pdf_url).read())
     tf.close()

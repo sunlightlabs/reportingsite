@@ -81,7 +81,10 @@ class Command(BaseCommand):
 
             page = urllib2.urlopen(url).read()
             doc = lxml.html.fromstring(page)
-            table = doc.cssselect('#search_results')[0]
+            try:
+                table = doc.cssselect('#search_results')[0]
+            except IndexError:
+                continue
             for row in table.cssselect('tr')[1:]:
                 name, office_name, begin_date, end_date = [x.text for x in row.getchildren()]
 

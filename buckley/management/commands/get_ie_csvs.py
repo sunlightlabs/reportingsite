@@ -36,7 +36,7 @@ socket.setdefaulttimeout(1000)
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        url = 'http://query.nictusa.com/cgi-bin/dcdev/indexp/1'
+        url = 'http://query.nictusa.com/cgi-bin/dcdev/indexp/7'
         page = urllib2.urlopen(url).read()
         filings = re.findall(r'FEC-(\d+)', page)
         dl_url = 'http://query.nictusa.com/cgi-bin/dcdev/forms/DL/%s/'
@@ -49,15 +49,16 @@ class Command(BaseCommand):
                      (4, 'payee_name'),
                      (17, 'expenditure_date'),
                      (18, 'expenditure_amount'),
-                     (21, 'expenditure_purpose'),
-                     (24, 'support_oppose'),
-                     (25, 'candidate_id'),
-                     (26, 'candidate_last'),
-                     (27, 'candidate_first'),
-                     (28, 'candidate_middle'),
-                     (31, 'candidate_office'),
-                     (32, 'candidate_state'),
-                     (33, 'candidate_district'), ]
+                     (20, 'expenditure_purpose'),
+                     (23, 'support_oppose'),
+                     (24, 'candidate_id'),
+                     (25, 'candidate_last'),
+                     (26, 'candidate_first'),
+                     (27, 'candidate_middle'),
+                     (30, 'candidate_office'),
+                     (31, 'candidate_state'),
+                     (32, 'candidate_district'), ]
+        '''
         se_fields = [(0, 'form'),
                      (1, 'committee_id'),
                      (2, 'transaction_id'),
@@ -75,6 +76,25 @@ class Command(BaseCommand):
                      (34, 'candidate_state'),
                      (35, 'candidate_district'),
                      (41, 'receipt_date')]
+        '''
+        se_fields = [(0, 'form'),
+                     (1, 'committee_id'),
+                     (2, 'transaction_id'),
+                     (5, 'entity_type'),
+                     (6, 'payee_name'),
+                     (19, 'expenditure_date'),
+                     (20, 'expenditure_amount'),
+                     (22, 'expenditure_purpose'),
+                     (25, 'support_oppose'),
+                     (26, 'candidate_id'),
+                     (27, 'candidate_last'),
+                     (28, 'candidate_first'),
+                     (29, 'candidate_middle'),
+                     (32, 'candidate_office'),
+                     (33, 'candidate_state'),
+                     (34, 'candidate_district'),
+                     (40, 'receipt_date')]
+
 
         for url in urls:
             filing_number = url.strip('/').split('/')[-1]
@@ -144,9 +164,19 @@ class Command(BaseCommand):
                             committee=committee)
                 print committee
 
+                print row
                 try:
                     if row['candidate_id']:
-                        candidate = Candidate.objects.get(fec_id=row['candidate_id'], cycle=2012)
+                        try:
+                            candidate = Candidate.objects.get(fec_id=row['candidate_id'], cycle=2012) 
+                        except Candidate.MultipleObjectsReturned:
+                            candidates = Candidate.objects.filter(fec_id=row['candidate_id'], cycle=2012)
+                            if not candidates[0].expenditure_set.count():
+                                candidate = candidates[1]
+                                candidates[0].delete()
+                            elif not candidates[1].expenditure_set.count():
+                                candidate = candidates[0]
+                                candidates[1].delete()
                     else:
                         raise Candidate.DoesNotExist
                 except Candidate.DoesNotExist:
@@ -168,7 +198,6 @@ class Command(BaseCommand):
                         try:
                             candidate = Candidate.objects.get(slug=slugify(crp_name)[:50], cycle=2012)
                         except Candidate.DoesNotExist:
-
                             if crp_name:
                                 party = re.search(r'\([A-Z0-9]\)$', row.get('FirstLastP', ''))
                                 if party:
@@ -226,7 +255,7 @@ class Command(BaseCommand):
 
                 except Expenditure.DoesNotExist:
                     special_elections = ['NY-26', 
-                                         'CA-36', ]
+                                         'CA-36', 'NV-02', ]
                     if candidate.race() in special_elections:
                         election_type = 'O'
                     else:
@@ -456,7 +485,20 @@ def create_candidate_from_fec(data):
 	result = generic_querier("SELECT * FROM fec_candidate_master WHERE candidate_id = %s",
 				 [data['candidate_id'], ])
 	if not result:
-	    return None
+            candidate = Candidate.objects.create(
+                cycle=2012,
+                fec_id=data['candidate_id'],
+                fec_name='%(candidate_first)s %(candidate_last)s' % data,
+                crp_id='',
+                crp_name='',
+                party='',
+                office=data['candidate_office'],
+                state=data['candidate_state'],
+                district=data.get('candidate_district'),
+                slug=slugify('%(candidate_first)s %(candidate_last)s' % data)
+                )
+
+	    return candidate
 
 	candidate = Candidate.objects.create(
 			cycle=2012,
