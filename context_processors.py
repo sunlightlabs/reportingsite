@@ -1,5 +1,8 @@
+import datetime
+
 from reporting.models import Post
 from feedinator import Feed, FeedEntry
+from buckley.models import Expenditure
 
 from django.core.cache import cache
 
@@ -20,3 +23,12 @@ def latest_by_site(request):
 
     return latest
 
+
+def outside_spending_updated(request):
+    return {'outside_spending_updated': datetime.datetime(2010, 11, 2, 16, 31)}
+    expenditures = Expenditure.objects.order_by('-timestamp').values_list('timestamp', flat=True)
+    if expenditures:
+        updated = expenditures[0]
+    else:
+        updated = None
+    return {'outside_spending_updated': updated - datetime.timedelta(hours=4), }

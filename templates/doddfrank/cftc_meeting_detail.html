@@ -1,0 +1,70 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% load doddfrank %}
+
+{% block body %}{{ block.super }} cftc{% endblock %}
+
+{% block content %}
+
+<h2>Commodity Futures Trading Commission</h2>
+<p class="tip">The CFTC's mission is to protect market users and the public from fraud, manipulation, abusive practices and systemic risk related to derivatives that are subject to the Commodity Exchange Act, and to foster open, competitive, and financially sound markets. (<a href="http://www.cftc.gov/About/MissionResponsibilities/index.htm">source</a>)</p>
+
+<h3>{{ meeting.meeting_time|date:"F j, Y" }}</h3>
+<p>{{ meeting.description }}</p>
+<p><a href="{{ meeting.url }}">View on CFTC website</a></p>
+
+{% if meeting.organizations %}
+<h4 style="float: left;">Participating organizations</h4>
+<ul style="float: right; width: 70%;">
+    {% for organization in meeting.organizations %}
+    <li><a href="{% url doddfrank_organization_detail organization_slug=organization|slugify %}">{{ organization }}</a></li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+            <div class="clear"></div>
+            <hr/>
+
+<h4 style="float: left;">Participants</h4>
+<ul style="float: right; width: 70%;">
+    {% for participant in meeting.visitors %}
+        {% if participant.name %}
+            <li>{{ participant.name }} {% if participant.org %}({{ participant.org }}){% endif %}</li>
+        {% endif %}
+    {% endfor %}
+</ul>
+
+            <div class="clear"></div>
+            <hr/>
+
+{% if meeting.cftc_staff %}
+<h4 style="float: left;">CFTC staff members</h4>
+<ul style="float: right; width: 70%;">
+    {% for staffer in meeting.cftc_staff %}
+        <li>{{ staffer }}</li>
+    {% endfor %}
+</ul>
+{% endif %}
+
+            <div class="clear"></div>
+            <hr/>
+
+{% if meeting.rulemaking %}
+<h4 style="float: left;">Rulemakings</h4>
+<ul style="float: right; width: 70%;">
+{% for rulemaking in meeting.rulemaking %}
+<li>
+{% if rulemaking|get_cftc_rulemaking_link %}
+<a href="{{ rulemaking|get_cftc_rulemaking_link }}">{{ rulemaking }}</a>
+{% else %}
+{{ rulemaking }}
+{% endif %}
+</li>
+{% endfor %}
+</ul>
+{% endif %}
+            <div class="clear"></div>
+
+{% include "doddfrank/cftc_source.html" %}
+
+{% endblock content %}

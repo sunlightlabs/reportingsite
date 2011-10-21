@@ -1,0 +1,47 @@
+{% extends "willard/willard_base.html" %}
+
+{% block title %}{{ block.super }} - Affiliated Organizations: {{ object }}{% endblock %}
+
+{% block body %}reporting affiliated fullWidth{% endblock %}
+
+{% block breadcrumb %}
+{{ block.super }}
+<li><a href="{% url willard_affiliated_list %}">Affiliated Organizations</a></li>
+<li>{{ object }}</li>
+{% endblock breadcrumb %}
+
+
+{% block content %}
+{% include "willard/registration_header.html" %}
+<h3>{{ object }}</h3>
+
+<h4>Recent registrations</h4>
+<table class="tablesorter" id="expendituresData">
+    <thead>
+        <tr>
+            <th class="sort header">Date</th>
+            <th class="sort header">Registrant</th>
+            <th class="sort header">Client</th>
+            <th style="width: 150px;">Issues</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+{% for registration in object.registration_set.all %}
+<tr class="{% cycle 'odd' 'even' %}">
+    <td>{{ registration.received.date|date:"n/j/y" }}</td>
+    <td><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></td>
+    <td><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></td>
+    <td>{% for issue in registration.denormalized_issues %}<a href="{{ issue.get_absolute_url }}">{{ issue }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}</td>
+    <td><a href="{{ registration.get_absolute_url }}">View registration</a></td>
+</tr>
+{% endfor %}
+    </tbody>
+</table>
+
+{% with "[0,1]" as sortdir %}
+{% include "buckley/tablesorter.html" %}
+{% endwith %}
+
+
+{% endblock %}

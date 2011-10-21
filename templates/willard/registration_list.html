@@ -1,0 +1,49 @@
+{% extends "willard/willard_base.html" %}
+
+{% block title %}{{ block.super }} - {{ object }}{% endblock %}
+
+{% block body %}reporting {{ plural|lower }} fullWidth{% endblock %}
+
+{% block breadcrumb %}
+{{ block.super }}
+{% if plural %}
+<li><a href="{{ object.get_absolute_url }}/../">{{ plural }}</a></li>
+{% if object %}
+<li>{{ object }}</li>
+{% endif %}
+{% endif %}
+{% endblock %}
+
+{% block content %}
+{% include "willard/registration_header.html" %}
+
+<div style="float: right;">
+    {% if object.get_rss_url %}
+    <div class="rssIcon">
+        <a href="{{ object.get_rss_url }}">Subscribe</a>
+    </div>
+    {% endif %}
+    <br/>
+    {% if object.get_csv_url %}
+    <div class="csvIcon">
+        <a href="{{ object.get_csv_url }}">Download</a>
+    </div>
+    {% endif %}
+</div>
+
+<h4>
+    {% if object %}
+    {{ object }}
+    {% else %}
+    All registrations
+    {% endif %}
+</h4>
+{% if object.ie_id %}
+<a class="tip tipHeight" href="{{ object.ie_url }}">Get more information at Influence Explorer</a>
+{% endif %}
+
+{% include "willard/registration_list_table.html" %}
+
+{% include "willard/pagination.html" %}
+
+{% endblock %}

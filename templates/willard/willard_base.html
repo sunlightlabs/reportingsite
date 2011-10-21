@@ -1,0 +1,35 @@
+{% extends "base.html" %}
+
+{% load media %}
+
+{% block title %}{{ block.super }}: Lobbying Tracker{% endblock %}
+
+{% block body %}fullWidth{% endblock %}
+{% block main_content %}
+{% css "css/lobbying.css" %}
+
+{% block lobbyheader %}
+<div id="columns">
+    <div id="fullColumn" style="overflow:hidden;">
+        
+        <h2 id="lobbyHeader"><a href="/lobbying">Lobbying Tracker</a></h2>
+        <div id="lobbyShareBar">
+            <ul>
+                <li><a href="http://www.addthis.com/bookmark.php?v=250&username=sunlightfoundation" class="addthis_button_compact">Share</a>
+                <script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script> 
+                <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=sunlightfoundation"></script>
+                </li>
+                <li><a href="http://sunlightfoundation.com/contact/">Feedback</a></li>
+            </ul>
+        </div>
+        <p id="lobbyingDescript" class="tip tipLg">Follow Washington influence using Sunlight’s Lobbying Tracker tools for keeping up with K street. Keep checking this page as we add more resources and tools to LobbyTrack.</p>
+{% endblock %}
+
+        {% block content %}
+        {% endblock %}
+        
+
+
+    </div>
+</div>
+{% endblock main_content %}

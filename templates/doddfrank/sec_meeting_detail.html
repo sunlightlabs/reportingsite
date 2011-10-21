@@ -1,0 +1,33 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% block body %}{{ block.super }} sec{% endblock %}
+
+{% block content %}
+
+<h2>Security and Exchange Commission</h2>
+<p class="tip">The SEC oversees the key participants in the securities world, including securities exchanges, securities brokers and dealers, investment advisors, and mutual funds. Here the SEC is concerned primarily with promoting the disclosure of important market-related information, maintaining fair dealing, and protecting against fraud. (<a href="http://sec.gov/about/whatwedo.shtml">source</a>)</p>
+
+<h3>{{ meeting.meeting_time|date:"F j, Y" }}</h3>
+<p><strong>Type</strong>: {{ meeting.type|title }}</p>
+<p>{{ meeting.description }}</p>
+
+<h4 style="float: left;">Participants</h4>
+<ul style="float: right; width: 70%">
+    <li>{{ meeting.attendees }}</li>
+</ul>
+
+            <div class="clear"></div>
+            <hr/>
+
+{% if meeting.pdf_url %}
+<h4 style="float: left;">Documents</h4>
+<ul style="float: right; width: 70%">
+    <li><a href="{{ meeting.pdf_url }}">Memorandum{% if meeting.from %} from {{ meeting.from }}{% endif %}</a></li>
+</ul>
+{% endif %}
+
+            <div class="clear"></div>
+
+{% include "doddfrank/sec_source.html" %}
+
+{% endblock content %}

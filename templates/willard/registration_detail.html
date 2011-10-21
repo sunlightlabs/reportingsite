@@ -1,0 +1,54 @@
+{% extends "willard/willard_base.html" %}
+
+{% block title %}{{ block.super }} - {{ object.registrant }} for {{ object.client }}{% endblock %}
+
+{% block body %}reporting registrant fullWidth{% endblock %}
+
+{% block content %}
+{% include "willard/registration_header.html" %}
+
+<h3>{{ object.registrant }} for {{ object.client }}</h3>
+
+<p>
+<strong>Issues:</strong>
+{% for issue in object.denormalized_issues %}
+<a href="{{ issue.get_absolute_url }}">{{ issue }}</a>{% if not forloop.last %}; {% endif %}
+{% endfor %}
+</p>
+<p><strong>Specific issue:</strong> {{ object.specific_issue }}</p>
+<p><strong>Lobbyists:</strong>
+<br/>
+{% for lobbyist in object.lobbyists.all %}
+<a href="{{ lobbyist.get_absolute_url }}">{{ lobbyist }}</a>
+{% if lobbyist.positions %}
+(covered positions: 
+{% for position in lobbyist.positions %}
+{{ position }}{% if not forloop.last %}; {% endif %}
+{% endfor %})
+{% endif %}
+<br/>
+{% endfor %}
+
+{% if object.affiliated_organizations.all %}
+<p><strong>Affiliated organizations:</strong>
+{% for org in object.affiliated_organizations.all %}
+<a href="{{ org.get_absolute_url }}">{{ org }}</a><br/>
+{% endfor %}
+{% endif %}
+
+<br/>
+
+<div id='embedded_doc'></div>
+
+
+<script type="text/javascript" charset="utf-8" src="http://www.scribd.com/javascripts/view.js"></script>
+<script type="text/javascript">
+    var scribd_doc = scribd.Document.getDocFromUrl('{{ object.pdf_url|safe }}', 'pub-43329585085964116591');
+    scribd_doc.addParam("height", 900);
+    scribd_doc.addParam("width", 900);
+    scribd_doc.addParam('jsapi_version', 1);
+    scribd_doc.addParam("public", false);
+    scribd_doc.write('embedded_doc');
+</script>
+
+{% endblock content %}

@@ -2,7 +2,7 @@
 
 {% load humanize %}
 
-{% block title %}{{ block.super }}: Follow the Unlimited Money - About{% endblock %}
+{% block title %}Follow the Unlimited Money: About - {{ block.super }}{% endblock %}
 
 {% block body %}expendituresAbout separateNav{% endblock %}
 
@@ -21,7 +21,8 @@
     <h2 id="featureHeader">Follow the Unlimited Money</h2>
     <div id="featureMainNav">
         <ul>
-            <li id="expenditures"><a href="{% url buckley_index %}">Latest Independent Expenditures</a></li>
+            <li id="expenditures"><a href="{% url buckley_index %}">Latest Outside Spending</a></li>
+            <li id="overview"><a href="{% url buckley_totals %}">Overview</a></li>
             <li id="about"><a href="{% url buckley_about %}">About</a></li>
             <li id="stories" class="last"><a href="{% url buckley_stories %}">Stories</a></li>
         </ul>  
@@ -39,17 +40,19 @@
 
 {% block sidebar %}
     <div class="mainModule sideExpenditures">
-        <h3>Latest Independent Expenditures</h3>
+        <h3>Latest Outside Spending</h3>
         {% regroup latest_expenditures by expenditure_date as date_list %}
         {% for date_expenditures in date_list %}
             <h4>{{ date_expenditures.grouper|date:"N j" }}</h4>
             <ul>
                 {% for expenditure in date_expenditures.list %}
+{% if expenditure.candidate.race %}
                 <li><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a> spent <a href="{{ expenditure.get_absolute_url }}">${{ expenditure.expenditure_amount|intcomma }}</a> in {% ifequal expenditure.support_oppose 'S' %}support of{% else %}opposition to{% endifequal %} <a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a> in the <a href="{% url buckley_race_detail race=expenditure.candidate.race  %}">{{ expenditure.candidate.full_race_name }} race</a>.</li>
+{% endif %}
                 {% endfor %}
             </ul>
         {% endfor %}
-        <a class="viewAll" href="/independent-expenditures/">View All Expenditures</a>
+        <a class="viewAll" href="{% url buckley_index %}">View All Outside Spending</a>
 
     </div>
     <div class="mainModule sideStories">
@@ -59,6 +62,6 @@
             <li><a href="{{ story.get_absolute_url }}">{{ story.title }}</a></li>
         {% endfor %}
         </ul>
-        <a class="viewAll" href="/independent-expenditures/stories/">View All Stories</a>
+        <a class="viewAll" href="{% url buckley_stories %}">View All Stories</a>
     </div>
 {% endblock sidebar %}

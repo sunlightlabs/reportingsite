@@ -1,0 +1,63 @@
+{% extends "willard/willard_base.html" %}
+
+{% block title %}{{ block.super }} - Lobbyists{% endblock %}
+
+{% block body %}reporting lobbyists fullWidth{% endblock %}
+
+{% load humanize %}
+{% load partition %}
+
+{% block breadcrumb %}
+{{ block.super }}
+<li>Lobbyists</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include "willard/registration_header.html" %}
+
+<h3>Lobbyists</h3>
+
+<table class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort header{% ifequal order 'name' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'name' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}name">Lobbyist</a></th>
+            <th class="sort header{% ifequal order 'covered' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'covered' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}covered">Covered positions</a></th>
+            <th class="sort header{% ifequal order 'registrants' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'registrants' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}registrants">Registrants</a></th>
+            <th class="sort header{% ifequal order 'date' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'date' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}date">Most recent registration</a></th>
+            <th class="sort header{% ifequal order 'registrations' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'registrations' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}registrations">Registrations</a></th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for lobbyist in object_list %}
+    <tr class="{% cycle 'odd' 'even' %}">
+        <td><a href="{{ lobbyist.get_absolute_url }}">{{ lobbyist }}</a></td>
+        <td>
+            {% for position in lobbyist.positions %}
+            <ul>
+                {{ position }}
+            </ul>
+            {% endfor %}
+        </td>
+        <td>
+            {% for registrant in lobbyist.denormalized_registrants %}
+            <ul>
+                <a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a>
+            </ul>
+            {% endfor %}
+        </td>
+        <td>
+            <a href="{{ lobbyist.latest_registration.url }}">
+            {{ lobbyist.latest_registration.received|date:"n/j/y" }}
+        </a>
+        </td>
+        <td>
+            {{ lobbyist.registration_count }}
+        </td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% include "willard/pagination.html" %}
+
+{% endblock content %}

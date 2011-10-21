@@ -1,3 +1,4 @@
+from optparse import make_option
 import datetime
 from cStringIO import StringIO
 import logging
@@ -6,7 +7,8 @@ import socket
 import time
 import urllib2
 
-from django.core.management.base import NoArgsCommand
+from django.core.management.base import BaseCommand, CommandError
+from django.db.utils import IntegrityError
 
 from buckley.models import IEOnlyCommittee
 
@@ -17,6 +19,12 @@ import pyPdf
 socket.setdefaulttimeout(60)
 
 logging.basicConfig(filename='ie_letter_errors.log', level=logging.DEBUG)
+
+def smart_title(s):
+    s = s.title()
+    to_uppercase = ['Pac', ]
+    regex = re.compile(r'(%s)' % '|'.join([r'\b%s\b' % x for x in to_uppercase]))
+    return regex.sub(lambda x: x.group().upper(), s)
 
 def get_already_submitted():
     """Create a list of committees that have submitted a letter
@@ -44,39 +52,68 @@ def get_pdf_urls(page):
         filed = re.search(r'\d\d\/\d\d\/\d\d\d\d', row)
         if filed:
             date = dateparse(filed.group()).date()
-            if date > datetime.date.today() - datetime.timedelta(15):
+            if date > datetime.date.today() - datetime.timedelta(1000):
                 match = re.search(r'\/pdf.*?\.pdf', row)
                 if match:
                     yield 'http://images.nictusa.com%s' % match.group(), date
 
 def parse_pdf(url):
     pdf = pyPdf.PdfFileReader(StringIO(urllib2.urlopen(url).read()))
-    first_page = pdf.getPage(0).extractText()
-    if re.search('speech\s?now', first_page, re.I | re.S):
-        return True
+    for pagenum in range(pdf.numPages):
+        page = pdf.getPage(pagenum).extractText()
+        if re.search('spe?ecc?h\s?now', page, re.I | re.S):
+            return True
+
+        if re.search(r'Carey v\.? FEC', page, re.I | re.S):
+            return True
+
+        if re.search(r'independent expenditure(-| )only', page, re.I | re.S):
+            return True
+
+        if re.search(r'intends to make independent expenditures', page, re.I | re.S):
+            return True
 
     return False
 
 def get_committee_name(page):
     match = re.search(r'<B>(.*?)<\/B>', page)
     if match:
-        return match.groups()[0]
+        return smart_title(match.groups()[0])
     return None
 
-class Command(NoArgsCommand):
+
+def save_checked_url(url):
+    with open(r'/projects/reporting/log/fec_pdfs_checked.log', 'a') as fh:
+        fh.write(url + '\n')
+
+
+class Command(BaseCommand):
     help = """Get a list of independent expenditure committees that have submitted
     a letter saying they will raise unlimited contributions."""
     requires_model_validation = False
 
-    def handle_noargs(self, **options):
+    option_list = BaseCommand.option_list + (
+            make_option('--cids',
+                action='store',
+                dest='cids',
+                default=None,
+                help='Comma-separated list of committees to check for IE-only letters.'),
+    ) 
+
+    def handle(self, *args, **options):
         body = 'filerid=&name=&treas=&city=&img_num=&state=&party=&type=I&submit=Send+Query'
         url = 'http://images.nictusa.com/cgi-bin/fecimg/'
         request = urllib2.Request(url, body)
         response = urllib2.urlopen(request)
         page = response.read()
 
-        already = get_already_submitted()
-        committee_ids = set(re.findall(r'C\d{8}', page)).difference(already)
+        checked = [x.strip() for x in open(r'/projects/reporting/log/fec_pdfs_checked.log', 'r')]
+
+        if options.get('cids'):
+            committee_ids = options.get('cids').split(',')
+        else:
+            already = get_already_submitted()
+            committee_ids = set(re.findall(r'C\d{8}', page)).difference(already)
 
         for id in committee_ids:
 
@@ -87,11 +124,19 @@ class Command(NoArgsCommand):
                 continue
 
             for url, date in get_pdf_urls(page):
+                if url in checked and not options.get('cids'):
+                    continue
                 mentions_speechnow = parse_pdf(url)
                 if mentions_speechnow:
-                    IEOnlyCommittee.objects.create(
-                            id=id,
-                            name=get_committee_name(page),
-                            date_letter_submitted=date,
-                            pdf_url=url)
+                    try:
+                        IEOnlyCommittee.objects.create(
+                                id=id,
+                                name=get_committee_name(page),
+                                date_letter_submitted=date,
+                                pdf_url=url)
+                    except IntegrityError:
+                        continue
+
                     print id, url, get_committee_name(page), date
+
+                save_checked_url(url)

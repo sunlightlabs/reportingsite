@@ -23,29 +23,46 @@ class Command(BaseCommand):
                 cursor.execute(query, row)
 
         else:
-            fields = [('candidate_id', (1, 9)),
-                      ('candidate_name', (10, 47)),
-                      ('party1', (48, 50)),
-                      #('filler', (51, 53)),
-                      ('party3', (54, 56)),
-                      ('seat_status', (57, 57)),
-                      #('filler', (58, )),
-                      ('candidate_status', (59, 59)),
-                      ('street1', (60, 93)),
-                      ('street2', (94, 127)),
-                      ('city', (128, 145)),
-                      ('state', (146, 147)),
-                      ('zipcode', (148, 152)),
-                      ('campaign_comm', (153, 161)),
-                      ('election_year', (162, 163)),
-                      ('current_district', (164, 163)), ]
+            if table == 'fec_candidate_master':
+                fields = [('candidate_id', (1, 9)),
+                          ('candidate_name', (10, 47)),
+                          ('party1', (48, 50)),
+                          #('filler', (51, 53)),
+                          ('party3', (54, 56)),
+                          ('seat_status', (57, 57)),
+                          #('filler', (58, )),
+                          ('candidate_status', (59, 59)),
+                          ('street1', (60, 93)),
+                          ('street2', (94, 127)),
+                          ('city', (128, 145)),
+                          ('state', (146, 147)),
+                          ('zipcode', (148, 152)),
+                          ('campaign_comm', (153, 161)),
+                          ('election_year', (162, 163)),
+                          ('current_district', (164, 163)), ]
+            elif table == 'fec_committee_master':
+                fields = [('committee_id', (1,9)),
+                            ('committee_name', (10, 99)),
+                            ('treasurer', (100, 137)),
+                            ('street1', (138, 171)),
+                            ('street2', (172, 205)),
+                            ('city', (206, 223)),
+                            ('state', (224, 225)),
+                            ('zipcode', (226, 230)),
+                            ('designation', (231, 231)),
+                            ('type', (232, 232)),
+                            ('party', (233, 235)),
+                            ('filing_frequency', (236, 236)),
+                            ('interest_group_category', (237, 237)),
+                            ('connected_org_name', (238, 275)),
+                            ('candidate_id', (276, 284)), ]
 
             for line in sys.stdin:
                 data = []
                 for fieldname, (start, end) in fields:
                     data.append(line[start-1:end].strip())
 
-                query = "INSERT INTO fec_candidate_master VALUES (%s)" % ('%s,' * len(data)).strip(',')
+                query = "INSERT INTO %s VALUES (%s)" % (table, ('%s,' * len(data)).strip(','), )
                 try:
                     cursor.execute(query, data)
                 except MySQLdb.IntegrityError:

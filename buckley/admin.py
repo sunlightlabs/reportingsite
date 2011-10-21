@@ -13,7 +13,11 @@ class CandidateAdmin(admin.ModelAdmin):
 class ExpenditureAdmin(admin.ModelAdmin):
     pass
 
+class IEOnlyCommitteeAdmin(admin.ModelAdmin):
+    pass
+
 admin.site.register(Committee, CommitteeAdmin)
 admin.site.register(Payee, PayeeAdmin)
 admin.site.register(Candidate, CandidateAdmin)
 admin.site.register(Expenditure, ExpenditureAdmin)
+admin.site.register(IEOnlyCommittee, IEOnlyCommitteeAdmin)

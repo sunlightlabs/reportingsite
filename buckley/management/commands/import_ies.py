@@ -19,10 +19,11 @@ except ImportError:
 from django.core.cache import cache
 from django.core.mail import send_mail
 from django.core.management.base import NoArgsCommand, BaseCommand, CommandError
-from django.db.models import Q
+from django.db.models import *
 from django.template.defaultfilters import slugify
 
 from buckley.models import *
+from buckley.management.commands.cache_totals import cache_totals
 
 from dateutil.parser import parse as dateparse
 from dateutil.tz import tzutc
@@ -36,7 +37,8 @@ socket.setdefaulttimeout(25)
 logging.basicConfig(filename='ie_import_errors.log', level=logging.DEBUG)
 
 
-cursor = MySQLdb.Connection('reporting.sunlightfoundation.com', 'reporting', '***REMOVED***', 'reporting').cursor()
+#cursor = MySQLdb.Connection('reporting.sunlightfoundation.com', 'reporting', '***REMOVED***', 'reporting').cursor()
+cursor = MySQLdb.Connection('localhost', 'reporting', '***REMOVED***', 'reporting').cursor()
 
 # Some names we know are missing FEC IDs.
 NAME_LOOKUP = {
@@ -130,15 +132,21 @@ def candidate_lookup_by_id(fec_id):
     return generic_querier(query, params)
 
 
-def candidate_lookup_by_race(row):
-    office = row['CAN_OFF']
-    district = row['CAN_OFF_DIS']
-    state = row['CAN_OFF_STA']
-    prefix, first, last, suffix = name_tools.split(row['CAND_NAM'])
+def candidate_lookup_by_race(row, name_field='CAND_NAM', office_field='CAN_OFF',
+        district_field='CAN_OFF_DIS', state_field='CAN_OFF_STA'):
+    office = row[office_field]
+    district = row.get(district_field, '')
+    state = row[state_field]
+    prefix, first, last, suffix = name_tools.split(row[name_field])
     if office == 'H':
-        query = "SELECT * FROM candidates WHERE distidrunfor = %s AND cycle = 2010 AND firstlastp LIKE %s"
-        params = ['%s%s' % (state, district),
-                  '%' + last + '%', ]
+        if district:
+            query = "SELECT * FROM candidates WHERE distidrunfor = %s AND cycle = 2010 AND firstlastp LIKE %s"
+            params = ['%s%s' % (state, district),
+                      '%' + last + '%', ]
+        else:
+            query = "SELECT * FROM candidates WHERE distidrunfor LIKE %s AND cycle = 2010 AND firstlastp LIKE %s"
+            params = [state + '%', '%' + last + '%', ]
+
     elif office == 'S':
         query = "SELECT * FROM candidates WHERE distidrunfor LIKE %s AND cycle = 2010 AND firstlastp LIKE %s"
         params = ['%sS' % state + '%',
@@ -192,11 +200,6 @@ class Command(BaseCommand):
 
             # If data hasn't been updated in the past hour, don't do anything.
             if hours_diff > 1:
-                send_mail('[ IE data importer ] Data not updated',
-                          '',
-                          'abycoffe@sunlightfoundation.com',
-                          ['abycoffe@sunlightfoundation.com', ],
-                          fail_silently=True)
                 return
 
         reader = list(csv.DictReader(StringIO(urllib2.urlopen(url).read())))
@@ -282,7 +285,7 @@ class Command(BaseCommand):
                                     #logging.debug('Could not find candidate for image number %s transaction id %s' % (row['IMAGE_NUM'], row['TRAN_ID']))
                                     #logging.debug(row)
                                     skipped.append(row)
-                                    continue 
+                                    continue
                                 else:
                                     candidates_by_name[row['CAND_NAM']] = name
 
@@ -388,7 +391,9 @@ class Command(BaseCommand):
                 expenditure.race = expenditure.candidate.race()
                 expenditure.save()
 
+
             except Expenditure.DoesNotExist:
+                filing_number = int(Decimal(row['FILE_NUM'].replace(',', '')))
                 expenditure = Expenditure.objects.create(
                         image_number=int(Decimal(row['IMAGE_NUM'])),
                         committee=committee,
@@ -400,7 +405,7 @@ class Command(BaseCommand):
                         election_type=row['ELE_TYP'],
                         candidate=candidate,
                         transaction_id=row['TRAN_ID'],
-                        filing_number=int(Decimal(row['FILE_NUM'].replace(',', ''))),
+                        filing_number=filing_number,
                         amendment=row['AMNDT_IND'],
                         receipt_date=dateparse(row['RECEIPT_DT']).date(),
                         race=candidate.race()
@@ -503,34 +508,52 @@ class Command(BaseCommand):
             else:
                 logging.debug('Skipped record because no CID:' + str(row))
 
-            
         # Remove amendmended filings
+        print 'removing amended filings'
         for amendment in Expenditure.objects.exclude(amendment='N'):
             # Check for A2 amendments
             if amendment.amendment == 'A2':
                 Expenditure.objects.filter(Q(amendment='N') | Q(amendment='A1'),
-                                           transaction_id=amendment.transaction_id, 
-                                           committee=amendment.committee, 
+                                           transaction_id=amendment.transaction_id,
+                                           committee=amendment.committee,
+                                           expenditure_date=amendment.expenditure_date,
                                            candidate=amendment.candidate).delete()
             else:
-                Expenditure.objects.filter(amendment='N', 
-                                           transaction_id=amendment.transaction_id, 
-                                           committee=amendment.committee, 
+                Expenditure.objects.filter(amendment='N',
+                                           transaction_id=amendment.transaction_id,
+                                           committee=amendment.committee,
+                                           expenditure_date=amendment.expenditure_date,
                                            candidate=amendment.candidate).delete()
 
+
         # Remove apparent duplicates
+        print 'removing apparent duplicates'
         for expenditure in Expenditure.objects.all():
-            e = Expenditure.objects.filter(candidate=expenditure.candidate, committee=expenditure.committee, expenditure_date=expenditure.expenditure_date, payee=expenditure.payee, expenditure_amount=expenditure.expenditure_amount).exclude(filing_number=expenditure.filing_number)
+            e = Expenditure.objects.filter(candidate=expenditure.candidate,
+                                           committee=expenditure.committee,
+                                           expenditure_date=expenditure.expenditure_date,
+                                           payee=expenditure.payee,
+                                           expenditure_amount=str(round(expenditure.expenditure_amount))).exclude(filing_number=expenditure.filing_number)
             if e.count() > 1:
                 for to_delete in e[1:]:
                     to_delete.delete()
 
         # Remove more apparent duplicates
+        print 'removing more apparent duplicates'
         dupes = {}
         for expenditure in Expenditure.objects.all():
-            e = Expenditure.objects.filter(candidate=expenditure.candidate, committee=expenditure.committee, expenditure_date=expenditure.expenditure_date, payee=expenditure.payee, expenditure_amount=expenditure.expenditure_amount).exclude(filing_number=expenditure.filing_number)
+            e = Expenditure.objects.filter(candidate=expenditure.candidate,
+                                           committee=expenditure.committee,
+                                           expenditure_date=expenditure.expenditure_date,
+                                           payee=expenditure.payee,
+                                           ).exclude(filing_number=expenditure.filing_number)
             if e:
-                dupes[expenditure] = e
+                d = []
+                for i in e:
+                    if round(i.expenditure_amount) == round(expenditure.expenditure_amount):
+                        d.append(i)
+                if d:
+                    dupes[expenditure] = d
 
         for k, v in dupes.items():
             if Expenditure.objects.filter(pk=k.pk):
@@ -549,6 +572,38 @@ class Command(BaseCommand):
         Expenditure.objects.filter(image_number=10930676766, candidate__slug='nick-rahall').delete()
         Expenditure.objects.filter(image_number=10931302159).delete()
 
+        # Fix Murkowski problem
+        def fix_murkowski():
+            frank = Candidate.objects.filter(slug='frank-h-murkowski')
+            if not frank:
+                return
+            frank = frank[0]
+
+            lisa = Candidate.objects.filter(slug='lisa-murkowski')
+            if not lisa:
+                return
+            lisa = lisa[0]
+            frank.expenditure_set.update(candidate=lisa)
+            frank.delete()
+
+        fix_murkowski()
+
+        try:
+            bad = Committee.objects.get(name='New Prosperity Foundation, The')
+            good = Committee.objects.get(name='The New Prosperity Foundation')
+            bad.expenditure_set.update(committee=good)
+        except:
+            pass
+
+        # Remove duplicate slugs.
+        print 'removing duplicate slugs'
+        slugs = list(Committee.objects.values_list('slug', flat=True).annotate(n=Count('slug')).filter(n__gt=1))
+        for slug in slugs:
+            bad, good = Committee.objects.filter(slug=slug).order_by('pk')
+            bad.expenditure_set.all().update(committee=good)
+            bad.contribution_set.all().update(committee=good)
+            bad.delete()
+
         # Fix support/oppose errors
         Expenditure.objects.filter(image_number=10990630854, candidate__slug='blanche-lincoln').update(support_oppose='O')
         Expenditure.objects.filter(image_number=10931242198, candidate__slug='ann-mclane-kuster').update(support_oppose='S')
@@ -557,18 +612,34 @@ class Command(BaseCommand):
         Expenditure.objects.filter(image_number__in=[10990653705, 10990653694], candidate__slug='alan-b-mollohan').update(support_oppose='O')
         Expenditure.objects.filter(image_number__in=[10991169349, 10991169350, 10991169350], candidate__slug='pat-toomey').update(support_oppose='O')
         Expenditure.objects.filter(image_number__in=[10991180834, 10991180834, 10991180834, 10991180842, 10991180822, 10991180822, 10991180835], candidate__slug='joseph-a-sestak-jr').update(support_oppose='S')
+        Expenditure.objects.filter(image_number__in=[10991225146, 10991124434, 10991124436, 10931094398, 10931135624, 10931094385, 10931094382, 10931094380, 10030273417], candidate__slug__in=['paul-w-hodes', 'robin-w-carnahan', 'bill-halter', ]).update(support_oppose='S')
+        Expenditure.objects.filter(image_number=10930395723, candidate__slug='robert-f-bennett').update(support_oppose='O')
+
         Expenditure.objects.filter(image_number=10931278251, candidate__slug='tim-griffin').update(support_oppose='O')
         Expenditure.objects.filter(image_number=10931278248, candidate__slug='joyce-elliott').update(support_oppose='S')
 
         # Remove committees that have no expenditures
+        print 'removing committees that have no expenditures'
         for committee in Committee.objects.all():
             if committee.expenditure_set.count() == 0:
                 committee.delete()
 
         # Remove candidates that have no expenditures
+        print 'removing candidates that have no expenditures'
         for candidate in Candidate.objects.all():
             if candidate.expenditure_set.count() == 0:
                 candidate.delete()
 
+        # Denormalize expensive-to-calculate fields
+        print 'denormalizing candidate totals'
+        for candidate in Candidate.objects.all():
+            candidate.denormalize()
+
         # Clear the cached widget
         cache.delete('buckley:widget2')
+
+        cache.delete('buckley:totals')
+
+
+        print 'caching totals'
+        cache_totals()

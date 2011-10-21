@@ -1,0 +1,254 @@
+{% extends "willard/willard_base.html" %}
+
+{% load humanize %}
+{% load media %}
+{% load willard_filters %}
+
+{% block title %}{{ block.super }}: Lobbyist registrations{% endblock %}
+
+{% block body %}fullWidth{% endblock %}
+
+{% block registrationheader %}
+{% endblock %}
+
+{% block content %}
+{% css "css/lobbying.css" %}
+{% js "js/jquery.sparkline.min.js "%}
+
+{% include "willard/registration_header.html" %}
+
+<div id="lobbyFeature_wrapper">
+    <div id="lobbyFeature">
+        <p>The Lobbying Disclosure Act requires lobbyists and lobbying firms to register with the House and the Senate within 45 days of being hired by a client. The registrations list the issue areas that will be covered by the lobbying. This database allows users to see those registrations as they're submitted, to browse by issue, registrant and client, and to see the trends in issues and registrations over time. The database is updated weekly based on Senate records and includes all registrations starting in 2009.</p>
+    </div>
+</div>
+<div id="halfColumn_lt">
+    <div id="timeToggle">
+        <span>Show graphs for:</span>
+        <form>
+            <label><input class="radio" type="radio" name="group1" value="30Days" id="toggle_month" checked="checked"> Last 30 days</label>
+            <label><input class="radio" type="radio" name="group2" value="12Months" id="toggle_year"> Last 12 Months</label>
+            <div class="clear"></div>
+        </form>
+    </div>
+    <div id="registrations_month" class="clear">
+        <h4 class="withTip">Registrations</h4>
+        <span class="tip tipHeight">Last 30 Days</span>
+        <div id="monthLineChart"></div>
+        
+        <h3 class="withTip">By issue</h3>
+        <span class="tip tipHeight">Last 30 Days</span>
+        <ul class="issueChart">
+            {% for issue in past_month_issues %}
+            <li>
+                <a href="{{ issue.get_absolute_url }}">
+                    <span>{{ issue.issue }}</span>
+                    <span class="inlinesparkline">{{ issue.counts_by_day }}</span>
+                </a>
+                <span class="count">{{ issue.past_month_count|intcomma }}</span>
+                <span class="index" style="width: {{ issue.past_month_count|percentage:past_month_count|intcomma }}%"></span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <div id="registrations_year" style="display: none;">
+        <h3 class="withTip">Registrations</h3>
+        <span class="tip tipHeight">Last 12 Months</span>
+        <div id="yearLineChart"></div>
+        
+        <h3 class="withTip">By issue</h3>
+        <span class="tip tipHeight">Last 12 Months</span>
+        <ul class="issueChart">
+            {% for issue in issues %}
+            <li>
+                <a href="{{ issue.get_absolute_url }}">
+                    <span>{{ issue.issue }}</span>
+                    <span class="inlinesparkline" style="color:#f1f1ef;">{{ issue.counts_by_month }}</span>
+                </a>
+                <span class="count">{{ issue.num|intcomma }}</span>
+                <span class="index" style="width: {{ issue.num|percentage:past_year_count|intcomma }}%"></span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+
+        // Create inline sparklines
+        $('.inlinesparkline').sparkline('html', { fillColor: false,  spotRadius: 0, lineColor: '#414042', width: '70px' });
+
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'yearLineChart',
+                width: '415',
+                height: '300',
+                defaultSeriesType: 'line',
+                marginTop: -25,
+                marginLeft: 50,
+                animation: false,
+                backgroundColor: 'none'
+            },
+            credits: { enabled: false },
+            plotOptions: {
+                series: {
+                    cursor: 'pointer',
+                    marker: { 
+                        radius: 3
+                    },
+                    lineWidth: 2,
+                    color: '#eac80e',
+                    shadow: false
+                }
+            },
+            legend: {
+                        enabled: false
+            },
+            title: {
+                text: '',
+                style: { display: 'none', position: 'absolute', left: '0', top: '0', }
+            },
+            tooltip: {
+                borderRadius: 0,
+                borderWidth: 0,
+                formatter: function() {
+                    return '<b>' + this.point.name + ': ' + this.y + ' registrations</b>';
+                }
+            },
+            yAxis: {
+                min: 0,
+                     title: { text: 'Number of registrations',
+                              style: { color: '#414042' }
+                     }
+            },
+            xAxis: {
+                categories: [ {% for month, registrations in registrations_by_month %} '{{ month.month_initial }}'{% if not forloop.last %},{% endif %} {% endfor %} ],
+                    title: { text: 'Month',
+                        style: { color: '#414042' }
+                    }
+            },
+
+            series: [
+            {
+                name: 'Lobbyist registrations',
+                data: [ {% for month, registrations in registrations_by_month %} { y: {{ registrations }}, name: '{{ month.month_name }} {{ month.year }}' }{% if not forloop.last %},{% endif %} {% endfor %} ]
+            }
+            ]
+        });
+
+
+        chart = new Highcharts.Chart({
+            chart: {
+                renderTo: 'monthLineChart',
+                width: '415',
+                height: '300',
+                defaultSeriesType: 'line',
+                marginTop: -25,
+                marginLeft: 50,
+                animation: false,
+                backgroundColor: '#f1f1ef'
+            },
+            credits: { enabled: false },
+            plotOptions: {
+                series: {
+                    cursor: 'pointer',
+                    marker: { 
+                        radius: 3
+                    },
+                    lineWidth: 2,
+                    color: '#eac80e',
+                    shadow: false
+                }
+            },
+            legend: {
+                        enabled: false
+            },
+            title: {
+                text: '',
+                style: { display: 'none', position: 'absolute', left: '0', top: '0', }
+            },
+            tooltip: {
+                borderRadius: 0,
+                borderWidth: 0,
+                formatter: function() {
+                    return '<b>' + this.point.name + ': ' + this.y + ' registrations</b>';
+                }
+            },
+            yAxis: {
+                min: 0,
+                     title: { text: 'Number of registrations',
+                              style: { color: '#414042' }
+                     }
+            },
+            xAxis: {
+                categories: [ {% for day, registrations in registrations_by_day %} '{% cycle day|date:"n/j" " " " " " " " " %}'{% if not forloop.last %},{% endif %} {% endfor %} ],
+                    title: { text: 'Date',
+                        style: { color: '#414042' }
+                    }
+            },
+
+            series: [
+            {
+                name: 'Lobbyist registrations',
+                data: [ {% for day, registrations in registrations_by_day %} { y: {{ registrations }}, name: '{{ day|date:"n/j" }}' }{% if not forloop.last %},{% endif %} {% endfor %} ]
+            }
+            ]
+
+        });
+
+        var showMonth = function () {
+            $("#registrations_year").hide();
+            $("#registrations_month").show();
+            $("#toggle_month").attr("checked", "checked");
+            $("#toggle_year").attr("checked", "");
+            $.sparkline_display_visible();
+        }
+
+        var showYear = function () {
+            $("#registrations_month").hide();
+            $("#registrations_year").show();
+            $("#toggle_year").attr("checked", "checked");
+            $("#toggle_month").attr("checked", "");
+            $.sparkline_display_visible();
+        }
+
+        if (window.location.hash == '#year') {
+            showYear();
+        }
+
+        $("#toggle_year").bind('click', function() {
+            showYear();
+        });
+        $("#toggle_month").bind('click', function() {
+            showMonth();
+        });
+
+    });
+</script>
+
+
+<div id="halfColumn_rt">
+    <h3 class="withTip">Latest registrations</h3>
+    <div class="rssIcon rssBlock">
+        <a href="{% url willard_feed %}">Subscribe</a>
+    </div>
+    {% for dategroup in object_list %}
+    <h4>{{ dategroup.date|date:"F j" }}</h4>
+    <ul class="smDefinedList">
+        {% for registration in dategroup.registrations %}
+            {% include "willard/registration_list_item.html" %}
+        {% endfor %}
+    </ul>
+    {% endfor %}
+    <a class="lobbying_paginatorNext" href="{% url willard_registrations_all %}">View all registrations »</a>
+</div>
+<div class="clear"></div>
+
+
+        
+{% endblock content %}

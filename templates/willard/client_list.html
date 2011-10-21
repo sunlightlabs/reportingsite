@@ -1,0 +1,39 @@
+{% extends "willard/willard_base.html" %}
+
+{% block title %}{{ block.super }} - Clients{% endblock %}
+
+{% block body %}reporting clients fullWidth{% endblock %}
+
+{% load humanize %}
+{% load partition %}
+
+{% block breadcrumb %}
+{{ block.super }}
+<li>Clients</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include "willard/registration_header.html" %}
+
+<h3>Lobbying clients</h3>
+
+<div id="timeToggle">
+    <span>Jump to:</span>
+{% for letter, clients in by_letter %}
+    <a href="#{{ letter }}">{{ letter }}</a>
+{% endfor %}
+</div>
+
+{% for letter, clients in by_letter %}
+<h3 id="{{ letter }}" class="browseHeading">{{ letter }}</h3>
+<ol class="browseTable">
+    {% for row in clients|columns_across:3 %}
+        {% for client in row %}
+        <li class="{% cycle 'one' 'two' 'three' %}"><a href="{{ client.get_absolute_url }}">{{ client }}</a></li>
+        {% endfor %}
+    {% endfor %}
+</ol>
+<div class="clear"></div>
+{% endfor %}
+
+{% endblock content %}

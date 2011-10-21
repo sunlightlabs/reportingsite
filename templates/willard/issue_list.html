@@ -1,0 +1,28 @@
+{% extends "willard/willard_base.html" %}
+
+{% block title %}{{ block.super }} - Issues{% endblock %}
+
+{% block body %}reporting issues fullWidth{% endblock %}
+
+{% load humanize %}
+{% load partition %}
+
+{% block breadcrumb %}
+{{ block.super }}
+<li>Issues</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include "willard/registration_header.html" %}
+
+<h3>Lobbying issues</h3>
+
+<ol class="browseTable">
+{% for row in object_list|columns_across:3 %}
+    {% for issue in row %}
+    <li class="{% cycle 'one' 'two' 'three' %}"><a href="{{ issue.get_absolute_url }}">{{ issue }}</a></li>
+    {% endfor %}
+{% endfor %}
+</ol>
+
+{% endblock content %}

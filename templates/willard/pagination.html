@@ -1,0 +1,8 @@
+{% if page_obj.has_other_pages %}
+<div id="paginator">
+    {% if page_obj.has_previous %} <a class="lobbying_paginatorPrevious" href="?order={{ given_order }}&page={{ page_obj.previous_page_number }}">« Previous</a>{% endif %}
+  {% if page_obj.has_next %} 
+  <a class="lobbying_paginatorNext" href="?order={{ given_order }}&page={{ page_obj.next_page_number }}">Next »</a>{% endif %}
+</div>
+<div class="clear"></div>
+{% endif %}

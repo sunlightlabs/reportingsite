@@ -36,10 +36,13 @@ WHICHSITE_CHOICES = getattr(settings, "WHICHSITE_CHOICES", False)
 
 
 def post_detail(request, year, slug, month=None, day=None):
-    key = 'reporting:%s:%s' % (year, slug)
+    key = 'reporting:%s:%s-1' % (year, slug)
     post = cache.get(key)
+    post = None
     if not post:
-        post = get_object_or_404(Post, date_published__year=year, slug=slug, is_published=True)
+        post = get_object_or_404(Post, date_published__year=year, slug=slug)
+        if not post.is_published and not request.user.is_staff:
+            raise Http404
         cache.set(key, post, 60*60)
 
     # Check whether the post is published. If so, show it.
@@ -207,11 +210,14 @@ def index(request):
     #    cache.set(key, blogs, 60*15)
 
     from buckley.views import widget
+    ie_data, last_update = widget()
+
 
     return render_to_response('index.html', 
                               {'blogs': blogs, 'featured': featured, 'bodyclass': 'home',
                                'host': request.META['HTTP_HOST'],
-                               'ies': widget(),
+                               'ies': ie_data,
+                               'last_ie_update': last_update,
                               },
                               context_instance=RequestContext(request))
 

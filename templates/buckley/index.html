@@ -7,45 +7,24 @@
 
 {% block content %}
 
-<h2>Latest independent expenditures</h2>
+<h2>
+{% if cycle %}
+Outside spending: {{ cycle }} cycle
+{% else %}
+Latest outside spending
+{% endif %}
+</h2>
+
+{% if not cycle %}
+Previous cycles: <a href="{% url buckley_cycle_index 2010 %}">2010</a>
+{% endif %}
+
 {% include "buckley/tabs.html" %}
 
-<table id="expenditures">
-    <thead>
-        <tr>
-            <th>Date</th>
-            <th>Race</th>
-            <th>Committee</th>
-            <th>Support/Oppose</th>
-            <th>Candidate</th>
-            <th>Party</th>
-            <th>Amount</th>
-            <th>Purpose</th>
-        </tr>
-    </thead>
-    <tbody>
-    {% for expenditure in object_list %}
-        <tr class="{% cycle 'odd' 'even' %}">
-            <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
-            <td><a href="{% url buckley_race_detail race=expenditure.candidate.race %}">{{ expenditure.candidate.race }}</a></td>
-            <td><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a></td>
-            <td>{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}</td>
-            <td><a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a></td>
-            <td>{{ expenditure.candidate.party }}</td>
-            <td><a href="{% url buckley_candidate_committee_detail candidate_slug=expenditure.candidate.slug committee_slug=expenditure.committee.slug %}#{{ expenditure.id }}">${{ expenditure.expenditure_amount|intcomma }}</a></td>
-            <td>{{ expenditure.expenditure_purpose }}</td>
-        </tr>
-    {% endfor %}
-    </tbody>
-</table>
+{% include "buckley/expenditure_table.html" %}
 
-{% if page_obj.has_other_pages %}
-<div id="paginator" style="width: 250px; margin-left: auto; margin-right: auto; margin-top: 20px; margin-bottom: 20px;">
-  {% if page_obj.has_previous %} <a style="margin-right: 20px;" class="paginatorPrevious" href="?page={{ page_obj.previous_page_number }}">&lt;&lt;Previous</a>{% endif %}
-  {% if page_obj.has_next %} 
-<a class="paginatorNext" href="?page={{ page_obj.next_page_number }}">Next &gt;&gt;</a>{% endif %}
-</div>
-<div class="clear"></div>
-{% endif %}
+{% include "buckley/pagination.html" %}
+
+{% include "buckley/electioneering_asterisk.html" %}
 
 {% endblock content %}

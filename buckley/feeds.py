@@ -2,22 +2,28 @@ import datetime
 
 from django.contrib.humanize.templatetags.humanize import intcomma
 from django.contrib.syndication.views import Feed
+from django.http import Http404
 from django.shortcuts import get_object_or_404
 
 from buckley.models import *
 
 
 def make_expenditure_description(item):
-    return '%s spent $%s on %s %s %s' % (item.committee,
-                                         intcomma(item.expenditure_amount),
-                                         item.expenditure_purpose,
-                                         'in support of' if item.support_oppose == 'S' else 'in opposition to',
-                                         item.candidate)
+    if not item.electioneering_communication:
+        return '%s spent $%s on %s %s %s' % (item.committee,
+                                             intcomma(item.expenditure_amount),
+                                             item.expenditure_purpose,
+                                             'in support of' if item.support_oppose == 'S' else 'in opposition to',
+                                             item.candidate)
+    else:
+        return '%s spent %s on an electioneering communication mentioning %s' % (item.committee,
+                intcomma(item.expenditure_amount),
+                ', '.join([x.__unicode__() for x in item.electioneering_candidates.all()]))
 
 class ExpenditureFeed(Feed):
-    title = "Newest independent expenditure"
+    title = "Latest outside spending"
     link = "/rss/"
-    description = "The latest independent expenditures"
+    description = "The latest outside spending in congressional elections"
 
     def items(self):
         return Expenditure.objects.all()[:50]
@@ -29,7 +35,17 @@ class ExpenditureFeed(Feed):
         return make_expenditure_description(item)
 
     def item_pubdate(self, item):
-        return datetime.datetime.combine(item.expenditure_date, datetime.time())
+        return item.timestamp
+
+    def item_title(self, item):
+        if item.electioneering_communication:
+            return '%s: %s' % (item.committee,
+                                ', '.join([x.__unicode__() for x in item.electioneering_candidates.all()]))
+        else:
+            return '%s: %s' % (item.committee, item.candidate)
+
+    def item_pubdate(self, item):
+        return item.timestamp
 
 
 class CandidateFeed(Feed):
@@ -38,7 +54,7 @@ class CandidateFeed(Feed):
         return get_object_or_404(Candidate, slug=slug)
 
     def title(self, obj):
-        return obj.fec_name
+        return 'Outside spending: %s' % obj
 
     def link(self, obj):
         return obj.get_absolute_url()
@@ -47,7 +63,17 @@ class CandidateFeed(Feed):
         return make_expenditure_description(item)
 
     def items(self, obj):
-        return Expenditure.objects.filter(candidate=obj)[:15]
+        all = obj.expenditure_set.all() | obj.electioneering_expenditures.all()
+        return all.order_by('-expenditure_date')[:50]
+
+    def item_title(self, item):
+        return '%s: $%s' % (item.committee, intcomma(item.expenditure_amount))
+
+    def item_link(self, item):
+        return item.get_absolute_url() + '#' + str(item.pk)
+
+    def item_pubdate(self, item):
+        return item.timestamp
 
 
 class CommitteeFeed(Feed):
@@ -56,7 +82,7 @@ class CommitteeFeed(Feed):
         return get_object_or_404(Committee, slug=slug)
 
     def title(self, obj):
-        return obj.name
+        return 'Outside spending: %s' % obj.name
 
     def link(self, obj):
         return obj.get_absolute_url()
@@ -65,25 +91,19 @@ class CommitteeFeed(Feed):
         return make_expenditure_description(item)
 
     def items(self, obj):
-        return Expenditure.objects.filter(committee=obj)[:15]
+        return Expenditure.objects.filter(committee=obj)[:50]
 
+    def item_title(self, item):
+        if item.electioneering_communication:
+            return ', '.join([x.__unicode__() for x in item.electioneering_candidates.all()])
+        else:
+            return item.candidate
 
-class PayeeFeed(Feed):
+    def item_link(self, item):
+        return item.get_absolute_url() + '#' + str(item.pk)
 
-    def get_object(self, request, slug):
-        return get_object_or_404(Payee, slug=slug)
-
-    def title(self, obj):
-        return obj.name
-
-    def link(self, obj):
-        return obj.get_absolute_url()
-
-    def item_description(self, item):
-        return make_expenditure_description(item)
-
-    def items(self, obj):
-        return Expenditure.objects.filter(payee=obj)[:15]
+    def item_pubdate(self, item):
+        return item.timestamp
 
 
 class CommitteeLetterFeed(Feed):
@@ -106,3 +126,54 @@ class CommitteeLetterFeed(Feed):
         date = item.date_letter_submitted.strftime('%A, %B %%s, %Y') % monthday
         return '%s filed a letter with the FEC on %s stating its intent to raise unlimited amounts for independent expenditures' % (item.name,
                date)
+
+    def item_pubdate(self, item):
+        return datetime.datetime.combine(item.date_letter_submitted, datetime.time())
+
+
+class RaceFeed(Feed):
+
+    def link(self, obj):
+        return '/independent-expenditures/race/%s' % self.race
+
+    def get_object(self, request, race):
+        self.race = race
+
+    def title(self, obj):
+        expenditures = Expenditure.objects.filter(race=self.race, electioneering_communication=False)
+        if expenditures:
+            return 'Outside spending: %s' % expenditures[0].candidate.full_race_name()
+        try:
+            state, seat = self.race.split('-')
+        except ValueError:
+            raise Http404
+
+        if seat.lower() == 'senate':
+            candidates = Candidate.objects.filter(office='S', state=state)
+        else:
+            candidates = Candidate.objects.filter(office='H', state=state, district=seat)
+
+        if not candidates:
+            raise Http404
+
+        return 'Outside spending: %s' % candidates[0].full_race_name()
+
+
+    def item_link(self, item):
+        return item.get_absolute_url() + '#' + str(item.pk)
+
+    def items(self):
+        return Expenditure.objects.filter(race=self.race)[:50]
+
+    def item_title(self, item):
+        if item.electioneering_communication:
+            return '%s: %s' % (item.committee,
+                                ', '.join([x.__unicode__() for x in item.electioneering_candidates.all()]))
+        else:
+            return '%s: %s' % (item.committee, item.candidate)
+
+    def item_description(self, item):
+        return make_expenditure_description(item)
+
+    def item_pubdate(self, item):
+        return item.timestamp

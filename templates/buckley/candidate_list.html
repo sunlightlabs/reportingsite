@@ -3,7 +3,7 @@
 {% load humanize %}
 {% load media %}
 
-{% block title %}{{ block.super }} - Candidates{% endblock %}
+{% block title %}Candidates - {{ block.super }}{% endblock %}
 
 {% block body %}{{ block.super }} expendituresCandidate{% endblock %}
 
@@ -15,6 +15,13 @@
     {% include "buckley/tabs.html" %}
 
     <h2>Candidates</h2>
+
+{% if not cycle %}
+Previous cycles: <a href="{% url buckley_cycle_candidate_list 2010 %}">2010</a>
+{% endif %}
+
+{% if object_list %}
+
     <p>Select a candidate to see details.
     <br>
     <table id="expendituresData" class="tablesorter">
@@ -23,9 +30,12 @@
                 <th class="sort">Candidate</th>
                 <th class="sort">Party</th>
                 <th class="sort">Race</th>
-                <th class="sort">Total independent expenditures</th>
-                <th class="sort">Independent expenditures supporting</th>
-                <th class="sort">Independent expenditures opposing</th>
+                <th class="sort">Total outside spending</th>
+                <th class="sort">Supporting</th>
+                <th class="sort">Opposing</th>
+{% if not cycle %}
+                <th class="sort">Winner</th>
+{% endif %}
             </tr>
         </thead>
         <tbody>
@@ -35,9 +45,12 @@
         <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.last_first }}</a></td>
         <td>{{ candidate.party }}</td>
         <td>{{ candidate.full_race_name }}</td>
-        <td>${{ candidate.total|intcomma }}</td>
-        <td>${{ candidate.total_supporting|intcomma }}</td>
-        <td>${{ candidate.total_opposing|intcomma }}</td>
+        <td>${{ candidate.total_expenditures|intcomma }}{% if candidate.electioneering_total %} <a href="#asterisk">*</a>{% endif %}</td>
+        <td>${{ candidate.expenditures_supporting|intcomma }}</td>
+        <td>${{ candidate.expenditures_opposing|intcomma }}</td>
+{% if not cycle %}
+        <td>{% if candidate.winner %}Winner{% endif %}</td>
+{% endif %}
     </tr>
     {% endfor %}
     </tbody>
@@ -46,4 +59,11 @@
     {% with '[3,1]' as sortdir %}
     {% include "buckley/tablesorter.html" %}
     {% endwith %}
+
+    {% include "buckley/electioneering_asterisk.html" %}
+
+{% else %}
+<br/><br/>No spending has been reported for this cycle.
+{% endif %}
+
 {% endblock content %}

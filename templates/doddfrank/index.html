@@ -1,0 +1,47 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% load doddfrank %}
+{% load humanize %}
+
+{% block content %}
+
+<div id="lobbyFeature_wrapper">
+    <div id="lobbyFeature" style="background: none; margin-bottom: 15px;">
+        <p style="width: 800px; margin-bottom: 0px;">Every day, lobbyists and executives from Wall Street firms, big banks, insurance companies and others are meeting with financial regulators. They are pressing their case on how the federal financial agencies implement the massive Dodd-Frank financial law, which required more than 240 rulemakings. In the spirit of transparency, the major agencies have been posting records of their meetings with these outside representatives. However, until now it was necessary to visit each agency's website to obtain this information, which is reported at different time intervals and in varying formats. With the Dodd-Frank meeting log tracker, now it is possible to find all the meetings in one place.</p>
+    </div>
+</div>
+
+<h2>Recently disclosed meetings</h2>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Agency</th>
+            <th>Participants</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for meeting in meetings|slice:"50" %}
+        <tr class="{% cycle 'even' 'odd' %}">
+            <td>{{ meeting.meeting_time|date:"F j, Y" }}</td>
+            <td>{{ meeting.agency }}</td>
+            <td>
+                {% if meeting.organizations %}
+                {% for organization in meeting.organizations|slice:"3" %}
+                {{ organization }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if meeting.organizations|length > 3 %}, others{% endif %}
+                {% else %}
+                    {% if meeting.attendees %}
+                        {{ meeting.attendees }}
+                    {% endif %}
+                {% endif %}
+
+            </td>
+            <td><a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency|slugify id=meeting|get_id %}">Details</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% endblock %}

@@ -1,0 +1,35 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% load doddfrank %}
+{% load humanize %}
+
+{% block body %}{{ block.super }} organizations{% endblock %}
+
+{% block content %}
+
+<h2>{{ organization }}</h2>
+
+<p>{{ meetings.count|apnumber|title }} meeting{{ meetings.count|pluralize }} found</p>
+
+<ul>
+{% for meeting in meetings %}
+    <li>
+    <h4>Agency: {{ meeting.agency }} - {{ meeting.meeting_time|date:"F j, Y" }}</h4>
+    {% if meeting.description %}
+        {% if meeting.agency == 'Treasury' %}
+        {{ meeting.description|join:", " }}
+        {% else %}
+        {{ meeting.description }}
+        {% endif %}
+        <br/>
+    {% endif %}
+        <a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency|slugify id=meeting|get_id %}">
+            View Details
+        </a>
+            <div class="clear"></div>
+            <hr/>
+    </li>
+{% endfor %}
+</ul>
+
+{% endblock %}

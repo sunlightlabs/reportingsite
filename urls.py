@@ -1,10 +1,17 @@
+import re
+
+from django.http import HttpResponse, HttpResponsePermanentRedirect
 from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.views.static import serve
+from django.views.generic.simple import direct_to_template
 import settings
 
 
 admin.autodiscover()
+
+def buckley_redirect(request, *args, **kwargs):
+    return HttpResponsePermanentRedirect(re.sub(r'independent-expenditures', 'outside-spending', request.path))
 
 
 urlpatterns = patterns(
@@ -20,6 +27,32 @@ urlpatterns = patterns(
     url(r'^tag/admin/$', 'tag_list_admin', name='blogdor_tag_list'),
     url(r'^tag/(?P<tag>[^/]+)/$', 'tag', name='blogdor_tag'),
     url(r'^tag/$', 'tag_list', name='blogdor_tag_list'),
+
+    # documents
+    url(r'^docs/',
+        direct_to_template,
+        {'template': 'dc.html',
+            },
+        name='reporting_document'),
+
+    url(r'^mortgage-fraud\/?$',
+        direct_to_template,
+        {'template': 'fincen/index.html',
+        },
+        name='reporting_fincen'),
+
+    url(r'^fincen\.html\/?$',
+        direct_to_template,
+        {'template': 'fincen/fincen.html',
+        },
+        name='reporting_fincen'),
+
+    url(r'^fincen\.js\/?$',
+        direct_to_template,
+        {'template': 'fincen/fincen.js',
+         'mimetype': 'text/javascript',
+        },
+        name='reporting_fincen_js'),
     
     # archives
     url(r'^(?P<year>\d{4})/$', 'archive_year', name='blogdor_archive_year'),
@@ -46,7 +79,19 @@ urlpatterns = patterns(
 
     url(r'^editing/', 'admin_editing', name='admin_editing'),
 
-    url(r'^independent-expenditures/', include('buckley.urls')),
+    url(r'^independent-expenditures/.*', buckley_redirect),
+
+    url(r'^outside-spending/', include('buckley.urls')),
+
+    url(r'^lobbying/', include('willard.urls')),
+
+    url(r'^hac/', include('hacmap.urls')),
+
+    url(r'^aors/', include('aors.urls')),
+
+    url(r'^doddfrank/', include('doddfrank.urls')),
+
+
 )
 
 

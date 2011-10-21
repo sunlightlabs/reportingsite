@@ -1,0 +1,61 @@
+{% extends "willard/willard_base.html" %}
+
+{% block title %}Foreign agent filings - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} reporting registrant fullWidth{% endblock %}
+
+{% block content %}
+<h4>Foreign lobbying filings</h4>
+
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Registrant</th>
+            <th>Status</th>
+            <th>Foreign Principal</th>
+            <th>Country</th>
+            <th>Filing type</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for filing in object_list %}
+    <tr class="{% cycle 'odd' 'even' %}">
+        <td>
+            <a href="{{ filing.get_absolute_url }}">
+            {{ filing.stamped|date:"n/j/Y" }}
+            </a>
+        </td>
+        <td>
+            <a href="{{ filing.get_absolute_url }}">
+            {{ filing.registrant_name }}
+            </a>
+        </td>
+        <td>
+            <a href="{{ filing.get_absolute_url }}">
+            {{ filing.registrant_status }}
+            </a>
+        </td>
+        <td>
+            <a href="{{ filing.get_absolute_url }}">
+            {{ filing.foreign_principal_name }}
+            </a>
+        </td>
+        <td>
+            <a href="{{ filing.get_absolute_url }}">
+            {{ filing.foreign_principal_country|title }}
+            </a>
+        </td>
+        <td>
+            <a href="{{ filing.get_absolute_url }}">
+            {{ filing.document_type }}
+            </a>
+        </td>
+    </tr>
+    {% endfor %}
+</tbody>
+</table>
+
+{% include "willard/pagination.html" %}
+
+{% endblock %}

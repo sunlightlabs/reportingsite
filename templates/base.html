@@ -5,6 +5,7 @@
     <meta name="keywords" content="" />
     <meta name="description" content="" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
+<meta name="google-site-verification" content="3wa4E5iGsKSwN886ts897uQBnZWj_kXWxnnQ2EOaheE" />
  <link rel="shortcut icon" href="http://assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
 <link rel="alternate" type="application/rss+xml" title="Sunlight Foundation Transparency Ecosystem" href="http://feeds.feedburner.com/SunlightFoundationReportingGroup" />
  <link rel="icon" href="http://assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
@@ -18,10 +19,10 @@
   <!--[if IE 7]>{%css "css/buggy7.css"%}<![endif]-->
 <script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
   </head>
-  <body class="{% block body %}{% endblock %}">  
+  <body class="{% block body %}reporting{% endblock %}">  
     <div id="pageMain">
       <div id="header">
-        <div id="rssIcon">
+        <div class="rssIcon">
           <a href="http://feeds.feedburner.com/SunlightFoundationReportingGroup">Subscribe to our feed</a>
         </div>
         <div id="logo">
@@ -34,9 +35,9 @@
         <div id="nav">
           <ul>
             <li class="firstLi" id="nav_blog"><a href="/blog">Blog</a></li>
-            <li id="nav_features"><a href="/features">Featured Stories</a></li>
-            <li id="nav_features"><a href="/resources">Resources</a></li>
-            <li id="nav_features"><a href="/about">About</a></li>
+            <li><a href="/features">Featured Stories</a></li>
+            <li><a href="/resources">Resources</a></li>
+            <li><a href="/about">About</a></li>
           </ul>
         </div>
       </div>
@@ -62,7 +63,7 @@
     {% load cache %}
 
     {% cache 1800 footer %}
-    <div id="footer">
+    <div id="footer" class="clear">
       <div id="fullWidth">
         <div id="otherPosts">
           <div class="otherProperty">
@@ -118,6 +119,7 @@
     </div>
     {#{%js "js/jquery.js"%}#}
     {%js "js/reporting.js"%}
+    {%js "js/script.js"%}
     <script src="http://services.sunlightlabs.com/brandingbar/hat_js/sunlightlabs/" type="text/javascript"></script>
     <script type="text/javascript" src="http://use.typekit.com/foz3kwy.js"></script>
     <script type="text/javascript">try{Typekit.load();}catch(e){}</script>

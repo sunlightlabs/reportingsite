@@ -1,0 +1,323 @@
+
+{% extends "base.html" %}
+
+{% block main_content %}
+  <style type="text/css">
+
+  #container {
+    width:600;
+    height:600px;
+  }
+
+  p {
+    font-family: verdana,arial,sans-serif;
+    font-size: 12px;
+    color: #000;
+  }
+
+  .clearBoth {
+    clear:both;
+  }
+
+div#key {
+   float: right;
+   width: 400px; 
+   margin-left: 70px;
+}
+div#key img {
+   border: 0;
+   width: 15px;
+   margin-right: 5px;
+}
+
+#address { border: 1px solid gray !important; width: 200px !important;}
+#addressButton { width: 100px !important; 
+}
+.note { font-size:11px; color:#666666; }
+#map { background-color: #f1f1ed; }
+  #map_canvas { width:900px; height:600px; margin-bottom:12px; margin-left: auto; margin-right: auto;}
+  #map_canvas span { color:#666666; font-size:12px; display:inline; }
+  #map_canvas h4 { color: #666666; font-size: 12px; }
+  #credit_line p { font-size: 10px; font-weight:bold; font-style:italic; color:#666666; text-align:right; }
+  </style>
+  <script type="text/javascript" src="http://maps.google.com/maps/api/js?sensor=false"></script>
+  <script type="text/javascript" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/marker_clusterer/markerclusterer_packed.js"></script>
+  <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+  <script type="text/javascript">
+    var selectedMapType;
+    var geocoder;
+    var ctaLayer;
+    var layer_name = 'test';
+    var layer_index = 0;
+    var map, markerCluster;
+    var markers = new Array();
+    var USA = new google.maps.LatLng(39.89859, -96.035971);
+    var marker_layers = {};
+    var infoWindow = null;
+    var COLORS = ['ffffff', 'aaaaaa', '00aa00', 'aaaa00', '0000aa', 'ffaa00', 'aa0000'];
+
+    var MARKER_ICONS = ['white.png', 'gray.png', 'green.png', 'lightblue.png', 'blue.png', 'orange.png', 'red.png'];
+    var LAYER_NAMES = ['catheter_uti', 'falls_and_trauma', 'foreign_objects', 'poor_glycemic', 'ulcers', 'vascular'];
+    
+    function MapIconUrl(marker_color_bitmask) {
+      var color = (marker_color_bitmask >> (4*layer_index)) & 7;      
+      if(layer_name=='test')
+        return 'http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/' + MARKER_ICONS[0];
+      return 'http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/' + MARKER_ICONS[color];
+    }
+    
+    function UpdateLayerInfo() {
+      layer_name = $("#selectMapType").val();
+      if(layer_name=='test') {
+        layer_index = 0;
+        layer_name = LAYER_NAMES[layer_index];
+      }
+      else {
+        for(var i=0;i<LAYER_NAMES.length;i++)
+          if(layer_name==LAYER_NAMES[i])
+            layer_index = i;        
+      }
+    }
+    
+    $(document).ready(function () {
+
+      // When the value of the selectMapType drop-down changes ...
+      $("#selectMapType").bind('change', function (i) { 
+          RedoMarkerColors();                  
+      });
+      
+      Initialize();
+    });
+  </script>
+  
+<script type="text/javascript">
+
+function Initialize() {
+
+  var stylez = [
+    {
+      featureType: "all",
+      elementType: "all",
+      stylers: [
+		{ saturation:-100 },
+		{ visibility: "simplified" }
+      ]
+    },
+    {
+      featureType: "road",
+      elementType: "all",
+      stylers: [
+		{ visibility: "simplified" }
+      ]
+    },
+    {
+      featureType: "transit",
+      elementType: "all",
+      stylers: [
+		{ visibility: "off" }
+      ]
+    },
+    {
+      featureType: "administrative",
+      elementType: "all",
+      stylers: [
+		{ visibility: "on" }
+      ]
+    },
+    {
+      featureType: "poi",
+      elementType: "all",
+      stylers: [
+		{ visibility: "off" }
+      ]
+    },
+    {
+      featureType: "landscape",
+      elementType: "all",
+      stylers: [
+		{ visibility: "off" }
+      ]
+    },
+    {
+      featureType: "water",
+      elementType: "all",
+      stylers: [
+		{ visibility: "simplified" }
+      ]
+    }
+  ];
+
+  var mapOptions = { center: USA, zoom: 4, mapTypeControlOptions: {
+      mapTypeIds: [google.maps.MapTypeId.TERRAIN, 'hac']
+    }
+  }
+  
+  map = new google.maps.Map(document.getElementById("map_canvas"), mapOptions);
+
+  var styledMapOptions = {
+    name: "HAC Map"
+  }
+  
+  var hacMapType = new google.maps.StyledMapType(stylez, styledMapOptions);    
+  map.mapTypes.set('hac', hacMapType);
+  map.setMapTypeId('hac');
+  
+  
+  // get the markers. this is a one-time operation
+  $.getJSON('/hac/markers/', function(data) { 
+    $.each(data, function(index, val) {   
+      var marker = new google.maps.Marker({
+      			position: new google.maps.LatLng(parseFloat(val[2]), parseFloat(val[1])),
+      			title: val[4],	
+      			icon: MapIconUrl(val[3]),
+  		});  
+  		marker.marker_id = val[0];
+  		marker.marker_color_bitmask = val[3];
+  		      
+  		markers.push(marker);
+  		      
+  		google.maps.event.addListener(marker, 'click', function() {
+  		  if(layer_name=='test') {
+  		    alert('Please select a layer');
+  		    return;
+  		  }
+  		    
+        $.getJSON('/hac/markers/' + layer_name + '/' + marker.marker_id, function(data){          
+          var content = "<div style=\"font-family: helvetica, arial, sans-serif; padding:10px; font-size: 11pt; line-height: 120%\"> \
+<strong>Facility:</strong> " + data['hospitalname'] + "<br/> \
+<strong>Type of facility:</strong> " + data['type'] + "<br/> \
+<strong>Address:</strong> " + data['address'] + "<br/> \
+<strong>County:</strong> " + data['county'] + "<br/><br/> \
+<strong>Number of hospital acquired conditions (HACs)</strong>:  " + data['hacs'] + "<br/> \
+<strong>Eligible discharges:</strong> " + data['discharges'] + "<br/> \
+<strong>Rate per 1,000 discharges</strong>:  " + data['rateper1000discharges'] + "<br/> \
+<strong>National rate:</strong> " + data['nationalrateper1000discharges'] + " \
+</div>";
+          
+          
+          if (infoWindow==null) {
+            infoWindow = new google.maps.InfoWindow({
+                content: content
+            });
+          } 
+          else {
+            infoWindow.setContent(content);
+          }
+          infoWindow.open(map, marker);          
+        });
+      });
+      
+    });
+
+    markerCluster = new MarkerClusterer(map, markers, {gridSize: 50, maxZoom: 6, styles: [{ textColor: '#ffffff', height: 33, width: 33, url: 'http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/icon_cluster.png'}] });
+  });
+}
+
+function RedoMarkerColors() {
+  UpdateLayerInfo();
+  for(var i=0;i<markers.length;i++) {
+    markers[i].setOptions({ icon: MapIconUrl(markers[i].marker_color_bitmask) });
+  }
+}
+
+
+
+function codeAddress() {
+  var address = document.getElementById("address").value;
+  geocoder = new google.maps.Geocoder();
+  geocoder.geocode( { 'address': address}, function(results, status) {
+    if (status == google.maps.GeocoderStatus.OK) {
+      map.setCenter(results[0].geometry.location);
+      var marker = new google.maps.Marker({
+          map: map, 
+          position: results[0].geometry.location
+      });
+    } else {
+      alert("Geocode was not successful for the following reason: " + status);
+    }
+  });
+}
+
+</script>
+
+
+  <div id="map" style="width:950px; height:1000px; padding: 15px;">
+<div style="width: 900px; margin-left: 15px; margin-bottom: 15px;">
+<h2>Mapping Hospital Acquired Conditions</h2>
+
+<div id="key">
+<h5 style="font-size: 1em;">Hospital's rate of HACs is:</h5>
+<!--
+<img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/"
+Hospital's rate of HACs is...
+Green: Far lower than the national average
+Yellow: Lower than the national average
+Blue: Near the national average
+Orange: Above the national average
+Red: Far above the national average
+White: No HACs reported
+Gray: Not applicable
+//-->
+<ul style="float: right;">
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/white.png"/>No HACs reported</li>
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/gray.png"/>Not applicable</li>
+</ul>
+<ul>
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/green.png"/>Far lower than national average</li>
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/lightblue.png"/>Lower than national average</li>
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/blue.png"/>Near national average</li>
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/orange.png"/>Above national average</li>
+<li><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/hac_map/red.png"/>Far above national average</li>
+</ul>
+</div>
+
+<div>A hospital-acquired condition (HAC) is where a patient suffers from a health problem due to being in the hospital, for example, an infection following surgery. To see how your local hospital stacks up to others or the national average when it comes to these so-called HACs, use the dropdown menu below to select a condition, zoom into your area to see individual hospitals, and select a placemark to see how each rates. To see a different condition, reselect from the dropdown menu.
+<br/>
+Source: <a href="https://www.cms.gov/hospitalacqcond/06_hospital-acquired_conditions.asp">Centers for Medicare and Medicaid Services</a>
+</div>
+
+</div>
+<!--
+    <div>
+      <input id="address" type="textbox" value=""> <input id="addressButton" type="button" value="Find a location" onclick="codeAddress()">
+    </div>
+//-->
+
+    <div style="margin-left: 10px;">
+      <select id="selectMapType">
+        <option value="test">
+          Select data to map:
+        </option>
+
+        <option value="poor_glycemic">
+          MANIFESTATIONS OF POOR GLYCEMIC CONTROL
+        </option>
+
+        <option value="ulcers">
+          PRESSURE ULCER STAGES III AND IV
+        </option>
+
+        <option value="foreign_objects">
+          FOREIGN OBJECT RETAINED AFTER SURGERY
+        </option>
+
+        <option value="catheter_uti">
+          CATHETER-ASSOCIATED UTI
+        </option>
+
+        <option value="falls_and_trauma">
+          FALLS AND TRAUMA
+        </option>
+
+        <option value="vascular">
+          VASCULAR CATHETER-ASSOCIATED INFECTION
+        </option>
+
+      </select><br>
+      <br>
+    </div>
+
+    <div id="map_canvas"></div>
+  </div><br>
+  <!--end google map-->
+{% endblock main_content %}

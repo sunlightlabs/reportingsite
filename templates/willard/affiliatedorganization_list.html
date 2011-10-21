@@ -1,0 +1,44 @@
+{% extends "willard/willard_base.html" %}
+
+{% block title %}{{ block.super }} - Affiliated Organizations{% endblock %}
+
+{% block body %}reporting affiliated fullWidth{% endblock %}
+
+{% block breadcrumb %}
+{{ block.super }}
+<li>Affiliated Organizations</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+{% include "willard/registration_header.html" %}
+<h3>Affiliated organizations</h3>
+<p></p>
+
+<table class="tablesorter" id="expendituresData">
+    <thead>
+        <tr>
+            <th>Name</th>
+            <th>Country</th>
+            <th>Registrations</th>
+            <th>Most recent registration</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for org in object_list %}
+        <tr>
+            <td><a href="{{ org.get_absolute_url }}">{{ org }}</a></td>
+            <td>{{ org.country }}</td>
+            <td>{{ org.registration_count }}</td>
+            <td><a href="{{ org.latest_registration.0.get_absolute_url }}">{{ org.latest_registration.0.received|date:"n/j/y" }}</a></td>
+            <td></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% with "[0,0]" as sortdir %}
+{% include "buckley/tablesorter.html" %}
+{% endwith %}
+
+
+{% endblock %}

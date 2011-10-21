@@ -1,0 +1,48 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% load humanize %}
+
+{% block title %}{{ title }} - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} {{ body_class }}{% endblock %}
+
+{% block breadcrumb %}
+{{ block.super }}
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    {% include "buckley/tabs.html" %}
+
+    <h2>
+        {% if cycle %}
+        {{ title }}: {{ cycle }} cycle
+        {% else %}
+        {{ title }}
+        {% endif %}
+    </h2>
+
+    {% if not cycle %}
+    Previous cycles: 
+        {% if electioneering %}
+        <a href="{% url buckley_cycle_electioneering_list 2010 %}">2010</a>
+        {% else %}
+        <a href="{% url buckley_cycle_ie_list 2010 %}">2010</a>
+        {% endif %}
+    {% endif %}
+
+    <p class="tip">{{ description }}</p>
+
+    {% if object_list %}
+        {% include "buckley/expenditure_table.html" %}
+    {% else %}
+        {% if electioneering %}
+        No electioneering communications have been reported for this cycle.
+        {% else %}
+        No independent expenditures have been reported for this cycle.
+        {% endif %}
+    {% endif %}
+
+    {% include "buckley/pagination.html" %}
+
+{% endblock content %}

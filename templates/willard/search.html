@@ -1,0 +1,68 @@
+{% extends "willard/willard_base.html" %}
+
+{% block breadcrumb %}{{ block.super }}
+<li>Search results</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+<h3>Search results</h3>
+
+{% if num_results %}
+
+    {% if registrants %}
+    <h4>Registrants</h4>
+    <ul>
+    {% for registrant in registrants %}
+        <li><a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a></li>
+    {% endfor %}
+    </ul>
+    <br /><br />
+    {% endif %}
+
+    {% if clients %}
+    <h4>Clients</h4>
+    <ul>
+    {% for client in clients %}
+        <li><a href="{{ client.get_absolute_url }}">{{ client }}</a></li>
+    {% endfor %}
+    </ul>
+    <br /><br />
+    {% endif %}
+
+    {% if lobbyists %}
+    <h4>Lobbyists</h4>
+    <ul>
+    {% for lobbyist in lobbyists %}
+        <li><a href="{{ lobbyist.get_absolute_url }}">{{ lobbyist }}</a></li>
+    {% endfor %}
+    </ul>
+    <br /><br />
+    {% endif %}
+
+    {% if covered_position_lobbyists %}
+    <h4>Covered positions</h4>
+    <ul>
+        {% for lobbyist in covered_position_lobbyists %}
+            <li><a href="{{ lobbyist.get_absolute_url }}">{{ lobbyist }}</a> ({{ lobbyist.positions|join:"; " }})</li>
+        {% endfor %}
+    </ul>
+    <br /><br />
+    {% endif %}
+
+    {% if specific_issue_registrations %}
+    <h4>Specific issues</h4>
+    <ul>
+        {% for registration in specific_issue_registrations %}
+            <li style="margin-bottom:15px;"><a href="{{ registration.get_absolute_url }}">{{ registration.registrant }} for {{ registration.client }}</a> ({{ registration.received|date:"n/j/Y" }})<br/>
+            <strong>Specific issues:</strong> {{ registration.specific_issue }}</li>
+        {% endfor %}
+    </ul>
+    <br /><br />
+    {% endif %}
+
+{% else %}
+    No results found.
+{% endif %}
+
+{% endblock content %}

@@ -10,7 +10,7 @@ class PostIndex(RealTimeSearchIndex):
     date_published = DateField(model_attr='date_published')
 
     def get_queryset(self):
-        return Post.objects.published()
+        return Post.objects.published() | Post.objects.filter(is_published=True, show_on_index_pages=False)
 
 
 site.register(Post, PostIndex)

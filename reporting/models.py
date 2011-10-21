@@ -35,10 +35,10 @@ class PostManager(models.Manager):
     use_for_related_fields = True
     
     def published(self):
-        return Post.objects.filter(is_published=True)
+        return Post.objects.filter(is_published=True, show_on_index_pages=True)
 
     def favorites(self):
-        return Post.objects.filter(is_published=True, is_favorite=True)
+        return Post.objects.filter(is_published=True, is_favorite=True, show_on_index_pages=True)
         
     def get_query_set(self):
         return PostQuerySet(self.model)
@@ -73,6 +73,8 @@ class Post(models.Model):
     override_byline = models.CharField("Override byline (for special contributor or multiple writers)", max_length=255, blank=True)
 
     image = models.FileField(upload_to='images', max_length=500)
+
+    show_on_index_pages = models.BooleanField(default=True)
 
     users_editing = models.ManyToManyField(User, through='UserEditingPost')
 

@@ -1,0 +1,32 @@
+{% extends "willard/willard_base.html" %}
+
+{% load humanize %}
+{% load media %}
+{% load willard_filters %}
+
+{% block title %}{{ block.super }}: Lobbyist registrations{% endblock %}
+
+{% block body %}fullWidth{% endblock %}
+
+{% block registrationheader %}
+<h2 id="lobbyingTitle"><a href="/lobbying">Lobbyist registration tracker</a></h2>
+        <div id="lobbyistFilter">
+            <ul>
+                <li class="issues"><a href="{% url willard_issue_list %}">Browse issues</a></li>
+                <li class="registrants"><a href="{% url willard_registrant_list %}">Browse registrants</a></li>
+                <li class="lobbyists"><a href="{% url willard_lobbyist_list %}">Browse lobbyists</a></li>
+                <li class="clients"><a href="{% url willard_client_list %}">Browse clients</a></li>
+                <form id="lobbyingSearch" action="{% url willard_search %}" method="GET">
+                    <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Registrant, client, lobbyist, position or specific issue"{% endif %} type="text" name="q" />
+                    <button class="goBtn" type="submit" value="Search" >
+                        <span>Go</span>
+                    </button>
+                </form>
+                <div class="clear"></div>
+            </ul>
+        </div>
+{% endblock %}
+
+{% comment %}
+{% block content %} {% endblock content %}
+{% endcomment %}

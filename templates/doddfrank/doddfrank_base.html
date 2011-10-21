@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+
+{% load media %}
+
+{% block title %}Dodd-Frank Meeting Logs - {{ block.super }}{% endblock %}
+
+{% block body %}fullWidth{%endblock %}
+
+{% block main_content %}
+{% css "css/lobbying.css" %}
+<div id="columns">
+    <div id="fullColumn">
+        <h2 id="lobbyHeader"><a href="{% url doddfrank_index %}">Dodd-Frank Meeting Logs</a></h2>
+        <div id="lobbyShareBar">
+            <ul>
+                <li><a href="http://www.addthis.com/bookmark.php?v=250&username=sunlightfoundation" class="addthis_button_compact">Share</a>
+                <script type="text/javascript">var addthis_config = {"data_track_clickback":true};</script> 
+                <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=sunlightfoundation"></script>
+                </li>
+                <li><a href="http://sunlightfoundation.com/contact/">Feedback</a></li>
+            </ul>
+        </div>
+        {#<p id="lobbyingDescript" class="tip tipLg"></p>#}
+        <div id="lobbyistFilter">
+            <ul>
+                <li class="organizations"><a href="{% url doddfrank_organization_list  %}">Browse organizations</a></li>
+                <li style="border-right: none;">By agency:</li>
+                <li class="cftc"><a href="{% url doddfrank_agency_detail agency_slug='cftc' %}">CFTC</a></li>
+                <li class="fdic"><a href="{% url doddfrank_agency_detail agency_slug='fdic' %}">FDIC</a></li>
+            <li class="federalReserve"><a href="{% url doddfrank_agency_detail agency_slug='federal-reserve' %}">Fed</a></li>
+                <li class="sec"><a href="{% url doddfrank_agency_detail agency_slug='sec' %}">SEC</a></li>
+                <li class="treasury"><a href="{% url doddfrank_agency_detail agency_slug='treasury' %}">Treasury</a></li>
+
+                <form id="lobbyingSearch" action="{% url doddfrank_search %}" method="GET">
+                    <input id="searchbox" {% if q %}value="{{ q }}"{% else %}value="Participant, official or topic"{% endif %} type="text" name="q" style="width: 200px;"/>
+                    <button class="goBtn" type="submit" value="Search" >
+                        <span>Go</span>
+                    </button>
+                </form>
+                <div class="clear"></div>
+            </ul>
+        </div>
+
+
+    {% block content %}
+    {% endblock content %}
+
+</div>
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Participant, official or topic') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock main_content %}
+
