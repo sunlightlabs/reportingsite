@@ -181,14 +181,20 @@ def author(request, username):
 
 
 def mergetweets(posts, tweetsfeed, ptentries):
+    
     elist = []
+    
     for p in posts:
-        elist.append(p) 
+        elist.append(p)
+
     for p in ptentries:
-        elist.append(p) 
+        elist.append(p)
+        
     for t in tweetsfeed:
         elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
+        
     elist = dictsortreversed(elist, 'date_published')
+    
     return elist
 
 
@@ -203,10 +209,16 @@ def index(request):
     #key = 'reporting_homepage_bloglist'
     #blogs = cache.get(key)
     #if not blogs:
+    
+    try:
+        pt_entries = Feed.objects.get(codename='partytime').entries.all().select_related()[:15]
+    except:
+        pt_entries = Feed.objects.none()
+    
     blogs = mergetweets(
                 Post.objects.published().filter(is_favorite=False).select_related()[:10],
                 FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-').select_related()[:4],
-                Feed.objects.get(codename='partytime').entries.all().select_related()[:15])
+                pt_entries)
     #    cache.set(key, blogs, 60*15)
 
     from buckley.views import widget
