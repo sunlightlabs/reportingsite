@@ -479,8 +479,10 @@ def ie_stories():
     from tagging.utils import get_tag
     from reporting.models import Post
     tag = get_tag('Independent Expenditures')
-    posts = TaggedItem.objects.get_by_model(Post, tag)
-    return posts
+    if tag:
+        posts = TaggedItem.objects.get_by_model(Post, tag)
+        return posts
+    return Post.objects.none()
 
 
 def multi_candidate_ecs(request, slug):
