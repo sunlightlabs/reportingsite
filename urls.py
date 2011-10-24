@@ -91,7 +91,7 @@ urlpatterns = patterns(
 
     url(r'^doddfrank/', include('doddfrank.urls')),
 
-
+    url(r'^budgets/', direct_to_template, {'template': 'budgetforecasts/budgets.html'}),
 )
 
 
