@@ -19,7 +19,7 @@ from willard.models import *
 class Command(BaseCommand):
 
     def handle(self, *args, **options):
-        url = 'http://209.11.109.152/pls/htmldb/f?p=125:10:::NO::P10_DOCTYPE:ALL'
+        url = 'https://efile.fara.gov/pls/apex/f?p=125:10:::NO::P10_DOCTYPE:ALL'
 
         page = urllib2.urlopen(url).read()
         doc = lxml.html.fromstring(page)
@@ -32,7 +32,7 @@ class Command(BaseCommand):
                     continue
                 data.append((input.attrib['name'], input.attrib['value']))
 
-        start_date = datetime.date.today() - datetime.timedelta(14)
+        start_date = datetime.date.today() - datetime.timedelta(9)
         end_date = datetime.date.today()
 
         data += [('p_t01', 'ALL'),
@@ -42,7 +42,8 @@ class Command(BaseCommand):
                  ('p_request', 'SEARCH'),
                  ]
 
-        url = 'http://209.11.109.152/pls/htmldb/wwv_flow.accept'
+        #url = 'http://209.11.109.152/pls/htmldb/wwv_flow.accept'
+        url = 'https://efile.fara.gov/pls/apex/wwv_flow.accept'
 
         req = urllib2.Request(url, data=urllib.urlencode(data))
         page = urllib2.urlopen(req).read()
@@ -71,6 +72,9 @@ class Command(BaseCommand):
 
         pdf = pyPdf.PdfFileReader(StringIO(pdf))
         text = pdf.getPage(0).extractText()
+        print
+        print text
+        print
         metadata = {}
         for line in text.split('\n'):
             if line.find('=') > -1:
@@ -82,8 +86,9 @@ class Command(BaseCommand):
         return metadata
 
     def parse(self, doc):
-        rows = doc.cssselect('tr.highlight-row')
-        for row in rows:
+        rows = doc.cssselect('table.t14Standard tr')
+        for row in rows[1:]:
+            print lxml.html.tostring(row, pretty_print=True)
             filing = {}
             cells = row.cssselect('td')
             filing['pdf_url'] = cells[0].cssselect('a')[0].attrib.get('href')
@@ -96,14 +101,23 @@ class Command(BaseCommand):
                       'document_type',
                       'stamped', ]
             filing.update(dict(zip(fields, [x.text_content() for x in cells[1:]])))
-            metadata = self.get_metadata(filing)
+            filing['stamped'] = dateparse(filing['stamped'])
+            '''
+            try:
+                metadata = self.get_metadata(filing)
+            except:
+                continue
             if metadata is None:
                 print 'No metadata found: %s' % filing['pdf_url']
                 continue
 
             filing.update(metadata)
 
-            filing = self.adjust_fieldnames(filing)
+            print filing
+            try:
+                filing = self.adjust_fieldnames(filing)
+            except:
+                continue
 
             for k, v in filing.iteritems():
                 if k in ['registration_date', 'stamped', 'short_form_termination_date',
@@ -115,6 +129,7 @@ class Command(BaseCommand):
                     else:
                         filing[k] = None
 
+            '''
             time.sleep(1)
             yield filing
 

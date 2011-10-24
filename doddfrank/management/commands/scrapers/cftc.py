@@ -35,6 +35,10 @@ class CFTCScraper(Scraper):
         collection = Connection().test.meetings
         if collection.find_one({'url': url}):
             return True
+        if collection.find_one({'url': url.rstrip('.html')}):
+            return True
+        if collection.find_one({'url': url + '.html'}):
+            return True
         return False
 
     def get_index(self):

@@ -1,27 +1,27 @@
-from django.template.defaultfilters import dictsortreversed
-from feedinator.models import Feed, FeedEntry
-from django.core.cache import cache
-from django.views.decorators.cache import cache_page
-from django.core.paginator import Paginator, InvalidPage, EmptyPage
-from django.db.models import Q
-import urllib
-import datetime
 from operator import itemgetter
+import datetime
+import time
+import urllib
+
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.contrib.contenttypes.models import ContentType
+from django.core.cache import cache
+from django.core.paginator import Paginator, InvalidPage, EmptyPage
 from django.core.urlresolvers import reverse
+from django.db.models import Q
 from django.http import *
 from django.shortcuts import render_to_response, get_object_or_404, get_list_or_404
+from django.template import RequestContext
+from django.template.defaultfilters import dictsortreversed
+from django.views.decorators.cache import cache_page
 from django.views.generic import date_based, list_detail
+from feedinator.models import Feed, FeedEntry
+from haystack.query import SearchQuerySet
 from tagging.models import Tag
 from tagging.views import tagged_object_list
-from models import *
-import datetime, time
-from django.contrib.comments.models import Comment
-from django.template import RequestContext
-from django.core.paginator import Paginator, EmptyPage, InvalidPage
-from haystack.query import SearchQuerySet
+
+from reportingsite.reporting.models import *
 
 try:
     import json
@@ -181,14 +181,20 @@ def author(request, username):
 
 
 def mergetweets(posts, tweetsfeed, ptentries):
+    
     elist = []
+    
     for p in posts:
-        elist.append(p) 
+        elist.append(p)
+
     for p in ptentries:
-        elist.append(p) 
+        elist.append(p)
+        
     for t in tweetsfeed:
         elist.append({ 'date_published': t.date_published, 'byline': '', 'text': t.title[t.title.find(': ')+2:], 'twit': t.title[:t.title.find(': ')] })
+        
     elist = dictsortreversed(elist, 'date_published')
+    
     return elist
 
 
@@ -203,10 +209,16 @@ def index(request):
     #key = 'reporting_homepage_bloglist'
     #blogs = cache.get(key)
     #if not blogs:
+    
+    try:
+        pt_entries = Feed.objects.get(codename='partytime').entries.all().select_related()[:15]
+    except:
+        pt_entries = Feed.objects.none()
+    
     blogs = mergetweets(
                 Post.objects.published().filter(is_favorite=False).select_related()[:10],
                 FeedEntry.objects.filter(feed__codename__startswith='tweetsRT-').select_related()[:4],
-                Feed.objects.get(codename='partytime').entries.all().select_related()[:15])
+                pt_entries)
     #    cache.set(key, blogs, 60*15)
 
     from buckley.views import widget
@@ -268,18 +280,19 @@ def search(request):
             raise Http404
 
     return list_detail.object_list(request,
-                                   queryset=Post.objects.all(),
-                                   paginate_by=20,
-                                   template_name='search/search.html',
-                                   template_object_name='posts',
-                                   allow_empty=True,
-                                   extra_context={'query': query,
-                                                  'page': page,
-                                                  'results': results, # So we can access things like results.count()
-                                                  'order': order,
-                                                  'hide_sidebar_search': True,
-                                                 }
-                                   )
+        queryset=Post.objects.all(),
+        paginate_by=20,
+        template_name='search/search.html',
+        template_object_name='posts',
+        allow_empty=True,
+        extra_context={
+            'query': query,
+          'page': page,
+          'results': results, # So we can access things like results.count()
+          'order': order,
+          'hide_sidebar_search': True,
+        }
+    )
 
 
 def adminfiles(request):

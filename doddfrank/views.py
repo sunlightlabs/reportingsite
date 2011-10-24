@@ -31,7 +31,7 @@ def _list_agencies():
     return _collection().distinct(key='agency')
 
 def _list_organizations():
-    return sorted(list(set(sum(_collection().distinct(key='organizations'), []))))
+    return [x for x in sorted(list(set(sum(_collection().distinct(key='organizations'), [])))) if x]
 
 @cache_page(60*5, key_prefix=_cache_prefix())
 def index(request):
