@@ -921,6 +921,7 @@ def api_candidate_detail(request, crp_id):
         candidate['outside_spending_supporting'] = int(candidate_obj.expenditures_supporting)
         candidate['outside_spending_opposing'] = int(candidate_obj.expenditures_opposing)
         candidate['top_outside_spending_groups'] = []
+        candidate['fec_id'] = candidate_obj.fec_id
         outside_spending = sorted(candidate_obj.sole_all_committees_with_amounts(), key=itemgetter('amount'), reverse=True)
         for spending in outside_spending:
             candidate['top_outside_spending_groups'].append({
