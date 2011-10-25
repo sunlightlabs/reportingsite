@@ -65,6 +65,8 @@ urlpatterns = patterns('reporting.views',
     url(r'^(?P<site>\w{1,4})/$', 'bysite'),
     #url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[\w-]+)/$', 'post_wpcompat', name='blogdor_post_wpcompat'),
 
+    # budget forecasts vs reality
+    url(r'^budgets/', direct_to_template, {'template': 'budgetforecasts/budgets.html'}),
 )
 
 #
