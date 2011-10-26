@@ -730,7 +730,7 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 	var pointX = point.x,
 		pointY = point.y,
 		x = pointX - boxWidth + outerLeft - distance,
-		y = pointY - boxHeight + outerTop + 15, // 15 means the point is 15 pixels up from the bottom of the tooltip
+		y = pointY - boxHeight + outerTop - (boxHeight * 0.25), // 15 means the point is 15 pixels up from the bottom of the tooltip
 		alignedRight;
 
 	// it is too far to the left, adjust it
@@ -742,7 +742,7 @@ function placeBox(boxWidth, boxHeight, outerLeft, outerTop, outerWidth, outerHei
 	// if it is, move it back to be inside and then up to not cover the point.
 	if ((x + boxWidth) > (outerLeft + outerWidth)) {
 		x -= (x + boxWidth) - (outerLeft + outerWidth);
-		y -= boxHeight;
+		y -= (boxHeight * 0.05);
 		alignedRight = true;
 	}
 
