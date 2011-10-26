@@ -25,6 +25,73 @@
 	.explain { color: #58595B; font-size: 120%; margin: 0 0 12pt 0; }
 	.clear { clear: both; } 
 </style>
+<div id="columns">
+    <div id="fullColumn" style="overflow:hidden;">
+		<div id="budget-title">Budget Forecasts vs. Budget Realities</div>
+		<div id="budget-explain" class="explain">When a proposed U.S. federal budget is presented to congress, it includes forecasts for up to 10 years out. How well do these forecasts match up with reality? We've analyzed past budgets and actual government income and spending to develop the chart below, showing that forecasts rarely match up with reality.</div>
+        <div id="ctlbar">
+            <div class="collapsable">
+                <div class="list-bullet list-bullet-open"></div>
+                <div class="presidenttitle">
+                    <span>Budgets under <br> Barack Obama</span>
+                    <br>
+                    <span class="termyears">(2009 - 2011)</span>
+                </div>
+                <ul id="obama-budgets" class="yearlist">
+                    <li><input type="checkbox" name="Obama-2012" id="Obama-2012" class="series-toggle">2012</li>
+                    <li><input type="checkbox" name="Obama-2011" id="Obama-2011" class="series-toggle">2011</li>
+                    <li><input type="checkbox" name="Obama-2010" id="Obama-2010" class="series-toggle">2010</li>
+                </ul>
+            </div>
+
+            <div class="collapsable">
+                <div class="list-bullet list-bullet-open"></div>
+                <div class="presidenttitle">
+                    <span>Budgets under <br> George W. Bush</span>
+                    <br>
+                    <span class="termyears">(2001 - 2009)</span>
+                </div>
+                <ul id="bush-budgets" class="yearlist">
+                    <li><input type="checkbox" name="Bush-2009" id="Bush-2009" class="series-toggle">2009</li>
+                    <li><input type="checkbox" name="Bush-2008" id="Bush-2008" class="series-toggle">2008</li>
+                    <li><input type="checkbox" name="Bush-2007" id="Bush-2007" class="series-toggle">2007</li>
+                    <li><input type="checkbox" name="Bush-2006" id="Bush-2006" class="series-toggle">2006</li>
+                    <li><input type="checkbox" name="Bush-2005" id="Bush-2005" class="series-toggle">2005</li>
+                    <li><input type="checkbox" name="Bush-2004" id="Bush-2004" class="series-toggle">2004</li>
+                    <li><input type="checkbox" name="Bush-2003" id="Bush-2003" class="series-toggle">2003</li>
+                    <li><input type="checkbox" name="Bush-2002" id="Bush-2002" class="series-toggle">2002</li>
+                </ul>
+            </div>
+
+            <div class="collapsable">
+                <div class="list-bullet list-bullet-open"></div>
+                <div class="presidenttitle">
+                    <span>Budgets under <br> Bill Clinton</span>
+                    <br>
+                    <span class="termyears">(1995 - 2001)</span>
+                </div>
+                <ul id="clinton-budgets" class="yearlist">
+                    <li><input type="checkbox" name="Clinton-2001" id="Clinton-2001" class="series-toggle">2001</li>
+                    <li><input type="checkbox" name="Clinton-2000" id="Clinton-2000" class="series-toggle">2000</li>
+                    <li><input type="checkbox" name="Clinton-1999" id="Clinton-1999" class="series-toggle">1999</li>
+                    <li><input type="checkbox" name="Clinton-1998" id="Clinton-1998" class="series-toggle">1998</li>
+                    <li><input type="checkbox" name="Clinton-1997" id="Clinton-1997" class="series-toggle">1997</li>
+                    <li><input type="checkbox" name="Clinton-1996" id="Clinton-1996" class="series-toggle">1996</li>
+                </ul>
+            </div>
+        
+        </div>
+		<span id="billions-label" class="explain">In Billions</span>
+        <div id="chart-container">
+			<span id="loading">Loading...</span>
+        </div>
+        <div class="clear"></div>
+	</div>
+</div>
+{% endblock %}
+
+
+{%block js %}
 <script src="{% media_url %}/js/highstock.src.js"></script>
 <script type="text/javascript">
 	var balances = [
@@ -662,67 +729,4 @@ $(function(){
 
 });
 </script>
-<div id="columns">
-    <div id="fullColumn" style="overflow:hidden;">
-		<div id="budget-title">Budget Forecasts vs. Budget Realities</div>
-		<div id="budget-explain" class="explain">When a proposed U.S. federal budget is presented to congress, it includes forecasts for up to 10 years out. How well do these forecasts match up with reality? We've analyzed past budgets and actual government income and spending to develop the chart below, showing that forecasts rarely match up with reality.</div>
-        <div id="ctlbar">
-            <div class="collapsable">
-                <div class="list-bullet list-bullet-open"></div>
-                <div class="presidenttitle">
-                    <span>Budgets under <br> Barack Obama</span>
-                    <br>
-                    <span class="termyears">(2009 - 2011)</span>
-                </div>
-                <ul id="obama-budgets" class="yearlist">
-                    <li><input type="checkbox" name="Obama-2012" id="Obama-2012" class="series-toggle">2012</li>
-                    <li><input type="checkbox" name="Obama-2011" id="Obama-2011" class="series-toggle">2011</li>
-                    <li><input type="checkbox" name="Obama-2010" id="Obama-2010" class="series-toggle">2010</li>
-                </ul>
-            </div>
-
-            <div class="collapsable">
-                <div class="list-bullet list-bullet-open"></div>
-                <div class="presidenttitle">
-                    <span>Budgets under <br> George W. Bush</span>
-                    <br>
-                    <span class="termyears">(2001 - 2009)</span>
-                </div>
-                <ul id="bush-budgets" class="yearlist">
-                    <li><input type="checkbox" name="Bush-2009" id="Bush-2009" class="series-toggle">2009</li>
-                    <li><input type="checkbox" name="Bush-2008" id="Bush-2008" class="series-toggle">2008</li>
-                    <li><input type="checkbox" name="Bush-2007" id="Bush-2007" class="series-toggle">2007</li>
-                    <li><input type="checkbox" name="Bush-2006" id="Bush-2006" class="series-toggle">2006</li>
-                    <li><input type="checkbox" name="Bush-2005" id="Bush-2005" class="series-toggle">2005</li>
-                    <li><input type="checkbox" name="Bush-2004" id="Bush-2004" class="series-toggle">2004</li>
-                    <li><input type="checkbox" name="Bush-2003" id="Bush-2003" class="series-toggle">2003</li>
-                    <li><input type="checkbox" name="Bush-2002" id="Bush-2002" class="series-toggle">2002</li>
-                </ul>
-            </div>
-
-            <div class="collapsable">
-                <div class="list-bullet list-bullet-open"></div>
-                <div class="presidenttitle">
-                    <span>Budgets under <br> Bill Clinton</span>
-                    <br>
-                    <span class="termyears">(1995 - 2001)</span>
-                </div>
-                <ul id="clinton-budgets" class="yearlist">
-                    <li><input type="checkbox" name="Clinton-2001" id="Clinton-2001" class="series-toggle">2001</li>
-                    <li><input type="checkbox" name="Clinton-2000" id="Clinton-2000" class="series-toggle">2000</li>
-                    <li><input type="checkbox" name="Clinton-1999" id="Clinton-1999" class="series-toggle">1999</li>
-                    <li><input type="checkbox" name="Clinton-1998" id="Clinton-1998" class="series-toggle">1998</li>
-                    <li><input type="checkbox" name="Clinton-1997" id="Clinton-1997" class="series-toggle">1997</li>
-                    <li><input type="checkbox" name="Clinton-1996" id="Clinton-1996" class="series-toggle">1996</li>
-                </ul>
-            </div>
-        
-        </div>
-		<span id="billions-label" class="explain">In Billions</span>
-        <div id="chart-container">
-			<span id="loading">Loading...</span>
-        </div>
-        <div class="clear"></div>
-	</div>
-</div>
 {% endblock %}
