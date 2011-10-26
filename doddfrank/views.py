@@ -1,26 +1,29 @@
-import datetime
-from itertools import groupby
 from collections import defaultdict
+from itertools import groupby
 from operator import itemgetter
+import datetime
 import re
 
+from django.conf import settings
+from django.http import Http404, HttpResponse
+from django.shortcuts import render_to_response
+from django.template import RequestContext
+from django.template.defaultfilters import slugify
+from django.views.decorators.cache import cache_page
 from pymongo import Connection
 from pymongo.objectid import ObjectId
 
-from django.shortcuts import render_to_response
-from django.template.defaultfilters import slugify
-from django.http import Http404, HttpResponse
-from django.views.decorators.cache import cache_page
-from django.template import RequestContext
-
-
 def _cache_prefix():
-    c = Connection()
-    coll = c.test.cache_prefixes
-    m = coll.find_one({'key': 'doddfrank'})
-    if not m:
+    use_mongo = getattr(settings, 'USE_MONGO', True)
+    if use_mongo:
+        c = Connection()
+        coll = c.test.cache_prefixes
+        m = coll.find_one({'key': 'doddfrank'})
+        if not m:
+            return ''
+        return m['prefix']
+    else:
         return ''
-    return m['prefix']
 
 def _collection():
     c = Connection()
