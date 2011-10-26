@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.http import HttpResponse
+from django.shortcuts import render_to_response
 from tagging.views import tagged_object_list
 
 from reportingsite.reporting.models import Post
@@ -17,3 +18,6 @@ def index(request):
         extra_context={'tag': tag},
         allow_empty=True,
     )
+    
+def browse(request):
+    return render_to_response("findatcat/browse.html")
