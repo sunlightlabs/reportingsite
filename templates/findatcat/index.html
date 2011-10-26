@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+{% load comments %}
+{% load lede %}
+
+{% block feature %}
+    <div id="featureBox">
+        BIG OL FEATURE
+    </div>
+{% endblock %}
+
+{% block content %}
+
+    <ol class="moduleLists">
+        {% for post in page_obj.object_list %}
+            <li class="module posts">
+                <h2><a href="{% url blogdor_post post.date_published.year post.slug %}">{{ post.title }}</a></h2>
+                <span class="postMeta">
+                    {%autoescape off%}{{post.shortbyline}}{%endautoescape%}
+                    <span class="postdate">{{post.date_published|date:"M j, Y"}}</span>
+                    <span class="posttime">{{post.date_published|date:"P"}}</span>
+                    {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post post.date_published.year post.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
+                </span>
+                {{ post|lede|safe }}
+            </li>
+        {% endfor %}
+    </ol>
+
+    {% include 'paginator.html' %}
+
+{% endblock %}
+
+{% block sidebar %}
+    <h3>Browse our Financial Reporting</h3>
+    <p>A collection of links to available financial data.</p>
+    
+    <ul>
+        <li>
+            <a href="#">Loan Modifications</a>
+        </li>
+    </ul>
+{% endblock %}

@@ -135,7 +135,7 @@ signals.post_save.connect(cache_updater, sender=Post)
 signals.pre_delete.connect(cache_deleter, sender=Post)
 
 
-moderator.register(Post, BlogdorModerator)
+#moderator.register(Post, BlogdorModerator)
 
 
 class UserEditingPost(models.Model):

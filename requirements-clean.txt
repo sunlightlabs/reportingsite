@@ -1,0 +1,19 @@
+Django==1.2.3
+python-memcached==1.45
+django-tagging==0.3.1
+-e git://github.com/sunlightlabs/django-feedinator.git@0e3f7b1ce75d0ae8659030d2cc95cdbb4cdc5b58#egg=django_feedinator-0.2.1-
+feedparser==4.1
+django-mediasync==1.0.1
+django-storages==1.1.1
+django-debug-toolbar==0.8.4
+django-haystack==1.1.0
+pysolr==2.0.13
+gunicorn==0.11.2
+south
+python-dateutil==1.5
+django-picklefield==0.1.9
+lxml==2.2.6
+django-gatekeeper==0.3.0
+pymongo
+
+django-tastypie
