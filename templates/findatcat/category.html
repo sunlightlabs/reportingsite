@@ -1,0 +1,73 @@
+{% extends "base.html" %}
+{% load markup %}
+{% load media %}
+
+{% block body %}fullWidth{% endblock %}
+
+{% block css %}
+    {% css "css/finance.css" %}
+{% endblock %}
+
+{% block main_content %}
+<div id="columns">
+    <div id="fullColumn">
+
+        <h2><a href="/buriedtreasure/">Buried Treasure</a> <span>What we don't know about money in America</span></h2>
+
+        <ul id="featureNav">
+            <li class="last"><a href="mailto:buriedtreasure@sunlightfoundation.com">Suggest a Story</a></li>
+        </ul>
+
+        <div id="internalLtColumn">
+            
+            <h3>{{ current_category.title }} Data Sets</h3>
+
+            {% if links %}
+                <ul class="data-sets">
+                    {% for link in links %}
+                        <li>
+                            <a href="{{ link.url }}">{{ link.title }}</a>
+                            {% if link.description %}
+                                {{ link.description|markdown }}
+                            {% endif %}
+                        </li>
+                    {% endfor %}
+                </ul>
+            {% else %}
+                <p>We have no {{ current_category.title }} data sets available.</p>
+            {% endif %}
+
+            <h3>Reporting on {{ current_category.title }}</h3>
+
+            {% if posts %}
+                <ol class="moduleLists">
+                    {% for post in posts %}
+                        {% include "findatcat/_post.html" %}
+                    {% endfor %}
+                </ol>
+                {% include 'paginator.html' %}
+            {% else %}
+                <p>We have not yet reported on {{ current_category.title }}.</p>
+            {% endif %}
+
+        </div>
+        <div id="internalRtColumn">
+            <h3 class="withTip">Browse our Financial Reporting</h3>
+            <p class="tip">Find more of what your looking for when you browse our reports by specific categories</p>
+            <ul class="categoriesPlain">
+                {% for cat in categories %}
+                    <li{% if cat.pk == current_category.pk %} class="current"{% endif %}>
+                        <a href="{% url findatcat_category cat.slug %}">
+                            {{ cat.title }}
+                            {% if cat.description %}<span>({{ cat.description }})</span>{% endif %}
+                        </a>
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+        
+{% endblock %}
+

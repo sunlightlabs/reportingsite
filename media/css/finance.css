@@ -18,7 +18,9 @@
 .remove { background: url(../img/btn_close.png) left top no-repeat; padding: 4px 0 1px 30px;}
 .remove:hover { background: url(../img/btn_close.png) bottom left no-repeat; }
 
-.categoriesPlain li { border-bottom: 1px dotted #B8B9B9; margin-bottom: 15px; padding-bottom: 15px; line-height: 20px;}
+.categoriesPlain li { border-bottom: 1px dotted #B8B9B9; margin: 0; padding: 15px 5px; line-height: 20px;}
+.categoriesPlain li.current { background-color: #e1e7e6; }
 .categoriesPlain span { font-style: oblique; font-size: 95%; font-family: Georgia, Times New Roman, Times, serif;}
 
 h2 { background: url(../img/bg_titleLine.png) bottom left no-repeat; padding-bottom: 10px; z-index: 2; position: relative;}
+h2 span { display: block; font-size: 70%; }

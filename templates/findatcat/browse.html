@@ -1,6 +1,4 @@
 {% extends "base.html" %}
-{% load comments %}
-{% load lede %}
 {% load media %}
 
 {% block body %}fullWidth{% endblock %}
@@ -12,7 +10,7 @@
 {% block main_content %}
 <div id="columns">
     <div id="fullColumn">
-        <h2><a href="#">Name of Project</a></h2>
+        <h2><a href="/buriedtreasure/">Buried Treasure</a></h2>
         <ul id="featureNav">
             <li><a href="#">Resources</a></li>
             <li class="last"><a href="#">Suggest a Story</a></li>
@@ -26,16 +24,7 @@
             </div>    
             <ol class="moduleLists">
                 {% for post in page_obj.object_list %}
-                    <li class="module posts">
-                        <h2><a href="{% url blogdor_post post.date_published.year post.slug %}">{{ post.title }}</a></h2>
-                        <span class="postMeta">
-                            {%autoescape off%}{{post.shortbyline}}{%endautoescape%}
-                            <span class="postdate">{{post.date_published|date:"M j, Y"}}</span>
-                            <span class="posttime">{{post.date_published|date:"P"}}</span>
-                            {% if comment_count %}<span class="posttime"><a href="{% url blogdor_post post.date_published.year post.slug %}#comments">{{ comment_count}} comment{{comment_count|pluralize}}</a></span>{%endif%}
-                        </span>
-                        {{ post|lede|safe }}
-                    </li>
+                    {% include "findatcat/_post.html" %}
                 {% endfor %}
             </ol>
 
