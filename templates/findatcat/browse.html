@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load media %}
+
+{% block body %}fullWidth{% endblock %}
+
+{% block css %}
+    {% css "css/finance.css" %}
+{% endblock %}
+
+{% block main_content %}
+<div id="columns">
+    <div id="fullColumn">
+        <h2><a href="/buriedtreasure/">Buried Treasure</a></h2>
+        <ul id="featureNav">
+            <li><a href="#">Resources</a></li>
+            <li class="last"><a href="#">Suggest a Story</a></li>
+        </ul>    
+        <div id="internalLtColumn"> 
+            <div id="callOut">
+                <span>Your Selections:</span>
+                <ul>
+                    <li><a class="remove" href="">Category Name</a></li>
+                </ul>    
+            </div>    
+            <ol class="moduleLists">
+                {% for post in page_obj.object_list %}
+                    {% include "findatcat/_post.html" %}
+                {% endfor %}
+            </ol>
+
+            {% include 'paginator.html' %}
+        </div>
+        <div id="internalRtColumn">
+            <h3 class="withTip">Browse our Financial Reporting</h3>
+            <p class="tip">Find more of what your looking for when you browse our reports by specific categories</p>
+            <ul class="categoriesPlain">
+                <li><label><input class="checkbox" type="checkbox" name="word" />Conflict of interest <span>(campaign finance, lobbying)</span></label></li>
+                <li><label><input class="checkbox" type="checkbox" name="word" />Consumer Banking <span>(bank fees, bank health, credit and debit cards)</span></label></li>
+                <li><label><input class="checkbox" type="checkbox" name="word" />Enforcement <span>(SEC investigative records, investment advisers, registration)</span></label></li>
+                <li><label><input class="checkbox" type="checkbox" name="word" />FOIA <span>(Fed data, other examples)</span></label></li>
+                <li><label><input class="checkbox" type="checkbox" name="word" />Health Care <span>(Medicare spending, etc...)</span></label></li>
+                <li><label><input class="checkbox" type="checkbox" name="word" />Home Ownership <span>(Mortgages, foreclosure, appraisal)</span></label></li>
+                <li><label><input class="checkbox" type="checkbox" name="word" />Investment <span>(Investment advisers, broker-dealers, pensions)</span></label></li>
+                <li><label><input class="checkbox" type="checkbox" name="word" />Insurance</label></li>
+                <li><label><input class="checkbox" type="checkbox" name="word" />Student Loans</label></li>
+            </ul>
+        </div>
+        <div class="clear"></div>
+    </div>
+</div>
+        
+{% endblock %}
+

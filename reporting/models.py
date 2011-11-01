@@ -1,22 +1,21 @@
+import datetime
+
 from django.conf import settings
 from django.contrib.auth.models import User
+from django.contrib.comments.moderation import moderator
+from django.contrib.sites.models import Site
 from django.core.exceptions import ImproperlyConfigured
 from django.db import models
-from tagging.fields import TagField
-import datetime
-from django.contrib.sites.models import Site
 from django.db.models import signals
-
-from comments import BlogdorModerator
-from django.contrib.comments.moderation import moderator
-
 from django.template.loader import render_to_string
+from tagging.fields import TagField
+import tagging
 
+from reportingsite.reporting.comments import BlogdorModerator
 
 COMMENT_FILTERS = getattr(settings, "BLOGDOR_COMMENT_FILTERS", [])
 WP_PERMALINKS = getattr(settings, "BLOGDOR_WP_PERMALINKS", False)
 WHICHSITE_CHOICES = getattr(settings, "WHICHSITE_CHOICES", False)
-
 
 class PostQuerySet(models.query.QuerySet):
     
@@ -28,7 +27,6 @@ class PostQuerySet(models.query.QuerySet):
         
     def recall(self):
         return self.update(is_published=False)
-
 
 class PostManager(models.Manager):
     
@@ -65,7 +63,7 @@ class Post(models.Model):
     
     comments_enabled = models.BooleanField(default=True)
     
-    tags = TagField()
+    #tags = TagField()
 
     whichsite = models.CharField(max_length=10, choices=WHICHSITE_CHOICES)
 
@@ -134,8 +132,12 @@ def cache_deleter(sender, **kwargs):
 signals.post_save.connect(cache_updater, sender=Post)
 signals.pre_delete.connect(cache_deleter, sender=Post)
 
-
 #moderator.register(Post, BlogdorModerator)
+
+try:
+    tagging.register(Post)
+except tagging.AlreadyRegistered:
+    pass
 
 
 class UserEditingPost(models.Model):
