@@ -26,6 +26,7 @@ urlpatterns = patterns('reporting.views',
     # mounted apps
     url(r'^admin/', include(admin.site.urls)),
     url(r'^aors/', include('aors.urls')),
+    url(r'^buriedtreasure/', include('findatcat.urls')),
     url(r'^doddfrank/', include('doddfrank.urls')),
     url(r'^hac/', include('hacmap.urls')),
     url(r'^lobbying/', include('willard.urls')),

@@ -8,6 +8,8 @@
     <meta name="description" content="" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="google-site-verification" content="3wa4E5iGsKSwN886ts897uQBnZWj_kXWxnnQ2EOaheE" />
+    
+    <script>var _sf_startpt=(new Date()).getTime()</script>
 
     <title>{% block title %}{%if post%}{{post}} - {%endif%}Sunlight Foundation Reporting Group{% endblock %}</title>
 
@@ -15,13 +17,12 @@
     <link rel="alternate" type="application/rss+xml" title="Sunlight Foundation Transparency Ecosystem" href="http://feeds.feedburner.com/SunlightFoundationReportingGroup" />
     <link rel="icon" href="http://assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
 
-    {%css "css/main.css"%}
-    {# <link rel="stylesheet" href="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/css/main.css" type="text/css" media="screen, projection" /> #}
-    <!--[if IE 6]>{%css "css/buggy.css"%}<![endif]-->
-    <!--[if IE 7]>{%css "css/buggy7.css"%}<![endif]-->
-
-    <script type="text/javascript" src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
-    <script type="text/javascript">var _sf_startpt=(new Date()).getTime()</script>
+    {% css "css/main.css" %}
+    {# <link rel="stylesheet" href="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/css/main.css" media="screen, projection" /> #}
+    {% block css %}
+    {% endblock %}
+    <!--[if IE 6]>{% css "css/buggy.css" %}<![endif]-->
+    <!--[if IE 7]>{% css "css/buggy7.css" %}<![endif]-->
 
   </head>
   <body class="{% block body %}reporting{% endblock %}">
@@ -125,23 +126,29 @@
       </div>
     </div>
 
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
     {%js "js/reporting.js"%}
     {%js "js/script.js"%}
 
-    <script src="http://services.sunlightlabs.com/brandingbar/hat_js/sunlightlabs/" type="text/javascript"></script>
-    <script type="text/javascript" src="http://use.typekit.com/foz3kwy.js"></script>
-    <script type="text/javascript">try{Typekit.load();}catch(e){}</script>
-    <script type="text/javascript">
+	{% block js %}
+	{% endblock %}
+
+    <script src="http://use.typekit.com/foz3kwy.js"></script>
+    <script>try{Typekit.load();}catch(e){}</script>
+    
+    <script src="http://services.sunlightlabs.com/brandingbar/hat_js/sunlightlabs/"></script>
+    
+    <script>
       var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
       document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
     </script>
-    <script type="text/javascript">
+    <script>
       try {
         var pageTracker = _gat._getTracker("UA-1265484-45");
         pageTracker._trackPageview();
       } catch(err) {}
     </script>
-    <script type="text/javascript">
+    <script>
       var _sf_async_config={uid:980,domain:"reporting.sunlightfoundation.com"};
       (function(){
         function loadChartbeat() {
