@@ -45,7 +45,6 @@
                     <li>
                         <a href="{% url findatcat_category cat.slug %}">
                             {{ cat.title }}
-                            {% if cat.description %}<span>({{ cat.description }})</span>{% endif %}
                         </a>
                     </li>
                 {% endfor %}
