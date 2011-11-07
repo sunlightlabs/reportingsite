@@ -143,7 +143,7 @@ MEDIASYNC_AWS_KEY = "***REMOVED***"
 MEDIASYNC_AWS_SECRET = "***REMOVED***"
 MEDIASYNC_AWS_BUCKET = "assets.sunlightfoundation.com" #"bucket_name"  
 MEDIASYNC_AWS_PREFIX = "reporting/1.0"
-MEDIASYNC_SERVE_REMOTE = False
+MEDIASYNC_SERVE_REMOTE = True
 
 MEDIASYNC = {
     'BACKEND': 'mediasync.backends.s3',
@@ -152,7 +152,7 @@ MEDIASYNC = {
     'AWS_BUCKET': MEDIASYNC_AWS_BUCKET,
     'AWS_PREFIX': MEDIASYNC_AWS_PREFIX,
     'MEDIA_URL': '/media/',
-    'SERVE_REMOTE': MEDIASYNC_SERVE_REMOTE
+    'SERVE_REMOTE': MEDIASYNC_SERVE_REMOTE,
 }
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
