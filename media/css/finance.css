@@ -23,4 +23,4 @@
 .categoriesPlain span { font-style: oblique; font-size: 95%; font-family: Georgia, Times New Roman, Times, serif;}
 
 h2 { background: url(../img/bg_titleLine.png) bottom left no-repeat; padding-bottom: 10px; z-index: 2; position: relative;}
-h2 span { display: block; font-size: 70%; }
+h2 span { display: block; font-size: 50%; font-style: oblique; line-height: 25px; color: #58595B;}
