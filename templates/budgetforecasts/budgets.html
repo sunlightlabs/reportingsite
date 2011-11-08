@@ -24,7 +24,7 @@
 	#loading { color: #3a7982; font-size: 120%; font-weight: bold; }
 	#budget-title { margin: 0 0 12pt 0; color: #3a7982; font-size: 28pt; font-weight: 500; font-family: serif; }
 	#billions-label { font-size: 10pt; font-style: italic; display: none; }
-	.explain { color: #58595B; font-size: 120%; margin: 0 0 12pt 0; }
+	.explain { color: #58595B; font-size: 15px; margin: 0 0 12pt 0; }
 	.clear { clear: both; } 
 </style>
 <div id="columns">
@@ -37,7 +37,8 @@
 			below, showing that forecasts rarely match up with reality.</p>
 			<p>The line on the chart shows the annual actual budget deficit or surplus. Use the check
 			boxes on the left to show different budget forecasts and how they compared to what
-			really happened.</p>
+			really happened. Hover over the pins at the bottom of the chart to see major 
+			political/economic news that influenced the budget.</p>
 			<p>Note: The federal government's fiscal year runs from Oct. 1 to the following 
 			September 30.</p>
 		</div>
@@ -643,7 +644,7 @@ $(function(){
 				tooltip: {
 					formatter: formatEstimateLabel,
 					animation: false,
-					crosshairs: false,
+					crosshairs: true,
 					shared: false,
 					shadow: false,
 					borderRadius: 0,
