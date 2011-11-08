@@ -23,7 +23,7 @@ class FDICScraper(Scraper):
                     'meeting_time': dateparse(row['Date']),
                     'organizations': self.parse_organizations(row['Affiliation']),
                     'visitors': self.parse_visitors(row['Visitor']),
-                    'material_provided': row['Material <br />Provided'],
+                    'material_provided': row['Material Provided'],
                     'description': row['Issues Discussed'].replace(':', '; '),
                     }
             if data['meeting_time'] <= max_meeting_time:
