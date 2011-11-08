@@ -5,6 +5,9 @@ import urllib
 import urllib2
 
 import lxml.html
+import lxml.html.soupparser
+from lxml.html.clean import clean_html
+
 from pymongo import Connection
 import requests
 from dateutil.parser import parse as dateparse
@@ -18,7 +21,8 @@ class TreasuryScraper(Scraper):
         self.agency = 'Treasury'
 
     def scrape(self, special=False):
-        page = lxml.html.fromstring(sys.stdin.read())
+        page = lxml.html.soupparser.fromstring(clean_html(sys.stdin.read()))
+
         for data in self.parse_meeting_page(page, special):
             #print data
             #continue
@@ -29,17 +33,14 @@ class TreasuryScraper(Scraper):
         #rows = table.cssselect('tr')
         rows = page.cssselect('tr')
         for row in rows:
-            datefield = row.cssselect('nobr')
-            if not len(datefield):
+            cells = row.cssselect('td')
+            if len(cells) != 4:
                 continue
 
-            date = dateparse(datefield[0].text)
+            cells = row.cssselect('td')
+            date = dateparse(cells[0].text.strip())
 
-            tds = row.cssselect('td')
-            if len(tds) != 4:
-                continue
-
-            rowdata = dict(zip(['treasury_officials', 'description', 'visitors'], row.cssselect('td')[1:]))
+            rowdata = dict(zip(['treasury_officials', 'description', 'visitors'], cells[1:]))
 
             # Special cases
             if special == True:
@@ -48,7 +49,7 @@ class TreasuryScraper(Scraper):
             for k, v in rowdata.iteritems():
                 if special == True and k == 'visitors':
                     continue
-                rowdata[k] = [lxml.html.fromstring(x).text_content().strip()
+                rowdata[k] = [lxml.html.soupparser.fromstring(x).text_content().strip()
                                 for x in
                                 lxml.html.tostring(v).split('<br>')]
 
