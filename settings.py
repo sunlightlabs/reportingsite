@@ -114,7 +114,7 @@ INSTALLED_APPS = (
     'doddfrank',
 )
 
-INTERNAL_IPS = ('127.0.0.1','localhost')
+INTERNAL_IPS = ('127.0.0.1','localhost','216.15.37.167')
 
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
