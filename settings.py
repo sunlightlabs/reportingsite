@@ -49,8 +49,8 @@ MEDIA_ROOT = '/media/'
 # URL that handles the media served from MEDIA_ROOT. Make sure to use a
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
-MEDIA_URL = '/media/'
-#MEDIA_URL = 'http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/'
+#MEDIA_URL = '/media/'
+MEDIA_URL = 'http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/'
 #MEDIA_URL = 'http://reporting.sunlightlabs.com/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
@@ -151,7 +151,6 @@ MEDIASYNC = {
     'AWS_SECRET': MEDIASYNC_AWS_SECRET,
     'AWS_BUCKET': MEDIASYNC_AWS_BUCKET,
     'AWS_PREFIX': MEDIASYNC_AWS_PREFIX,
-    'MEDIA_URL': '/media/',
     'SERVE_REMOTE': MEDIASYNC_SERVE_REMOTE,
 }
 
