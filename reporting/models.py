@@ -63,7 +63,7 @@ class Post(models.Model):
     
     comments_enabled = models.BooleanField(default=True)
     
-    #tags = TagField()
+    tags = TagField()
 
     whichsite = models.CharField(max_length=10, choices=WHICHSITE_CHOICES)
 
@@ -134,10 +134,10 @@ signals.pre_delete.connect(cache_deleter, sender=Post)
 
 #moderator.register(Post, BlogdorModerator)
 
-try:
-    tagging.register(Post)
-except tagging.AlreadyRegistered:
-    pass
+# try:
+#     tagging.register(Post)
+# except tagging.AlreadyRegistered:
+#     pass
 
 
 class UserEditingPost(models.Model):
