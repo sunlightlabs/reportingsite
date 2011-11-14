@@ -13,7 +13,6 @@
 
 {% block content %}
 {% css "css/lobbying.css" %}
-{% js "js/jquery.sparkline.min.js "%}
 
 {% include "willard/registration_header.html" %}
 
@@ -75,6 +74,30 @@
 </div>
 
 
+<div id="halfColumn_rt">
+    <h3 class="withTip">Latest registrations</h3>
+    <div class="rssIcon rssBlock">
+        <a href="{% url willard_feed %}">Subscribe</a>
+    </div>
+    {% for dategroup in object_list %}
+    <h4>{{ dategroup.date|date:"F j" }}</h4>
+    <ul class="smDefinedList">
+        {% for registration in dategroup.registrations %}
+            {% include "willard/registration_list_item.html" %}
+        {% endfor %}
+    </ul>
+    {% endfor %}
+    <a class="lobbying_paginatorNext" href="{% url willard_registrations_all %}">View all registrations »</a>
+</div>
+<div class="clear"></div>
+
+
+        
+{% endblock content %}
+
+{% block js %}
+
+{{ block.super }}
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
 
 <script type="text/javascript">
@@ -230,25 +253,5 @@
 
     });
 </script>
-
-
-<div id="halfColumn_rt">
-    <h3 class="withTip">Latest registrations</h3>
-    <div class="rssIcon rssBlock">
-        <a href="{% url willard_feed %}">Subscribe</a>
-    </div>
-    {% for dategroup in object_list %}
-    <h4>{{ dategroup.date|date:"F j" }}</h4>
-    <ul class="smDefinedList">
-        {% for registration in dategroup.registrations %}
-            {% include "willard/registration_list_item.html" %}
-        {% endfor %}
-    </ul>
-    {% endfor %}
-    <a class="lobbying_paginatorNext" href="{% url willard_registrations_all %}">View all registrations »</a>
-</div>
-<div class="clear"></div>
-
-
-        
-{% endblock content %}
+{% js "js/jquery.sparkline.min.js "%}
+{% endblock %}

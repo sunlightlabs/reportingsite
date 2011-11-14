@@ -14,6 +14,75 @@
 
 {% block content %}
 {% include "willard/registration_header.html" %}
+
+<div style="float: right;">
+    <div class="rssIcon">
+        <a href="{% url willard_issue_detail_feed slug=issue.slug %}">Subscribe</a>
+    </div>
+    <br/>
+    <div class="csvIcon">
+        <a href="{% url willard_issue_detail_api slug=issue.slug,format='csv' %}">Download</a>
+    </div>
+</div>
+
+<h3>{{ issue.issue }}</h3>
+
+<div id="issueChart">
+    <div id="issueChart1">
+        <h4>{{ issue.issue }} Registrations</h4>
+        <span class="tip tipHeight">Past 12 Months</span>
+        <div id="monthLineChart"></div>
+    </div>
+    {% if top_registrants %}
+    <div id="issueChart2">
+        <h4>Top registrants</h4>
+        <span class="tip tipHeight">Past 12 Months</span>
+        <ul class="issueChart">
+            {% for registrant in top_registrants %}
+            <li>
+                <a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a>
+                <span class="count">{{ registrant.num|intcomma }}</span>
+                <span class="index" style="width: {{ registrant.num|percentage:past_year_count|intcomma }}%"></span>
+            </li>
+            {% endfor %}
+        </ul>
+    </div>
+    {% endif %}
+    <div class="clear"></div>
+</div>
+
+
+
+<table class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort header{% ifequal order 'received' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'received' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}received">Date</a></th>
+            <th class="sort header{% ifequal order 'registrant' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'registrant' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}registrant">Registrant</a></th>
+            <th class="sort header{% ifequal order 'client' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'client' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}client">Client</a></th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for registration in object_list %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td>{{ registration.received.date|date:"n/j/y" }}</td>
+            <td><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></td>
+            <td><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></td>
+            <td><a href="{{ registration.get_absolute_url }}">View registration</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include "willard/pagination.html" %}
+
+
+{% endblock content %}
+
+
+{% block js %}
+{{ block.super }}
+
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
 
 <script type="text/javascript">
@@ -86,67 +155,5 @@
 
     });
 </script>
+{% endblock %}
 
-<div style="float: right;">
-    <div class="rssIcon">
-        <a href="{% url willard_issue_detail_feed slug=issue.slug %}">Subscribe</a>
-    </div>
-    <br/>
-    <div class="csvIcon">
-        <a href="{% url willard_issue_detail_api slug=issue.slug,format='csv' %}">Download</a>
-    </div>
-</div>
-
-<h3>{{ issue.issue }}</h3>
-
-<div id="issueChart">
-    <div id="issueChart1">
-        <h4>{{ issue.issue }} Registrations</h4>
-        <span class="tip tipHeight">Past 12 Months</span>
-        <div id="monthLineChart"></div>
-    </div>
-    {% if top_registrants %}
-    <div id="issueChart2">
-        <h4>Top registrants</h4>
-        <span class="tip tipHeight">Past 12 Months</span>
-        <ul class="issueChart">
-            {% for registrant in top_registrants %}
-            <li>
-                <a href="{{ registrant.get_absolute_url }}">{{ registrant }}</a>
-                <span class="count">{{ registrant.num|intcomma }}</span>
-                <span class="index" style="width: {{ registrant.num|percentage:past_year_count|intcomma }}%"></span>
-            </li>
-            {% endfor %}
-        </ul>
-    </div>
-    {% endif %}
-    <div class="clear"></div>
-</div>
-
-
-
-<table class="tablesorter">
-    <thead>
-        <tr>
-            <th class="sort header{% ifequal order 'received' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'received' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}received">Date</a></th>
-            <th class="sort header{% ifequal order 'registrant' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'registrant' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}registrant">Registrant</a></th>
-            <th class="sort header{% ifequal order 'client' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'client' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}client">Client</a></th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-        {% for registration in object_list %}
-        <tr class="{% cycle 'odd' 'even' %}">
-            <td>{{ registration.received.date|date:"n/j/y" }}</td>
-            <td><a href="{{ registration.registrant.get_absolute_url }}">{{ registration.registrant }}</a></td>
-            <td><a href="{{ registration.client.get_absolute_url }}">{{ registration.client }}</a></td>
-            <td><a href="{{ registration.get_absolute_url }}">View registration</a></td>
-        </tr>
-        {% endfor %}
-    </tbody>
-</table>
-
-{% include "willard/pagination.html" %}
-
-
-{% endblock content %}

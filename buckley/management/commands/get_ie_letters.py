@@ -1,6 +1,7 @@
 from optparse import make_option
 import datetime
 from cStringIO import StringIO
+import os
 import logging
 import re
 import socket
@@ -83,7 +84,9 @@ def get_committee_name(page):
 
 
 def save_checked_url(url):
-    with open(r'/projects/reporting/log/fec_pdfs_checked.log', 'a') as fh:
+    path = os.path.join("log" if os.path.isdir('log') else ".",
+                        "fec_pdfs_checked.log")
+    with open(path, 'a') as fh:
         fh.write(url + '\n')
 
 
@@ -107,7 +110,10 @@ class Command(BaseCommand):
         response = urllib2.urlopen(request)
         page = response.read()
 
-        checked = [x.strip() for x in open(r'/projects/reporting/log/fec_pdfs_checked.log', 'r')]
+        path = os.path.join("log" if os.path.isdir('log') else ".",
+                            "fec_pdfs_checked.log")
+        with file(path, 'r') as fil:
+            checked = [ln.strip() for ln in fil]
 
         if options.get('cids'):
             committee_ids = options.get('cids').split(',')
