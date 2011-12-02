@@ -37,8 +37,9 @@ socket.setdefaulttimeout(25)
 logging.basicConfig(filename='ie_import_errors.log', level=logging.DEBUG)
 
 
-#cursor = MySQLdb.Connection('reporting.sunlightfoundation.com', 'reporting', '***REMOVED***', 'reporting').cursor()
-cursor = MySQLdb.Connection('localhost', 'reporting', '***REMOVED***', 'reporting').cursor()
+dbcfg = settings.DATABASES['default']
+assert 'mysql' in dbcfg['ENGINE'].lower(), "The import_crp_donors command requires a MySQL database."
+cursor = MySQLdb.Connection(dbcfg['HOST'], dbcfg['USER'], dbcfg['PASSWORD'], dbcfg['NAME']).cursor()
 
 # Some names we know are missing FEC IDs.
 NAME_LOOKUP = {
@@ -196,7 +197,7 @@ class Command(BaseCommand):
             # so using cURL.
             headers = os.popen('curl -Is "%s"' % url).read().split('\n')
             last_modified = dateparse(headers[0].replace('Last-Modified: ', '').strip())
-            hours_diff = (datetime.datetime.now(tzutc()) - last_modified).seconds / 60 / 60
+            hours_diff = (datetime.datetime.now() - last_modified).seconds / 60 / 60
 
             # If data hasn't been updated in the past hour, don't do anything.
             if hours_diff > 1:

@@ -6,7 +6,6 @@ from django.core.management.base import BaseCommand, CommandError
 import MySQLdb
 from django.conf import settings
 
-#cursor = MySQLdb.Connection('reporting.sunlightfoundation.com', 'reporting', '***REMOVED***', 'reporting').cursor()
 dbcfg = settings.DATABASES['default']
 assert 'mysql' in dbcfg['ENGINE'].lower(), "The update_fec_crp_data command requires a MySQL database."
 cursor = MySQLdb.Connection(dbcfg['HOST'], dbcfg['USER'], dbcfg['PASSWORD'], dbcfg['NAME']).cursor()
