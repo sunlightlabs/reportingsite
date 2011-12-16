@@ -22,6 +22,35 @@ KEY_PREFIX = '7'
 
 urlpatterns = patterns('',
 
+        # I've moved these URLS to the top and blocked the ones 
+        # below with a wildcard pattern in order to take down the 
+        # unlimited money tracker temporarily.
+        url(r'letters\/?$',
+            cache_page(object_list, 60*5, key_prefix=KEY_PREFIX),
+            {'queryset': IEOnlyCommittee.objects.all(), },
+            name='buckley_letter_list'),
+
+        url(r'^letters\.json$',
+            'buckley.views.json_ieletter_list',
+            {},
+            name='buckley_json_ieletter_list'),
+
+        url(r'letters\/rss\/?$',
+            CommitteeLetterFeed(),
+            name='buckley_letter_feed'),
+
+        url(r'letters\/(?P<object_id>C\d+)\/?$',
+            object_detail,
+            {'queryset': IEOnlyCommittee.objects.all(), },
+            name='buckley_letter_detail'),
+
+        url(r'.*',
+            cache_page(object_list, 60*5, key_prefix=KEY_PREFIX),
+            {'queryset': IEOnlyCommittee.objects.all(), },
+            name='buckley_letter_list'),
+        # This is the end of the temporary take-down block.
+
+
         url(r'^committee\/(?P<committee_slug>[-\w]+)\/(?P<object_id>\d+)\/?$',
             'buckley.views.expenditure_detail',
             {},
@@ -242,25 +271,6 @@ urlpatterns = patterns('',
                  'electioneering': True,
                 },
                 name='buckley_cycle_electioneering_list'),
-
-        url(r'letters\/?$',
-            cache_page(object_list, 60*5, key_prefix=KEY_PREFIX),
-            {'queryset': IEOnlyCommittee.objects.all(), },
-            name='buckley_letter_list'),
-
-        url(r'^letters\.json$',
-            'buckley.views.json_ieletter_list',
-            {},
-            name='buckley_json_ieletter_list'),
-
-        url(r'letters\/rss\/?$',
-            CommitteeLetterFeed(),
-            name='buckley_letter_feed'),
-
-        url(r'letters\/(?P<object_id>C\d+)\/?$',
-            object_detail,
-            {'queryset': IEOnlyCommittee.objects.all(), },
-            name='buckley_letter_detail'),
 
         url(r'search\/?$',
             'buckley.views.search',
