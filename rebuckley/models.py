@@ -246,6 +246,13 @@ class Expenditure(models.Model):
 
     def __unicode__(self):
         return str(self.image_number)
+    
+    def support_or_oppose(self):
+        if self.support_oppose.upper() == 'S':
+            return "Support"
+        if self.support_oppose.upper() == 'O':
+                return "Oppose"
+        return "Unknown"
 
 # Dump of transparency ids
 class Transparency_Crosswalk(models.Model):
@@ -270,6 +277,7 @@ class IEOnlyCommittee(models.Model):
     fec_id = models.CharField(max_length=9, primary_key=True)
     committee_master_record=models.ForeignKey(Committee, null=True)
     display_name = models.CharField(max_length=100, null=True)
+    slug = models.SlugField(null=True)
     fec_name = models.CharField(max_length=100, null=True)
     filing_freq_verbatim = models.CharField(max_length=100, null=True)
     # we can suck this in from the old pdf reading ap--without a start date I dunno how we total contributions.
@@ -294,6 +302,8 @@ class IEOnlyCommittee(models.Model):
     def __unicode__(self):
         return self.name
         
+    def superpachackpage(self):
+        return "/super-pacs/committee/%s/%s/" % (self.slug, self.fec_id)
         
 # pac_candidate -- indicates a pac's total support or opposition towards a particular candidate. If a particular pac *both* supports and opposes a candidate, this should go in two separate entries. 
 class Pac_Candidate(models.Model):

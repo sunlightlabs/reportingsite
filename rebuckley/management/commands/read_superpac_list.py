@@ -4,6 +4,7 @@ import re
 
 from django.core.cache import cache
 from django.core.management.base import BaseCommand, CommandError
+from django.template.defaultfilters import slugify
 
 from rebuckley.models import IEOnlyCommittee
 
@@ -34,7 +35,8 @@ class Command(BaseCommand):
                 print "saving: %s" % (name)
                 ieoc = IEOnlyCommittee.objects.create(
                     fec_id=committee_id,
-                    fec_name=name, 
+                    fec_name=name,
+                    slug=slugify(name)[0:50],
                     filing_freq_verbatim=filing_freq
                 )
                 ieoc.save()

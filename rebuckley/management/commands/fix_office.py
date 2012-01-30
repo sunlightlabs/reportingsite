@@ -15,13 +15,11 @@ class Command(BaseCommand):
                 for e in expenditures:
                     if (e.candidate):
                         print "candidate's office = %s ; expenditure office: %s" % (e.candidate.office, e.office)
-                        if ( ( e.office == '' or e.office==' ')  and e.office.upper() != e.candidate.office.upper()):
-                            if ( e.office == '' or e.office==' '): 
+                        if ( ( e.office == '' or e.office==' ') ):
+                            if ( (e.candidate.office.upper()='P' or e.candidate.office.upper()='H' or e.candidate.office.upper()='S' ) ): 
                                 e.office = e.candidate.office.upper().strip()
                                 e.save()
-                                
-                                
-                            print "Mismatch '%s' - '%s' " % (e.office, e.candidate.office)
+                                print "Fixing '%s' to '%s' " % (e.office, e.candidate.office)
                     else:
                         print "Missing candidate: %s " % (e.candidate_name) 
                         

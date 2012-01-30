@@ -36,6 +36,7 @@ class Command(BaseCommand):
                 
         all_ies = Expenditure.objects.filter(candidate__isnull=True)
         for ie in all_ies:
+            print "*** Trying to match %s - %s" % (ie.raw_candidate_id, ie.candidate_name)
             try:
                 this_candidate = Candidate.objects.get(fec_id=ie.raw_candidate_id, cycle=ie.cycle)
                 ie.candidate = this_candidate
