@@ -19,9 +19,12 @@ import name_tools
 from name_tools.split import namecase
 from dateutil.parser import parse as dateparse
 import MySQLdb
+from django.conf import settings
 
 
-cursor = MySQLdb.Connection('localhost', 'campfin', 'campfin', 'campfin').cursor()
+dbcfg = settings.DATABASES['default']
+assert 'mysql' in dbcfg['ENGINE'].lower(), "The ingest_ies command requires a MySQL database."
+cursor = MySQLdb.Connection(dbcfg['HOST'], dbcfg['USER'], dbcfg['PASSWORD'], dbcfg['NAME']).cursor()
 
 
 def fec_master_lookup(id=None, name=None):

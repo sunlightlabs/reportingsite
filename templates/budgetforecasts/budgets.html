@@ -31,16 +31,21 @@
     <div id="fullColumn" style="overflow:hidden;">
 		<div id="budget-title">Spending forecasts vs. spending realities</div>
 		<div id="budget-explain" class="explain">
-			<p>When a proposed U.S. federal budget is presented to Congress, it includes forecasts
-			for up to 10 years out. How well do these forecasts match up with reality? We've
-			analyzed past budgets and actual government income and spending to develop the chart
-			below, showing that forecasts rarely match up with reality.</p>
-			<p>The line on the chart shows the annual actual budget deficit or surplus. Use the check
-			boxes on the left to show different budget forecasts and how they compared to what
-			really happened. Hover over the pins at the bottom of the chart to see major 
-			political/economic news that influenced the budget.</p>
-			<p>Note: The federal government's fiscal year runs from Oct. 1 to the following 
-			September 30.</p>
+			<p>As the Joint Select Committee on Deficit Reduction — better known as the supercommittee - nears its Nov. 23 deadline for a plan to cut $1.3 trillion from the federal deficit, we at Sunlight thought it would be worth looking at how budget plans match up to budget realities.</p>
+
+			<p>In the chart below, you can see the annual budget deficit or surplus since 1995. What we've attempted to do is show how that lines up with budget forecasts over the years.</p>
+
+			<p>Each year, the president submits a budget that details the upcoming year's spending and revenue expectations, but also forecasts spending and revenues for several years into the future.</p>
+
+			<p>Because no Congress can bind a future Congress, these projections are little more than political statements designed to reassure people that the government is on a path toward fiscal responsibility.</p>
+
+			<p>See those budget forecasts using the buttons below and you'll quickly see how far off a projected budget can be from reality. In 2008, for example, the budget forecasted a 2009 deficit of $187 billion. In reality, the deficit that year ended up being $1.419 trillion. That's nearly 10 times the projection.</p>
+
+			<p>So, when the supercommittee comes back with a budget plan that projects balance in 10 years, you can see just how rarely projections match up with reality.</p>
+
+			<p>Hover over the pins at the bottom of the chart to see major political/economic news that influenced the budget.</p>
+
+			<p>Note: The federal government's fiscal year runs from Oct. 1 to the following September 30.</p>
 		</div>
         <div id="ctlbar">
 			<span id="ctlbar-title">Budget forecasts</span>
@@ -142,7 +147,6 @@
 	var budgets = {
 		'Clinton': {
 			'1996': [
-				//[Date.UTC(1995, 0, 1), -192.506], 
 				[Date.UTC(1996, 0, 1), -196.671], 
 				[Date.UTC(1997, 0, 1), -213.091], 
 				[Date.UTC(1998, 0, 1), -196.376], 
@@ -150,7 +154,6 @@
 				[Date.UTC(2000, 0, 1), -194.426]
 			],
 			'1997': [
-				//[Date.UTC(1996, 0, 1), -145.636],
 				[Date.UTC(1997, 0, 1), -140.091],
 				[Date.UTC(1998, 0, 1), -97.952],
 				[Date.UTC(1999, 0, 1), -64.403],
@@ -159,7 +162,6 @@
 				[Date.UTC(2002, 0, 1), 43.902]
 			],
 			'1998': [
-				//[Date.UTC(1997, 0, 1), -125.591],
 				[Date.UTC(1998, 0, 1), -120.633],
 				[Date.UTC(1999, 0, 1), -117.380],
 				[Date.UTC(2000, 0, 1), -87.123],
@@ -167,7 +169,6 @@
 				[Date.UTC(2002, 0, 1), 16.969]
 			],
 			'1999': [
-				//[Date.UTC(1998, 0, 1), -9.957],
 				[Date.UTC(1999, 0, 1), 9.519],
 				[Date.UTC(2000, 0, 1), 8.530],
 				[Date.UTC(2001, 0, 1), 28.190],
@@ -180,7 +181,6 @@
 				[Date.UTC(2008, 0, 1), 261.300]
 			],
 			'2000': [
-				//[Date.UTC(1999, 0, 1), 79.263],
 				[Date.UTC(2000, 0, 1), 117.305],
 				[Date.UTC(2001, 0, 1), 134.100],
 				[Date.UTC(2002, 0, 1), 186.745],
@@ -193,7 +193,6 @@
 				[Date.UTC(2009, 0, 1), 393.000]
 			],
 			'2001': [
-				//[Date.UTC(2000, 0, 1), 166.690],
 				[Date.UTC(2001, 0, 1), 183.998],
 				[Date.UTC(2002, 0, 1), 185.903],
 				[Date.UTC(2003, 0, 1), 184.636],
@@ -208,7 +207,6 @@
 		},
 		'Bush': {
 			'2002': [
-				//[Date.UTC(2001, 0, 1), 280.708],
 				[Date.UTC(2002, 0, 1), 231.170],
 				[Date.UTC(2003, 0, 1), 242.014],
 				[Date.UTC(2004, 0, 1), 262.098],
@@ -221,7 +219,6 @@
 				[Date.UTC(2011, 0, 1), 526.000]
 			],
 			'2003': [
-				//[Date.UTC(2002, 0, 1), -106.184],
 				[Date.UTC(2003, 0, 1), -80.170],
 				[Date.UTC(2004, 0, 1), -13.741],
 				[Date.UTC(2005, 0, 1), 61.139],
@@ -229,7 +226,6 @@
 				[Date.UTC(2007, 0, 1), 103.970]
 			],
 			'2004': [
-				//[Date.UTC(2003, 0, 1), -304.159],
 				[Date.UTC(2004, 0, 1), -307.400],
 				[Date.UTC(2005, 0, 1), -208.211],
 				[Date.UTC(2006, 0, 1), -200.504],
@@ -237,7 +233,6 @@
 				[Date.UTC(2008, 0, 1), -189.594]
 			],
 			'2005': [
-				//[Date.UTC(2004, 0, 1), -520.741],
 				[Date.UTC(2005, 0, 1), -363.570],
 				[Date.UTC(2006, 0, 1), -267.632],
 				[Date.UTC(2007, 0, 1), -241.272],
@@ -245,7 +240,6 @@
 				[Date.UTC(2009, 0, 1), -237.076]
 			],
 			'2006': [
-				//[Date.UTC(2005, 0, 1), -426.600],
 				[Date.UTC(2006, 0, 1), -390.100],
 				[Date.UTC(2007, 0, 1), -312.100],
 				[Date.UTC(2008, 0, 1), -250.800],
@@ -253,7 +247,6 @@
 				[Date.UTC(2010, 0, 1), -207.300]
 			],
 			'2007': [
-				//[Date.UTC(2006, 0, 1), -423.186],
 				[Date.UTC(2007, 0, 1), -354.245],
 				[Date.UTC(2008, 0, 1), -223.334],
 				[Date.UTC(2009, 0, 1), -207.553],
@@ -261,7 +254,6 @@
 				[Date.UTC(2011, 0, 1), -204.908]
 			],
 			'2008': [
-				//[Date.UTC(2007, 0, 1), -244.171],
 				[Date.UTC(2008, 0, 1), -239.387],
 				[Date.UTC(2009, 0, 1), -187.166],
 				[Date.UTC(2010, 0, 1), -94.361],
@@ -269,7 +261,6 @@
 				[Date.UTC(2012, 0, 1), 61.018]
 			],
 			'2009': [
-				//[Date.UTC(2008, 0, 1), -410.047],
 				[Date.UTC(2009, 0, 1), -407.408],
 				[Date.UTC(2010, 0, 1), -159.992],
 				[Date.UTC(2011, 0, 1), -94.810],
@@ -279,7 +270,6 @@
 		},
 		'Obama': {
 			'2010': [
-				//[Date.UTC(2009, 0, 1), -1841.188],
 				[Date.UTC(2010, 0, 1), -1258.431],
 				[Date.UTC(2011, 0, 1), -929.416],
 				[Date.UTC(2012, 0, 1), -557.419],
@@ -292,7 +282,6 @@
 				[Date.UTC(2019, 0, 1), -712.000]
 			],
 			'2011': [
-				//[Date.UTC(2010, 0, 1), -1555.582],
 				[Date.UTC(2011, 0, 1), -1266.680],
 				[Date.UTC(2012, 0, 1), -828.452],
 				[Date.UTC(2013, 0, 1), -727.328],
@@ -305,7 +294,6 @@
 				[Date.UTC(2020, 0, 1), -1003.000]
 			],
 			'2012': [
-				//[Date.UTC(2011, 0, 1), -1645.119],
 				[Date.UTC(2012, 0, 1), -1101.237],
 				[Date.UTC(2013, 0, 1), -767.531],
 				[Date.UTC(2014, 0, 1), -644.553],
@@ -699,18 +687,6 @@ $(function(){
 				Chart.redraw();
 			}
 		});
-
-		/*
-		$(".list-bullet").click(function(event){
-			$(event.currentTarget).toggleClass("list-bullet-open");
-			$(event.currentTarget).toggleClass("list-bullet-closed");
-			if ($(event.currentTarget).hasClass("list-bullet-closed")) {
-				$("ul", event.currentTarget.parentNode).hide();
-			} else {
-				$("ul", event.currentTarget.parentNode).show();
-			}
-		});
-		*/
 	});
 
 });

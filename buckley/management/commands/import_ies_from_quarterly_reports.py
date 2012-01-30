@@ -22,6 +22,7 @@ from buckley.models import *
 
 from get_ie_csvs import make_row_dict
 from import_ies import committee_lookup, generic_querier, cursor
+from elections import election_cycle
 
 
 
@@ -94,11 +95,15 @@ class Command(BaseCommand):
                 filing_number = os.path.split(filepath)[-1].replace('.fec', '')
 
                 for row in self.parse_file_for_ies(filepath):
-                    row.update({'filing_number': filing_number, })
-                    data = self.get_ie_data(row)
-                    if data['expenditure_date'] < datetime.date(2010, 11, 3):
+                    try:
+                        row.update({'filing_number': filing_number, })
+                        data = self.get_ie_data(row)
+                        if data['expenditure_date'] < datetime.date(2010, 11, 3):
+                            continue
+                        self.save_ie(data)
+                    except ValueError, e:
+                        print >>sys.stderr, "Unparseable value in row: %s" % repr(row)
                         continue
-                    self.save_ie(data)
 
             time.sleep(sleep)
 
@@ -107,16 +112,12 @@ class Command(BaseCommand):
         if not data['candidate_first'] and not data['candidate_last']:
             return
 
+        data['cycle'] = election_cycle(data['expenditure_date']) # cycle is used by get_candidate
         data['payee'] = self.get_payee(data['payee_name'])
         data['committee'] = self.get_committee(data)
         data['candidate'] = self.get_candidate(data)
         if not data['candidate']:
             return
-
-        if data['expenditure_date'] >= datetime.date(2011, 1, 1):
-            cycle = 2012
-        else:
-            cycle = 2010
 
         if data['candidate'].cycle == 2010:
             data['candidate'] = deepcopy(data['candidate'])
@@ -190,8 +191,13 @@ class Command(BaseCommand):
                 try:
                     return Candidate.objects.get(crp_id=candidate['CID'])
                 except Candidate.MultipleObjectsReturned:
-                    return Candidate.objects.get(crp_id=candidate['CID'],
-                                                 office=data['candidate_office'])
+                    try:
+                        return Candidate.objects.get(crp_id=candidate['CID'],
+                                                     office=data['candidate_office'])
+                    except Candidate.MultipleObjectsReturned:
+                        return Candidate.objects.get(crp_id=candidate['CID'],
+                                                     office=data['candidate_office'],
+                                                     cycle=data['cycle'])
             except Candidate.DoesNotExist:
                 return self.create_candidate_from_crp(candidate, data)
 
@@ -414,6 +420,11 @@ class Command(BaseCommand):
                     fields = F5_FIELDS[:-1]
                 else:
                     fields = F5_FIELDS
+            
+                max_ix = max(map(lambda fs: fs[0], F5_FIELDS))
+                if len(line) <= max_ix:
+                    print >>sys.stderr, "`line` contains %d fields while F5_FIELDS requires %d" % (len(line), max_ix)
+                    continue
 
                 row = make_row_dict(line, fields)
 
@@ -429,8 +440,7 @@ class Command(BaseCommand):
 
 
     def list_dates(self):
-        year = datetime.date.today().year
-        start = datetime.date(year, 1, 1)
+        start = (datetime.date.today() - datetime.timedelta(days=7))
         end = datetime.date.today()
         curr = start
         while curr < end:

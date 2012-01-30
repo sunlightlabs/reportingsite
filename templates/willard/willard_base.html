@@ -33,3 +33,21 @@
     </div>
 </div>
 {% endblock main_content %}
+
+{% block js %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        var defaultSearchText = 'Registrant, client, lobbyist, position or specific issue';
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === defaultSearchText) {
+                $(this).val('');
+            }
+        });
+        $("#searchbox").blur(function () {
+            if ($(this)[0].value === '') {
+                $(this).val(defaultSearchText);
+            }
+        });
+    });
+</script>
+{% endblock %}

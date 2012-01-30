@@ -13,7 +13,7 @@ from django.db.models import signals
 from dateutil.relativedelta import relativedelta
 from picklefield.fields import PickledObjectField
 import lxml.etree
-import MySQLdb
+#import MySQLdb
 
 
 try:
@@ -632,7 +632,7 @@ class ForeignLobbying(models.Model):
     registration_number = models.IntegerField()
     registrant_name = models.CharField(max_length=255)
     registrant_status = models.CharField(max_length=255)
-    registration_date = models.DateField()
+    registration_date = models.DateField(null=True)
     registrant_termination_date = models.DateField(null=True)
     alias = models.CharField(max_length=255)
     doing_business_as = models.CharField(max_length=255)
@@ -688,39 +688,39 @@ PASSWORD = '***REMOVED***'
 def doccloud_upload(sender, **kwargs):
     """Via http://www.muckrock.com/blog/using-the-documentcloud-api/
     """
-    filing = kwargs['instance']
-    if filing.doc_id:
-        return
-
-    filename = r'/tmp/fara.pdf'
-    print filing.pdf_url
-    tf = open(filename, 'wb')
-    tf.write(urllib2.urlopen(filing.pdf_url).read())
-    tf.close()
-
-    socket.setdefaulttimeout(25)
-
-    params = {'title': '%s Foreign Agents Registration Act filing' % filing.registrant_name,
-              'source': 'FARA Registration Unit',
-              'file': open(filename, 'rb'), #StringIO(urllib2.urlopen(filing.pdf_url).read()),
-              'access': 'public',
-              }
-    url = '/upload.json'
-    opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
-    request = urllib2.Request('https://www.documentcloud.org/api/%s' % url, params)
-    auth = base64.encodestring('%s:%s' % (USERNAME, PASSWORD))[:-1]
-    request.add_header('Authorization', 'Basic %s' % auth)
-
     try:
+        filing = kwargs['instance']
+        if filing.doc_id:
+            return
+
+        filename = r'/tmp/fara.pdf'
+        print filing.pdf_url
+        tf = open(filename, 'wb')
+        tf.write(urllib2.urlopen(filing.pdf_url).read())
+        tf.close()
+
+        socket.setdefaulttimeout(25)
+
+        params = {'title': '%s Foreign Agents Registration Act filing' % filing.registrant_name,
+                  'source': 'FARA Registration Unit',
+                  'file': open(filename, 'rb'), #StringIO(urllib2.urlopen(filing.pdf_url).read()),
+                  'access': 'public',
+                  }
+        url = '/upload.json'
+        opener = urllib2.build_opener(MultipartPostHandler.MultipartPostHandler)
+        request = urllib2.Request('https://www.documentcloud.org/api/%s' % url, params)
+        auth = base64.encodestring('%s:%s' % (USERNAME, PASSWORD))[:-1]
+        request.add_header('Authorization', 'Basic %s' % auth)
+
         ret = opener.open(request).read()
         info = json.loads(ret)
         filing.doc_id = info['id']
         filing.save()
+        
     except urllib2.URLError, exc:
         print 'url error'
         print exc
-        pass
-
+        
     time.sleep(1)
 
 signals.post_save.connect(doccloud_upload, sender=ForeignLobbying, dispatch_uid='reporting.willard')

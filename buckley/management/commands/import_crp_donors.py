@@ -1,3 +1,4 @@
+import sys
 import datetime
 
 from django.core.management.base import BaseCommand, CommandError
@@ -6,12 +7,14 @@ from buckley.models import Committee, Contribution, CommitteeId
 
 from dateutil.parser import parse as dateparse
 import MySQLdb
+from django.conf import settings
 
 
 MIN_DATE = datetime.date(2009, 1, 1)
 
-#cursor = MySQLdb.Connection('localhost', 'reporting', '***REMOVED***', 'reporting').cursor()
-cursor = MySQLdb.Connection('reporting.sunlightlabs.com', 'reporting', '***REMOVED***', 'reporting').cursor()
+dbcfg = settings.DATABASES['default']
+assert 'mysql' in dbcfg['ENGINE'].lower(), "The import_crp_donors command requires a MySQL database."
+cursor = MySQLdb.Connection(dbcfg['HOST'], dbcfg['USER'], dbcfg['PASSWORD'], dbcfg['NAME']).cursor()
 
 
 def get_527_committees():
