@@ -770,7 +770,7 @@ class Command(BaseCommand):
   
   
       * These super PACs have filed termination reports with the FEC.
-    <p><em>Updated 9 a.m. Jan. 27 </em></p>
+    <p><em>Updated 10:00 a.m. Jan. 30 </em></p>
 
   
 

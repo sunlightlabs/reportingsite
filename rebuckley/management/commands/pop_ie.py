@@ -9,10 +9,10 @@ from dateutil.parser import parse as dateparse
 from rebuckley.models import Expenditure
 
 def clean_currency_field(currency_string):
+    """ We return a string here; python 2.6 can't convert a float to a decimal, but can convert a string. """
     cs = currency_string.replace("$","")
     cs= cs.replace(",","")
-    result = float(cs)
-    return result
+    return cs
 
 class Command(BaseCommand):
     args = '<cycle>'

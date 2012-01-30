@@ -9,8 +9,8 @@ from rebuckley.views import *
 urlpatterns = patterns('',
 
 
-    url(r'^chart\/?$', 'rebuckley.views.superpac_chart'),
-
+    url(r'^presidential\/chart\/?$', 'rebuckley.views.superpac_presidential_chart'),
+    url(r'^all\/chart\/?$', 'rebuckley.views.superpac_chart'),
 )
     
     

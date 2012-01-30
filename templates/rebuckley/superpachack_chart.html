@@ -3,7 +3,7 @@
 {% load media %}
 
 {% block title %}Super PACs{% endblock %}
-{% block page_title %}Super PACs{% endblock %}
+{% block page_title %}Super PACs supporting presidential candidates{% endblock %}
 
 {% block main_content %}
 <table id="expendituresData" class="tablesorter">
@@ -60,7 +60,7 @@ $(document).ready(function()
 
     $("#expendituresData").tablesorter({
 		widgets: ['zebra'],
-		sortList: [[1,1]]
+		sortList: [[2,1]]
 
         });
     }

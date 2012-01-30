@@ -1,4 +1,4 @@
-datadir='rebuckley/data'
+datadir='re:buckley/data'
 
 for year in '10' '12'
 do
@@ -16,7 +16,7 @@ do
     curl -o $datadir/$year/ec_exp_20$year.csv ftp://ftp.fec.gov/FEC/ec_exp_20$year.csv
     
     #Independent expenditures
-    curl -o $datadir/$year/IndependentExpenditure_$year.csv http://www.fec.gov/data/IndependentExpenditure.do?format=csv&election_yr=20$year
+    curl -o $datadir/$year/IndependentExpenditure_$year.csv "http://www.fec.gov/data/IndependentExpenditure.do?format=csv&election_yr=20$year"
     
     # Committee summary file -- only contains records from those that have filed a quarterly / monthly / annual report
     curl -o $datadir/$year/CommitteeSummary_$year.csv "http://www.fec.gov/data/CommitteeSummary.do?format=csv&election_yr=20$year"
