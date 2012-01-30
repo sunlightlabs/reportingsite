@@ -1,0 +1,91 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% load humanize %}
+
+{% block title %}Search - {{ block.super }}{% endblock %}
+
+{% block breadcrumb %}{{ block.super }}
+<li>Search</li>
+{% endblock %}
+
+{% block content %}
+{% if terms %}
+<h2>Search Results for &#8220;{{ terms }}&#8221;</h2>
+{% else %}
+<h2>Search</h2>
+{% endif %}
+
+{% if terms %}
+
+    {% ifequal num_results 0 %}
+    <h3>No results found</h3>
+    {% endifequal %}
+    {% if candidates %}
+    <h3>Candidates</h3>
+    <table id="expenditures" class="tablesorter">
+        <thead>
+            <tr>
+                <th class="sort">Candidate</th>
+                <th class="sort">Party</th>
+                <th class="sort">Race</th>
+                <th class="sort">Total outside spending</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate in candidates %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.last_first }}</a></td>
+                <td>{{ candidate.party }}</td>
+                <td>{{ candidate.full_race_name }}</td>
+                <td>${{ candidate.sole_total|intcomma }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% endif %}
+
+    <br><br>
+
+    {% if committees %}
+    <h3>Committees</h3>
+    <table id="expenditures" class="tablesorter">
+        <thead>
+            <tr>
+                <th>Committee</th>
+                {#<th>Total outside spending</th>#}
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for committee in committees %}
+{#                {% if committee.total %}#}
+                    <tr class="{% cycle 'odd' 'even' %}">
+                        <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
+                        {#<td>${{ committee.total|intcomma }}</td>#}
+                        <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</a></td>
+                    </tr>
+{#                {% endif %}#}
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% endif %}
+
+<br><br>
+{% if ieonly %}
+<h3>Super PAC letters</h3>
+<table>
+{% for committee in ieonly %}
+<tr class="{% cycle 'odd' 'even' %}">
+<td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
+</tr>
+{% endfor %}
+</table>
+{% endif %}
+
+    {% else %}
+    <h3>Please enter a search term</h3>
+    {% endif %}
+
+{% endblock %}
+

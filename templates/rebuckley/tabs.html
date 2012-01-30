@@ -1,0 +1,27 @@
+<div id="filterExpenditures">
+    <span>Browse by</span>
+        <ul>
+            <li id="filter_candidate">
+                <a href="{% url buckley_candidate_list %}">Candidate</a>
+            </li>
+            <li id="filter_race">
+                <a href="{% url buckley_race_list %}">Race</a>
+            </li>
+            <li id="filter_committee">
+                <a href="{% url buckley_committee_list %}">Committee</a>
+            </li>
+            {% comment %}
+            <li id="filter_letters">
+                <a href="{% url buckley_letter_list %}">Committees that intend to accept unlimited contributions</a>
+            </li>
+            {% endcomment %}
+            <li id="filter_ies">
+                <a href="{% url buckley_ie_list %}">Independent expenditures</a>
+            </li>
+            <li id="filter_electioneering">
+                <a href="{% url buckley_electioneering_list %}">Electioneering communications</a>
+            </li>
+        </ul> 
+        <div class="clear"></div>
+</div>
+{#        <p style="margin-top: -15px; font-style: oblique; font-family: Georgia, 'Times New Roman', Times, serif; text-align: right;">Last update: {{ outside_spending_updated|date:"N j, P" }}</p> #}

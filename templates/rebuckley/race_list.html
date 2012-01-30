@@ -1,0 +1,65 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% block title %}Races - {{ block.super }}{% endblock %}
+
+{% block body %}expendituresHome fullWidth expendituresRace{% endblock %}
+
+
+{% load humanize %}
+{% load media %}
+
+{% block breadcrumb %}{{ block.super }}
+<li>Races</li>
+{% endblock %}
+
+{% block content %}
+    {% include "buckley/tabs.html" %}
+
+<h2>
+    {% if cycle %}
+    Races: {{ cycle }} cycle
+    {% else %}
+    Races
+    {% endif %}
+</h2>
+
+{% if not cycle %}
+Previous cycles: <a href="{% url buckley_cycle_race_list 2010 %}">2010</a>
+{% endif %}
+
+{% if races %}
+
+<p class="tip">Select a race to see details.</p>
+
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Race</th>
+            <th class="sort">General</th>
+            <th class="sort">Primary</th>
+            <th class="sort">Other</th>
+            <th class="sort">Total</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for race in races %}
+    <tr class="{% cycle 'odd' 'even' %}">
+        <td><a href="{% url buckley_cycle_race_detail race=race.race cycle=race.cycle %}">{{ race.full_race }}</a></td>
+        <td>${{ race.amounts.G|intcomma }}</td>
+        <td>${{ race.amounts.P|intcomma }}</td>
+        <td>${{ race.amounts.other|intcomma }}</td>
+        <td>${{ race.total|intcomma }}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+{% with '[4,1]' as sortdir %}
+{% include "buckley/tablesorter.html" %}
+{% endwith %}
+
+{% else %}
+<br/><br/>No spending has been reported for this cycle.
+{% endif %}
+
+{% endblock content %}

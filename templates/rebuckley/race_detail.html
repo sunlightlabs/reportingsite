@@ -1,0 +1,107 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% load humanize %}
+{% load buckley %}
+
+{% block title %}{{ race }} - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} expendituresRace{% endblock %}
+
+{% block breadcrumb %}{{ block.super }}
+<li><a href="{% url buckley_race_list %}">Races</a></li>
+{% if election_type %}
+<li><a href="{% url buckley_race_detail race=short_race %}">{{ race }}</a></li>
+<li>{{ election_type|capfirst }}</li>
+{% else %}
+<li>{{ race }}</li>
+{% endif %}
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "buckley/tabs.html" %}
+
+    <a style="display: block; float: right;" href="{% url buckley_race_detail_feed race=short_race %}"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/feed-icon-14x14.png" alt="RSS" title="Subscribe to an RSS feed of outside spending in the {{ race }} race" style="border: 0;" /></a>
+
+    <h2>Outside spending - {{ race }}{% if election_type %} ({{ election_type }}){% endif %}{% if cycle %} - {{ cycle }} cycle {% endif %}</h2>
+
+<h3 class="h5">Candidates</h3>
+
+{% for candidate in candidates %}
+<a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}{% if not cycle %}{% if candidate.winner %}<span style="font-style: oblique;font-size: 12px;"> - winner</span>{% endif %}{% endif %}:
+<div class="amountLine">
+    <ul>
+    <li>Independent expenditures in support: <span class="amount">${{ candidate|total_support_by_election_type:election_type|intcomma }}</span></li>
+    <li>Independent expenditures in opposition: <span class="amount">${{ candidate|total_opposition_by_election_type:election_type|intcomma }}</span></li>
+    {% if candidate|total_sole_electioneering_by_election_type:election_type %}
+    <li>Electioneering communications: <span class="amount">${{ candidate|total_sole_electioneering_by_election_type:election_type|intcomma }}</span> <a href="#asterisk">*</a></li>
+    {% endif %}
+    </ul>
+</div>
+{% endfor %}
+<div class="amountLine">
+    Total outside spending in race: <span class="amount">${{ total_spent|intcomma }} {% if includes_electioneering %}<a href="#asterisk">*</a>{% endif %}</span>
+</div>
+    {% if election_types %}
+<strong>Elections:</strong> {% for e in election_types %}<a href="{% url buckley_race_election_type_detail race=short_race, election_type=e.slug %}">{{ e.election_type }}</a>{% if not forloop.last %}, {% endif %}{% endfor %}
+<br>
+{% endif %}
+<br>
+
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Date</th>
+            <th class="sort">Election</th>
+            <th class="sort">Committee</th>
+            <th class="sort">Support/Oppose</th>
+            <th class="sort">Candidate</th>
+            {#<th class="sort">Party</th>#}
+            <th class="sort">Amount</th>
+            <th class="sort">Purpose</th>
+        </tr>
+    </thead>
+{% for expenditure in object_list %}
+<tr class="{% cycle 'odd' 'even' %}">
+    <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
+    <td>{{ expenditure.election_type_for_detail_page }}</td>
+    <td>
+        {% if cycle %}
+        <a href="{% url buckley_cycle_committee_detail cycle=cycle slug=expenditure.committee.slug %}">{{ expenditure.committee }}</a>
+        {% else %}
+        <a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a>
+        {% endif %}
+    </td>
+    <td>{% if expenditure.electioneering_communication %}<a href="#asterisk">*</a>{% else %}{% if expenditure.support_oppose == 'O' %}Oppose{% else %}Support{%endif %}{% endif %}</td>
+    <td>{% spaceless %}
+        {% if expenditure.electioneering_communication %}
+        {% for candidate in expenditure.electioneering_candidates.all %}
+        <a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}
+        {% if not forloop.last %},{% endif %}
+        {% endfor %}
+        {% else %}
+        <a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a>{% if expenditure.candidate.party %} ({{ expenditure.candidate.party }}){% endif %}
+        {% endif %}
+        {% endspaceless %}
+    </td>
+    <td>${{ expenditure.expenditure_amount|intcomma }}</td>
+    <td>{{ expenditure.expenditure_purpose }}</td>
+</tr>
+{% endfor %}
+</table>
+
+{% if page_obj.has_other_pages %}
+<div id="paginator" style="width: 250px; margin-left: auto; margin-right: auto; margin-top: 20px; margin-bottom: 20px;">
+  {% if page_obj.has_previous %} <a style="margin-right: 20px;" class="paginatorPrevious" href="?page={{ page_obj.previous_page_number }}">&lt;&lt;Previous</a>{% endif %}
+  {% if page_obj.has_next %} 
+<a class="paginatorNext" href="?page={{ page_obj.next_page_number }}">Next &gt;&gt;</a>{% endif %}
+</div>
+<br />
+{% endif %}
+
+{% with '[0,1]' as sortdir %}
+{% include "buckley/tablesorter.html" %}
+{% endwith %}
+
+    {% include "buckley/electioneering_asterisk.html" %}
+
+{% endblock content %}

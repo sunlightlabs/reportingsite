@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+
+{% block title %}Follow the Unlimited Money - {{ block.super }}{% endblock %}
+
+{% block body %}fullWidth{% endblock %}
+{% block main_content %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+<div id="columns">
+    <div id="fullColumn">
+        <h2 id="featureHeader">Follow the Unlimited Money</h2>
+        <div id="featureMainNav">
+            <ul>
+                <li id="expenditures"><a href="{% url buckley_index %}">Latest Outside Spending</a></li>
+                <li id="overview"><a href="{% url buckley_totals %}">Overview</a></li>
+                <li id="about"><a href="{% url buckley_about %}">About</a></li>
+                <li id="stories" class="last"><a href="{% url buckley_stories %}">Stories</a></li>
+            </ul>  
+            <form id="expenditureSearch" action="{% url buckley_search %}" method="GET">
+                <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Search for a candidate or committee"{% endif %} type="text" name="q" />
+                <button class="goBtn" type="submit" value="Search" >
+                  <span>Go</span>
+                </button>
+            </form>
+            <div class="clear"></div>  
+        </div>
+        
+        <div id="breadcrumbs">
+            <ul>
+                {% block breadcrumb %}
+                <li>
+                    <a href="{% url buckley_index %}">Outside spending home</a>
+                </li>
+                {% endblock breadcrumb %}
+            </ul>
+            <div class="clear"></div>
+        </div>
+        
+    {% block content %}
+    {% endblock content %}
+        
+        <div id="expendituresSource" class="tip">
+            <span>Data source:</span>
+            <ul>
+                <li><a href="http://www.fec.gov/blog/disclosure/entry/update_on_new_spending_data">Federal Election Commission</a></li>
+                <li id="downloadFEC"><a href="ftp://ftp.fec.gov/FEC/ind_exp_2010.csv">Download FEC independent expenditure data</a></li>
+                <li id="downloadFEC"><a href="ftp://ftp.fec.gov/FEC/ec_exp_2010.csv">Download FEC electioneering communication data</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+{% endblock main_content %}

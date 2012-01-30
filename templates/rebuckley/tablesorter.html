@@ -1,0 +1,32 @@
+{% load media %}
+    {% js "js/jquery.tablesorter.min.js" %}
+    <script type="text/javascript">
+    $.tablesorter.addParser({ 
+        id: 'nocomma', 
+        is: function(s) { 
+            // return false so this parser is not auto detected 
+            return false; 
+        }, 
+        format: function(s) { 
+            return s.replace(/,/,'');
+        }, 
+        type: 'numeric' 
+    }); 
+
+    $(document).ready(function()
+        {
+        $("#expendituresData").tablesorter({
+widgets: ['zebra'],
+{% if sorter %}
+headers: { 1: { sorter: '{{ sorter }}' } },
+{% endif %}
+{% if sortdir %}
+sortList: [{{ sortdir }}]
+{% else %}
+sortList: [[0,0]]
+{% endif %}
+            });
+        }
+    );
+
+    </script>

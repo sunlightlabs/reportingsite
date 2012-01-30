@@ -1,0 +1,35 @@
+
+$ source get_fec_files.sh 
+
+# Will load the data files into rebuckely/data/[10|12]/
+# It can take a while to run. 
+
+# loading scripts:
+
+$ python manage.py pop_committees 10
+$ python manage.py pop_committees 12
+$ python manage.py pop_candidates 10
+$ python manage.py pop_candidates 12
+$ python manage.py pop_ie 10
+$ python manage.py pop_ie 12
+
+
+# Read superpacs directly from fec page:
+
+python manage.py read_superpac_list
+
+# loading ie might go faster with or without an index:
+# create index xz1 on rebuckley_expenditure (filing_number, transaction_id);
+
+# to remove duplicates use:
+
+$ python manage.py cull_amended 10
+$ python manage.py cull_amended 12
+
+
+# still need to attach django models...
+$ python manage.py attach_models
+$ python manage.py calculate_sums
+
+
+

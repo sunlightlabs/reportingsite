@@ -1,0 +1,139 @@
+{% load humanize %}
+{% load media %}
+
+    <!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">
+    <html><head>
+    <meta http-equiv="content-type" content="text/html; charset=ISO-8859-1">
+
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.0/jquery.min.js"></script>
+
+
+	<link rel="stylesheet" href="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/css/main.css" type="text/css" media="screen, projection" />
+	    <!--[if IE 6]><link rel="stylesheet" href="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/css/buggy.css" type="text/css" media="screen, projection" /><![endif]-->
+	    <!--[if IE 7]><link rel="stylesheet" href="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/css/buggy7.css" type="text/css" media="screen, projection" /><![endif]-->
+	
+	
+	
+	
+	<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+	
+      <title></title>
+
+
+      <style type="text/css">
+    /* ------------------
+      hack
+            ------------------      */
+	
+	#expendituresData {
+		font-family: "Lucida Sans Unicode", "Lucida Grande", Sans-Serif;
+	}
+	#expendituresData th
+     {
+          font-size: 12px;
+          font-weight: bold;
+          color: #58595B;
+          padding: 0px 10px;
+          border-bottom: 2px solid #457b80;
+          vertical-align: bottom;
+     }
+     #expendituresData td
+     {
+          color: #58595B;
+          padding: 9px 8px 2px 8px;
+			font-size: 11px;
+     }
+		
+ 	.tablesorter thead {
+		font-size:14px;
+		
+	}
+	.even {
+		background-color: #eeefeb;
+	}
+	
+	.odd {
+		background-color: #dfe0da;
+	}
+	
+	.tablesorter thead th.sort{
+		background-color: #b3b5b7;
+		border-bottom: 2px solid #020000;
+	}
+	
+	.tablesorter thead th.headerSortUp { 
+		background-color: #9f9f9f;
+	}
+	
+	.tablesorter thead th.headerSortDown {
+		background-color: #9f9f9f;
+		 
+	}
+	
+
+
+      </style>
+    </head>
+
+    <body>
+	<div style="width:590px; background-color: #eeefeb; padding-top:10px;">
+      <center>
+        <h3>Super PACs</h3>
+      </center>
+
+
+     
+
+<table id="expendituresData" class="tablesorter">
+    <thead>
+
+        <tr>
+            <th class="sort">Committee</th>
+            <th class="sort">Independent Expenditures (Presidential only)</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for sp in superpacs %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td>{{ sp.fec_name }}</td>
+            <td>${{ sp.total_presidential_indy_expenditures|intcomma }}</td>
+            
+        </tr>
+        {% endfor %}
+        
+
+        
+</tbody>
+</table>
+</div>
+
+<script type="text/javascript">
+$(document).ready(function()
+    {
+	$.tablesorter.addParser({ 
+		id: 'nocomma', 
+		is: function(s) { 
+			// return false so this parser is not auto detected 
+			return false; 
+		}, 
+		format: function(s) { 
+			return s.replace(/,/,'');
+		}, 
+		type: 'numeric' 
+	}); 
+
+    $("#expendituresData").tablesorter({
+		widgets: ['zebra'],
+		sortList: [[1,1]]
+
+        });
+    }
+);
+
+</script>
+
+
+    </body></html>
+    

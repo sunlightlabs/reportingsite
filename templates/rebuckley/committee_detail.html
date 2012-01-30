@@ -1,0 +1,117 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% load buckley %}
+{% load humanize %}
+
+{% block title %}{{ object }} - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} expendituresCommittee{% endblock %}
+
+{% block breadcrumb %}{{ block.super }}
+<li><a href="{% url buckley_committee_list %}">Committees</a></li>
+<li>{{ object }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "buckley/tabs.html" %}
+
+    <a style="display: block; float: right;" href="{% url buckley_committee_detail_feed slug=object.slug %}"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/feed-icon-14x14.png" alt="RSS" title="Subscribe to an RSS feed of outside spending by {{ object }}" style="border: 0;" /></a>
+
+    <h2>
+        {% if cycle %}
+            {{ object }} - {{ cycle }} cycle
+        {% else %}
+            {{ object }}
+        {% endif %}
+    </h2>
+    {% if not cycle %}
+    Previous cycles: 
+        <a href="{% url buckley_cycle_committee_detail cycle=2010 slug=object.slug %}">2010</a>
+    {% endif %}
+
+{% if object.ieonly_url %}
+<p class="tip">This committee has <a href="{{ object.ieonly_url }}">filed a letter indicating that it will accept donations of unlimited amounts</a></p>
+{% endif %}
+
+{% if object.combined_all_candidates_with_amounts %}
+
+<div class="amountLine">
+    Total: <span class="amount">
+        {% if cycle %}
+        ${{ object|committee_total_by_cycle:cycle|intcomma }}
+        {% else %}
+        ${{ object.total|intcomma }}
+        {% endif %}
+    </span>
+</div>
+<div class="clear"></div>
+
+<div class="clear"></div>
+
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Race</th>
+            <th class="sort">Candidate</th>
+            <th class="sort">Support/oppose</th>
+            <th class="sort">Amount</th>
+{% if not cycle %}
+            <th class="sort">Winner</th>
+{% endif %}
+        </tr>
+    </thead>
+    <tbody>
+        {% for candidates, data in object.combined_all_candidates_with_amounts %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td>{% if data.race %}{{ data.race }}{% else %}--{% endif %}</td>
+            <td>{% spaceless %}
+                {% if candidates %}
+                    {% for candidate in candidates %}
+                        {% if data.slugs %}
+                            {% if cycle %}
+                            <a href="{% url buckley_cycle_candidate_committee_detail candidate_slug=data.slugs committee_slug=object.slug cycle=cycle %}">
+                            {% else %}
+                            <a href="{% url buckley_candidate_committee_detail candidate_slug=data.slugs committee_slug=object.slug %}">
+                            {% endif %}
+                        {% else %}
+                            {% if cycle %}
+                            <a href="{% url buckley_cycle_candidate_committee_detail candidate_slug=candidate.slug committee_slug=object.slug cycle=cycle %}">
+                            {% else %}
+                            <a href="{% url buckley_candidate_committee_detail candidate_slug=candidate.slug committee_slug=object.slug %}">
+                            {% endif %}
+                        {% endif %}
+                        {{ candidate }}</a>
+                        {% if candidate.party %} ({{ candidate.party }}){% endif %}
+                        {% if not forloop.last %}, {% endif %}
+                    {% endfor %}
+                {% else %}
+                ---
+                {% endif %}
+                </a>
+                {% endspaceless %}</td>
+            <td>{% ifequal data.support_oppose '*' %}<a href="#asterisk">{{ data.support_oppose }}</a>{% else %}{{ data.support_oppose }}{% endifequal %}</td>
+            <td>${{ data.amount|intcomma }}</td>
+{% if not cycle %}
+            <td>
+                {% if candidates %}
+                {% for candidate in candidates %}
+                    {% if candidate.winner %}Winner{% endif %}
+                    {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+                {% endif %}
+            </td>
+{% endif %}
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% include "buckley/tablesorter.html" %}
+
+    {% include "buckley/electioneering_asterisk.html" %}
+
+{% else %}
+<br/><br/>No spending has been reported for this cycle.
+{% endif %}
+
+{% endblock content %}

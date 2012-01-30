@@ -1,0 +1,68 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% block title %}{{ candidate }} - {{ committee }} - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} expendituresCandidate{% endblock %}
+
+{% load humanize %}
+{% load media %}
+{% load buckley %}
+
+{% block breadcrumb %}{{ block.super }}
+<li><a href="{% url buckley_candidate_list %}">Candidates</a></li>
+{% ifequal candidate_count 1 %}
+<li><a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a></li>
+{% endifequal %}
+<li>Spending by {{ committee }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "buckley/tabs.html" %}
+
+    {% spaceless %}
+    <h2 id="withDetail"><a href="{{ committee.get_absolute_url }}">{{ committee }}</a>:<br>Filings mentioning
+        {% for candidate in candidates %}
+        <a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a>{% if candidate.party %} ({{ candidate.party }}){% endif %}{% if not forloop.last %}, {% endif %}
+        {% endfor %}
+        {% if cycle %}
+        <br/>{{ cycle }} cycle
+        {% endif %}
+    </h2>
+    {% endspaceless %}
+    <div class="amountLine">
+        Total: <span class="amount">${{ total|intcomma }}</span>
+    </div>
+    <table id="expendituresData" class="tablesorter">
+        <thead>
+            <tr>
+                <th class="sort">Expenditure date</th>
+                <th class="sort">Support/Oppose</th>
+                <th class="sort">Amount</th>
+                <th class="sort">Purpose</th>
+                <th class="sort">Payee</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for expenditure in object_list %}
+            <tr class="{% cycle 'odd' 'even' %}" id="{{ expenditure.id }}">
+                <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
+                <td>{% spaceless %}
+                    {% if expenditure.electioneering_communication %}
+                    <a href="#asterisk">*</a>
+                    {% else %}
+                    {% if expenditure.support_oppose == 'O' %}Oppose{% else %}{% if expenditure.support_oppose == 'S' %}Support{% endif %}{%endif %}
+                    {% endif %}
+                    {% endspaceless %}</td>
+                <td>{% if expenditure.expenditure_amount < 0 %}-&nbsp;{% endif %}${{ expenditure.expenditure_amount|absolute_value|intcomma }}</td>
+                <td>{{ expenditure.expenditure_purpose }}</td>
+                <td>{{ expenditure.payee }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    {% with '[0,1]' as sortdir %}
+    {% include "buckley/tablesorter.html" %}
+    {% endwith %}
+
+    {% include "buckley/electioneering_asterisk.html" %}
+{% endblock content %}

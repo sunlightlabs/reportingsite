@@ -3,3 +3,8 @@
 .*.swp
 local_settings.py
 reporting.sql
+buckley/data/
+rebuckley/data/
+rebuckley/data/10/
+rebuckley/data/12/
+*.DS_Store
