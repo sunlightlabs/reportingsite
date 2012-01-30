@@ -38,7 +38,7 @@ class Command(BaseCommand):
                   ('election_year', (162, 163)),
                   ('current_district', (164, 165)), ]
 
-        data_filename = "buckley/data/%s/foiacn.dta" % (cycle)
+        data_filename = "rebuckley/data/%s/foiacn.dta" % (cycle)
         data_file = open(data_filename, "r")
         for line in data_file:
             data_dict = {}

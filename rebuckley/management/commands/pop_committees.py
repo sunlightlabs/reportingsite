@@ -42,7 +42,7 @@ class Command(BaseCommand):
                     ('connected_org_name',(238,275)),
                     ('candidate_id',(276,284))]
         
-        data_filename = "buckley/data/%s/foiacm.dta" % (cycle)
+        data_filename = "rebuckley/data/%s/foiacm.dta" % (cycle)
         data_file = open(data_filename, "r")
         processed =0
         for line in data_file:

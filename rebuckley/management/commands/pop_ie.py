@@ -24,7 +24,7 @@ class Command(BaseCommand):
         cycle_year = 2000 + int(cycle)
         assert cycle, "You must enter a two-digit cycle"
         
-        datafile = "buckley/data/%s/IndependentExpenditure_%s.csv" % (cycle, cycle)
+        datafile = "rebuckley/data/%s/IndependentExpenditure_%s.csv" % (cycle, cycle)
         reader = csv.DictReader(open(datafile))
         for row in reader:
             try:
