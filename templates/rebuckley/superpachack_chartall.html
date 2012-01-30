@@ -1,0 +1,71 @@
+{% extends "rebuckley/superpachac_base.html" %}
+{% load humanize %}
+{% load media %}
+
+{% block title %}Super PACs{% endblock %}
+{% block page_title %}Super PACs reporting independent expenditures{% endblock %}
+
+{% block main_content %}
+<table id="expendituresData" class="tablesorter">
+    <thead>
+
+        <tr>
+            <th class="sort">Committee</th>
+            <th class="sort">Presidential Spending</th>
+            <th class="sort">Total Spending</th>            
+            <th class="sort">Donations</th>
+            <th class="sort">Cash&nbsp;as&nbsp;of<br>12/31/11</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for sp in superpacs %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td>{{ sp.fec_name }}</td>
+            <td>${{ sp.total_presidential_indy_expenditures|intcomma }}<br><a href="">download .csv</a></td>
+            <td>${{ sp.total_indy_expenditures|intcomma }}<br><a href="">download .csv</a></td>
+            <td>$0,000,000<br><a href="">download .csv</a></td>
+            <td>$0,000,000</td>
+            
+            
+            
+        </tr>
+        {% endfor %}
+        
+
+        
+</tbody>
+</table>
+<div style="margin-top:20px;">
+<p style="font-size: 10px;">Source: FEC; Sunlight Foundation analysis</p>
+</div>
+
+</div>
+
+
+<script type="text/javascript">
+$(document).ready(function()
+    {
+	$.tablesorter.addParser({ 
+		id: 'nocomma', 
+		is: function(s) { 
+			// return false so this parser is not auto detected 
+			return false; 
+		}, 
+		format: function(s) { 
+			return s.replace(/,/,'');
+		}, 
+		type: 'numeric' 
+	}); 
+
+    $("#expendituresData").tablesorter({
+		widgets: ['zebra'],
+		sortList: [[2,1]]
+
+        });
+    }
+);
+
+</script>
+
+{% endblock %}
