@@ -14,11 +14,12 @@ class Command(BaseCommand):
                 expenditures = Expenditure.objects.filter(cycle=cycle)
                 for e in expenditures:
                     if (e.candidate):
-                        #print "candidate's office = %s" % (e.candidate.office)
-                        if ( ( e.office != '' and e.office!=' ')  and e.office.upper() != e.candidate.office.upper()):
+                        print "candidate's office = %s ; expenditure office: %s" % (e.candidate.office, e.office)
+                        if ( ( e.office == '' or e.office==' ')  and e.office.upper() != e.candidate.office.upper()):
                             if ( e.office == '' or e.office==' '): 
-                                e.office = e.candidate.office.upper().trim()
+                                e.office = e.candidate.office.upper().strip()
                                 e.save()
+                                
                                 
                             print "Mismatch '%s' - '%s' " % (e.office, e.candidate.office)
                     else:
