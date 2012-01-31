@@ -5,6 +5,7 @@ from django.views.decorators.cache import cache_page
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
 from django.http import Http404, HttpResponse
 from django.db.models import Sum
+from django.db.models import Q
 
 from rebuckley.models import *
 
@@ -32,7 +33,9 @@ def superpac_presidential_chart(request):
                               
 def superpac_chart(request):
 
-    superpacs_spending = IEOnlyCommittee.objects.filter(total_indy_expenditures__gte=10)
+
+
+    superpacs_spending = IEOnlyCommittee.objects.filter( Q(total_indy_expenditures__gte=10) | Q(has_contributions=True))
     return render_to_response('rebuckley/superpachack_chartall.html',
                             {'superpacs':superpacs_spending})  
                             

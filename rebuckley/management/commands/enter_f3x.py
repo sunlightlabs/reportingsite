@@ -25,12 +25,12 @@ def process_summary_line(field_array, filing_number):
     state = field_array[7]
     zip = field_array[8]
 
-    print "\ncommittee: %s address_change: %s address: %s %s %s %s %s"  % (committee_name, address_change, street_1, street_2, city, state, zip)
+    #print "\ncommittee: %s address_change: %s address: %s %s %s %s %s"  % (committee_name, address_change, street_1, street_2, city, state, zip)
 
     coverage_from_date = field_array[13]
     coverage_to_date = field_array[14]
 
-    print "Form covers %s - %s " % (coverage_from_date, coverage_to_date)
+    #print "Form covers %s - %s " % (coverage_from_date, coverage_to_date)
 
     coh_begin = field_array[22]
     total_receipts = field_array[23]
@@ -38,7 +38,7 @@ def process_summary_line(field_array, filing_number):
     coh_close = field_array[26]
     itemized = field_array[80]
     unitemized = field_array[81]
-    print "\tCash on hand beginning: %s\n\t+total receipts %s ( = itemized: %s + unitemized: %s)\n\t-total_disbursements %s\n\t=Cash on hand close %s" % (coh_begin, total_receipts, itemized, unitemized, total_disbursements, coh_close)
+    #print "\tCash on hand beginning: %s\n\t+total receipts %s ( = itemized: %s + unitemized: %s)\n\t-total_disbursements %s\n\t=Cash on hand close %s" % (coh_begin, total_receipts, itemized, unitemized, total_disbursements, coh_close)
     
     # enter the line: 
     try:
@@ -78,7 +78,7 @@ def process_contrib_11A1(fields, filing_number, amended):
     back_ref_sked_name = fields[4]
     entity_type = fields[5]
     
-    print "committee %s \n transaction id: %s back_ref_tran_id: %s back_ref_sked_name: %s entity_type: %s" % (committee_id, transaction_id, back_ref_tran_id, back_ref_sked_name, entity_type)
+    #print "committee %s \n transaction id: %s back_ref_tran_id: %s back_ref_sked_name: %s entity_type: %s" % (committee_id, transaction_id, back_ref_tran_id, back_ref_sked_name, entity_type)
     
     contrib_org = fields[6]
     contrib_last = fields[7]
@@ -103,15 +103,15 @@ def process_contrib_11A1(fields, filing_number, amended):
     # "Reference to SI or SL system code that identifies the Account"
     s_ref = fields[43]
     
-    print "org: %s name: %s %s %s '%s' address: %s %s %s %s %s" % (contrib_org, contrib_prefix, contrib_first, contrib_middle, contrib_last, contrib_street_1, contrib_street_2, contrib_city, contrib_state, contrib_zip)
-    print "Amt: $%s, date %s, purpose: %s employer: %s, occupation: %s" % (contrib_amt, contrib_date, contrib_purpose, contrib_employer, contrib_occupation)
+    #print "org: %s name: %s %s %s '%s' address: %s %s %s %s %s" % (contrib_org, contrib_prefix, contrib_first, contrib_middle, contrib_last, contrib_street_1, contrib_street_2, contrib_city, contrib_state, contrib_zip)
+    #print "Amt: $%s, date %s, purpose: %s employer: %s, occupation: %s" % (contrib_amt, contrib_date, contrib_purpose, contrib_employer, contrib_occupation)
     
     # enter the data:
     
     try: 
         Contribution.objects.get(filing_number=filing_number,transaction_id=transaction_id)
     except Contribution.DoesNotExist:
-        print "Creating contrib from filing number: %s transaction_id: %s" % (filing_number, transaction_id)
+        #print "Creating contrib from filing number: %s transaction_id: %s" % (filing_number, transaction_id)
         c = Contribution.objects.create(
             from_amended_filing=amended,
             fec_committeeid = committee_id,
@@ -160,8 +160,8 @@ def enter_form(complete_file_text, filing_number):
         line_type = fields[0].upper()
         
         if (linecount==1): 
-            print "'header line': %s" % fields
-            print "Verifying header version" 
+            #print "'header line': %s" % fields
+            #print "Verifying header version" 
             assert (fields[2].strip()=="8.0")            
             
         if (linecount==2):
