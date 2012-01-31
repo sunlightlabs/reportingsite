@@ -15,7 +15,7 @@ def generic_csv(filename, fields, rows):
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
     writer = csv.writer(response)
-    writer.writerow(["This file is based on recently-updated FEC data. etc. etc. etc."])
+    writer.writerow([data_disclaimer])
     writer.writerow(fields)
     for row in rows:
         writer.writerow(row)
