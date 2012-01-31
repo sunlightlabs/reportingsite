@@ -13,7 +13,7 @@
             <th class="sort">Committee</th>
             <th class="sort">Presidential Spending</th>
             <th class="sort">Total Spending</th>            
-            <th class="sort">Donations</th>
+            <th class="sort">2011 Donations</th>
             <th class="sort">Cash&nbsp;as&nbsp;of<br>12/31/11</th>
         </tr>
     </thead> 
@@ -24,8 +24,8 @@
             <td><a href="{{sp.superpachackpage}}">{{ sp.fec_name }}</a></td>
             <td>${{ sp.total_presidential_indy_expenditures|intcomma }}<br><a href="">download .csv</a></td>
             <td>${{ sp.total_indy_expenditures|intcomma }}<br><a href="">download .csv</a></td>
-            <td>$0,000,000<br><a href="">download .csv</a></td>
-            <td>$0,000,000</td>
+            <td>{% if sp.total_contributions %}${{ sp.total_contributions|intcomma}}<br><a href="">download .csv</a>{% endif %}</td>
+            <td>{% if sp.cash_on_hand %}${{ sp.cash_on_hand|intcomma }}{% endif %}</td>
             
             
             

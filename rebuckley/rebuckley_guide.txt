@@ -27,9 +27,23 @@ $ python manage.py cull_amended 10
 $ python manage.py cull_amended 12
 
 
-# still need to attach django models...
+
 $ python manage.py attach_models
+$ python manage.py fix_office
+
+# create donors by reading
+$ python manage.py load_contribs
+# Don't load them, just see who's filed year-end reports
+$ python manage.py watch_superpac_filings
+
+#sum expenditure stuff
 $ python manage.py calculate_sums
+# put tallies in main superpac model:
+$ python manage.py set_contrib_flags
+
+# run diagnostic 
+$ python manage.py count_db_entities
+
 
 
 

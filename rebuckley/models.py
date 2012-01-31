@@ -41,6 +41,12 @@ class Candidate(models.Model):
 
     def __unicode__(self):
         return self.crp_name or self.fec_name
+    
+    def state(self):
+        if self.office=='P':
+            return 'NA'
+        else:
+            return self.state_address
 
 
     @models.permalink
@@ -158,32 +164,77 @@ class Committee(models.Model):
     total_expenditures = models.DecimalField(max_digits=19, decimal_places=2, null=True)
 
 
+class F3X_Summary(models.Model):
+    """The second line, aka 'form line' of a F3X filing"""
+    filing_number = models.IntegerField()
+    amended = models.NullBooleanField()
+    committee_name = models.CharField(max_length=200)
+    fec_id = models.CharField(max_length=9)
+    address_change = models.CharField(max_length=1, blank=True)
+    street_1 = models.CharField(max_length=34, blank=True)
+    street_2 = models.CharField(max_length=34, blank=True)
+    city = models.CharField(max_length=30, blank=True)
+    state = models.CharField(max_length=2, blank=True)
+    zip = models.CharField(max_length=10, blank=True)
+    coverage_from_date = models.DateField(null=True, blank=True)
+    coverage_to_date = models.DateField(null=True, blank=True)
+    coh_begin = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    total_receipts = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    total_disbursements = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    coh_close = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    itemized = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    unitemized = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    
+    
 class Contribution(models.Model):
-    committee = models.ForeignKey(Committee)
+    """ For F3X line 11A entries """
+    from_amended_filing = models.NullBooleanField()
+    committee = models.ForeignKey(Committee, null=True)
+    fec_committeeid = models.CharField(max_length=9)
     filing_number = models.IntegerField()
     transaction_id = models.CharField(max_length=32)
-    name = models.CharField(max_length=255)
-    contributor_type = models.CharField(max_length=10)
-    date = models.DateField()
-    employer = models.CharField(max_length=100)
-    occupation = models.CharField(max_length=100)
-    street1 = models.CharField(max_length=100)
-    street2 = models.CharField(max_length=100)
-    city = models.CharField(max_length=100)
-    state = models.CharField(max_length=50)
-    zipcode = models.CharField(max_length=9)
-    amount = models.DecimalField(max_digits=19, decimal_places=2)
-    aggregate = models.DecimalField(max_digits=19, decimal_places=2)
-    memo = models.CharField(max_length=100)
-    url = models.URLField(verify_exists=False)
-    data_row = models.TextField()
-    data_row_hash = models.CharField(max_length=32, db_index=True) # This would normally have a unique key, but some data rows are blank.
+    back_ref_tran_id = models.CharField(max_length=32, blank=True)
+    back_ref_sked_name = models.CharField(max_length=32, blank=True )
+    entity_type = models.CharField(max_length=5, blank=True)
+    display_name = models.CharField(max_length=255)
+    
+    contrib_org = models.CharField(max_length=200, blank=True)
+    contrib_last = models.CharField(max_length=30, blank=True)
+    contrib_first = models.CharField(max_length=20, blank=True)
+    contrib_middle = models.CharField(max_length=20, blank=True)
+    contrib_prefix = models.CharField(max_length=10, blank=True)
+    contrib_suffix = models.CharField(max_length=10, blank=True)
+    contrib_street_1 = models.CharField(max_length=34, blank=True)
+    contrib_street_2 = models.CharField(max_length=34, blank=True)
+    contrib_city = models.CharField(max_length=30, blank=True)
+    contrib_state = models.CharField(max_length=2, blank=True)
+    contrib_zip = models.CharField(max_length=10, blank=True)
+    contrib_date = models.DateField(blank=True, null=True)
+    contrib_amt = models.DecimalField(max_digits=19, decimal_places=2)
+    contrib_agg = models.DecimalField(max_digits=19, decimal_places=2)
+    contrib_purpose = models.CharField(max_length=100, blank=True)
+    contrib_employer = models.CharField(max_length=38, blank=True)
+    contrib_occupation = models.CharField(max_length=38, blank=True)
+    memo_agg_item = models.CharField(max_length=100, blank=True)
+    memo_text_descript = models.CharField(max_length=100, blank=True)
+    
+    url = models.URLField(verify_exists=False, null=True, blank=True)
+    
+    # Put the raw data line in here as ref--probably a good idea
+    # data_row = models.TextField()
+    
+    # Should we disregard this line item because it appears later in an amended filing?
+    superceded_by_amendment=models.BooleanField(default=False)
+    amends_earlier_filing = models.BooleanField(default=False)
+    # if this entry is amended by a more recent entry, link to it:
+    amended_by=models.IntegerField(null=True)
+    
 
     def __unicode__(self):
         return self.name
     
     class Meta:
-        ordering = ('name', )
+        ordering = ('-contrib_amt', )
 
     def __unicode__(self):
         return self.name
@@ -253,6 +304,11 @@ class Expenditure(models.Model):
         if self.support_oppose.upper() == 'O':
                 return "Oppose"
         return "Unknown"
+    def unmatched_amendment(self):
+        if self.amendment.startswith('A') and self.amends_earlier_filing == False:
+            return True
+        else: 
+            return False
 
 # Dump of transparency ids
 class Transparency_Crosswalk(models.Model):
@@ -276,17 +332,19 @@ class IEOnlyCommittee(models.Model):
     """
     fec_id = models.CharField(max_length=9, primary_key=True)
     committee_master_record=models.ForeignKey(Committee, null=True)
-    display_name = models.CharField(max_length=100, null=True)
-    slug = models.SlugField(null=True)
+    display_name = models.CharField(max_length=100, null=True, blank=True, help_text="A name entered here will be used instead of the fec's name. Leave this blank if the FEC name is fine.")
+    slug = models.SlugField(null=True, editable=False)
     fec_name = models.CharField(max_length=100, null=True)
     filing_freq_verbatim = models.CharField(max_length=100, null=True)
     # we can suck this in from the old pdf reading ap--without a start date I dunno how we total contributions.
     date_letter_submitted = models.DateField(null=True)
     # hand-enter this to link to sunlight reporting group's published profile
-    profile_url = models.CharField(max_length=255, null=True, blank=True)
+    profile_url = models.CharField(max_length=255, null=True, blank=True, help_text="What's the url of sunlight's profile of this candidate? Please include the full link, i.e. http://sunlight/etc/etc.html. Leave blank if there isn't one")
+    supporting = models.CharField(max_length=255, null=True, blank=True, help_text="Who is this PAC supporting?")
     # hand-enter this to link to a superpacs web site published profile
-    superpac_url = models.CharField(max_length=255, null=True, blank=True)
+    superpac_url = models.CharField(max_length=255, null=True, blank=True, help_text="What's the super PAC's web site?")
     has_contributions = models.NullBooleanField(null=True, default=False)
+    # total receipts
     total_contributions = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     # Only include independent expenditures in this total
     has_expenditures = models.NullBooleanField(null=True, default=False)
@@ -294,16 +352,40 @@ class IEOnlyCommittee(models.Model):
     # Include all spending reported on summary reports. Should this also include total_indy_expenditures after last report closing date?
     total_presidential_indy_expenditures = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     total_all_expenditures = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    cash_on_hand = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    cash_on_hand_date = models.DateField(null=True)
 
 
     class Meta:
-        ordering = ('-date_letter_submitted', )
+        ordering = ('-total_indy_expenditures', )
 
+
+    def name_to_show(self):
+        if (self.display_name):
+            if (len(self.display_name.strip()) > 4):
+                return self.display_name
+        return self.fec_name
+            
     def __unicode__(self):
-        return self.name
+        return self.name_to_show()
         
     def superpachackpage(self):
         return "/super-pacs/committee/%s/%s/" % (self.slug, self.fec_id)
+    
+    def superpachackcsv(self):
+        return "/super-pacs/csv/committee/%s/%s/" % (self.slug, self.fec_id)
+        
+    def superpachackdonors(self):
+        return "/super-pacs/contributions/%s/%s/" % (self.slug, self.fec_id)        
+    
+    def superpachackdonorscsv(self):
+        return "/super-pacs/csv/contributions/%s/%s/" % (self.slug, self.fec_id)
+        
+    def has_linkable_url(self):
+        """Don't display a url if someone adds a space there... """
+        if (len(self.profile_url.strip()) > 4):
+            return True
+        return False
         
 # pac_candidate -- indicates a pac's total support or opposition towards a particular candidate. If a particular pac *both* supports and opposes a candidate, this should go in two separate entries. 
 class Pac_Candidate(models.Model):

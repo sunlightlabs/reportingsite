@@ -22,16 +22,14 @@ class Command(BaseCommand):
             for this_amendment in all_current_amendments:
                 print 
                 presumed_dupe = Expenditure.objects.filter(transaction_id=this_amendment.transaction_id, raw_committee_id=this_amendment.raw_committee_id, amendment__in=list_of_earlier_amendments, superceded_by_amendment=False, cycle=this_amendment.cycle)
-                if (len(presumed_dupe) == 1):
+                for dupe in presumed_dupe:
                     print "Found dupe to: %s %s $%s" % (this_amendment.raw_committee_id, this_amendment.id, this_amendment.expenditure_amount)
-                    presumed_dupe[0].amended_by=this_amendment.id
-                    presumed_dupe[0].superceded_by_amendment=True
-                    presumed_dupe[0].save()
+                    dupe.amended_by=this_amendment.id
+                    dupe.superceded_by_amendment=True
+                    dupe.save()
                     
                     this_amendment.amends_earlier_filing = True
                     this_amendment.save()
                     
-                elif (len(presumed_dupe) > 1):
-                    print "@@@Found multiple dupes to: %s %s $%s " % (this_amendment.raw_committee_id, this_amendment.id, this_amendment.expenditure_amount)
                 else:
                     print "Couldn't find dupe to: %s %s $%s " % (this_amendment.raw_committee_id, this_amendment.id, this_amendment.expenditure_amount)

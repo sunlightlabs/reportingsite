@@ -38,4 +38,13 @@ class Command(BaseCommand):
         print "Committees: (from master table): %s" % (committee_count)
         
         ieoc_count = IEOnlyCommittee.objects.count()
-        print "Superpacs: %s" % (ieoc_count)        
+        print "Superpacs: %s" % (ieoc_count)
+        
+        has_expenditures = IEOnlyCommittee.objects.filter(has_expenditures=True).count()
+        print "Number of superpacs with expenditures: %s" % (has_expenditures)
+                
+        has_pres_expenditures = IEOnlyCommittee.objects.filter(total_presidential_indy_expenditures__gt=0).count()
+        print "Superpacs with pres expenditures: %s" % has_pres_expenditures
+        
+        has_donors = IEOnlyCommittee.objects.filter(has_contributions=True).count()
+        print "Has donors: %s" % (has_donors)
