@@ -21,7 +21,7 @@
     <tbody>
         {% for sp in superpacs %}
         <tr class="{% cycle 'odd' 'even' %}">
-            <td>{% if sp.has_linkable_url %}<a href="{{sp.profile_url}}">{% endif %}{{ sp.name_to_show }}{% if sp.has_linkable_url %}</a>{% endif %}</td>
+            <td>{% if sp.has_linkable_url %}<a href="{{sp.profile_url}}" target="null">{% endif %}{{ sp.name_to_show }}{% if sp.has_linkable_url %}</a>{% endif %}</td>
             <td>{% if sp.supporting %}{{sp.supporting}}{% endif %}</td>
             <td>${{ sp.total_presidential_indy_expenditures|intcomma }}<br><a href="{{sp.superpachackcsv}}">download .csv</a></td>
             <td>{% if sp.total_contributions %}${{ sp.total_contributions|intcomma}}{% endif %}{% if sp.has_contributions %}<br><a href="{{ sp.superpachackdonorscsv}}">download .csv</a>{% endif %}</td>
