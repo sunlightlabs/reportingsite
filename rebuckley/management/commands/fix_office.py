@@ -16,7 +16,7 @@ class Command(BaseCommand):
                     if (e.candidate):
                         print "candidate's office = %s ; expenditure office: %s" % (e.candidate.office, e.office)
                         if ( ( e.office == '' or e.office==' ') ):
-                            if ( (e.candidate.office.upper()='P' or e.candidate.office.upper()='H' or e.candidate.office.upper()='S' ) ): 
+                            if ( (e.candidate.office.upper()=='P' or e.candidate.office.upper()=='H' or e.candidate.office.upper()=='S' ) ): 
                                 e.office = e.candidate.office.upper().strip()
                                 e.save()
                                 print "Fixing '%s' to '%s' " % (e.office, e.candidate.office)
