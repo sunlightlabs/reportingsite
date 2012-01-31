@@ -4,7 +4,7 @@ import csv
 from django.views.decorators.cache import cache_page
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
 from django.http import Http404, HttpResponse
-
+from django.db.models import Sum
 
 from rebuckley.models import *
 
@@ -25,8 +25,10 @@ def generic_csv(filename, fields, rows):
 def superpac_presidential_chart(request):
     
     superpacs_with_presidential_spending = IEOnlyCommittee.objects.filter(total_presidential_indy_expenditures__gte=10)
+    total_spending = superpacs_with_presidential_spending.aggregate(total_spent=Sum('total_presidential_indy_expenditures'))
     return render_to_response('rebuckley/superpachack_chart.html',
-                              {'superpacs':superpacs_with_presidential_spending})
+                              {'superpacs':superpacs_with_presidential_spending,
+                              'total':total_spending})
                               
 def superpac_chart(request):
 
