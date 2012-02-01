@@ -35,7 +35,7 @@ def superpac_chart(request):
 
 
 
-    superpacs_spending = IEOnlyCommittee.objects.filter( Q(total_indy_expenditures__gte=100) | Q(has_contributions=True) | Q(cash_on_hand__gt=100))
+    superpacs_spending = IEOnlyCommittee.objects.filter( Q(total_indy_expenditures__gte=1) | Q(has_contributions=True) | Q(cash_on_hand__gt=100))
     return render_to_response('rebuckley/superpachack_chartall.html',
                             {'superpacs':superpacs_spending})  
                             
@@ -81,13 +81,13 @@ def contribs_csv(request, ieonlycommittee_id):
     return generic_csv(file_name, fields, rows)
     
 def state_contribs_csv(request, state):                            
-    contributions = Contribution.objects.filter(contrib_state=state, superceded_by_amendment=False)
+    contributions = Contribution.objects.filter(contrib_state=state.upper(), superceded_by_amendment=False)
     fields = ['Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Transaction ID', 'Filing Number']
     rows = []
     file_name = state + "_donors.csv"
 
     for c in contributions:
-        rows.append([committee.fec_name, ieonlycommittee_id, c.contrib_org, c.contrib_last, c.contrib_first, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
+        rows.append([ c.superpac.fec_name, c.fec_committeeid, c.contrib_org.replace('"',''), c.contrib_last.replace('"',''), c.contrib_first.replace('"',''), c.contrib_city.replace('"',''), c.contrib_state.replace('"',''), c.contrib_occupation.replace('"',''), c.contrib_employer.replace('"',''), c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
     return generic_csv(file_name, fields, rows)        
                                  
                                  
@@ -98,5 +98,9 @@ def all_contribs_csv(request):
     file_name = "all_donors.csv"
 
     for c in contributions:
-        rows.append([committee.fec_name, ieonlycommittee_id, c.contrib_org, c.contrib_last, c.contrib_first, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
+        name = ''
+        if (c.committee):
+            name = c.committee.fec_name
+        
+        rows.append([ c.superpac.fec_name, c.fec_committeeid, c.contrib_org.replace('"',''), c.contrib_last.replace('"',''), c.contrib_first.replace('"',''), c.contrib_city.replace('"',''), c.contrib_state.replace('"',''), c.contrib_occupation.replace('"',''), c.contrib_employer.replace('"',''), c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
     return generic_csv(file_name, fields, rows)                                 

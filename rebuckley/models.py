@@ -186,59 +186,6 @@ class F3X_Summary(models.Model):
     unitemized = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
     
     
-class Contribution(models.Model):
-    """ For F3X line 11A entries """
-    from_amended_filing = models.NullBooleanField()
-    committee = models.ForeignKey(Committee, null=True)
-    fec_committeeid = models.CharField(max_length=9)
-    filing_number = models.IntegerField()
-    transaction_id = models.CharField(max_length=32)
-    back_ref_tran_id = models.CharField(max_length=32, blank=True)
-    back_ref_sked_name = models.CharField(max_length=32, blank=True )
-    entity_type = models.CharField(max_length=5, blank=True)
-    display_name = models.CharField(max_length=255)
-    
-    contrib_org = models.CharField(max_length=200, blank=True)
-    contrib_last = models.CharField(max_length=30, blank=True)
-    contrib_first = models.CharField(max_length=20, blank=True)
-    contrib_middle = models.CharField(max_length=20, blank=True)
-    contrib_prefix = models.CharField(max_length=10, blank=True)
-    contrib_suffix = models.CharField(max_length=10, blank=True)
-    contrib_street_1 = models.CharField(max_length=34, blank=True)
-    contrib_street_2 = models.CharField(max_length=34, blank=True)
-    contrib_city = models.CharField(max_length=30, blank=True)
-    contrib_state = models.CharField(max_length=2, blank=True)
-    contrib_zip = models.CharField(max_length=10, blank=True)
-    contrib_date = models.DateField(blank=True, null=True)
-    contrib_amt = models.DecimalField(max_digits=19, decimal_places=2)
-    contrib_agg = models.DecimalField(max_digits=19, decimal_places=2)
-    contrib_purpose = models.CharField(max_length=100, blank=True)
-    contrib_employer = models.CharField(max_length=38, blank=True)
-    contrib_occupation = models.CharField(max_length=38, blank=True)
-    memo_agg_item = models.CharField(max_length=100, blank=True)
-    memo_text_descript = models.CharField(max_length=100, blank=True)
-    
-    url = models.URLField(verify_exists=False, null=True, blank=True)
-    
-    # Put the raw data line in here as ref--probably a good idea
-    # data_row = models.TextField()
-    
-    # Should we disregard this line item because it appears later in an amended filing?
-    superceded_by_amendment=models.BooleanField(default=False)
-    amends_earlier_filing = models.BooleanField(default=False)
-    # if this entry is amended by a more recent entry, link to it:
-    amended_by=models.IntegerField(null=True)
-    
-
-    def __unicode__(self):
-        return self.name
-    
-    class Meta:
-        ordering = ('-contrib_amt', )
-
-    def __unicode__(self):
-        return self.name
-
 
 class Expenditure(models.Model):
     cycle = models.CharField(max_length=4, null=True)
@@ -365,6 +312,7 @@ class IEOnlyCommittee(models.Model):
             if (len(self.display_name.strip()) > 4):
                 return self.display_name
         return self.fec_name
+    
             
     def __unicode__(self):
         return self.name_to_show()
@@ -401,4 +349,61 @@ class Pac_Candidate(models.Model):
         ordering = ('-total_indepedent_expenditures', )
 
     def __unicode__(self):
-        return self.committee, self.candidate                                      
+        return self.committee, self.candidate 
+        
+        
+class Contribution(models.Model):
+    """ For F3X line 11A entries """
+    from_amended_filing = models.NullBooleanField()
+    committee = models.ForeignKey(Committee, null=True)
+    superpac = models.ForeignKey(IEOnlyCommittee, null=True)
+    fec_committeeid = models.CharField(max_length=9)
+    filing_number = models.IntegerField()
+    transaction_id = models.CharField(max_length=32)
+    back_ref_tran_id = models.CharField(max_length=32, blank=True)
+    back_ref_sked_name = models.CharField(max_length=32, blank=True )
+    entity_type = models.CharField(max_length=5, blank=True)
+    display_name = models.CharField(max_length=255)
+
+    contrib_org = models.CharField(max_length=200, blank=True)
+    contrib_last = models.CharField(max_length=30, blank=True)
+    contrib_first = models.CharField(max_length=20, blank=True)
+    contrib_middle = models.CharField(max_length=20, blank=True)
+    contrib_prefix = models.CharField(max_length=10, blank=True)
+    contrib_suffix = models.CharField(max_length=10, blank=True)
+    contrib_street_1 = models.CharField(max_length=34, blank=True)
+    contrib_street_2 = models.CharField(max_length=34, blank=True)
+    contrib_city = models.CharField(max_length=30, blank=True)
+    contrib_state = models.CharField(max_length=2, blank=True)
+    contrib_zip = models.CharField(max_length=10, blank=True)
+    contrib_date = models.DateField(blank=True, null=True)
+    contrib_amt = models.DecimalField(max_digits=19, decimal_places=2)
+    contrib_agg = models.DecimalField(max_digits=19, decimal_places=2)
+    contrib_purpose = models.CharField(max_length=100, blank=True)
+    contrib_employer = models.CharField(max_length=38, blank=True)
+    contrib_occupation = models.CharField(max_length=38, blank=True)
+    memo_agg_item = models.CharField(max_length=100, blank=True)
+    memo_text_descript = models.CharField(max_length=100, blank=True)
+
+    url = models.URLField(verify_exists=False, null=True, blank=True)
+
+    # Put the raw data line in here as ref--probably a good idea
+    # data_row = models.TextField()
+
+    # Should we disregard this line item because it appears later in an amended filing?
+    superceded_by_amendment=models.BooleanField(default=False)
+    amends_earlier_filing = models.BooleanField(default=False)
+    # if this entry is amended by a more recent entry, link to it:
+    amended_by=models.IntegerField(null=True)
+
+
+    def __unicode__(self):
+        return self.name
+
+    class Meta:
+        ordering = ('-contrib_amt', )
+
+    def __unicode__(self):
+        return self.name
+
+                                             

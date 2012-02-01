@@ -15,6 +15,8 @@ urlpatterns = patterns('',
     url(r'^csv/committee\/[\w-]+\/(?P<ieonlycommittee_id>C\d{8})\/?$', 'rebuckley.views.expenditure_csv'),
     url(r'^contributions\/[\w-]+\/(?P<ieonlycommittee_id>C\d{8})\/?$', 'rebuckley.views.contribs_list'),
     url(r'^csv/contributions\/[\w-]+\/(?P<ieonlycommittee_id>C\d{8})\/?$', 'rebuckley.views.contribs_csv'),    
+    url(r'^csv/all/?$', 'rebuckley.views.all_contribs_csv'),    
+    url(r'^csv/state/(\w\w)\/?$', 'rebuckley.views.state_contribs_csv'),    
 )
     
     

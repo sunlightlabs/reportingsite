@@ -20,8 +20,8 @@ class Command(BaseCommand):
                 ie.committee_master_record = this_committee
                 ie.save()
             except Committee.DoesNotExist:
-                print "Couldn't find committee matching ieonly table: %s %s " % (ie.fec_name, ie.fec_id)
-                
+                #print "Couldn't find committee matching ieonly table: %s %s " % (ie.fec_name, ie.fec_id)
+                pass
                 
         
         all_ies = Expenditure.objects.filter(committee__isnull=True)       
@@ -31,12 +31,12 @@ class Command(BaseCommand):
                 ie.committee = this_committee
                 ie.save()
             except Committee.DoesNotExist:
-                print "Couldn't find committee matching expenditure table: %s %s " % (ie.raw_committee_id, ie.payee)
-                
+                #print "Couldn't find committee matching expenditure table: %s %s " % (ie.raw_committee_id, ie.payee)
+                pass
                 
         all_ies = Expenditure.objects.filter(candidate__isnull=True)
         for ie in all_ies:
-            print "*** Trying to match %s - %s" % (ie.raw_candidate_id, ie.candidate_name)
+            #print "*** Trying to match %s - %s" % (ie.raw_candidate_id, ie.candidate_name)
             try:
                 this_candidate = Candidate.objects.get(fec_id=ie.raw_candidate_id, cycle=ie.cycle)
                 ie.candidate = this_candidate
@@ -52,8 +52,18 @@ class Command(BaseCommand):
                     
                 except KeyError:
                         
-                
-                    print "Couldn't attach candidate to expenditure: %s - %s" % (ie.raw_candidate_id, ie.candidate_name)
-                
+                    pass
+                    #print "Couldn't attach candidate to expenditure: %s - %s" % (ie.raw_candidate_id, ie.candidate_name)
+
+        all_contribs = Contribution.objects.all()
+        for ac in all_contribs:
+            try:
+                print "looking for %s" % (ac.fec_committeeid)
+                this_superpac = IEOnlyCommittee.objects.get(fec_id=ac.fec_committeeid)
+                ac.superpac=this_superpac
+                ac.save()
+            except IEOnlyCommittee.DoesNotExist:
+                print "** Couldn't locate it"
+                pass
                 
                     
