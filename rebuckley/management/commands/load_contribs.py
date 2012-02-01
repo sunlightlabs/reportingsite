@@ -25,15 +25,14 @@ def process_committee_page(pagehtml, committee_id):
             period_start = t.group(3)
             period_end = t.group(4)
             report_type = t.group(5)
-            if (period_end == '12/31/2011'):
-                print "-->F3X filed on %s %s for %s-%s\nhttp://query.nictusa.com/cgi-bin/dcdev/forms/%s/%s/\n\n" % (file_date, report_type, period_start, period_end, committee_id, file_id)
-                dl_url = 'http://query.nictusa.com/dcdev/posted/%s.fec' % (file_id)
+           
+            print "-->F3X filed on %s %s for %s-%s\nhttp://query.nictusa.com/cgi-bin/dcdev/forms/%s/%s/\n\n" % (file_date, report_type, period_start, period_end, committee_id, file_id)
+            dl_url = 'http://query.nictusa.com/dcdev/posted/%s.fec' % (file_id)
                 
-                # Ignore huntsman's amended filing 
-                if (file_id != '761989'):
-                    print "Processing filing: %s, dl_url: %s" % (file_id, dl_url)
-                    this_page = urllib2.urlopen(dl_url).read()
-                    enter_form(this_page, file_id)
+
+            print "Processing filing: %s, dl_url: %s" % (file_id, dl_url)
+            this_page = urllib2.urlopen(dl_url).read()
+            enter_form(this_page, file_id)
 
         else:
             print "\n\n\n*****no match\n\n\n"
