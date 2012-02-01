@@ -72,11 +72,11 @@ def contribs_list(request, ieonlycommittee_id):
 def contribs_csv(request, ieonlycommittee_id):                            
     committee = get_object_or_404(IEOnlyCommittee, fec_id=ieonlycommittee_id)
     contributions = Contribution.objects.filter(fec_committeeid=ieonlycommittee_id, superceded_by_amendment=False)
-    fields = ['Receiving Super PAC', 'Super PAC ID', 'Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Transaction ID', 'Filing Number']
+    fields = ['Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Transaction ID', 'Filing Number']
     rows = []
     file_name = committee.slug + "_donors.csv"
 
     for c in contributions:
-        rows.append([committee.fec_name, ieonlycommittee_id, c.contrib_last, c.contrib_first, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
+        rows.append([committee.fec_name, ieonlycommittee_id, c.contrib_org, c.contrib_last, c.contrib_first, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
     return generic_csv(file_name, fields, rows)    
                                  
