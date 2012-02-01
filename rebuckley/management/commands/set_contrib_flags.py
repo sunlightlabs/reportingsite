@@ -13,16 +13,27 @@ class Command(BaseCommand):
         all_superpacs = IEOnlyCommittee.objects.all()
         for sp in all_superpacs:
             try:
-                f3 = F3X_Summary.objects.filter(fec_id=sp.fec_id).order_by('-filing_number')[0]
-                sp.total_contributions = f3.total_receipts
+                has_contrib = 0
+                f3s = F3X_Summary.objects.filter(fec_id=sp.fec_id).order_by('-filing_number')
+                f3 = f3s[0]
+                
+                # As long as one of the cycles we're looking at is itemized we're good. 
+                for f in f3s:
+                    if (f.itemized):
+                        has_contrib+=1
+                if has_contrib > 0:
+                    sp.has_contributions=True
+                
+                
                 sp.cash_on_hand=f3.coh_close
                 sp.cash_on_hand_date=f3.coverage_to_date
-                if (f3.itemized):
-                    sp.has_contributions=True
         
             except IndexError:
                 sp.total_contributions = 0
                 sp.has_contributions=False
+                
+            total_contributions = Contribution.objects.filter(fec_committeeid=sp.fec_id).filter(contrib_date__gte='2011-01-01').aggregate(total_spent=Sum('contrib_amt'))
+            sp.total_contributions = total_contributions['total_spent']
             
             sp.save()
         

@@ -96,8 +96,8 @@ def process_contrib_11A1(fields, filing_number, amended):
     contrib_amt = fields[20]
     contrib_agg = fields[21]
     contrib_purpose = fields[22]
-    contrib_employer = fields[23]
-    contrib_occupation = fields[24]
+    contrib_employer = fields[23][0:37]
+    contrib_occupation = fields[24][0:37]
     memo_agg_item = fields[42]
     memo_text_descript = fields[43]
     # "Reference to SI or SL system code that identifies the Account"
@@ -162,7 +162,9 @@ def enter_form(complete_file_text, filing_number):
         if (linecount==1): 
             #print "'header line': %s" % fields
             #print "Verifying header version" 
-            assert (fields[2].strip()=="8.0")            
+            # disabling -- will this break on 7.0 ? 
+            #assert (fields[2].strip()=="8.0")            
+            pass
             
         if (linecount==2):
             form_type = fields[0]

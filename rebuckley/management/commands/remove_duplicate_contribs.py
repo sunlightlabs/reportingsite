@@ -12,7 +12,7 @@ cursor = MySQLdb.Connection(dbcfg['HOST'], dbcfg['USER'], dbcfg['PASSWORD'], dbc
 def purge_contribs_by_filing_number(filing_num):
     old_contribs = Contribution.objects.filter(filing_number=filing_num)
     for oc in old_contribs:
-        oc.delete
+        oc.delete()
 
 class Command(BaseCommand):
     help = "Removes amended reports, and those that don't fit our time scale"
@@ -27,6 +27,10 @@ class Command(BaseCommand):
             purge_contribs_by_filing_number(os.filing_number)
         
             os.delete()
+            
+        old_contribs = Contribution.objects.filter(contrib_date__lte='2011-01-01')    
+        for oc in old_contribs:
+            oc.delete()    
             
         query = "select count(*), fec_id, coverage_to_date from rebuckley_f3x_summary group by fec_id, coverage_to_date"
         cursor.execute(query)
