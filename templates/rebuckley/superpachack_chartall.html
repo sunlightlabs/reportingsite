@@ -3,17 +3,17 @@
 {% load media %}
 
 {% block title %}Super PACs{% endblock %}
-{% block page_title %}Super PACs reporting independent expenditures{% endblock %}
+{% block page_title %}Super PACs{% endblock %}
 
 {% block main_content %}
 <table id="expendituresData" class="tablesorter">
     <thead>
 
         <tr>
-            <th class="sort">Committee</th>
-            <th class="sort">Presidential Spending</th>
-            <th class="sort">Total Spending</th>            
-            <th class="sort">2011 Donations</th>
+            <th class="sort">Committee Name</th>
+            <th class="sort">Independent Expenditures (Presidential)</th>
+            <th class="sort">Independent Expenditures (All)</th>            
+            <th class="sort">2011 Itemized Donations</th>
             <th class="sort">Cash&nbsp;as&nbsp;of<br>12/31/11</th>
         </tr>
     </thead> 
@@ -37,7 +37,8 @@
 </tbody>
 </table>
 <div style="margin-top:20px;">
-<p style="font-size: 10px;">Source: FEC; Sunlight Foundation analysis</p>
+<p style="font-size: 10px; margin:10px;">Source: FEC; Sunlight Foundation analysis.</p>
+<p style="font-size: 10px; margin:10px;">Only PACs that have made independent expenditures, received itemized contributions, or had more than $100 on 12/31/2011 are included</p>
 </div>
 
 </div>

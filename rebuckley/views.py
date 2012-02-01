@@ -35,7 +35,7 @@ def superpac_chart(request):
 
 
 
-    superpacs_spending = IEOnlyCommittee.objects.filter( Q(total_indy_expenditures__gte=10) | Q(has_contributions=True))
+    superpacs_spending = IEOnlyCommittee.objects.filter( Q(total_indy_expenditures__gte=100) | Q(has_contributions=True) | Q(cash_on_hand__gt=100))
     return render_to_response('rebuckley/superpachack_chartall.html',
                             {'superpacs':superpacs_spending})  
                             
@@ -78,5 +78,25 @@ def contribs_csv(request, ieonlycommittee_id):
 
     for c in contributions:
         rows.append([committee.fec_name, ieonlycommittee_id, c.contrib_org, c.contrib_last, c.contrib_first, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
-    return generic_csv(file_name, fields, rows)    
+    return generic_csv(file_name, fields, rows)
+    
+def state_contribs_csv(request, state):                            
+    contributions = Contribution.objects.filter(contrib_state=state, superceded_by_amendment=False)
+    fields = ['Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Transaction ID', 'Filing Number']
+    rows = []
+    file_name = state + "_donors.csv"
+
+    for c in contributions:
+        rows.append([committee.fec_name, ieonlycommittee_id, c.contrib_org, c.contrib_last, c.contrib_first, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
+    return generic_csv(file_name, fields, rows)        
                                  
+                                 
+def all_contribs_csv(request):                            
+    contributions = Contribution.objects.filter(superceded_by_amendment=False)
+    fields = ['Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Transaction ID', 'Filing Number']
+    rows = []
+    file_name = "all_donors.csv"
+
+    for c in contributions:
+        rows.append([committee.fec_name, ieonlycommittee_id, c.contrib_org, c.contrib_last, c.contrib_first, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
+    return generic_csv(file_name, fields, rows)                                 
