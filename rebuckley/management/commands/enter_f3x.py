@@ -70,8 +70,9 @@ def process_summary_line(field_array, filing_number):
             
 
 
-def process_contrib_11A1(fields, filing_number, amended):
+def process_contrib_line(fields, filing_number, amended):
     """Process a line 11A1 contribution"""
+    line_type = fields[0]
     committee_id = fields[1]
     transaction_id = fields[2]
     back_ref_tran_id = fields[3]
@@ -87,15 +88,15 @@ def process_contrib_11A1(fields, filing_number, amended):
     contrib_prefix = fields[10]
     # suffix appears broken, ignore
     contrib_suffix = fields[11]
-    contrib_street_1 = fields[12]
-    contrib_street_2 = fields[13]
-    contrib_city = fields[14]
-    contrib_state = fields[15]
-    contrib_zip = fields[16]
+    contrib_street_1 = fields[12][0:34]
+    contrib_street_2 = fields[13][0:34]
+    contrib_city = fields[14][0:30]
+    contrib_state = fields[15][0:2]
+    contrib_zip = fields[16][0:9]
     contrib_date = fields[19]
     contrib_amt = fields[20]
     contrib_agg = fields[21]
-    contrib_purpose = fields[22]
+    contrib_purpose = fields[22][0:100]
     contrib_employer = fields[23][0:37]
     contrib_occupation = fields[24][0:37]
     memo_agg_item = fields[42]
@@ -113,6 +114,7 @@ def process_contrib_11A1(fields, filing_number, amended):
     except Contribution.DoesNotExist:
         #print "Creating contrib from filing number: %s transaction_id: %s" % (filing_number, transaction_id)
         c = Contribution.objects.create(
+            line_type=line_type.upper(),
             from_amended_filing=amended,
             fec_committeeid = committee_id,
             filing_number=filing_number,
@@ -176,5 +178,5 @@ def enter_form(complete_file_text, filing_number):
         
         if (linecount > 2):
             # Is it a sked 11 A1, B, or C line ? 
-            if (line_type == 'SA11AI'):
-                process_contrib_11A1(fields, filing_number, amended)
+            if (line_type == 'SA11AI' or line_type == 'SA11B' or line_type == 'SA11C'):
+                process_contrib_line(fields, filing_number, amended)

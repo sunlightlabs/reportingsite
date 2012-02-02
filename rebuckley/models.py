@@ -353,7 +353,8 @@ class Pac_Candidate(models.Model):
         
         
 class Contribution(models.Model):
-    """ For F3X line 11A entries """
+    # the verbatime line type: should be SA 11A1/11B/11C entries 
+    line_type = models.CharField(max_length=7)
     from_amended_filing = models.NullBooleanField()
     committee = models.ForeignKey(Committee, null=True)
     superpac = models.ForeignKey(IEOnlyCommittee, null=True)
