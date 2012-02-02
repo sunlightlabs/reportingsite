@@ -399,12 +399,20 @@ class Contribution(models.Model):
 
 
     def __unicode__(self):
-        return self.name
+        return self.display_name
 
     class Meta:
         ordering = ('-contrib_amt', )
 
     def __unicode__(self):
-        return self.name
+        return self.display_name
+    
+    def contrib_source(self):
+        if (self.line_type=='SA11AI'):
+            return "Individual/Corporation"
+        elif (self.line_type=='SA11B'):
+            return "Political Party Committee"
+        elif (self.line_type=='SA11C'):
+            return "Political Action Committee"
 
                                              
