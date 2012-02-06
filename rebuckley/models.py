@@ -414,5 +414,6 @@ class Contribution(models.Model):
             return "Political Party Committee"
         elif (self.line_type=='SA11C'):
             return "Political Action Committee"
-
+        elif (self.line_type=='SA15'):
+            return "Offsets To Operating Expenditure (line 15)"
                                              

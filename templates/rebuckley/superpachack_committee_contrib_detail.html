@@ -13,6 +13,7 @@
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
+            <th class="sort">Donating Organization</th>
             <th class="sort">Donor</th>
             <th class="sort">City</th>
             <th class="sort">Occupation/Employer</th>
@@ -24,6 +25,7 @@
     <tbody>
         {% for c in contributions %}
         <tr class="{% cycle 'odd' 'even' %}">
+            <td>{{ c.contrib_org }}</td>
             <td>{{ c.contrib_last }}, {{ c.contrib_first }}</td>
             <td>{{ c.contrib_city}}{% if c.contrib_state%}, {{c.contrib_state}}{% endif %}</td>
             <td>{{ c.contrib_occupation }} / {{c.contrib_employer}}</td>

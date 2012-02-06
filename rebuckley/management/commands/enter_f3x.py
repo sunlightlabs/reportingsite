@@ -16,7 +16,7 @@ def process_summary_line(field_array, filing_number):
     if (form_type == 'F3XA'):
         amended=True
         print "*** Amended filing\n"
-    committee_id = field_array[1]
+    committee_id = field_array[1][0:9]
     committee_name = field_array[2]
     address_change = field_array[3]
     street_1 = field_array[4]
@@ -73,21 +73,21 @@ def process_summary_line(field_array, filing_number):
 def process_contrib_line(fields, filing_number, amended):
     """Process a line 11A1 contribution"""
     line_type = fields[0]
-    committee_id = fields[1]
-    transaction_id = fields[2]
-    back_ref_tran_id = fields[3]
-    back_ref_sked_name = fields[4]
+    committee_id = fields[1][0:9]
+    transaction_id = fields[2][0:32]
+    back_ref_tran_id = fields[3][0:32]
+    back_ref_sked_name = fields[4][0:32]
     entity_type = fields[5]
     
     #print "committee %s \n transaction id: %s back_ref_tran_id: %s back_ref_sked_name: %s entity_type: %s" % (committee_id, transaction_id, back_ref_tran_id, back_ref_sked_name, entity_type)
     
-    contrib_org = fields[6]
-    contrib_last = fields[7]
-    contrib_first = fields[8]
-    contrib_middle = fields[9]
-    contrib_prefix = fields[10]
+    contrib_org = fields[6][0:200]
+    contrib_last = fields[7][0:30]
+    contrib_first = fields[8][0:20]
+    contrib_middle = fields[9][0:20]
+    contrib_prefix = fields[10][0:10]
     # suffix appears broken, ignore
-    contrib_suffix = fields[11]
+    contrib_suffix = fields[11][0:10]
     contrib_street_1 = fields[12][0:34]
     contrib_street_2 = fields[13][0:34]
     contrib_city = fields[14][0:30]
@@ -157,6 +157,9 @@ def enter_form(complete_file_text, filing_number):
         line = line.replace("\n","") 
         line = line.replace("\r","")
 
+        # remove double quotes:
+        line = line.replace('"','')
+        
         fields = line.split(delimiter)
         # sometimes they lowercase the type
         line_type = fields[0].upper()
@@ -177,6 +180,6 @@ def enter_form(complete_file_text, filing_number):
             process_summary_line(fields, filing_number)           
         
         if (linecount > 2):
-            # Is it a sked 11 A1, B, or C line ? 
-            if (line_type == 'SA11AI' or line_type == 'SA11B' or line_type == 'SA11C'):
+            # Is it a sked 11 A1, B, or C line, or a line 15 
+            if (line_type == 'SA11AI' or line_type == 'SA11B' or line_type == 'SA11C' or line_type == 'SA15'):
                 process_contrib_line(fields, filing_number, amended)

@@ -1,4 +1,4 @@
-datadir='re:buckley/data'
+datadir='rebuckley/data'
 
 for year in '10' '12'
 do
