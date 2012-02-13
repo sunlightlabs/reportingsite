@@ -11,7 +11,8 @@ $ python manage.py pop_committees 12
 $ python manage.py pop_candidates 10
 $ python manage.py pop_candidates 12
 $ python manage.py pop_ie 10
-$ python manage.py pop_ie 12
+ 
+# $ python manage.py pop_ie 12
 
 
 # Read superpacs directly from fec page:
@@ -26,24 +27,59 @@ python manage.py read_superpac_list
 $ python manage.py cull_amended 10
 $ python manage.py cull_amended 12
 
-
+Then:
 
 $ python manage.py attach_models
 $ python manage.py fix_office
 
-# create donors by reading
-$ python manage.py load_contribs
-# Don't load them, just see who's filed year-end reports
-$ python manage.py watch_superpac_filings
+-> 
 
 #sum expenditure stuff
 $ python manage.py calculate_sums
-# put tallies in main superpac model:
+
+
+# create donors by reading
+$ python manage.py load_contribs
+
+# reconfigured to load all 3FX reports. Then we gotta decide which ones don't meet our criteria, and kill em. 
+
+use: 
+$ python manage.py  remove_duplicate_contribs
+$ python manage.py attach_models
 $ python manage.py set_contrib_flags
+
+
+
+# Don't load them, just see who's filed year-end reports
+$ python manage.py watch_superpac_filings
+# put tallies in main superpac model:
+$ python manage.py set_contrib_flags;
+
+
+---- Rinse and repeat
+Note--if there are no itemized contributions in the summary -- as in Santa Rita -- manually set has_contributions to be true.
+update rebuckley_ieonlycommittee set has_contributions =1 where  fec_name like 'santa%';
+update rebuckley_ieonlycommittee set has_contributions =1 where  fec_name like 'strong america%';
+update rebuckley_ieonlycommittee set has_contributions =1 where  fec_name like 'restore our f%';
+
+update rebuckley_ieonlycommittee set has_contributions =1 where fec_id in (select distinct fec_committeeid from rebuckley_contribution where contrib_date > '2010-12-31';) 
+-- indexes to make new contrib lookups faster:
+create index cxz1 on rebuckley_contribution(filing_number, transaction_id);
+
+
+$ python manage.py watch_superpac_filings
 
 # run diagnostic 
 $ python manage.py count_db_entities
 
+---
+alter table rebuckley_contribution add column `superpac_id` varchar(9);
 
+--
 
+for ie update
+
+$ pwd
+/Users/jfenton/reporting/reportingsite
+$ source update_fec_ie.sh 
 
