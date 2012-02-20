@@ -206,7 +206,7 @@ def races(request):
                             })
 
 def race_detail(request, office, state, district):
-    race_aggregate = Race_Aggregate.objects.get(office=office, state=state, district=district)
+    race_aggregate = get_object_or_404(Race_Aggregate, office=office, state=state, district=district)
     candidate_pacs = Pac_Candidate.objects.filter(candidate__office=office, candidate__state_race=state, candidate__district=district)
     explanatory_text = "This table shows the total amount each super PAC made in independent expenditures to support or oppose a candidate in this race. For a downloadable file of this information, <a href=\"/super-pacs/csv/race/expenditures/%s/%s/%s/\">click here</a>." % (office, state, district)
     race_name = None
