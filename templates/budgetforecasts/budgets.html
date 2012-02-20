@@ -31,17 +31,13 @@
     <div id="fullColumn" style="overflow:hidden;">
 		<div id="budget-title">Spending forecasts vs. spending realities</div>
 		<div id="budget-explain" class="explain">
-			<p>As the Joint Select Committee on Deficit Reduction — better known as the supercommittee - nears its Nov. 23 deadline for a plan to cut $1.3 trillion from the federal deficit, we at Sunlight thought it would be worth looking at how budget plans match up to budget realities.</p>
-
-			<p>In the chart below, you can see the annual budget deficit or surplus since 1995. What we've attempted to do is show how that lines up with budget forecasts over the years.</p>
-
 			<p>Each year, the president submits a budget that details the upcoming year's spending and revenue expectations, but also forecasts spending and revenues for several years into the future.</p>
 
-			<p>Because no Congress can bind a future Congress, these projections are little more than political statements designed to reassure people that the government is on a path toward fiscal responsibility.</p>
+			<p>How well do those forecasts match reality? Not very, as the chart below shows.</p>
 
-			<p>See those budget forecasts using the buttons below and you'll quickly see how far off a projected budget can be from reality. In 2008, for example, the budget forecasted a 2009 deficit of $187 billion. In reality, the deficit that year ended up being $1.419 trillion. That's nearly 10 times the projection.</p>
+			<p>Select the budget forecasts using the buttons below and you'll quickly see how far off a projected budget can be from reality.</p>
 
-			<p>So, when the supercommittee comes back with a budget plan that projects balance in 10 years, you can see just how rarely projections match up with reality.</p>
+			<p>In 2008, for example, the budget forecasted a 2009 deficit of $187 billion. In reality, the deficit that year ended up being $1.419 trillion. That's nearly 10 times the projection.</p>
 
 			<p>Hover over the pins at the bottom of the chart to see major political/economic news that influenced the budget.</p>
 
@@ -91,6 +87,7 @@
                     <li><input type="checkbox" name="Obama-2010" id="Obama-2010" class="series-toggle">2010</li>
                     <li><input type="checkbox" name="Obama-2011" id="Obama-2011" class="series-toggle">2011</li>
                     <li><input type="checkbox" name="Obama-2012" id="Obama-2012" class="series-toggle">2012</li>
+                    <li><input type="checkbox" name="Obama-2013" id="Obama-2013" class="series-toggle">2013</li>
                 </ul>
             </div>
         
@@ -124,7 +121,9 @@
 		[Date.UTC(2007, 0, 1), -160.701],
 		[Date.UTC(2008, 0, 1), -458.555],
 		[Date.UTC(2009, 0, 1), -1412.686],
-		[Date.UTC(2010, 0, 1), -1293.489]
+		[Date.UTC(2010, 0, 1), -1293.489],
+		[Date.UTC(2011, 0, 1), -1300.000],
+		[Date.UTC(2012, 0, 1), -1327.000]
 	];
 
 	var events = {
@@ -304,6 +303,18 @@
 				[Date.UTC(2019, 0, 1), -681.000],
 				[Date.UTC(2020, 0, 1), -735.000],
 				[Date.UTC(2021, 0, 1), -774.000]
+			],
+			'2013': [
+				[Date.UTC(2013, 0, 1), -901.000],
+				[Date.UTC(2014, 0, 1), -668.000],
+				[Date.UTC(2015, 0, 1), -610.000],
+				[Date.UTC(2016, 0, 1), -649.000],
+				[Date.UTC(2017, 0, 1), -612.000],
+				[Date.UTC(2018, 0, 1), -575.000],
+				[Date.UTC(2019, 0, 1), -626.000],
+				[Date.UTC(2020, 0, 1), -658.000],
+				[Date.UTC(2021, 0, 1), -681.000],
+				[Date.UTC(2022, 0, 1), -704.000]
 			]
 		}
 	};
