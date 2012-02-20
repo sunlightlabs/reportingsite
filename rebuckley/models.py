@@ -528,9 +528,6 @@ class Contribution(models.Model):
 
     class Meta:
         ordering = ('-contrib_amt', )
-
-    def __unicode__(self):
-        return self.display_name
         
     def donor_display(self):
         if (self.contrib_org):
