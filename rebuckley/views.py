@@ -165,7 +165,7 @@ def all_superpacs(request):
                             'total_amt':total_amt})
                                 
 def presidential_superpacs(request):
-    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACS--that have made independent expenditures in support of a presidential candidate during the 2012 election cycle. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
+    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have made independent expenditures in support of a presidential candidate during the 2012 election cycle. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
 
     superpacs = IEOnlyCommittee.objects.filter(total_presidential_indy_expenditures__gte=10)
     total = superpacs.aggregate(total=Sum('total_presidential_indy_expenditures'))
@@ -199,13 +199,14 @@ def committee_detail(request,ieonlycommittee_id):
                             
 def races(request):
     races = Race_Aggregate.objects.exclude(district__isnull=True)
-    explanatory_text = "This page shows all independent expenditures made by super PACS in federal races contested in 2012 since the beginning of 2011."
+    explanatory_text = "This page shows independent expenditures made by super PACS in the 2012 election cycle by race. Click on each race to see aggregate totals by candidate, and to get access to a downloadable file of all individual expenditures for this race."
     return render_to_response('rebuckley/race_list.html',
                             {'races':races, 
                             'explanatory_text':explanatory_text
                             })
 
 def race_detail(request, office, state, district):
+    race_aggregate = Race_Aggregate.objects.get(office=office, state=state, district=district)
     candidate_pacs = Pac_Candidate.objects.filter(candidate__office=office, candidate__state_race=state, candidate__district=district)
     explanatory_text = "This table shows the total amount each super PAC made in independent expenditures to support or oppose a candidate in this race. For a downloadable file of this information, <a href=\"/super-pacs/csv/race/expenditures/%s/%s/%s/\">click here</a>." % (office, state, district)
     race_name = None
@@ -219,11 +220,12 @@ def race_detail(request, office, state, district):
     return render_to_response('rebuckley/race_detail.html',
                             {'candidates':candidate_pacs, 
                             'explanatory_text':explanatory_text, 
-                            'race_name':race_name
+                            'race_name':race_name,
+                            'race_aggregate':race_aggregate
                             })  
 def candidates(request):
     candidates = Candidate.objects.filter(total_expenditures__gte=10)
-    explanatory_text= 'This table lists the total of all super PAC independent expenditures made to support or oppose each federal candidate during the 2012 election cycle. Candidates not receiving opposition or support are not shown.'
+    explanatory_text= 'This table lists the total of all super PAC independent expenditures made to support or oppose federal candidates during the 2012 election cycle. Candidates not receiving opposition or support from super PACs are not shown.'
     return render_to_response('rebuckley/candidate_list.html',
                             {'candidates':candidates, 
                             'explanatory_text':explanatory_text,
@@ -231,7 +233,7 @@ def candidates(request):
                             
 def states(request):
     states = State_Aggregate.objects.filter(total_ind_exp__gt=0)
-    explanatory_text= 'This table lists the total of all super PAC independent expenditures made in each state during the 2012 election cycle. While FEC rules require super PACs to designate the state each independent expenditure is made in, many expenditures--particularly those spread across multiple states--are missing this information. Therefore, the totals on this page will not match overall totals found elsewhere on this site. For downloadable state-by-state files, see the <a href="/super-pacs/file-downloads/">downloads page</a>.'
+    explanatory_text= 'This table lists the total of all super PAC independent expenditures reported to have been made in each state during the 2012 election cycle. While FEC rules require super PACs to designate the state each independent expenditure is made in, many expenditures--particularly those spread across multiple states--are missing this information. Therefore, the totals on this page will not match overall totals found elsewhere on this site. For downloadable state-by-state files, see the <a href="/super-pacs/file-downloads/">downloads page</a>.'
     return render_to_response('rebuckley/state_list.html',
                             {'states':states, 
                             'explanatory_text':explanatory_text,

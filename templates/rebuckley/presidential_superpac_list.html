@@ -4,7 +4,7 @@
 {% load media %}
 
 
-{% block title %}Presidential Super PACs{% endblock %}
+{% block title %}Super PAC spending: Presidential{% endblock %}
 
 {% block body %}{{ block.super }} expendituresPresident{% endblock %}
 
@@ -18,7 +18,7 @@
     {% include "rebuckley/tabs.html" %}
 
 <h2>
-    Presidential Super PACs
+    Super PAC spending: Presidential
 </h2>
 <div>
     <span class="amountLine">Total Independent Expenditures to influence the presidential election: </span><span class="amount">${{total_amt|intcomma}}</span>
@@ -28,7 +28,7 @@
 
 {% if superpacs %}
 
-<p class="tip">Select a super PAC to see details.</p>
+<p class="tip">Click on each super PAC's name in the left column to see breakdowns of their spending, including aggregate amounts spent supporting or opposing individual candidates, and a chronological list of all their individual independent expenditure filings with the Federal Election Commission.</p>
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>

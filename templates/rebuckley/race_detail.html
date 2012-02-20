@@ -18,6 +18,9 @@
     
 
     <h2>Super PAC spending by race: {{ race_name }}</h2>
+    <div>
+    <span class="amountLine">Total super PAC independent expenditures in this race: </span><span class="amount">${{race_aggregate.total_ind_exp|intcomma}}</span>
+</div>
 <p>{{ explanatory_text|safe }}</p>
 <p class="tip">Select a super PAC or a candidate to see details.</p>
 {% if candidates %}
