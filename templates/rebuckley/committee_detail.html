@@ -1,53 +1,39 @@
-{% extends "buckley/buckley_base.html" %}
+{% extends "rebuckley/buckley_base.html" %}
 
 {% load buckley %}
 {% load humanize %}
 
-{% block title %}{{ object }} - {{ block.super }}{% endblock %}
+{% block title %}{{ committee.fec_name }} - {{ block.super }}{% endblock %}
 
 {% block body %}{{ block.super }} expendituresCommittee{% endblock %}
 
 {% block breadcrumb %}{{ block.super }}
-<li><a href="{% url buckley_committee_list %}">Committees</a></li>
-<li>{{ object }}</li>
+<li>{{ committee.fec_name }}</li>
 {% endblock breadcrumb %}
 
 {% block content %}
-    {% include "buckley/tabs.html" %}
-
-    <a style="display: block; float: right;" href="{% url buckley_committee_detail_feed slug=object.slug %}"><img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/feed-icon-14x14.png" alt="RSS" title="Subscribe to an RSS feed of outside spending by {{ object }}" style="border: 0;" /></a>
+    {% include "rebuckley/tabs.html" %}
 
     <h2>
-        {% if cycle %}
-            {{ object }} - {{ cycle }} cycle
-        {% else %}
-            {{ object }}
-        {% endif %}
+        {{ committee.fec_name }}
     </h2>
-    {% if not cycle %}
-    Previous cycles: 
-        <a href="{% url buckley_cycle_committee_detail cycle=2010 slug=object.slug %}">2010</a>
-    {% endif %}
 
-{% if object.ieonly_url %}
-<p class="tip">This committee has <a href="{{ object.ieonly_url }}">filed a letter indicating that it will accept donations of unlimited amounts</a></p>
-{% endif %}
 
-{% if object.combined_all_candidates_with_amounts %}
 
-<div class="amountLine">
-    Total: <span class="amount">
-        {% if cycle %}
-        ${{ object|committee_total_by_cycle:cycle|intcomma }}
-        {% else %}
-        ${{ object.total|intcomma }}
-        {% endif %}
-    </span>
+
+
+<div>
+    <span class="amountLine">Independent Expenditures: </span><span class="amount">{% if committee.total_indy_expenditures%}${{ committee.total_indy_expenditures|intcomma }}{% endif %}</span><br>Jump to <a href="#spending">expenditures</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackcsv}}">.csv file of all independent expenditures</a>
+    <br><br>
+    <span class="amountLine">Contributions (as of {{ committee.cash_on_hand_date }}): </span><span class="amount">{% if committee.total_contributions %}${{ committee.total_contributions|intcomma }}{% endif %}</span><br>Jump to <a href="#contributors"> contributors</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackdonors}}">.csv file of contributions</a>
 </div>
-<div class="clear"></div>
 
 <div class="clear"></div>
 
+
+<div class="space_above"><h3>Super PAC Independent Expenditure Summary</h3></div>
+<p>{{ explanatory_text|safe }}</p>
+{% if candidates %}
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
@@ -55,63 +41,113 @@
             <th class="sort">Candidate</th>
             <th class="sort">Support/oppose</th>
             <th class="sort">Amount</th>
-{% if not cycle %}
-            <th class="sort">Winner</th>
-{% endif %}
+
         </tr>
     </thead>
     <tbody>
-        {% for candidates, data in object.combined_all_candidates_with_amounts %}
-        <tr class="{% cycle 'odd' 'even' %}">
-            <td>{% if data.race %}{{ data.race }}{% else %}--{% endif %}</td>
-            <td>{% spaceless %}
-                {% if candidates %}
-                    {% for candidate in candidates %}
-                        {% if data.slugs %}
-                            {% if cycle %}
-                            <a href="{% url buckley_cycle_candidate_committee_detail candidate_slug=data.slugs committee_slug=object.slug cycle=cycle %}">
-                            {% else %}
-                            <a href="{% url buckley_candidate_committee_detail candidate_slug=data.slugs committee_slug=object.slug %}">
-                            {% endif %}
-                        {% else %}
-                            {% if cycle %}
-                            <a href="{% url buckley_cycle_candidate_committee_detail candidate_slug=candidate.slug committee_slug=object.slug cycle=cycle %}">
-                            {% else %}
-                            <a href="{% url buckley_candidate_committee_detail candidate_slug=candidate.slug committee_slug=object.slug %}">
-                            {% endif %}
-                        {% endif %}
-                        {{ candidate }}</a>
-                        {% if candidate.party %} ({{ candidate.party }}){% endif %}
-                        {% if not forloop.last %}, {% endif %}
-                    {% endfor %}
-                {% else %}
-                ---
-                {% endif %}
-                </a>
-                {% endspaceless %}</td>
-            <td>{% ifequal data.support_oppose '*' %}<a href="#asterisk">{{ data.support_oppose }}</a>{% else %}{{ data.support_oppose }}{% endifequal %}</td>
-            <td>${{ data.amount|intcomma }}</td>
-{% if not cycle %}
-            <td>
-                {% if candidates %}
-                {% for candidate in candidates %}
-                    {% if candidate.winner %}Winner{% endif %}
-                    {% if not forloop.last %}, {% endif %}
-                {% endfor %}
-                {% endif %}
-            </td>
-{% endif %}
-        </tr>
-        {% endfor %}
+    {% for candidate_pac in candidates %}
+    <tr>
+    <td><a href="{{candidate_pac.candidate.get_race_url}}">{{ candidate_pac.candidate.race }}</a></td>
+    <td><a href="{{candidate_pac.candidate.get_absolute_url}}">{{ candidate_pac.candidate.fec_name }} {{ candidate_pac.candidate.display_party }} </a></td>
+    <td>{{ candidate_pac.support_or_oppose }}</td>
+    <td>{% if candidate_pac.total_ind_exp %}${{ candidate_pac.total_ind_exp|intcomma }}{% endif %}</td>   
+    </tr>                
+    {% endfor %}    
     </tbody>
 </table>
 
-{% include "buckley/tablesorter.html" %}
-
-    {% include "buckley/electioneering_asterisk.html" %}
-
 {% else %}
-<br/><br/>No spending has been reported for this cycle.
+<br/><br/>No candidates have been supported by independent expenditures this cycle.
 {% endif %}
 
+<a name="spending"></a>
+{% if expenditures %}
+<div class="space_above"><h3>Super PAC Independent Expenditures </h3></div>
+<p>{{ explanatory_text_details|safe }}</p>
+<table id="expenditure_details" class="tablesorter">
+       <thead>
+           <tr>
+               <th class="sort">Date</th>
+               <th class="sort">Committee</th>
+               <th class="sort">Support/Oppose</th>
+               <th class="sort">Amount</th>
+               <th class="sort">State</th>                   
+               <th class="sort">Purpose</th>
+           </tr>
+       </thead>
+       <tbody>
+       {% for ie in expenditures %}    
+           <tr class="{% cycle 'odd' 'even' %}">
+               <td>{{ ie.expenditure_date }}</td>
+               <td><a href="{{ie.committee.get_superpac_url}}">{{ ie.committee.name }}</a></td> 
+               <td>{{ ie.support_or_oppose }}</td>
+               <td>${{ ie.expenditure_amount|intcomma }}</td>   
+               <td>{% if ie.state %}{{ ie.state }}{% endif %}</td>                                               
+               <td>{{ ie.expenditure_purpose }}</td>
+           </tr>
+       {% endfor %}
+       </tbody>
+       </table>
+       {% endif %}
+
+
+
+
+
+
+       <a name="contributors"></a>
+       {% if contributions %}
+       <div class="space_above"><h3>Super PAC Contributions </h3></div>
+       <p>{{ explanatory_text_contribs|safe }}</p>
+       <table id="contrib_details" class="tablesorter">
+              <thead>
+                  <tr>
+                      <th class="sort">Date</th>
+                      <th class="sort">Amount</th>
+                      <th class="sort">Donor</th>
+                      <th class="sort">Donor employer</th>
+                      <th class="sort">City</th>                   
+                      <th class="sort">State</th>
+                  </tr>
+              </thead>
+              <tbody>
+              {% for contrib in contributions %}    
+                  <tr class="{% cycle 'odd' 'even' %}">
+                      <td>{{ contrib.contrib_date }}</td>
+                      <td>{% if contrib.contrib_amt %}${{ contrib.contrib_amt|intcomma }}{% endif %}</a></td> 
+                      <td>{{ contrib.donor_display }}</td>
+                      <td>{{ contrib.contrib_employer }}</td>   
+                      <td>{{ contrib.contrib_city }}</td>                                               
+                      <td>{{ contrib.contrib_state }}</td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+              </table>
+              {% endif %}
+
 {% endblock content %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[3,1]' as sortdir %}
+{% include "rebuckley/tablesorter.html" %}
+{% endwith %}
+{% with '[0,1]' as sortdir %}
+{% include "rebuckley/tablesorter_expenditure_details.html" %}
+{% endwith %}
+{% with '[1,1]' as sortdir %}
+{% include "rebuckley/tablesorter_contribs.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

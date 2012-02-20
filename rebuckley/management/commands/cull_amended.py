@@ -4,7 +4,7 @@ from django.conf import settings
 from rebuckley.models import Expenditure
 
 class Command(BaseCommand):
-    help = "Populate the expenditure table from the independent expenditure csv file. Use a 2-digit cycle"
+    help = "Remove amended filings"
     requires_model_validation = False
     
     def handle(self, *args, **options):

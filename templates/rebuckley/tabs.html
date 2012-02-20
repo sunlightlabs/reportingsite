@@ -1,26 +1,28 @@
 <div id="filterExpenditures">
-    <span>Browse by</span>
         <ul>
-            <li id="filter_candidate">
-                <a href="{% url buckley_candidate_list %}">Candidate</a>
+            <li id="filter_states">
+                <a href="/super-pacs/states/">States</a>
             </li>
             <li id="filter_race">
-                <a href="{% url buckley_race_list %}">Race</a>
+                <a href="/super-pacs/races/">Races</a>
             </li>
+            
+            <li id="filter_candidate">
+                <a href="/super-pacs/candidates/">Candidates</a>
+            </li>
+
             <li id="filter_committee">
-                <a href="{% url buckley_committee_list %}">Committee</a>
+                <a href="/super-pacs/all/">Super PACs</a>
             </li>
-            {% comment %}
-            <li id="filter_letters">
-                <a href="{% url buckley_letter_list %}">Committees that intend to accept unlimited contributions</a>
+            <li id="filter_president">
+                <a href="/super-pacs/presidential/">Presidential Super PACs</a>
             </li>
-            {% endcomment %}
             <li id="filter_ies">
-                <a href="{% url buckley_ie_list %}">Independent expenditures</a>
+                <a href="/super-pacs/independent-expenditures/">Recent Independent Expenditures</a>
             </li>
-            <li id="filter_electioneering">
-                <a href="{% url buckley_electioneering_list %}">Electioneering communications</a>
-            </li>
+            <li id="filter_files">
+                <a href="/super-pacs/file-downloads/">File Downloads</a>
+            </li>            
         </ul> 
         <div class="clear"></div>
 </div>

@@ -1,4 +1,4 @@
-{% extends "buckley/buckley_base.html" %}
+{% extends "rebuckley/buckley_base.html" %}
 
 {% load humanize %}
 {% load media %}
@@ -7,22 +7,18 @@
 
 {% block body %}{{ block.super }} expendituresCandidate{% endblock %}
 
-{% block breadcrumb %}{{ block.super }}
+{% block breadcrumb %}
 <li>Candidates</li>
 {% endblock breadcrumb %}
 
 {% block content %}
-    {% include "buckley/tabs.html" %}
+    {% include "rebuckley/tabs.html" %}
 
-    <h2>Candidates</h2>
+    <h2>Candidates supported or opposed by super PACs</h2>
+<p>{{ explanatory_text|safe }}</p>
+{% if candidates %}
 
-{% if not cycle %}
-Previous cycles: <a href="{% url buckley_cycle_candidate_list 2010 %}">2010</a>
-{% endif %}
-
-{% if object_list %}
-
-    <p>Select a candidate to see details.
+    <p class="tip">Select a candidate or a race to see details.</p>
     <br>
     <table id="expendituresData" class="tablesorter">
         <thead>
@@ -30,40 +26,51 @@ Previous cycles: <a href="{% url buckley_cycle_candidate_list 2010 %}">2010</a>
                 <th class="sort">Candidate</th>
                 <th class="sort">Party</th>
                 <th class="sort">Race</th>
-                <th class="sort">Total outside spending</th>
-                <th class="sort">Supporting</th>
-                <th class="sort">Opposing</th>
-{% if not cycle %}
-                <th class="sort">Winner</th>
-{% endif %}
+                <th class="sort">Opposing Expenditures</th>
+                <th class="sort">Supporting Expenditures</th>
+                <th class="sort">Total Expenditures
+
             </tr>
         </thead>
         <tbody>
 
-    {% for candidate in object_list %}
+    {% for candidate in candidates %}
     <tr>
-        <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.last_first }}</a></td>
-        <td>{{ candidate.party }}</td>
-        <td>{{ candidate.full_race_name }}</td>
-        <td>${{ candidate.total_expenditures|intcomma }}{% if candidate.electioneering_total %} <a href="#asterisk">*</a>{% endif %}</td>
-        <td>${{ candidate.expenditures_supporting|intcomma }}</td>
-        <td>${{ candidate.expenditures_opposing|intcomma }}</td>
-{% if not cycle %}
-        <td>{% if candidate.winner %}Winner{% endif %}</td>
-{% endif %}
+        <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.fec_name }}</a></td>
+        <td>{{ candidate.display_party }}</td>
+        <td><a href="{{candidate.get_race_url}}">{{ candidate.race }}</a></td>
+        <td>{% if candidate.expenditures_opposing %}${{ candidate.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</td>
+        <td>{% if candidate.expenditures_supporting %}${{ candidate.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</td>
+        <td>${{ candidate.total_expenditures|intcomma }}</td>
     </tr>
     {% endfor %}
     </tbody>
     </table>
 
-    {% with '[3,1]' as sortdir %}
-    {% include "buckley/tablesorter.html" %}
-    {% endwith %}
-
-    {% include "buckley/electioneering_asterisk.html" %}
+    
 
 {% else %}
 <br/><br/>No spending has been reported for this cycle.
 {% endif %}
 
 {% endblock content %}
+
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[5,1]' as sortdir %}
+{% include "rebuckley/tablesorter.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

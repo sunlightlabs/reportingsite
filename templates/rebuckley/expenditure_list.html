@@ -1,48 +1,57 @@
-{% extends "buckley/buckley_base.html" %}
+{% extends "rebuckley/buckley_base.html" %}
 
 {% load humanize %}
 
 {% block title %}{{ title }} - {{ block.super }}{% endblock %}
 
-{% block body %}{{ block.super }} {{ body_class }}{% endblock %}
+{% block body %} expendituresHome fullWidth expendituresIes{% endblock %}
 
 {% block breadcrumb %}
-{{ block.super }}
+<li>Recent super PAC independent expenditures</li>
 {% endblock breadcrumb %}
 
 {% block content %}
 
-    {% include "buckley/tabs.html" %}
+    {% include "rebuckley/tabs.html" %}
+
 
     <h2>
-        {% if cycle %}
-        {{ title }}: {{ cycle }} cycle
-        {% else %}
-        {{ title }}
-        {% endif %}
+        Recent super PAC independent expenditures
     </h2>
+    <p>{{ explanatory_text|safe }}</p>
 
-    {% if not cycle %}
-    Previous cycles: 
-        {% if electioneering %}
-        <a href="{% url buckley_cycle_electioneering_list 2010 %}">2010</a>
-        {% else %}
-        <a href="{% url buckley_cycle_ie_list 2010 %}">2010</a>
+    {% if ies %}
+    <p class="tip">Click on a race, committee or candidate name for more details</p>
+
+   
+    <table id="expenditures">
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Race</th>
+                <th>Committee</th>
+                <th>Support/Oppose</th>
+                <th>Candidate</th>
+                <th>State</th>
+                <th>Amount</th>
+                <th>Purpose</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ie in ies %}    
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td>{{ ie.expenditure_date }}</td>
+                <td><a href="{{ie.candidate.get_race_url}}">{{ ie.candidate.race }}</a></td>
+                <td><a href="{{ie.committee.get_superpac_url}}">{{ ie.committee.name }}</a></td> 
+                <td>{{ ie.support_or_oppose }}</td>
+                <td><a href="{{ie.candidate.get_absolute_url}}">{{ ie.candidate.fec_name }} {{ ie.candidate.display_party }}</a></td> 
+                <td>{% if ie.state %}{{ ie.state }}{% endif %}</td>
+                <td>${{ ie.expenditure_amount|intcomma }}</td>                               
+                <td>{{ ie.expenditure_purpose }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>    
         {% endif %}
-    {% endif %}
-
-    <p class="tip">{{ description }}</p>
-
-    {% if object_list %}
-        {% include "buckley/expenditure_table.html" %}
-    {% else %}
-        {% if electioneering %}
-        No electioneering communications have been reported for this cycle.
-        {% else %}
-        No independent expenditures have been reported for this cycle.
-        {% endif %}
-    {% endif %}
-
-    {% include "buckley/pagination.html" %}
 
 {% endblock content %}

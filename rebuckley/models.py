@@ -1,4 +1,7 @@
 from django.db import models
+from django.contrib.localflavor.us.us_states import STATE_CHOICES
+
+STATE_CHOICES = dict(STATE_CHOICES)
 
 """Simplified version of buckley that's truer to the FEC data"""
 
@@ -6,6 +9,7 @@ CYCLE_DATES = {'2010': ('2009-01-01', '2010-12-31', ),
                '2012': ('2011-01-01', '2012-12-31', ),
                }
 
+# populated from fec's candidate master
 class Candidate(models.Model):
     cycle = models.CharField(max_length=4)
     fec_id = models.CharField(max_length=9, blank=True)
@@ -25,11 +29,12 @@ class Candidate(models.Model):
                                         choices=(('C', 'STATUTORY CANDIDATE'), ('F', 'STATUTORY CANDIDATE FOR FUTURE ELECTION'), ('N', 'NOT YET A STATUTORY CANDIDATE'), ('P', 'STATUTORY CANDIDATE IN PRIOR CYCLE'))
                                          )
     # state is from the candidate's address (?)                                     
-    state_address = models.CharField(max_length=2, blank=True)
+    state_address = models.CharField(max_length=2, blank=True)    
     district = models.CharField(max_length=2, blank=True)
+    # The state where the candidate is running -- pulled from the candidate id.
+    state_race = models.CharField(max_length=2, blank=True, null=True)
     slug = models.SlugField()
     campaign_com_fec_id = models.CharField(max_length=9, blank=True)
-    # Denormalizations
     total_expenditures = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     expenditures_supporting = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     expenditures_opposing = models.DecimalField(max_digits=19, decimal_places=2, null=True)
@@ -46,20 +51,18 @@ class Candidate(models.Model):
         if self.office=='P':
             return 'NA'
         else:
-            return self.state_address
-
-
-    @models.permalink
+            return self.state_race
+    
     def get_absolute_url(self):
-        return ('buckley_cycle_candidate_detail', [self.cycle, self.slug, ])
+        return ("/super-pacs/candidate/%s/%s/" % (self.slug, self.fec_id))
 
     def race(self):
         if self.office == 'P':
             return 'President'
         elif self.office == 'S' or self.district.startswith('S'):
-            return '%s-Senate' % self.state
+            return '%s (Senate)' % self.state()
         else:
-            return '%s-%s' % (self.state, self.district.lstrip('0'))
+            return '%s-%s (House)' % (self.state(), self.district.lstrip('0'))
 
     def full_race_name(self):
         if self.office == 'P':
@@ -87,6 +90,30 @@ class Candidate(models.Model):
                 return ''
         except KeyError:
             return None
+    def display_party(self):
+        if (self.party.upper()=='REP'):
+            return '(R)'
+        elif (self.party.upper()=='DEM'):
+            return '(D)'
+        else: 
+            return ''
+        # todo--add other parties, if there are any that are being used? 
+    
+    # HACK. NEED A DRY-ER SOLUTION... 
+    def get_race_url(self):
+        office=self.office
+        state=self.state_race
+        district = self.district
+        if (office == 'P'):
+            state='00'
+            district='00'
+        elif (office=='S'):
+            district='00'
+            
+            
+        return "/super-pacs/race_detail/%s/%s/%s/" % (office, state, district)
+
+# Populated from fec's committee master            
 class Committee(models.Model):
     name = models.CharField(max_length=255)
     display_name = models.CharField(max_length=255, null=True)
@@ -162,6 +189,14 @@ class Committee(models.Model):
     
     total_contributions = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     total_expenditures = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    
+    
+    # HACK!
+    def get_superpac_url(self):
+        return ("/super-pacs/committee/%s/%s/" % (self.slug, self.fec_id))
+        
+    def __unicode__(self):
+        return str(self.name)        
 
 
 class F3X_Summary(models.Model):
@@ -186,7 +221,7 @@ class F3X_Summary(models.Model):
     unitemized = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
     
     
-
+# This needs a 'final' -- i.e. unamended -- manager, but unclear if it should be on this model or a distillation
 class Expenditure(models.Model):
     cycle = models.CharField(max_length=4, null=True)
     image_number = models.BigIntegerField()
@@ -251,11 +286,20 @@ class Expenditure(models.Model):
         if self.support_oppose.upper() == 'O':
                 return "Oppose"
         return "Unknown"
+        
     def unmatched_amendment(self):
         if self.amendment.startswith('A') and self.amends_earlier_filing == False:
             return True
         else: 
             return False
+    
+    def race_name(self):
+        if self.office == 'P':
+            return 'President'
+        elif self.office == 'S' or self.district.startswith('S'):
+            return '%s (Senate)' % self.state()
+        else:
+            return '%s-%s (House)' % (self.state(), self.district.lstrip('0'))            
 
 # Dump of transparency ids
 class Transparency_Crosswalk(models.Model):
@@ -306,6 +350,8 @@ class IEOnlyCommittee(models.Model):
     class Meta:
         ordering = ('-total_indy_expenditures', )
 
+    def get_absolute_url(self):  
+        return ("/super-pacs/committee/%s/%s/" % (self.slug, self.fec_id))
 
     def name_to_show(self):
         if (self.display_name):
@@ -342,18 +388,97 @@ class Pac_Candidate(models.Model):
     support_oppose = models.CharField(max_length=1, 
                                        choices=(('S', 'Support'), ('O', 'Oppose'))
                                        )
-    total_indepedent_expenditures = models.DecimalField(max_digits=19, decimal_places=2, null=True) 
-    
+    total_ind_exp = models.DecimalField(max_digits=19, decimal_places=2, null=True) 
+    total_ec = models.DecimalField(max_digits=19, decimal_places=2, null=True) 
     
     class Meta:
-        ordering = ('-total_indepedent_expenditures', )
+        ordering = ('-total_ind_exp', )
 
     def __unicode__(self):
-        return self.committee, self.candidate 
+        return self.committee, self.candidate
+    
+    def support_or_oppose(self):
+        if (self.support_oppose.upper() == 'O'):
+            return 'Oppose'
+        elif (self.support_oppose.upper() == 'S'): 
+            return 'Support'
+        return ''
         
         
+class Race_Aggregate(models.Model):
+    office = models.CharField(max_length=1,
+                              choices=(('H', 'House'), ('S', 'Senate'), ('P', 'President')),
+                              null=True
+                              )    
+    district = models.CharField(max_length=2, blank=True, null=True)
+    # Null for president
+    state = models.CharField(max_length=2, blank=True, null=True)
+    expenditures_supporting = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    expenditures_opposing = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    total_ind_exp = models.DecimalField(max_digits=19, decimal_places=2, null=True) 
+    total_ec = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    
+    class Meta:
+        ordering = ('-total_ind_exp', )    
+    
+    def race_name(self):
+        
+        if self.office == 'P':
+            return 'President'
+        elif self.office == 'S':
+            return '%s (Senate)' % self.state
+        else:
+            return '%s-%s (House)' % (self.state, self.district.lstrip('0')) 
+            
+    def get_absolute_url(self):
+        return "/super-pacs/race_detail/%s/%s/%s/" % (self.office, self.state, self.district) 
+        
+class State_Aggregate(models.Model):
+    state = models.CharField(max_length=2, blank=True, null=True)
+    expenditures_supporting_president = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    expenditures_opposing_president = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    total_pres_ind_exp = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    expenditures_supporting_house = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    expenditures_opposing_house = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    total_house_ind_exp = models.DecimalField(max_digits=19, decimal_places=2, null=True)   
+    expenditures_supporting_senate = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    expenditures_opposing_senate = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    total_senate_ind_exp = models.DecimalField(max_digits=19, decimal_places=2, null=True)     
+    total_ind_exp = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    # last 10 days is recent
+    recent_ind_exp = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    recent_pres_exp = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    total_ec = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    
+    def __unicode__(self):
+        return STATE_CHOICES[self.state]
+    
+    def get_absolute_url(self):
+        return "/super-pacs/state/%s/" % (self.state)
+        
+#    def state_name(self):
+
+
+class President_State_Pac_Aggregate(models.Model):
+    committee = models.ForeignKey(Committee)
+    candidate = models.ForeignKey(Candidate)
+    support_oppose = models.CharField(max_length=1, 
+                                       choices=(('S', 'Support'), ('O', 'Oppose'))
+                                       )    
+    state = models.CharField(max_length=2, blank=True, null=True)
+    expenditures = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    recent_expenditures = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    
+    def support_or_oppose(self):
+        if (self.support_oppose.upper() == 'O'):
+            return 'Oppose'
+        elif (self.support_oppose.upper() == 'S'): 
+            return 'Support'
+        return ''    
+        
+
 class Contribution(models.Model):
-    # the verbatime line type: should be SA 11A1/11B/11C entries 
+    # the verbatim line type: should be SA 11A1/11B/11C entries 
     line_type = models.CharField(max_length=7)
     from_amended_filing = models.NullBooleanField()
     committee = models.ForeignKey(Committee, null=True)
@@ -406,6 +531,12 @@ class Contribution(models.Model):
 
     def __unicode__(self):
         return self.display_name
+        
+    def donor_display(self):
+        if (self.contrib_org):
+            return self.contrib_org
+        else:
+            return "%s, %s" % (self.contrib_last, self.contrib_first)
     
     def contrib_source(self):
         if (self.line_type=='SA11AI'):

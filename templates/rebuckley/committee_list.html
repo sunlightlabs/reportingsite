@@ -1,79 +1,60 @@
-{% extends "buckley/buckley_base.html" %}
+{% extends "rebuckley/buckley_base.html" %}
 
 {% load humanize %}
 {% load media %}
-{% load buckley %}
 
-{% block title %}Committees - {{ block.super }}{% endblock %}
+
+{% block title %}Super PACs - {{ block.super }}{% endblock %}
 
 {% block body %}{{ block.super }} expendituresCommittee{% endblock %}
 
+{% comment %}
 {% block breadcrumb %}{{ block.super }}
-<li>Committees</li>
+<li>Super PACs</li>
 {% endblock %}
+{% endcomment %}
 
 {% block content %}
-    {% include "buckley/tabs.html" %}
+    {% include "rebuckley/tabs.html" %}
 
 <h2>
-    {% if cycle %}
-    Committees: {{ cycle }} cycle
-    {% else %}
-    Committees
-    {% endif %}
+    Super PACs
 </h2>
 
 
-{% if not cycle %}
-Previous cycles: <a href="{% url buckley_cycle_committee_list 2010 %}">2010</a>
-{% endif %}
 
 {% if object_list %}
 
-<p class="tip">Select a committee to see details.</p>
-<p style="font-weight: bold;"><a href="{% url buckley_letter_list %}">View all committes intending to accept unlimited contributions.</a></p>
+<p class="tip">Select a super PAC to see details.</p>
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
-            <th class="sort">Committee</th>
+            <th class="sort">Super PACs</th>
             <th class="sort">Independent expenditures</th>
-            <th class="sort">Electioneering communications</th>
-            {#<th class="sort">IE-only letter</th>#}
             <th class="sort">Contributions</th>
+            <th class="sort">Cash on hand</th>
+            <th class="sort">Filing date</th>
             <th></th>
         </tr>
     </thead>
     <tbody>
         {% for committee in object_list %}
-            {#{% if committee.total %}#}
+            
                 <tr class="{% cycle 'odd' 'even' %}">
                     <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
-
-                    {% if cycle %}
-                    <td>${{ committee|committee_ie_total_by_cycle:cycle|intcomma }}</td>
-                    <td>${{ committee|committee_ec_total_by_cycle:cycle|intcomma }}</td>
-
-                    {% else %}
-                    <td>${{ committee.ie_total|intcomma }}</td>
-                    <td>${{ committee.ec_total|intcomma }}</td>
-                    {% endif %}
-
-                    {#<td>{% if committee.ieonly_url %}<a href="{{ committee.ieonly_url }}">Yes</a>{% endif %}</td>#}
-                    {% if committee.slug %}
-                    {#<td>{% if committee.contribution_set.count %}<a href="{% url buckley_committee_contribution_list slug=committee.slug %}">Donors</a>{% endif %}</td>#}
-                    <td>{% if committee.has_donors %}<a href="{% url buckley_committee_contribution_list slug=committee.slug %}">Donors</a>{% endif %}</td>
-                    {% else %}
                     <td></td>
-                    {% endif %}
+                    <td></td>
+                    <td></td>
+                    <td></td>
                     <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</a></td>
                 </tr>
-            {#{% endif %}#}
+            
         {% endfor %}
     </tbody>
 </table>
 
 {% with '[1,1]' as sortdir %}
-{% include "buckley/tablesorter.html" %}
+{% include "rebuckley/tablesorter.html" %}
 {% endwith %}
 
 {% else %}

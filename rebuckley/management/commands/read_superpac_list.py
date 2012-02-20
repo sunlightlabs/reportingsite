@@ -6,7 +6,7 @@ from django.core.cache import cache
 from django.core.management.base import BaseCommand, CommandError
 from django.template.defaultfilters import slugify
 
-from rebuckley.models import IEOnlyCommittee
+from rebuckley.models import IEOnlyCommittee, Committee
 
 
 socket.setdefaulttimeout(10000)
@@ -29,8 +29,20 @@ class Command(BaseCommand):
             name = m.group(3)
             filing_freq = m.group(4) 
             
+            # set the superpac flag for these committees:
+            try: 
+                committee = Committee.objects.get(fec_id=committee_id)
+                committee.is_superpac=True
+                committee.save()
+            except Committee.DoesNotExist:
+                pass
+            
+            
             try:
-                IEOnlyCommittee.objects.get(fec_id=committee_id)
+                sp = IEOnlyCommittee.objects.get(fec_id=committee_id)
+                # They're constantly changing their filing dates, so upatethese... 
+                sp.filing_freq_verbatim=filing_freq
+                sp.save()
             except IEOnlyCommittee.DoesNotExist:
                 print "saving: %s" % (name)
                 ieoc = IEOnlyCommittee.objects.create(
@@ -40,5 +52,15 @@ class Command(BaseCommand):
                     filing_freq_verbatim=filing_freq
                 )
                 ieoc.save()
+            
+            
+                
+            # Super pac listings use a newer name than what's in the committee master, so locate the original record and sync the name. This is a sorta dumb circumstance, but... 
+            try: 
+                com = Committee.objects.get(fec_id=committee_id)
+                com.name = name
+                com.save()
+            except Committee.DoesNotExist:
+                print "*** Can't find original record for %s %s" % (committee_id, name)
             
             
