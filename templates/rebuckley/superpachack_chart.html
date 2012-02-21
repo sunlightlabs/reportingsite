@@ -13,8 +13,8 @@
             <th class="sort">Committee</th>
             <th class="sort">Supporting</th>
             <th class="sort">Presidential Spending</th>
-            <th class="sort">Itemized Donations, 2011</th>
-            <th class="sort">Cash&nbsp;as&nbsp;of<br>12/31/11</th>
+            <th class="sort">Total Contributions</th>
+            <th class="sort">Cash&nbsp;on&nbsp;hand</th>
         </tr>
     </thead>
 
@@ -25,7 +25,7 @@
             <td>{% if sp.supporting %}{{sp.supporting}}{% endif %}</td>
             <td>${{ sp.total_presidential_indy_expenditures|intcomma }}<br><a href="{{sp.superpachackcsv}}">download .csv</a></td>
             <td>{% if sp.total_contributions %}${{ sp.total_contributions|intcomma}}{% endif %}{% if sp.has_contributions %}<br><a href="{{ sp.superpachackdonorscsv}}">download .csv</a>{% endif %}</td>
-            <td>{% if sp.cash_on_hand %}${{ sp.cash_on_hand|intcomma }}{% endif %}<br>&nbsp;</td>
+            <td>{% if sp.cash_on_hand %}${{ sp.cash_on_hand|intcomma }}<br>as of {{sp.cash_on_hand_date}}{% endif %}<br>&nbsp;</td>
             
             
             
@@ -40,7 +40,7 @@
 <div style="text-align:right; margin:10px; margin-right:25px; width:590px;"><span style="font-size:18px; text-align:right;"><b>Total presidential independent expenditures: ${{total.total_spent|intcomma}}</b></span></div>
 <div style="margin-top:20px;">
 <p style="font-size: 10px; margin:10px; margin-bottom:5px;">Source: FEC; Sunlight Foundation analysis</p>
-<p style="font-size: 10px; margin:10px; margin-top:5px; margin-bottom:5px;">Note: Spending totals on this chart reflect independent expenditures only, not all disbursements. Itemized donations--those in which donor names are disclosed--may be less than the total amount raised because small donations are not itemized.</p>
+<p style="font-size: 10px; margin:10px; margin-top:5px; margin-bottom:5px;">Note: Spending totals on this chart reflect independent expenditures only, not all disbursements.</p>
 </div>
 
 </div>
