@@ -311,7 +311,7 @@ def candidate_detail(request, candidate_id):
 def file_downloads(request):
     superpacs = IEOnlyCommittee.objects.filter(total_indy_expenditures__gt=0).order_by('fec_name')
     states = State_Aggregate.objects.filter(total_ind_exp__gt=0).order_by('state')
-    races = Race_Aggregate.objects.filter(total_ind_exp__gt=0).order_by('-total_ind_exp')
+    races = Race_Aggregate.objects.filter(total_ind_exp__gt=0).order_by('state', 'office', 'district')
     
     return render_to_response('rebuckley/file_downloads.html',
                             {'superpacs':superpacs, 
