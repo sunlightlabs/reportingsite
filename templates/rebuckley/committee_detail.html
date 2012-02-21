@@ -69,6 +69,7 @@
            <tr>
                <th class="sort">Date</th>
                <th class="sort">Committee</th>
+               <th class="sort">Candidate</th>
                <th class="sort">Support/Oppose</th>
                <th class="sort">Amount</th>
                <th class="sort">State</th>                   
@@ -79,7 +80,8 @@
        {% for ie in expenditures %}    
            <tr class="{% cycle 'odd' 'even' %}">
                <td>{{ ie.expenditure_date }}</td>
-               <td><a href="{{ie.committee.get_superpac_url}}">{{ ie.committee.name }}</a></td> 
+               <td><a href="{{ie.committee.get_superpac_url}}">{{ ie.committee.name }}</a></td>
+               <td><a href="{{ie.candidate.get_absolute_url}}">{{ ie.candidate.fec_name }}</a></td>                
                <td>{{ ie.support_or_oppose }}</td>
                <td>${{ ie.expenditure_amount|intcomma }}</td>   
                <td>{% if ie.state %}{{ ie.state }}{% endif %}</td>                                               
