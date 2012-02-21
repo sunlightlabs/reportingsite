@@ -46,7 +46,8 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         
         #all_superpacs = IEOnlyCommittee.objects.all().filter(total_presidential_indy_expenditures__gte=100)
-        all_superpacs = IEOnlyCommittee.objects.all()
+        #all_superpacs = IEOnlyCommittee.objects.all()
+        all_superpacs = IEOnlyCommittee.objects.filter(filing_freq_verbatim='MONTHLY FILER')
         for sp in all_superpacs:
             
             print "%s - %s" % (sp.fec_name, sp.fec_id)

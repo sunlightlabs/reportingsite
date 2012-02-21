@@ -71,6 +71,7 @@ class Command(BaseCommand):
                             party=data_dict['party'],
                             office=office,
                             seat_status=data_dict['seat_status'],
+                            state_race=data_dict['fec_id'][2:4],
                             candidate_status=data_dict['candidate_status'],
                             state_address=data_dict['state_address'],
                             district=data_dict['current_district'],
