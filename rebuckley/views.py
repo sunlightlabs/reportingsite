@@ -264,7 +264,7 @@ def states_csv(request):
 
     for c in states:
         
-        rows.append([c.state, c,dollarify(c.total_ind_exp),dollarify(c.total_pres_ind_exp), dollarify(c.total_house_ind_exp), dollarify(c.total_senate_ind_exp)])
+        rows.append([c.state, c,dollarify(c.total_ind_exp),dollarify(c.total_pres_ind_exp), dollarify(c.recent_pres_exp), dollarify(c.total_house_ind_exp), dollarify(c.total_senate_ind_exp)])
     return generic_csv_headless(file_name, fields, rows)  
 
 
