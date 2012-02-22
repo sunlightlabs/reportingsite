@@ -17,7 +17,9 @@
     <h2>
         {{ committee.fec_name }}
     </h2>
-<p>FILING FREQUENCY: {{committee.filing_freq_verbatim}}</p>
+
+<p>{% if sp.supporting %}Supporting: {{sp.supporting}}<br>{% endif %}
+{% if committee.has_linkable_url %}<b>Read <a href="{{committee.profile_url}}" target="null" name="PROFILE: {{ committee.fec_name }}">a profile of this super PAC{% endif %}{% if committee.has_linkable_url %}</a></b><br>{% endif %}FILING FREQUENCY: {{committee.filing_freq_verbatim}}</p>
 
 
 
