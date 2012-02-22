@@ -19,7 +19,7 @@
     </h2>
 
 <p>{% if committee.supporting %}Supporting: {{committee.supporting}}<br>{% endif %}
-{% if committee.has_linkable_url %}<b>Read <a href="{{committee.profile_url}}" target="null" name="PROFILE: {{ committee.fec_name }}">a profile of this super PAC{% endif %}{% if committee.has_linkable_url %}</a></b><br>{% endif %}FILING FREQUENCY: {{committee.filing_freq_verbatim}}</p>
+{% if committee.has_linkable_url %}<b>Read <a href="{{committee.profile_url}}" name="PROFILE: {{ committee.fec_name }}">a profile of this super PAC{% endif %}{% if committee.has_linkable_url %}</a></b><br>{% endif %}FILING FREQUENCY: {{committee.filing_freq_verbatim}}</p>
 
 
 
