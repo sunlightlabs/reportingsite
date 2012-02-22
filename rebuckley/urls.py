@@ -32,7 +32,8 @@ urlpatterns = patterns('',
     url(r'^states\/?$', 'rebuckley.views.states'),
     url(r'^state\/(?P<state_abbreviation>\w\w)\/?$', 'rebuckley.views.state_detail'),  
     url(r'^independent-expenditures\/?$', 'rebuckley.views.ies'),
-    url(r'^candidate\/[\w-]+\/(?P<candidate_id>[\w\d]+)\/?$', 'rebuckley.views.candidate_detail')    
+    url(r'^candidate\/[\w-]+\/(?P<candidate_id>[\w\d]+)\/?$', 'rebuckley.views.candidate_detail'), 
+    url(r'^csv/state_csv/','rebuckley.views.states_csv')   
 )
 
 

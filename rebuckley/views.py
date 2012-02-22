@@ -29,6 +29,17 @@ def generic_csv(filename, fields, rows):
 
     return response
 
+def generic_csv_headless(filename, fields, rows):
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    writer = csv.writer(response)
+    writer.writerow(fields)
+    for row in rows:
+        writer.writerow(row)
+
+    return response
+        
 def superpac_presidential_chart(request):
     
     superpacs_with_presidential_spending = IEOnlyCommittee.objects.filter(total_presidential_indy_expenditures__gte=10)
@@ -240,6 +251,19 @@ def states(request):
                             }) 
 
 
+def states_csv(request):
+    states = State_Aggregate.objects.filter(total_ind_exp__gt=0)
+    fields = ['state','state_full', 'total', 'total_presidential','recent_presidential', 'house', 'senate']
+    rows = []
+    file_name = "states_summary.csv"
+
+    for c in states:
+        
+        rows.append([c.state, c,c.total_ind_exp,c.total_pres_ind_exp, c.total_house_ind_exp, c.total_senate_ind_exp])
+    return generic_csv_headless(file_name, fields, rows)  
+
+
+
 def presidential_state_summary(request, state):
     try:
         state_name = STATE_CHOICES[state]
@@ -282,7 +306,10 @@ def state_detail(request, state_abbreviation):
                             'candidates':candidates,
                             'explanatory_text':explanatory_text,
                             'this_state':this_state
-                            })                            
+                            }) 
+                            
+
+                                                       
 def ies(request):
     today = datetime.date.today()
     two_weeks_ago = today - datetime.timedelta(days=14)
