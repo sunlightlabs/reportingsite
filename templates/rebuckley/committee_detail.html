@@ -18,13 +18,13 @@
         {{ committee.fec_name }}
     </h2>
 
-<p>{% if committee.supporting %}Supporting: {{committee.supporting}}<br>{% endif %}
-{% if committee.has_linkable_url %}<b>Read <a href="{{committee.profile_url}}" name="PROFILE: {{ committee.fec_name }}">a profile of this super PAC{% endif %}{% if committee.has_linkable_url %}</a></b><br>{% endif %}FILING FREQUENCY: {{committee.filing_freq_verbatim}}</p>
+<div><span class="amountLine">{% if committee.supporting %}Supporting: {{committee.supporting}}<br>{% endif %}
+{% if committee.has_linkable_url %}Read <a href="{{committee.profile_url}}" name="PROFILE: {{ committee.fec_name }}">a profile of this super PAC{% endif %}{% if committee.has_linkable_url %}</a><br>{% endif %}Filing Frequency: {{committee.filing_freq_verbatim|lower}}</span></div>
 
 
 
 
-<div>
+<div class="space_above">
     <span class="amountLine">Independent Expenditures: </span><span class="amount">{% if committee.total_indy_expenditures%}${{ committee.total_indy_expenditures|intcomma }}{% endif %}</span><br>Jump to <a href="#spending">expenditures</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackcsv}}">.csv file of all independent expenditures</a>
     <br><br>
     <span class="amountLine">Contributions (as of {{ committee.cash_on_hand_date }}): </span><span class="amount">{% if committee.total_contributions %}${{ committee.total_contributions|intcomma }}{% endif %}</span><br>Jump to <a href="#contributors"> contributors</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackdonors}}">.csv file of contributions</a>
