@@ -250,6 +250,11 @@ def states(request):
                             'explanatory_text':explanatory_text,
                             }) 
 
+def dollarify(num):
+    if num:
+        return "$" + str(num)
+    else: 
+        return ""
 
 def states_csv(request):
     states = State_Aggregate.objects.filter(total_ind_exp__gt=0)
@@ -259,7 +264,7 @@ def states_csv(request):
 
     for c in states:
         
-        rows.append([c.state, c,c.total_ind_exp,c.total_pres_ind_exp, c.total_house_ind_exp, c.total_senate_ind_exp])
+        rows.append([c.state, c,dollarify(c.total_ind_exp),dollarify(c.total_pres_ind_exp), dollarify(c.total_house_ind_exp), dollarify(c.total_senate_ind_exp)])
     return generic_csv_headless(file_name, fields, rows)  
 
 
