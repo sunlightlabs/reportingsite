@@ -8,6 +8,7 @@ from django.http import Http404, HttpResponse
 from django.db.models import Sum
 from django.db.models import Q
 from django.contrib.localflavor.us.us_states import STATE_CHOICES
+from django.contrib.humanize.templatetags.humanize import intcomma
 
 STATE_CHOICES = dict(STATE_CHOICES)
 
@@ -252,7 +253,7 @@ def states(request):
 
 def dollarify(num):
     if num:
-        return "$" + str(num)
+        return "$" + str(intcomma(num))
     else: 
         return ""
 
