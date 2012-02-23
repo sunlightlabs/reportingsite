@@ -4,7 +4,7 @@ from django.conf import settings
 from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.http import HttpResponse, HttpResponsePermanentRedirect
-from django.views.generic.simple import direct_to_template
+from django.views.generic.simple import direct_to_template, redirect_to
 from django.views.static import serve
 
 from reporting.feeds import *
@@ -31,6 +31,7 @@ urlpatterns = patterns('reporting.views',
     url(r'^hac/', include('hacmap.urls')),
     url(r'^lobbying/', include('willard.urls')),
     url(r'^outside-spending/', include('buckley.urls')),
+    url(r'^outside-spending/$', redirect_to, {'url': '/super-pacs/all/'}, name='buckley_index'),
     url(r'^recovery/', include('millions.urls')),
     # super pac hack:
     url(r'^super-pacs/', include('rebuckley.urls')),
