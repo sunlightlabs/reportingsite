@@ -31,7 +31,7 @@ urlpatterns = patterns('reporting.views',
     url(r'^hac/', include('hacmap.urls')),
     url(r'^lobbying/', include('willard.urls')),
     url(r'^outside-spending/', include('buckley.urls')),
-    url(r'^outside-spending/$', redirect_to, {'url': '/super-pacs/all/'}, name='buckley_index'),
+    url(r'^outside-spending/$', redirect_to, {'url': '/super-pacs/all/'}),
     url(r'^recovery/', include('millions.urls')),
     # super pac hack:
     url(r'^super-pacs/', include('rebuckley.urls')),
