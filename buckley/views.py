@@ -16,6 +16,7 @@ from django.http import Http404, HttpResponse
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
 from django.template import RequestContext
 from django.views.decorators.cache import cache_page
+from django.shortcuts import redirect
 
 try:
     import json
@@ -35,12 +36,18 @@ except ImportError:
 
 KEY_PREFIX = '10'
 
+# redirect old url to temporary new one.  
+def redirect_to_rebuckley(request):
+    return redirect('/super-pacs/all/')
+
 
 @cache_page(60*5, key_prefix=KEY_PREFIX)
 def expenditure_detail(request, committee_slug, object_id):
     expenditure = get_object_or_404(Expenditure, committee__slug=committee_slug, pk=object_id)
     return render_to_response('buckley/expenditure_detail.html', {'object': expenditure, },
                                 context_instance=RequestContext(request))
+                                
+                                
 
 
 def races(cycle=None):

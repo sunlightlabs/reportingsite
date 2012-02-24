@@ -44,10 +44,8 @@ urlpatterns = patterns('',
             {'queryset': IEOnlyCommittee.objects.all(), },
             name='buckley_letter_detail'),
 
-        url(r'.*',
-            cache_page(object_list, 60*5, key_prefix=KEY_PREFIX),
-            {'queryset': IEOnlyCommittee.objects.all(), },
-            name='buckley_letter_list'),
+            
+        url(r'.*', 'buckley.views.redirect_to_rebuckley'),
         # This is the end of the temporary take-down block.
 
 
