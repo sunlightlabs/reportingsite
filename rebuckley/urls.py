@@ -3,6 +3,7 @@ from django.conf.urls.defaults import *
 from rebuckley.models import *
 #from rebuckley.feeds import *
 from rebuckley.views import *
+from django.views.generic.simple import direct_to_template
 
 
 
@@ -21,7 +22,10 @@ urlpatterns = patterns('',
     url(r'^csv/state/expenditures/(\w\w)\/?$', 'rebuckley.views.expenditure_csv_state'),
     url(r'^csv/race/expenditures/(?P<office>\w)\/(?P<state>[\w0]+)\/(?P<district>\d\d)\/?$', 'rebuckley.views.expenditure_csv_race'),
     url(r'^about/?$', 'rebuckley.views.about'),
+    # all that are noteworthy
     url(r'^all/?$', 'rebuckley.views.all_superpacs'),
+    # the complete reference
+    url(r'^complete/?$', 'rebuckley.views.complete_superpac_list'),
     url(r'^presidential/?$', 'rebuckley.views.presidential_superpacs'),
     url(r'^president-state-detail/(?P<state>[\w0]+)\/?$', 'rebuckley.views.presidential_state_summary'),    
     url(r'^committee\/[\w-]+\/(?P<ieonlycommittee_id>C\d{8})\/?$', 'rebuckley.views.committee_detail'),          
@@ -33,7 +37,9 @@ urlpatterns = patterns('',
     url(r'^state\/(?P<state_abbreviation>\w\w)\/?$', 'rebuckley.views.state_detail'),  
     url(r'^independent-expenditures\/?$', 'rebuckley.views.ies'),
     url(r'^candidate\/[\w-]+\/(?P<candidate_id>[\w\d]+)\/?$', 'rebuckley.views.candidate_detail'), 
-    url(r'^csv/state_csv/','rebuckley.views.states_csv')   
+    url(r'^csv/state_csv/','rebuckley.views.states_csv'),
+    url(r'^map/',direct_to_template, {'template': 'rebuckley/map.html'})   
+    
 )
 
 

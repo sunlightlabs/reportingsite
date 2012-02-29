@@ -165,7 +165,7 @@ def about(request):
                             {})                                   
                             
 def all_superpacs(request):
-    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACS--that have raised at least $10,000 since the beginning of 2011. For a complete list of all super PACS that includes the many that have not raised any money see <a href=\"http://www.fec.gov/press/press2011/ieoc_alpha.shtml\">here</a>. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
+    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACS--that have raised at least $10,000 since the beginning of 2011. For a complete list of all super PACS that includes the many that have not raised any money see <a href=\"/super-pacs/complete/\">here</a>. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
     
     superpacs = IEOnlyCommittee.objects.filter(total_contributions__gte=10000)
     total = superpacs.aggregate(total=Sum('total_indy_expenditures'))
@@ -350,4 +350,13 @@ def file_downloads(request):
                             {'superpacs':superpacs, 
                             'states':states,
                             'races':races,
-                            })                          
+                            })
+
+def complete_superpac_list(request):
+    superpacs = IEOnlyCommittee.objects.order_by('total_all_expenditures')
+    explanatory_text= 'This is a list of all super PACs.'
+    return render_to_response('rebuckley/superpac_show_all.html',
+                            {'superpacs':superpacs,
+                            'explanatory_text':explanatory_text,
+                            })
+                            

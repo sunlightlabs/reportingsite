@@ -41,6 +41,10 @@ def redirect_to_rebuckley(request):
     return redirect('/super-pacs/all/')
 
 
+# redirect old url to temporary new one.  
+def redirect_to_superpac_listing(request):
+    return redirect('/super-pacs/complete/')
+        
 @cache_page(60*5, key_prefix=KEY_PREFIX)
 def expenditure_detail(request, committee_slug, object_id):
     expenditure = get_object_or_404(Expenditure, committee__slug=committee_slug, pk=object_id)

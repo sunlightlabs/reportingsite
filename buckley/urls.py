@@ -22,14 +22,11 @@ KEY_PREFIX = '7'
 
 urlpatterns = patterns('',
 
-        # I've moved these URLS to the top and blocked the ones 
-        # below with a wildcard pattern in order to take down the 
-        # unlimited money tracker temporarily.
-        url(r'letters\/?$',
-            cache_page(object_list, 60*5, key_prefix=KEY_PREFIX),
-            {'queryset': IEOnlyCommittee.objects.all(), },
-            name='buckley_letter_list'),
-
+        # redirect old letters pages:
+        
+        url(r'letters\/?$','buckley.views.redirect_to_superpac_listing'),
+        url(r'letters\/(?P<object_id>C\d+)\/?$','buckley.views.redirect_to_superpac_listing'), 
+        
         url(r'^letters\.json$',
             'buckley.views.json_ieletter_list',
             {},
@@ -39,10 +36,6 @@ urlpatterns = patterns('',
             CommitteeLetterFeed(),
             name='buckley_letter_feed'),
 
-        url(r'letters\/(?P<object_id>C\d+)\/?$',
-            object_detail,
-            {'queryset': IEOnlyCommittee.objects.all(), },
-            name='buckley_letter_detail'),
 
             
         url(r'.*', 'buckley.views.redirect_to_rebuckley'),
