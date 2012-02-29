@@ -25,7 +25,7 @@ urlpatterns = patterns('',
         # redirect old letters pages:
         
         url(r'letters\/?$','buckley.views.redirect_to_superpac_listing'),
-        url(r'letters\/(?P<object_id>C\d+)\/?$','buckley.views.redirect_to_superpac_listing'), 
+        url(r'letters\/C\d+\/?$','buckley.views.redirect_to_superpac_listing'), 
         
         url(r'^letters\.json$',
             'buckley.views.json_ieletter_list',
