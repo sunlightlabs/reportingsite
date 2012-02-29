@@ -46,7 +46,7 @@
                     <td>{% if superpac.total_indy_expenditures%}${{ superpac.total_indy_expenditures|intcomma }}{% else %}$0{% endif %}</td>
                     <td>{% if superpac.total_contributions%}${{ superpac.total_contributions|intcomma }}{% else %}$0{% endif %}</td>
                     <td>{% if superpac.cash_on_hand%}${{ superpac.cash_on_hand|intcomma }}{% else %}$0{% endif %}</td>
-                    <td>{% if superpac.cash_on_hand_date  %}{{ superpac.cash_on_hand_date }}{% else %}$0{% endif %}</td>
+                    <td>{% if superpac.cash_on_hand_date  %}{{ superpac.cash_on_hand_date }}{% endif %}</td>
                     <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ superpac.fec_id }}">FEC filings</a></td>
                 </tr>
             
