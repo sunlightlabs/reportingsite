@@ -22,15 +22,12 @@ class Command(BaseCommand):
                 f3 = f3s[0]
                 
                 total_contributions = f3s.aggregate(receipts=Sum('total_receipts'))
-                operating_expenses_offsets = Contribution.objects.filter(superpac__fec_id=sp.fec_id, superceded_by_amendment=False, line_type='SA15').aggregate(total_contribs=Sum('contrib_amt'))
                 
-                total = 0
-                if operating_expenses_offsets['total_contribs']:
-                    total = total_contributions['receipts'] + operating_expenses_offsets['total_contribs']
-                else:
-                    total = total_contributions['receipts']
+                
+                
+                total = total_contributions['receipts']
 
-                print "SA15 spending %s offsets: %s other total: %s" % (sp.fec_name, operating_expenses_offsets['total_contribs'], total_contributions['receipts'])
+                print "%s total receipts = %s" % (sp.fec_name, total_contributions['receipts'])
                 
                 
                 sp.total_contributions = total
