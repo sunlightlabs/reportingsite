@@ -31,6 +31,14 @@ urlpatterns = patterns('',
                            {},
                            name='doddfrank_organization_detail'),
 
+                       url(r'^agency/federal-reserve/?$',
+                           'django.views.generic.simple.direct_to_template',
+                           {'template': 'doddfrank/federal_reserve_takedown_notice.html'}),
+
+                       url(r'^agency/sec/?$',
+                           'django.views.generic.simple.direct_to_template',
+                           {'template': 'doddfrank/sec_takedown_notice.html'}),
+
                        url(r'^agency\/(?P<agency_slug>[-\w]+)\/?$',
                            agency_detail,
                            {},
