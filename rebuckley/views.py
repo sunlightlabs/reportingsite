@@ -367,7 +367,7 @@ def organizational_superpac_contribs(request):
     total = contribs.aggregate(total=Sum('contrib_amt'))
     total_amt = total['total']
     
-    explanatory_text= 'This is a list of all contributions to super PACs from organizations, including donations listed as operating expense offsets (which sometimes include refunds). It does not include contributions from other PACs. '
+    explanatory_text= 'This is a list of all contributions to super PACs from organizations, including money received as operating expense offsets. These offsets, which are marked with an asterisk below, often include administrative overhead paid by a related organization, though sometimes include refund payments. This list does not include contributions from corporate--or any other--PACs. '
     return render_to_response('rebuckley/organizational_contribs.html',
                             {'contribs':contribs,
                             'total_amt':total_amt,
