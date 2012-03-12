@@ -1,0 +1,14 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+{% load doddfrank %}
+
+{% block body %}{{ block.super }} federalReserve{% endblock %}
+
+{% block content %}
+<h2>Federal Reserve</h2>
+<p class="tip">The Federal Reserve's main responsibilities are conducting the nation's monetary policy by influencing money and credit conditions; supervising and regulating banks and other financial institutions; maintaining the stability of the financial system and containing systemic risk; and providing financial services to the government and financial institutions. (<a href="http://www.federalreserve.gov/faqs/about_12594.htm">source</a>)</p>
+
+<p>This page is currently not displaying up to date information. Although the Federal Reserve voluntarily <a href="http://www.federalreserve.gov/newsevents/reform_systemic.htm">discloses Dodd-Frank related meetings</a> with outside groups, it does not do so in a machine readable format. Changes the agency makes in how its system displays the information will sometimes make our tracker inaccurate. We are working to fix this problem.</p>
+
+<div class="clear"></div>
+
+{% endblock content %}

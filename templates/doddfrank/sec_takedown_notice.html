@@ -1,0 +1,15 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% block body %}{{ block.super }} sec{% endblock %}
+
+{% block content %}
+{% load doddfrank %}
+<h2>Security and Exchange Commission</h2>
+<p class="tip">The SEC oversees the key participants in the securities world, including securities exchanges, securities brokers and dealers, investment advisors, and mutual funds. Here the SEC is concerned primarily with promoting the disclosure of important market-related information, maintaining fair dealing, and protecting against fraud. (<a href="http://sec.gov/about/whatwedo.shtml">source</a>)</p>
+
+<p>This page is currently not displaying up to date information. Although the Securities and Exchange Commission voluntarily <a href="http://sec.gov/spotlight/regreformcomments.shtml">discloses Dodd-Frank related meetings with outside groups</a>. It does not do so in a machine readable format. Changes the agency makes in how its system displays the information will sometimes make our tracker inaccurate. We are working to fix this problem.</p>
+
+<div class="clear"></div>
+
+{% endblock content %}
+
