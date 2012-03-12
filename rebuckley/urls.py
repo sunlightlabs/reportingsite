@@ -38,7 +38,8 @@ urlpatterns = patterns('',
     url(r'^independent-expenditures\/?$', 'rebuckley.views.ies'),
     url(r'^candidate\/[\w-]+\/(?P<candidate_id>[\w\d]+)\/?$', 'rebuckley.views.candidate_detail'), 
     url(r'^csv/state_csv/','rebuckley.views.states_csv'),
-    url(r'^map/',direct_to_template, {'template': 'rebuckley/map.html'})   
+    url(r'^map/',direct_to_template, {'template': 'rebuckley/map.html'}),  
+    url(r'^contribs/organizations/', 'rebuckley.views.organizational_superpac_contribs')
     
 )
 

@@ -360,3 +360,16 @@ def complete_superpac_list(request):
                             'explanatory_text':explanatory_text,
                             })
                             
+def organizational_superpac_contribs(request):
+    contribs = Contribution.objects.select_related("superpac").filter(superpac__isnull=False).exclude(contrib_org='').filter(line_type__in=['SA11AI', 'SA15'])
+    
+    
+    total = contribs.aggregate(total=Sum('contrib_amt'))
+    total_amt = total['total']
+    
+    explanatory_text= 'This is a list of all contributions to super PACs from organizations, including donations listed as operating expense offsets (which sometimes include refunds). It does not include contributions from other PACs. '
+    return render_to_response('rebuckley/organizational_contribs.html',
+                            {'contribs':contribs,
+                            'total_amt':total_amt,
+                            'explanatory_text':explanatory_text,
+                            })                            

@@ -545,3 +545,8 @@ class Contribution(models.Model):
         elif (self.line_type=='SA15'):
             return "Offsets To Operating Expenditure (line 15)"
                                              
+    def contrib_asterisk(self):
+        if (self.line_type=='SA15'):
+            return "*" 
+        else: 
+            return ""
