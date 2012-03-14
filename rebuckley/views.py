@@ -68,7 +68,7 @@ def expenditure_list(request, ieonlycommittee_id):
 def expenditure_csv(request, ieonlycommittee_id):
     committee = get_object_or_404(IEOnlyCommittee, fec_id=ieonlycommittee_id)
     committee_master = get_object_or_404(Committee, fec_id=ieonlycommittee_id)
-    expenditures = Expenditure.objects.filter(committee=committee_master, committee__is_superpac=True).filter(superceded_by_amendment=False)
+    expenditures = Expenditure.objects.select_related("committee", "candidate").filter(committee=committee_master, committee__is_superpac=True).filter(superceded_by_amendment=False)
     fields = ['Spending Committee', 'Spending Committee ID', 'Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number', 'unmatched amendment' ]
     rows = []
     file_name = committee.slug + "_expenditures.csv"
@@ -78,7 +78,7 @@ def expenditure_csv(request, ieonlycommittee_id):
     return generic_csv(file_name, fields, rows) 
     
 def all_expenditures_csv(request):
-    expenditures = Expenditure.objects.filter(committee__is_superpac=True).filter(superceded_by_amendment=False)
+    expenditures = Expenditure.objects.select_related("committee", "candidate").filter(committee__is_superpac=True).filter(superceded_by_amendment=False)
     fields = ['Spending Committee', 'Spending Committee ID', 'Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number', 'unmatched amendment' ]
     rows = []
     file_name =  "all_expenditures.csv"
@@ -88,7 +88,7 @@ def all_expenditures_csv(request):
     return generic_csv(file_name, fields, rows)     
     
 def expenditure_csv_state(request, state):
-    expenditures = Expenditure.objects.filter(state=state, committee__is_superpac=True).filter(superceded_by_amendment=False)
+    expenditures = Expenditure.objects.select_related("committee", "candidate").filter(state=state, committee__is_superpac=True).filter(superceded_by_amendment=False)
     fields = ['Spending Committee', 'Spending Committee ID', 'Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number', 'unmatched amendment' ]
     rows = []
     file_name = state + "_expenditures.csv"
@@ -99,7 +99,7 @@ def expenditure_csv_state(request, state):
 
 
 def expenditure_csv_race(request, office, state, district):
-    expenditures = Expenditure.objects.filter(office=office, committee__is_superpac=True).filter(superceded_by_amendment=False)
+    expenditures = Expenditure.objects.select_related("committee", "candidate").filter(office=office, committee__is_superpac=True).filter(superceded_by_amendment=False)
     if (office in ('H', 'S')):
         expenditures = expenditures.filter(candidate__state_race=state)
     if (office == 'H'):
@@ -319,7 +319,7 @@ def state_detail(request, state_abbreviation):
 def ies(request):
     today = datetime.date.today()
     two_weeks_ago = today - datetime.timedelta(days=14)
-    ies = Expenditure.objects.filter(committee__is_superpac=True, superceded_by_amendment=False, expenditure_date__gte=two_weeks_ago).order_by('-expenditure_date')
+    ies = Expenditure.objects.select_related("committee", "candidate").filter(committee__is_superpac=True, superceded_by_amendment=False, expenditure_date__gte=two_weeks_ago).order_by('-expenditure_date')
     explanatory_text= 'This page shows independent expenditures made by super PACs in the last two weeks.'
     return render_to_response('rebuckley/expenditure_list.html',
                             {'ies':ies, 
