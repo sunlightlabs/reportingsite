@@ -60,6 +60,7 @@
         </ol>
       {% endif %}
 
+      {% comment %}
       {% if post.days_old <= 30 %}
           {% get_comment_form for post as form %}
           <h3>Leave Us a Comment</h3>
@@ -84,6 +85,9 @@
         {% else %}
             <em>Comments are closed.</em>
         {% endif %}
+        {% endcomment %}
+        
+        
   </div>
   {%endautoescape%}
 {%endblock%}
