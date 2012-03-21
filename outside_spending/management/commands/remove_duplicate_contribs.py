@@ -32,7 +32,7 @@ class Command(BaseCommand):
         for oc in old_contribs:
             oc.delete()    
             
-        query = "select count(*), fec_id, coverage_to_date from rebuckley_f3x_summary group by fec_id, coverage_to_date"
+        query = "select count(*), fec_id, coverage_to_date from outside_spending_f3x_summary group by fec_id, coverage_to_date"
         cursor.execute(query)
         rows = cursor.fetchall()
         for r in rows:
