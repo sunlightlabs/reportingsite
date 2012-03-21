@@ -638,3 +638,27 @@ class Electioneering_94(models.Model):
     
     def __unicode__(self):
         return self.spe_nam, self.exp_amo, self.purpose    
+        
+        
+class F3X_Summary(models.Model):
+    """The second line, aka 'form line' of a F3X filing"""
+    filing_number = models.IntegerField()
+    amended = models.NullBooleanField()
+    committee_name = models.CharField(max_length=200)
+    fec_id = models.CharField(max_length=9)
+    address_change = models.CharField(max_length=1, blank=True)
+    street_1 = models.CharField(max_length=34, blank=True)
+    street_2 = models.CharField(max_length=34, blank=True)
+    city = models.CharField(max_length=30, blank=True)
+    state = models.CharField(max_length=2, blank=True)
+    zip = models.CharField(max_length=10, blank=True)
+    coverage_from_date = models.DateField(null=True, blank=True)
+    coverage_to_date = models.DateField(null=True, blank=True)
+    coh_begin = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    total_receipts = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    total_disbursements = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    coh_close = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    itemized = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    unitemized = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+
+        

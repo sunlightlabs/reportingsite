@@ -2,7 +2,7 @@ import MySQLdb
 
 from django.core.management.base import BaseCommand, CommandError
 
-from rebuckley.models import *
+from outside_spending.models import *
 from django.db.models import *
 
 dbcfg = settings.DATABASES['default']

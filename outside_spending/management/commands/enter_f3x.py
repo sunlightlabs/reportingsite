@@ -1,4 +1,4 @@
-from rebuckley.models import F3X_Summary, Contribution
+from outside_spending.models import F3X_Summary, Contribution
 from dateutil.parser import parse as dateparse
 
 

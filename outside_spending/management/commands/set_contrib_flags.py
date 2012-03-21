@@ -5,7 +5,7 @@
 from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Sum, Count
 from dateutil.parser import parse as dateparse
-from rebuckley.models import *
+from outside_spending.models import *
 
 class Command(BaseCommand):
     help = "Set superpac fields"
@@ -14,7 +14,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # calc superpac totals
-        all_superpacs = IEOnlyCommittee.objects.all()
+        all_superpacs = Committee_Overlay.objects.filter(is_superpac=True)
         for sp in all_superpacs:
             try:
                 
@@ -27,7 +27,7 @@ class Command(BaseCommand):
                 
                 total = total_contributions['receipts']
 
-                print "%s total receipts = %s" % (sp.fec_name, total_contributions['receipts'])
+                print "%s total receipts = %s" % (sp.name, total_contributions['receipts'])
                 
                 
                 sp.total_contributions = total
