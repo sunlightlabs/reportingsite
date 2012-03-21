@@ -47,6 +47,7 @@ def process_committee_page(pagehtml, committee_id):
 
                 print "Processing filing: %s, dl_url: %s" % (file_id, dl_url)
                 this_page = download_with_headers(dl_url)
+                time.sleep(1)
                 enter_form(this_page, file_id)
 
         else:
@@ -61,7 +62,7 @@ class Command(BaseCommand):
         
         #all_superpacs = IEOnlyCommittee.objects.all().filter(total_presidential_indy_expenditures__gte=100)
         #all_superpacs = IEOnlyCommittee.objects.all()
-        all_superpacs = Committee_Overlay.objects.filter(filing_frequency__iexact='M')
+        all_superpacs = Committee_Overlay.objects.filter(filing_frequency__iexact='M', is_superpac=True)
         for sp in all_superpacs:
             
             
