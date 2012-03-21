@@ -1,0 +1,20 @@
+<script type="text/javascript">
+$(document).ready(function()
+    {
+
+    $("#contrib_details").tablesorter({
+        widgets: ['zebra'],
+        {% if sorter %}
+        headers: { 1: { sorter: '{{ sorter }}' } },
+        {% endif %}
+        {% if sortdir %}
+        sortList: [{{ sortdir }}]
+        {% else %}
+        sortList: [[0,0]]
+        {% endif %}
+
+        });
+    }
+);
+
+</script>

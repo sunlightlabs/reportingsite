@@ -1,0 +1,73 @@
+{% extends "rebuckley/superpachac_base.html" %}
+{% load humanize %}
+{% load media %}
+
+{% block title %}SUPER PAC Donors: {{ committee.fec_name }}{% endblock %}
+{% block page_title %}Super PAC Donors<br>{{ committee.fec_name }}{% endblock %}
+
+{% block main_content %}
+<p style="margin-left:10px;">
+<b>Cash on hand: {% if committee.cash_on_hand %}${{committee.cash_on_hand|intcomma}} as of {{ committee.cash_on_hand_date}}{% endif %}</b>
+<br><b>Total receipts, 2011: ${{committee.total_contributions|intcomma}} (includes unitemized donations)</b>
+</p>
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Donating Organization</th>
+            <th class="sort">Donor</th>
+            <th class="sort">City</th>
+            <th class="sort">Occupation/Employer</th>
+            <th class="sort">Amount</th>
+            <th class="sort">Date</th>
+        </tr>
+    </thead>
+
+    <tbody>
+        {% for c in contributions %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td>{{ c.contrib_org }}</td>
+            <td>{{ c.contrib_last }}, {{ c.contrib_first }}</td>
+            <td>{{ c.contrib_city}}{% if c.contrib_state%}, {{c.contrib_state}}{% endif %}</td>
+            <td>{{ c.contrib_occupation }} / {{c.contrib_employer}}</td>
+            <td>${{ c.contrib_amt|intcomma }}</td>
+            <td>{{c.contrib_date}}</td>
+        </tr>
+        {% endfor %}
+        
+
+        
+</tbody>
+</table>
+<div style="margin-top:20px;">
+<p style="font-size: 10px;">Source: FEC; Sunlight Foundation analysis</p>
+</div>
+
+</div>
+
+
+<script type="text/javascript">
+$(document).ready(function()
+    {
+	$.tablesorter.addParser({ 
+		id: 'nocomma', 
+		is: function(s) { 
+			// return false so this parser is not auto detected 
+			return false; 
+		}, 
+		format: function(s) { 
+			return s.replace(/,/,'');
+		}, 
+		type: 'numeric' 
+	}); 
+
+    $("#expendituresData").tablesorter({
+		widgets: ['zebra'],
+		sortList: [[3,1]]
+
+        });
+    }
+);
+
+</script>
+
+{% endblock %}

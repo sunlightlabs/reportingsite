@@ -1,0 +1,114 @@
+{% extends "rebuckley/buckley_base.html" %}
+
+{% load humanize %}
+{% load buckley %}
+
+{% block title %}{{ candidate.fec_name }} {{ candidate.race }} - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} expendituresCandidate{% endblock %}
+
+{% block breadcrumb %}
+<li><a href="/super-pacs/candidates/">Candidates</a></li>
+<li>{{ candidate.fec_name }} {{ candidate.race }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "rebuckley/tabs.html" %}
+
+
+    <h2>
+        {{ candidate.fec_name }}  {{ candidate.display_party }}<br>Office Sought: {{ candidate.race }}
+    </h2>
+    
+
+    <div class="amountLine clear">
+        <ul>
+            <li>Independent expenditures made by super PACS <b>supporting</b> this candidate: <span class="amount">{% if candidate.expenditures_supporting %}${{ candidate.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</span> </li>
+            <li>Independent expenditures made by super PACS <b>opposing</b> this candidate: <span class="amount">{% if candidate.expenditures_opposing %}${{ candidate.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</span> </li>
+        <ul>
+    {% if object.transparencydata_id %}
+    <br>
+    View more data about this candidate at <a target="_new" href="{{ object.influence_explorer_url }}">Influence Explorer</a>
+    {% endif %}
+    <p><a href="{{ candidate.get_race_url}}">Compare to other candidates in this race</a></p>
+    
+    </div>
+    
+
+<div class="space_above"><h3>Super PAC Independent Expenditure Summary</h3></div>
+<p>This is a list of super PACs that have supported or opposed this candidate with independent expenditures.</p>
+    <div class="clear"></div>
+    {% if superpacs %}
+    <table id="expendituresData" class="tablesorter">
+        <thead>
+            <tr>
+                <th class="sort">Committee</th>
+                <th class="sort">Support/oppose</th>
+                <th class="sort">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate_pac in superpacs %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td><a href="{{candidate_pac.committee.get_superpac_url}}">{{ candidate_pac.committee.name }}</a></td>
+                <td>{{ candidate_pac.support_or_oppose }}</td>
+                <td>{% if candidate_pac.total_ind_exp %}${{ candidate_pac.total_ind_exp|intcomma }}{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% endif %}
+    
+    {% if expenditures %}
+    <div class="space_above"><h3>Super PAC Independent Expenditures </h3></div>
+    <p>{{ explanatory_text_details|safe }}</p>
+    <table id="expenditure_details" class="tablesorter">
+           <thead>
+               <tr>
+                   <th class="sort">Date</th>
+                   <th class="sort">Committee</th>
+                   <th class="sort">Support/Oppose</th>
+                   <th class="sort">Amount</th>
+                   <th class="sort">State</th>                   
+                   <th class="sort">Purpose</th>
+               </tr>
+           </thead>
+           <tbody>
+           {% for ie in expenditures %}    
+               <tr class="{% cycle 'odd' 'even' %}">
+                   <td>{{ ie.expenditure_date }}</td>
+                   <td><a href="{{ie.committee.get_superpac_url}}">{{ ie.committee.name }}</a></td> 
+                   <td>{{ ie.support_or_oppose }}</td>
+                   <td>${{ ie.expenditure_amount|intcomma }}</td>   
+                   <td>{% if ie.state %}{{ ie.state }}{% endif %}</td>                                               
+                   <td>{{ ie.expenditure_purpose }}</td>
+               </tr>
+           {% endfor %}
+           </tbody>
+           </table>
+           {% endif %}
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[2,1]' as sortdir %}
+{% include "rebuckley/tablesorter.html" %}
+{% endwith %}
+{% with '[0,1]' as sortdir %}
+{% include "rebuckley/tablesorter_expenditure_details.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

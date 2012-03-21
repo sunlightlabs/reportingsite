@@ -1,0 +1,5 @@
+-- count ies:
+
+select count(*) from outside_spending_filing_rows, outside_spending_filing_header where outside_spending_filing_rows.parent_filing_id = outside_spending_filing_header.id and outside_spending_filing_header.form='F24';
+
+select count(*) from outside_spending_filing_rows, outside_spending_filing_header where outside_spending_filing_rows.parent_filing_id = outside_spending_filing_header.id and outside_spending_filing_header.form='F24' and outside_spending_filing_header.is_amended;

@@ -113,6 +113,7 @@ INSTALLED_APPS = (
     #'valeo',
     'doddfrank',
     'rebuckley',
+    'outside_spending'
 )
 
 INTERNAL_IPS = ('127.0.0.1','localhost','216.15.37.167')

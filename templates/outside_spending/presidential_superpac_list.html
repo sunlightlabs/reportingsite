@@ -1,0 +1,86 @@
+{% extends "rebuckley/buckley_base.html" %}
+
+{% load humanize %}
+{% load media %}
+
+
+{% block title %}Super PAC spending: Presidential{% endblock %}
+
+{% block body %}{{ block.super }} expendituresPresident{% endblock %}
+
+
+{% block breadcrumb %}
+<li>Presidential Super PACs</li>
+{% endblock %}
+
+
+{% block content %}
+    {% include "rebuckley/tabs.html" %}
+
+<h2>
+    Super PAC spending: Presidential
+</h2>
+<div>
+    <span class="amountLine">Total Independent Expenditures to influence the presidential election: </span><span class="amount">${{total_amt|intcomma}}</span>
+</div>
+<p>{{ explanatory_text|safe }}</p>
+
+
+{% if superpacs %}
+
+<p class="tip">Click on each super PAC's name in the left column to see breakdowns of their spending, including aggregate amounts spent supporting or opposing individual candidates, and a chronological list of all their individual independent expenditure filings with the Federal Election Commission.</p>
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Super PAC</th>
+            <th class="sort">Presidential Expenditures</th>
+            <th class="sort">Contributions*</th>
+            <th class="sort">Cash on hand*</th>
+            <th class="sort">Filing date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for superpac in superpacs %}
+            
+                <tr class="{% cycle 'odd' 'even' %}">
+                    <td><a href="{{ superpac.get_absolute_url }}">{{ superpac.name_to_show }}</a></td>
+                    <td>{% if superpac.total_presidential_indy_expenditures%}${{ superpac.total_presidential_indy_expenditures|intcomma }}{% endif %}</td>
+                    <td>{% if superpac.total_contributions%}${{ superpac.total_contributions|intcomma }}{% endif %}</td>
+                    <td>{% if superpac.cash_on_hand%}${{ superpac.cash_on_hand|intcomma }}{% endif %}</td>
+                    <td>{% if superpac.cash_on_hand_date  %}{{ superpac.cash_on_hand_date }}{% endif %}</td>
+                    <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ superpac.fec_id }}">FEC filings</a></td>
+                </tr>
+            
+        {% endfor %}
+    </tbody>
+</table>
+<p>* Both contributions and cash on hand--which come from monthly or quarterly filings--are as of the most recent filing date. Independent expenditure amounts are more current because committees are required to report them within 24 hours. </p>
+
+
+
+{% else %}
+<br/><br/>No spending has been reported for this cycle.
+{% endif %}
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[1,1]' as sortdir %}
+{% include "rebuckley/tablesorter.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}
+

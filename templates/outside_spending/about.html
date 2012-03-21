@@ -1,0 +1,67 @@
+{% extends "base.html" %}
+
+{% load humanize %}
+
+{% block title %}Ouside spending: About - {{ block.super }}{% endblock %}
+
+{% block body %}expendituresAbout separateNav{% endblock %}
+
+{% block content %}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+    <h2 id="featureHeader">Super PACs</h2>
+    <div id="featureMainNav">
+        <ul>
+            <li id="overview"><a href="{% url buckley_totals %}">Overview</a></li>
+            <li id="expenditures"><a href="{% url buckley_index %}">Super PACs</a></li>
+            <li id="about"><a href="{% url buckley_about %}">About</a></li>
+            <li id="stories" class="last"><a href="http://reporting.sunlightfoundation.com/tag/Super%20PAC/">Stories</a></li>
+        </ul>  
+        <form id="expenditureSearch" action="{% url buckley_search %}" method="GET">
+            <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Search for a candidate or committee"{% endif %} type="text" name="q" />
+            <button class="goBtn" type="submit" value="Search" >
+              <span>Go</span>
+            </button>
+        </form>
+        <div class="clear"></div>
+    </div>
+    <h2>About this project</h2>
+    Text that desribes this project.
+{% endblock content %}
+
+{% block sidebar %}
+    <div class="mainModule sideExpenditures">
+        <h3>Latest Outside Spending</h3>
+        {% regroup latest_expenditures by expenditure_date as date_list %}
+        {% for date_expenditures in date_list %}
+            <h4>{{ date_expenditures.grouper|date:"N j" }}</h4>
+            <ul>
+                {% for expenditure in date_expenditures.list %}
+{% if expenditure.candidate.race %}
+                <li><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a> spent <a href="{{ expenditure.get_absolute_url }}">${{ expenditure.expenditure_amount|intcomma }}</a> in {% ifequal expenditure.support_oppose 'S' %}support of{% else %}opposition to{% endifequal %} <a href="{{ expenditure.candidate.get_absolute_url }}">{{ expenditure.candidate }}</a> in the <a href="{% url buckley_race_detail race=expenditure.candidate.race  %}">{{ expenditure.candidate.full_race_name }} race</a>.</li>
+{% endif %}
+                {% endfor %}
+            </ul>
+        {% endfor %}
+        <a class="viewAll" href="{% url buckley_index %}">View All Outside Spending</a>
+
+    </div>
+    <div class="mainModule sideStories">
+        <h3>Latest Stories</h3>
+        <ul>
+        {% for story in stories %}
+            <li><a href="{{ story.get_absolute_url }}">{{ story.title }}</a></li>
+        {% endfor %}
+        </ul>
+        <a class="viewAll" href="{% url buckley_stories %}">View All Stories</a>
+    </div>
+{% endblock sidebar %}

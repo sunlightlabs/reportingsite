@@ -1,0 +1,80 @@
+{% extends "rebuckley/buckley_base.html" %}
+
+{% block title %}States - {{ block.super }}{% endblock %}
+
+{% block body %}expendituresHome fullWidth expendituresStates{% endblock %}
+
+
+{% load humanize %}
+{% load media %}
+
+{% block breadcrumb %}
+<li>States</li>
+<li>Super PAC independent expenditures in {{ state_name }}</li>
+{% endblock %}
+
+{% block content %}
+    {% include "rebuckley/tabs.html" %}
+
+    <h2>
+        Super PACs' independent expenditures in {{ state_name }}
+    </h2>
+    <p>{{ explanatory_text|safe }}</p>
+
+
+<p class="tip">Select a race to see details.</p>
+
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Race</th>
+            <th class="sort">Total</th>
+            <th class="sort">Opposing</th>
+            <th class="sort">Supporting</th>           
+        </tr>
+    </thead>
+    <tbody>
+        {% if this_state.total_pres_ind_exp %}
+        <tr class="odd">
+            <td>President (<a href="/super-pacs/president-state-detail/{{this_state.state}}/">{{this_state}} only)</a></td>
+            <td>${{ this_state.total_pres_ind_exp|intcomma }}</td>
+            <td>{% if this_state.expenditures_opposing_president %}${{ this_state.expenditures_opposing_president|intcomma }}{% else %}$0{% endif %}</td>
+            <td>{% if this_state.expenditures_supporting_president %}${{ this_state.expenditures_supporting_president|intcomma }}{% else %}$0{% endif %}</td>
+        </tr>        
+        {% endif %}
+        
+        {% for race in races %}
+        <tr class="{% cycle 'even' 'odd' %}">
+            <td><a href="{{race.get_absolute_url}}">{{ race.race_name }}</a></td>
+            <td>${{ race.total_ind_exp|intcomma }}</td>
+            <td>{% if race.expenditures_opposing %}${{ race.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</td>
+            <td>{% if race.expenditures_supporting %}${{ race.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[1,1]' as sortdir %}
+{% include "rebuckley/tablesorter.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

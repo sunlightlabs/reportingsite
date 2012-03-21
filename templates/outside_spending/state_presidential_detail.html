@@ -1,0 +1,108 @@
+{% extends "rebuckley/buckley_base.html" %}
+
+{% load humanize %}
+{% load buckley %}
+
+{% block title %}Super PAC independent expenditures in {{ state_name }} {% endblock %}
+
+{% block body %}{{ block.super }}  expendituresPresident{% endblock %}
+
+{% block breadcrumb %}
+<li><a href="/super-pacs/presidential/">Presidential Super PACs</a></li>
+<li>Spending by state: {{ state_name }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "rebuckley/tabs.html" %}
+
+    
+
+    <h2>Super PAC presidential spending by state: {{ state_name }} </h2>
+{{ explanatory_text }}
+
+{% if state_pacs %}
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Candidate</th>            
+            <th class="sort">Super PAC</th>
+            <th class="sort">Support/oppose</th>
+            <th class="sort">Amount</th>
+            <th class="sort">Recent Spending*</th>
+        </tr>
+    </thead>
+    <tbody>
+    {% for candidate_pac in state_pacs %}
+    <tr>
+    <td><a href="{{ candidate_pac.candidate.get_absolute_url }}">{{ candidate_pac.candidate.fec_name }} {{ candidate_pac.candidate.display_party }}</a> </td>
+    <td><a href="{{candidate_pac.committee.get_superpac_url}}">{{ candidate_pac.committee.name }}</a></td>    
+    <td>{{ candidate_pac.support_or_oppose }}</td>
+    <td>{% if candidate_pac.expenditures %}${{ candidate_pac.expenditures|intcomma }}{% endif %}</td>   
+    <td>{% if candidate_pac.recent_expenditures %}${{ candidate_pac.recent_expenditures|intcomma }}{% endif %}</td>
+    </tr>                
+    {% endfor %}    
+    </tbody>
+</table>
+<p>* "Recent" spending, as used above, means in the last two weeks.</p>
+
+{% else %}
+<br/><br/>No candidates have been supported by independent expenditures this cycle.
+{% endif %}
+
+
+
+{% if expenditures %}
+<div class="space_above"><h3>Super PAC Independent Expenditures </h3></div>
+<p>{{ explanatory_text_details|safe }}</p>
+<table id="expenditure_details" class="tablesorter">
+       <thead>
+           <tr>
+               <th class="sort">Date</th>
+               <th class="sort">Committee</th>
+               <th class="sort">Candidate</th>               
+               <th class="sort">Support/Oppose</th>
+               <th class="sort">Amount</th>
+               <th class="sort">State</th>                   
+               <th class="sort">Purpose</th>
+           </tr>
+       </thead>
+       <tbody>
+       {% for ie in expenditures %}    
+           <tr class="{% cycle 'odd' 'even' %}">
+               <td>{{ ie.expenditure_date }}</td>
+               <td><a href="{{ie.committee.get_superpac_url}}">{{ ie.committee.name }}</a></td> 
+               <td><a href="{{ie.candidate.get_absolute_url}}">{{ ie.candidate.fec_name }}</a></td>               
+               <td>{{ ie.support_or_oppose }}</td>
+               <td>${{ ie.expenditure_amount|intcomma }}</td>   
+               <td>{% if ie.state %}{{ ie.state }}{% endif %}</td>                                               
+               <td>{{ ie.expenditure_purpose }}</td>
+           </tr>
+       {% endfor %}
+       </tbody>
+       </table>
+       {% endif %}
+
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[3,1]' as sortdir %}
+{% include "rebuckley/tablesorter.html" %}
+{% endwith %}
+{% with '[0,1]' as sortdir %}
+{% include "rebuckley/tablesorter_expenditure_details.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

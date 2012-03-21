@@ -1,0 +1,172 @@
+# Create your views here.
+import csv
+import datetime
+
+from django.views.decorators.cache import cache_page
+from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
+from django.http import Http404, HttpResponse
+from django.db.models import Sum
+from django.db.models import Q
+from django.contrib.localflavor.us.us_states import STATE_CHOICES
+from django.contrib.humanize.templatetags.humanize import intcomma
+
+STATE_CHOICES = dict(STATE_CHOICES)
+
+from outside_spending.models import *
+
+data_disclaimer = """ "These files are being provided as quickly as possible--but we cannot guarantee their accuracy. For more information, see: http://reporting.sunlightfoundation.com/super-pac/data/about/year-end/2011/ Please note that contributions in these files are as of the most recent filing deadline--whic is Jan. 31 for monthly filers, but Dec. 31, 2011 for quarterly filers. Presidential spending totals may not match up to overall spending totals, which may include independent expenditures made in support of congressional candidates. Independent expenditures are not comparable to the itemized disbursements found in PACs year-end reports. For more on independent expenditures see here: http://www.fec.gov/pages/brochures/indexp.shtml" """
+
+hybrid_superpac_disclaimer ="\"Hybrid\" super PACs--committees that have separate accounts for \"hard\" and \"soft\" money, are not included. For a list of these committees, see <a href=\"http://www.fec.gov/press/press2011/2012PoliticalCommitteeswithNon-ContributionAccounts.shtml\">here</a>."
+
+def generic_csv(filename, fields, rows):
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    writer = csv.writer(response)
+    writer.writerow([data_disclaimer])
+    writer.writerow(fields)
+    for row in rows:
+        writer.writerow(row)
+
+    return response
+
+def generic_csv_headless(filename, fields, rows):
+    response = HttpResponse(mimetype='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=%s' % filename
+
+    writer = csv.writer(response)
+    writer.writerow(fields)
+    for row in rows:
+        writer.writerow(row)
+
+    return response
+
+
+def expenditure_csv(request, committee_id):
+    committee = get_object_or_404(Committee_Overlay, fec_id=committee_id)
+    expenditures = Expenditure.objects.select_related("committee", "candidate").filter(committee=committee).filter(superceded_by_amendment=False)
+    fields = ['Spending Committee', 'Spending Committee ID', 'Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
+    rows = []
+    file_name = committee.slug + "_expenditures.csv"
+
+    for ie in expenditures:
+        rows.append([committee.name, committee.fec_id, ie.candidate_name, ie.support_or_oppose(), ie.candidate.fec_id, ie.candidate.party, ie.candidate.office, ie.candidate.district, ie.candidate.state(), ie.expenditure_amount, ie.state, ie.expenditure_date, ie.payee, ie.expenditure_purpose, ie.transaction_id, ie.filing_number ])
+    return generic_csv(file_name, fields, rows) 
+
+def all_expenditures_csv(request):
+    expenditures = Expenditure.objects.select_related("committee", "candidate").filter(superceded_by_amendment=False)
+    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Hybrid PAC?','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
+    rows = []
+    file_name =  "all_expenditures.csv"
+
+    for ie in expenditures:
+        rows.append([ie.committee.name, ie.committee.fec_id, ie.committee.superpac_status(), ie.committee.hybrid_status(), ie.candidate_name, ie.support_or_oppose(), ie.candidate.fec_id, ie.candidate.party, ie.candidate.office, ie.candidate.district, ie.candidate.state(), ie.expenditure_amount, ie.state, ie.expenditure_date, ie.payee, ie.expenditure_purpose, ie.transaction_id, ie.filing_number ])
+    return generic_csv(file_name, fields, rows)     
+
+def expenditure_csv_state(request, state):
+    expenditures = Expenditure.objects.select_related("committee", "candidate").filter(state=state).filter(superceded_by_amendment=False)
+    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Hybrid PAC?', 'Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number', 'unmatched amendment' ]
+    rows = []
+    file_name = state + "_expenditures.csv"
+
+    for ie in expenditures:
+        rows.append([ie.committee.name, ie.committee.fec_id, ie.committee.superpac_status(), ie.committee.hybrid_status(),ie.candidate_name, ie.support_or_oppose(), ie.candidate.fec_id, ie.candidate.party, ie.candidate.office, ie.candidate.district, ie.candidate.state(), ie.expenditure_amount, ie.state, ie.expenditure_date, ie.payee, ie.expenditure_purpose, ie.transaction_id, ie.filing_number, ie.unmatched_amendment() ])
+    return generic_csv(file_name, fields, rows)    
+
+
+def expenditure_csv_race(request, office, state, district):
+    expenditures = Expenditure.objects.select_related("committee", "candidate").filter(office=office).filter(superceded_by_amendment=False)
+    if (office in ('H', 'S')):
+        expenditures = expenditures.filter(candidate__state_race=state)
+    if (office == 'H'):
+        expenditures = expenditures.filter(candidate__district=district)    
+
+    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Hybrid PAC?', 'Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number', 'unmatched amendment' ]
+    rows = []
+    file_name = office + "_" + state + "_" + district + "_expenditures.csv"
+
+    for ie in expenditures:
+        rows.append([ie.committee.name, ie.committee.fec_id, ie.committee.superpac_status(), ie.committee.hybrid_status(), ie.candidate_name, ie.support_or_oppose(), ie.candidate.fec_id, ie.candidate.party, ie.candidate.office, ie.candidate.district, ie.candidate.state(), ie.expenditure_amount, ie.state, ie.expenditure_date, ie.payee, ie.expenditure_purpose, ie.transaction_id, ie.filing_number, ie.unmatched_amendment() ])
+    return generic_csv(file_name, fields, rows)
+
+def contribs_csv(request, committee_id):                            
+    committee = get_object_or_404(Committee_Overlay, fec_id=committee_id)
+    contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False)
+    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Transaction ID', 'Filing Number']
+    rows = []
+    file_name = committee.slug + "_donors.csv"
+
+    for c in contributions:
+        rows.append([c.contrib_source(), committee.name, committee_id, c.contrib_org, c.contrib_last, c.contrib_first, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
+    return generic_csv(file_name, fields, rows)
+
+def state_contribs_csv(request, state):                            
+    contributions = Contribution.objects.filter(contrib_state=state.upper(), superceded_by_amendment=False)
+    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Transaction ID', 'Filing Number']
+    rows = []
+    file_name = state + "_donors.csv"
+
+    for c in contributions:
+        rows.append([ c.contrib_source(), c.superpac.name, c.fec_committeeid, c.contrib_org.replace('"',''), c.contrib_last.replace('"',''), c.contrib_first.replace('"',''), c.contrib_city.replace('"',''), c.contrib_state.replace('"',''), c.contrib_occupation.replace('"',''), c.contrib_employer.replace('"',''), c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
+    return generic_csv(file_name, fields, rows)        
+
+
+def all_contribs_csv(request):                            
+    contributions = Contribution.objects.filter(superceded_by_amendment=False)
+    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Transaction ID', 'Filing Number']
+    rows = []
+    file_name = "all_donors.csv"
+
+    for c in contributions:
+        name = ''
+        if (c.committee):
+            name = c.committee.fec_name
+
+        rows.append([ c.contrib_source(), c.superpac.name, c.fec_committeeid, c.contrib_org.replace('"',''), c.contrib_last.replace('"',''), c.contrib_first.replace('"',''), c.contrib_city.replace('"',''), c.contrib_state.replace('"',''), c.contrib_occupation.replace('"',''), c.contrib_employer.replace('"',''), c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
+    return generic_csv(file_name, fields, rows)
+    
+    
+
+def all_superpacs(request):
+    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACS--that have spent at least $10,000 since the beginning of 2011. For a complete list of all super PACS that includes the many that have not raised any money see <a href=\"/super-pacs/complete/\">here</a>. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
+
+    superpacs = Committee_Overlay.objects.filter(total_indy_expenditures__gte=10000, is_superpac=True)
+    total = superpacs.aggregate(total=Sum('total_indy_expenditures'))
+    total_amt = total['total']
+
+    return render_to_response('outside_spending/superpac_list.html',
+                            {'explanatory_text':explanatory_text, 
+                            'superpacs':superpacs, 
+                            'total_amt':total_amt}) 
+
+def complete_superpac_list(request):
+    superpacs = Committee_Overlay.objects.filter(is_superpac=True).order_by('total_indy_expenditures')
+    explanatory_text= 'This is a list of all super PACs.'
+    return render_to_response('outside_spending/superpac_show_all.html',
+                            {'superpacs':superpacs,
+                            'explanatory_text':explanatory_text,
+                            })  
+def committee_detail(request,committee_id):
+    committee = get_object_or_404(Committee_Overlay, fec_id=committee_id)
+    expenditures = Expenditure.objects.filter(committee=committee).filter(superceded_by_amendment=False).select_related('committee', 'candidate')
+    contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False)
+    candidates_supported = Pac_Candidate.objects.filter(committee=committee)
+    explanatory_text = 'This table shows the overall total amount spent by this super PAC supporting or opposing federal candidates in independent expenditures in the 2012 election cycle.'
+    explanatory_text_details = 'This table shows all independent expenditures made by this super PAC during the 2012 campaign cycle. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.superpachackcsv())
+    explanatory_text_contribs = 'This table shows all contributions made to this super PAC during the 2012 campaign cycle, as of %s. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.cash_on_hand_date,committee.superpachackdonorscsv())
+    return render_to_response('outside_spending/committee_detail.html',
+                            {'committee':committee, 
+                            'expenditures':expenditures,
+                            'contributions':contributions, 
+                            'candidates':candidates_supported,
+                            'explanatory_text':explanatory_text,
+                            'explanatory_text_details':explanatory_text_details,
+                            'explanatory_text_contribs':explanatory_text_contribs
+                            })                            
+
+
+
+
+
+
+                        

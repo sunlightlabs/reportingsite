@@ -1,0 +1,50 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% load humanize %}
+{% load media %}
+
+{% block title %}Super PACs: Political committees intending to accept unlimited amounts - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} expendituresLetters{% endblock %}
+
+{% block breadcrumb %}{{ block.super }}
+<li>Committees intending to accept unlimited amounts</li>
+{% endblock %}
+
+
+{% block content %}
+    {% include "buckley/tabs.html" %}
+
+<h2>Committees intending to accept unlimited amounts</h2>
+<div class="rssBlock rssIcon">
+    <a href="{% url buckley_letter_feed %}">Subscribe to a feed of this data</a>
+</div>
+<p>The following committees, popularly known as Super PACs, have filed letters with the FEC stating their intention to accept contributions of unlimited amounts.</p>
+<p class="tip">Click on a committee name to see its letter.</p>
+
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Committee</th>
+            <th class="sort">Date letter filed</th>
+            <th class="sort">Outside spending</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for object in object_list %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td><a href="{{ object.get_absolute_url }}">{{ object.name }}</a></td>
+                <td>{{ object.date_letter_submitted|date:"n/j/y" }}</td>
+                <td>{% if object.has_expenditures %}<a href="{{ object.has_expenditures.get_absolute_url }}">${{ object.has_expenditures.total|intcomma }}</a>{% else %}$0{% endif %}</td>
+                <td><a target="new" href="http://images.nictusa.com/cgi-bin/fecimg/?{{ object.pk }}">View all FEC filings</a></td>
+            </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+{% with '[1,1]' as sortdir %}
+{% include "buckley/tablesorter.html" %}
+{% endwith %}
+
+{% endblock %}

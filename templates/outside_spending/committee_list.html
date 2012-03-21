@@ -1,0 +1,64 @@
+{% extends "rebuckley/buckley_base.html" %}
+
+{% load humanize %}
+{% load media %}
+
+
+{% block title %}Super PACs - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} expendituresCommittee{% endblock %}
+
+{% comment %}
+{% block breadcrumb %}{{ block.super }}
+<li>Super PACs</li>
+{% endblock %}
+{% endcomment %}
+
+{% block content %}
+    {% include "rebuckley/tabs.html" %}
+
+<h2>
+    Super PACs
+</h2>
+
+
+
+{% if object_list %}
+
+<p class="tip">Select a super PAC to see details.</p>
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Super PACs</th>
+            <th class="sort">Independent expenditures</th>
+            <th class="sort">Contributions</th>
+            <th class="sort">Cash on hand</th>
+            <th class="sort">Filing date</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for committee in object_list %}
+            
+                <tr class="{% cycle 'odd' 'even' %}">
+                    <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td></td>
+                    <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</a></td>
+                </tr>
+            
+        {% endfor %}
+    </tbody>
+</table>
+
+{% with '[1,1]' as sortdir %}
+{% include "rebuckley/tablesorter.html" %}
+{% endwith %}
+
+{% else %}
+<br/><br/>No spending has been reported for this cycle.
+{% endif %}
+
+{% endblock content %}

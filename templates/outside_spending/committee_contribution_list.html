@@ -1,0 +1,62 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% load humanize %}
+{% load media %}
+
+{% block title %}Contributions to {{ committee }} - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} expendituresCommittee{% endblock %}
+
+{% block breadcrumb %}{{ block.super }}
+<li><a href="{% url buckley_committee_list %}">Committees</a></li>
+<li><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></li>
+<li>Contributions</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "buckley/tabs.html" %}
+
+    <h2>{{ committee }} - Contributions</h2>
+
+{% if committee.ieonly_url %}
+<p class="tip">This committee has <a href="{{ committee.ieonly_url }}">filed a letter indicating that it will accept donations of unlimited amounts</a></p>
+{% endif %}
+
+{% if object_list %}
+    <table id="expendituresData" class="tablesorter">
+        <thead>
+            <th class="sort header{% ifequal order 'name' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'name' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}name">Name</a></th>
+            <th class="sort header{% ifequal order 'amount' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'amount' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}amount">Amount</a></th>
+            <th class="sort header{% ifequal order 'date' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'date' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}date">Date</a></th>
+            <th class="sort header{% ifequal order 'employer' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'employer' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}employer">Employer</a></th>
+            <th class="sort header{% ifequal order 'city' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'city' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}city">City</a></th>
+            <th class="sort header{% ifequal order 'state' %} {% ifequal sort 'asc' %}headerSortUp{% else %}headerSortDown{% endifequal %}{% endifequal %}"><a href="?order={% ifequal order 'state' %}{% ifequal sort 'asc' %}-{% endifequal %}{% endifequal %}state">State</a></th>
+        </thead>
+        <tbody>
+            {% for contribution in object_list %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td>{{ contribution.name|title }}</td>
+                <td>${{ contribution.amount|intcomma }}</td>
+                <td>{{ contribution.date|date:"n/j/y" }}</td>
+                <td>{{ contribution.employer|title }}</td>
+                <td>{{ contribution.city|title }}</td>
+                <td>{{ contribution.state }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% else %}
+    This organization's contributions have not yet been imported.
+    {% endif %}
+
+{% if page_obj.has_other_pages %}
+<div id="paginator" style="width: 250px; margin-left: auto; margin-right: auto; margin-top: 20px; margin-bottom: 20px;">
+    {% if page_obj.has_previous %} <a style="margin-right: 20px;" class="paginatorPrevious" href="?page={{ page_obj.previous_page_number }}&order={% ifequal sort 'desc' %}-{% endifequal %}{{ order }}">&lt;&lt;Previous</a>{% endif %}
+  {% if page_obj.has_next %} 
+  <a class="paginatorNext" href="?page={{ page_obj.next_page_number }}&order={% ifequal sort 'desc' %}-{% endifequal %}{{ order }}">Next &gt;&gt;</a>{% endif %}
+</div>
+<div class="clear"></div>
+{% endif %}
+
+{% endblock %}

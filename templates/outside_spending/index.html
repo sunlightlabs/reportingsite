@@ -1,0 +1,30 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% load humanize %}
+{% block body %}expendituresHome fullWidth{% endblock %}
+
+{% block breadcrumb %}{% endblock %}
+
+{% block content %}
+
+<h2>
+{% if cycle %}
+Outside spending: {{ cycle }} cycle
+{% else %}
+Latest outside spending
+{% endif %}
+</h2>
+
+{% if not cycle %}
+Previous cycles: <a href="{% url buckley_cycle_index 2010 %}">2010</a>
+{% endif %}
+
+{% include "buckley/tabs.html" %}
+
+{% include "buckley/expenditure_table.html" %}
+
+{% include "buckley/pagination.html" %}
+
+{% include "buckley/electioneering_asterisk.html" %}
+
+{% endblock content %}

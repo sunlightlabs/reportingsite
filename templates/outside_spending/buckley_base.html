@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+{% load media %}
+
+{% block title %}Super PACs - {{ block.super }}{% endblock %}
+
+
+
+
+
+{% block css %}
+
+<!-- Temporary style adds for superpac etc tabs -->
+
+<style type="text/css">
+#filterExpenditures li:hover, body.expendituresCommittee li#filter_committee, body.expendituresCandidate li#filter_candidate, body.expendituresRace li#filter_race, body.expendituresStates li#filter_states, body.expendituresPresident li#filter_president, body.expendituresFiles li#filter_files, body.expendituresIes li#filter_ies {  background-color: #2a5f65; border-top: 1px solid #134045; border-left: 1px solid #134045; border-right: 1px solid #134045; }
+#filterExpenditures li:hover a, body.expendituresCommittee li#filter_committee a, body.expendituresCandidate li#filter_candidate a, body.expendituresRace li#filter_race a, body.expendituresStates li#filter_states a, body.expendituresPresident li#filter_president a, body.expendituresIes li#filter_ies a, body.expendituresFiles li#filter_files a { color: #fff;}
+
+.space_above { margin-top: 15px; }
+
+div.share {
+		    margin: 0 0 0 0;
+		    min-height: 20px;
+		    padding: 0 0 0 0;
+    	}
+</style>
+
+
+
+
+{% endblock %}
+
+{% block body %}fullWidth{% endblock %}
+{% block main_content %}
+
+
+<div id="columns">
+    <div id="fullColumn">
+        <h2 id="featureHeader">Super PACs</h2>
+        <div id="featureMainNav">
+            <ul>
+                <li id="expenditures"><a href="/super-pacs/all/">All Super PACs</a></li>
+                <li id="about"><a href="/super-pac/data/about/montly/2011/February/">About this data</a></li>
+                <li id="stories" class="last"><a href="http://reporting.sunlightfoundation.com/tag/Super%20PAC/">Stories</a></li>
+            </ul>  
+            <!--
+            <form id="expenditureSearch" action="" method="GET">
+                <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Search for a candidate or committee"{% endif %} type="text" name="q" />
+                <button class="goBtn" type="submit" value="Search" >
+                  <span>Go</span>
+                </button>
+            </form>
+            -->
+            <div class="clear"></div>  
+        </div>
+        
+        <div id="breadcrumbs">
+            <ul>
+                {% block breadcrumb %}
+                <li>
+                    <a href="/super-pacs/all/">Super PACs</a>
+                </li>
+                {% endblock breadcrumb %}
+            </ul>
+
+            <div class="share">
+                <a href="https://twitter.com/share" class="twitter-share-button" data-via="sunfoundation" data-count="none" data-hashtags="superpacs">Tweet</a>
+                <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
+
+            </div>
+            	
+            <div class="clear"></div>
+        </div>
+        
+
+        
+        
+    {% block content %}
+    {% endblock content %}
+        
+        <div id="expendituresSource" class="tip">
+            <span>Data source:</span>
+            <ul>
+                <li><a href="http://www.fec.gov/blog/disclosure/entry/update_on_new_spending_data">Federal Election Commission</a></li>
+                <li id="downloadFEC"><a href="http://www.fec.gov/data/IndependentExpenditure.do?format=csv&election_yr=2012">Download FEC independent expenditure data</a></li>
+                <li id="downloadFEC"><a href="ftp://ftp.fec.gov/FEC/ec_exp_2012.csv">Download FEC electioneering communication data</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+
+
+
+{% endblock main_content %}
+

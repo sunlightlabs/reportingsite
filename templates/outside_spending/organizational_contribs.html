@@ -1,0 +1,86 @@
+{% extends "rebuckley/buckley_base.html" %}
+
+{% load buckley %}
+{% load humanize %}
+
+{% block title %}Organizational contributions to super PACS{% endblock %}
+
+{% block body %}{{ block.super }}{% endblock %}
+
+{% block breadcrumb %}{{ block.super }}
+<li>Organizational contributions to super PACS</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "rebuckley/tabs.html" %}
+
+    <h2>
+        Organizational contributions to super PACS
+    </h2>
+
+
+<div class="space_above">
+    <span class="amountLine">Total super PAC donations from organizations (excluding PACs): </span><span class="amount">$ {{total_amt|intcomma}}</span>
+</div>
+
+<div class="clear"></div>
+
+
+
+<p>{{ explanatory_text|safe }}</p>
+
+       <a name="contributors"></a>
+       {% if contribs %}
+       <table id="expendituresData" class="tablesorter">
+              <thead>
+                  <tr>
+                      <th class="sort">Recipient</th>
+                      <th class="sort">Date</th>
+                      <th class="sort">Amount</th>
+                      <th class="sort">Organization</th>
+                      <th class="sort">Notes</th>
+                      <th class="sort">Location</th>                   
+                  </tr>
+              </thead>
+              <tbody>
+              {% for contrib in contribs %}    
+                  <tr class="{% cycle 'odd' 'even' %}">
+                      <td><a href="{{ contrib.superpac.get_absolute_url }}">{{ contrib.superpac.fec_name }}</a></td>
+                      <td>{{ contrib.contrib_date }}</td>
+                      <td>{% if contrib.contrib_amt %}${{ contrib.contrib_amt|intcomma }}<a href="#offset">{{contrib.contrib_asterisk}}</a>{% endif %}</a></td> 
+                      <td>{{ contrib.contrib_org }}</td>
+                      <td>{{ contrib.contrib_employer }}</td>   
+                      <td>{% if contrib.contrib_city %}{{ contrib.contrib_city }}, {% endif %}{{ contrib.contrib_state }}</td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+              </table>
+              <a name="offset"><a>
+              <p>* Contributions with an asterisk next to them were reported as "Offsets to Operating Expenditures."</p>
+              
+              
+              {% endif %}
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[2,1]' as sortdir %}
+{% include "rebuckley/tablesorter.html" %}
+{% endwith %}
+
+
+{% comment %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+{% endcomment %}
+{% endblock %}

@@ -1,0 +1,52 @@
+{% extends "buckley/buckley_base.html" %}
+
+{% block title %}{{ candidate }} - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} expendituresCandidate{% endblock %}
+
+{% load humanize %}
+{% load media %}
+{% load buckley %}
+
+{% block breadcrumb %}{{ block.super }}
+<li><a href="{% url buckley_candidate_list %}">Candidates</a></li>
+<li><a href="{% url buckley_candidate_detail slug=candidate.slug %}">{{ candidate }}</a></li>
+<li>Multiple-candidate electioneering communications</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+<h2 id="withDetail">{{ candidate }}: Multiple-candidate electioneering communications</h2>
+<p class="tip">These electioneering communications mentioned {{ candidate }} and at least one other candidate.</p>
+
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Committee</th>
+            <th>Candidates</th>
+            <th class="sort">Expenditure date</th>
+            <th class="sort">Amount</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for expenditure in expenditures %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td><a href="{{ expenditure.committee.get_absolute_url }}">{{ expenditure.committee }}</a></td>
+            <td>{% spaceless %}
+                {% for candidate in expenditure.electioneering_candidates.all %}
+                {#<a href="{% url buckley_candidate_committee_detail candidate_slug=expenditure.candidate_slugs committee_slug=expenditure.committee.slug %}">#}
+                    <a href="{{ candidate.get_absolute_url }}">{{ candidate }}</a>
+                {#</a>#}
+                    {% if candidate.party %} ({{ candidate.party }}){% endif %}
+                {% if not forloop.last %}, {% endif %}
+                {% endfor %}
+                {% endspaceless %}</td>
+            <td>{{ expenditure.expenditure_date|date:"n/j/y" }}</td>
+            <td>${{ expenditure.expenditure_amount|intcomma }}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+    {% include "buckley/tablesorter.html" %}
+
+{% endblock %}
