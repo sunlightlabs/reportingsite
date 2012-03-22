@@ -152,7 +152,7 @@ def committee_detail(request,committee_id):
     contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False)
     candidates_supported = Pac_Candidate.objects.filter(committee=committee)
     explanatory_text = 'This table shows the overall total amount spent by this group supporting or opposing federal candidates in independent expenditures in the 2012 election cycle.'
-    explanatory_text_details = 'This table shows all independent expenditures made by this group during the 2012 campaign cycle. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.superpachackcsv())
+    explanatory_text_details = 'This table shows the total independent expenditure by this group supporting or opposing federal candidates in the 2012 election cycle. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.superpachackcsv())
     explanatory_text_contribs = 'This table shows all contributions made to this group during the 2012 campaign cycle, as of %s. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.cash_on_hand_date,committee.superpachackdonorscsv())
     return render_to_response('outside_spending/committee_detail.html',
                             {'committee':committee, 

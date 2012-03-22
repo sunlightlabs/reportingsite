@@ -32,6 +32,9 @@ python manage.py make_candidate_pacs
 python manage.py make_race_aggregates
 python manage.py make_candidate_aggregates
 python manage.py make_state_aggregates
+python manage.py make_presidential_state_pac_aggregates
+
+President_State_Pac_Aggregate
 
 --> This still doesn't deal with EC aggregates!!!
 
@@ -41,3 +44,5 @@ python manage.py load_contribs
 python manage.py  remove_duplicate_contribs
 python manage.py attach_models
 python manage.py set_contrib_flags
+
+
