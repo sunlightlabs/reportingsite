@@ -1,19 +1,19 @@
-{% extends "rebuckley/buckley_base.html" %}
+{% extends "outside_spending/buckley_base.html" %}
 
 {% load humanize %}
 {% load buckley %}
 
 {% block title %}{{ candidate.fec_name }} {{ candidate.race }} - {{ block.super }}{% endblock %}
 
-{% block body %}{{ block.super }} expendituresCandidate{% endblock %}
+{% block body %}{{ block.super }} {% endblock %}
 
 {% block breadcrumb %}
-<li><a href="/super-pacs/candidates/">Candidates</a></li>
+<li><a href="/outside-spending/candidates/">Candidates</a></li>
 <li>{{ candidate.fec_name }} {{ candidate.race }}</li>
 {% endblock breadcrumb %}
 
 {% block content %}
-    {% include "rebuckley/tabs.html" %}
+    {% include "outside_spending/tabs.html" %}
 
 
     <h2>
@@ -23,8 +23,8 @@
 
     <div class="amountLine clear">
         <ul>
-            <li>Independent expenditures made by super PACS <b>supporting</b> this candidate: <span class="amount">{% if candidate.expenditures_supporting %}${{ candidate.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</span> </li>
-            <li>Independent expenditures made by super PACS <b>opposing</b> this candidate: <span class="amount">{% if candidate.expenditures_opposing %}${{ candidate.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</span> </li>
+            <li>Independent expenditures made <b>supporting</b> this candidate: <span class="amount">{% if candidate.expenditures_supporting %}${{ candidate.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</span> </li>
+            <li>Independent expenditures made <b>opposing</b> this candidate: <span class="amount">{% if candidate.expenditures_opposing %}${{ candidate.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</span> </li>
         <ul>
     {% if object.transparencydata_id %}
     <br>
@@ -35,8 +35,8 @@
     </div>
     
 
-<div class="space_above"><h3>Super PAC Independent Expenditure Summary</h3></div>
-<p>This is a list of super PACs that have supported or opposed this candidate with independent expenditures.</p>
+<div class="space_above"><h3>Independent Expenditure Summary</h3></div>
+<p>This is a list of super groups that have supported or opposed this candidate with independent expenditures.</p>
     <div class="clear"></div>
     {% if superpacs %}
     <table id="expendituresData" class="tablesorter">
@@ -50,7 +50,7 @@
         <tbody>
             {% for candidate_pac in superpacs %}
             <tr class="{% cycle 'odd' 'even' %}">
-                <td><a href="{{candidate_pac.committee.get_superpac_url}}">{{ candidate_pac.committee.name }}</a></td>
+                <td><a href="{{candidate_pac.committee.get_absolute_url}}">{{ candidate_pac.committee.name }}</a></td>
                 <td>{{ candidate_pac.support_or_oppose }}</td>
                 <td>{% if candidate_pac.total_ind_exp %}${{ candidate_pac.total_ind_exp|intcomma }}{% endif %}</td>
             </tr>
@@ -61,7 +61,7 @@
     {% endif %}
     
     {% if expenditures %}
-    <div class="space_above"><h3>Super PAC Independent Expenditures </h3></div>
+    <div class="space_above"><h3>Independent Expenditures </h3></div>
     <p>{{ explanatory_text_details|safe }}</p>
     <table id="expenditure_details" class="tablesorter">
            <thead>
@@ -78,7 +78,7 @@
            {% for ie in expenditures %}    
                <tr class="{% cycle 'odd' 'even' %}">
                    <td>{{ ie.expenditure_date }}</td>
-                   <td><a href="{{ie.committee.get_superpac_url}}">{{ ie.committee.name }}</a></td> 
+                   <td><a href="{{ie.committee.get_absolute_url}}">{{ ie.committee.name }}</a></td> 
                    <td>{{ ie.support_or_oppose }}</td>
                    <td>${{ ie.expenditure_amount|intcomma }}</td>   
                    <td>{% if ie.state %}{{ ie.state }}{% endif %}</td>                                               
@@ -96,10 +96,10 @@
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
 
 {% with '[2,1]' as sortdir %}
-{% include "rebuckley/tablesorter.html" %}
+{% include "outside_spending/tablesorter.html" %}
 {% endwith %}
 {% with '[0,1]' as sortdir %}
-{% include "rebuckley/tablesorter_expenditure_details.html" %}
+{% include "outside_spending/tablesorter_expenditure_details.html" %}
 {% endwith %}
 <script type="text/javascript">
     $(document).ready(function () {

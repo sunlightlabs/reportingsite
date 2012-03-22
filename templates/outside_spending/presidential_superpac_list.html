@@ -1,4 +1,4 @@
-{% extends "rebuckley/buckley_base.html" %}
+{% extends "outside_spending/buckley_base.html" %}
 
 {% load humanize %}
 {% load media %}
@@ -6,16 +6,16 @@
 
 {% block title %}Super PAC spending: Presidential{% endblock %}
 
-{% block body %}{{ block.super }} expendituresPresident{% endblock %}
+{% block body %}{{ block.super }} {% endblock %}
 
 
 {% block breadcrumb %}
-<li>Presidential Super PACs</li>
+<li>Super PAC spending: Presidential</li>
 {% endblock %}
 
 
 {% block content %}
-    {% include "rebuckley/tabs.html" %}
+    {% include "outside_spending/tabs.html" %}
 
 <h2>
     Super PAC spending: Presidential
@@ -44,7 +44,7 @@
         {% for superpac in superpacs %}
             
                 <tr class="{% cycle 'odd' 'even' %}">
-                    <td><a href="{{ superpac.get_absolute_url }}">{{ superpac.name_to_show }}</a></td>
+                    <td><a href="{{ superpac.get_absolute_url }}">{{ superpac.name }}</a></td>
                     <td>{% if superpac.total_presidential_indy_expenditures%}${{ superpac.total_presidential_indy_expenditures|intcomma }}{% endif %}</td>
                     <td>{% if superpac.total_contributions%}${{ superpac.total_contributions|intcomma }}{% endif %}</td>
                     <td>{% if superpac.cash_on_hand%}${{ superpac.cash_on_hand|intcomma }}{% endif %}</td>
@@ -70,7 +70,7 @@
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
 
 {% with '[1,1]' as sortdir %}
-{% include "rebuckley/tablesorter.html" %}
+{% include "outside_spending/tablesorter.html" %}
 {% endwith %}
 <script type="text/javascript">
     $(document).ready(function () {

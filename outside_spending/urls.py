@@ -24,24 +24,27 @@ urlpatterns = patterns('',
     # This is not used
     #url(r'^about/?$', 'outside_spending.views.about'),
     url(r'^committee\/[\w-]+\/(?P<committee_id>C\d{8})\/?$', 'outside_spending.views.committee_detail'),
+    # super-pacs/presidential/  => outside-spending/super-pacs/presidential/
+    url(r'^super-pacs/presidential/?$', 'outside_spending.views.presidential_superpacs'),
+    url(r'^president-state-detail/(?P<state>[\w0]+)\/?$', 'outside_spending.views.presidential_state_summary'),
+    url(r'^races\/?$', 'outside_spending.views.races'),
+    url(r'^race_detail\/(?P<office>\w)\/(?P<state>[\w0]+)\/(?P<district>\d\d)\/?$', 'outside_spending.views.race_detail'),    
+    url(r'^candidates\/?$', 'outside_spending.views.candidates'),
+    url(r'^candidate\/[\w-]+\/(?P<candidate_id>[\w\d]+)\/?$', 'outside_spending.views.candidate_detail'),      
+    url(r'^states\/?$', 'outside_spending.views.states'),
+    url(r'^state\/(?P<state_abbreviation>\w\w)\/?$', 'outside_spending.views.state_detail'),    
+    url(r'^independent-expenditures\/?$', 'outside_spending.views.ies'),
+    # /super-pacs/contribs/organizations/ => /outside-spending/super-pacs/donating-organizations/
+    url(r'^super-pacs/donating-organizations/', 'outside_spending.views.organizational_superpac_contribs'),
+    url(r'^file-downloads\/?$', 'outside_spending.views.file_downloads'),    
     """
     
     # all that are noteworthy
-    # the complete reference
-    url(r'^presidential/?$', 'outside_spending.views.presidential_superpacs'),
-    url(r'^president-state-detail/(?P<state>[\w0]+)\/?$', 'outside_spending.views.presidential_state_summary'),    
-    url(r'^committee\/[\w-]+\/(?P<ieonlycommittee_id>C\d{8})\/?$', 'outside_spending.views.committee_detail'),          
-    url(r'^races\/?$', 'outside_spending.views.races'),
-    url(r'^race_detail\/(?P<office>\w)\/(?P<state>[\w0]+)\/(?P<district>\d\d)\/?$', 'outside_spending.views.race_detail'),    
-    url(r'^file-downloads\/?$', 'outside_spending.views.file_downloads'),
-    url(r'^candidates\/?$', 'outside_spending.views.candidates'),
-    url(r'^states\/?$', 'outside_spending.views.states'),
-    url(r'^state\/(?P<state_abbreviation>\w\w)\/?$', 'outside_spending.views.state_detail'),  
-    url(r'^independent-expenditures\/?$', 'outside_spending.views.ies'),
-    url(r'^candidate\/[\w-]+\/(?P<candidate_id>[\w\d]+)\/?$', 'outside_spending.views.candidate_detail'), 
+                
+  
+
     url(r'^csv/state_csv/','outside_spending.views.states_csv'),
     url(r'^map/',direct_to_template, {'template': 'rebuckley/map.html'}),  
-    url(r'^contribs/organizations/', 'outside_spending.views.organizational_superpac_contribs')
 
 """
 

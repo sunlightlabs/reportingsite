@@ -1,4 +1,4 @@
-{% extends "rebuckley/buckley_base.html" %}
+{% extends "outside_spending/buckley_base.html" %}
 
 {% load buckley %}
 {% load humanize %}
@@ -12,7 +12,7 @@
 {% endblock breadcrumb %}
 
 {% block content %}
-    {% include "rebuckley/tabs.html" %}
+    {% include "outside_spending/tabs.html" %}
 
     <h2>
         Organizational contributions to super PACS
@@ -45,7 +45,7 @@
               <tbody>
               {% for contrib in contribs %}    
                   <tr class="{% cycle 'odd' 'even' %}">
-                      <td><a href="{{ contrib.superpac.get_absolute_url }}">{{ contrib.superpac.fec_name }}</a></td>
+                      <td><a href="{{ contrib.committee.get_absolute_url }}">{{ contrib.committee.name }}</a></td>
                       <td>{{ contrib.contrib_date }}</td>
                       <td>{% if contrib.contrib_amt %}${{ contrib.contrib_amt|intcomma }}<a href="#offset">{{contrib.contrib_asterisk}}</a>{% endif %}</a></td> 
                       <td>{{ contrib.contrib_org }}</td>
@@ -68,7 +68,7 @@
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
 
 {% with '[2,1]' as sortdir %}
-{% include "rebuckley/tablesorter.html" %}
+{% include "outside_spending/tablesorter.html" %}
 {% endwith %}
 
 

@@ -1,5 +1,7 @@
 from django.db import models
+from django.contrib.localflavor.us.us_states import STATE_CHOICES
 
+STATE_CHOICES = dict(STATE_CHOICES)
 # Create your models here.
 
 # whenever we run the scraper add it here. Periodically clear this out...
@@ -171,10 +173,22 @@ class Committee_Overlay(models.Model):
             return 'N'
             
     def superpachackcsv(self):
-        return "/outside_spending/csv/committee/%s/%s/" % (self.slug, self.fec_id) 
+        return "/outside-spending/csv/committee/%s/%s/" % (self.slug, self.fec_id) 
 
     def superpachackdonorscsv(self):
-        return "/outside_spending/csv/contributions/%s/%s/" % (self.slug, self.fec_id)
+        return "/outside-spending/csv/contributions/%s/%s/" % (self.slug, self.fec_id)
+        
+    def filing_frequency_text(self):
+        if (self.filing_frequency.upper()=='M'):
+            return "Monthly"
+        if (self.filing_frequency.upper()=='Q'):
+            return "Quarterly"
+        if (self.filing_frequency.upper()=='T'):
+            return "Terminated"
+        if (self.filing_frequency.upper()=='W'):
+            return "Waived"
+        if (self.filing_frequency.upper()=='A'):
+            return "Administratively Terminated"            
                
 
 # populated from fec's candidate master
@@ -274,6 +288,45 @@ class Candidate_Overlay(models.Model):
 
     def get_absolute_url(self):
         return "/outside-spending/candidate/%s/%s/" % (self.slug, self.fec_id)
+        
+
+    def full_race_name(self):
+        if self.office == 'P':
+            return 'President'
+        elif self.office == 'S' or self.district.startswith('S'):
+            try:
+                return '%s Senate' % STATE_CHOICES[self.state]
+            except KeyError:
+                return 'Senate'
+        else:
+            try:
+                return '%s %s' % (STATE_CHOICES[self.state], ordinal(self.district))
+            except KeyError:
+                return ''
+
+    def last_first(self):
+        prefix, first, last, suffix = name_tools.split(self.__unicode__())
+        return re.sub(r'\s+([^\w])', r'\1', '%s %s, %s' % (last, suffix, first))
+
+    def seat(self):
+        try:
+            if self.fec_id:
+                return {'H': 'House', 'S': 'Senate', 'P': 'president'}[self.fec_id[0]]
+            else:
+                return ''
+        except KeyError:
+            return None
+            
+    def display_party(self):
+        if (self.party.upper()=='REP'):
+            return '(R)'
+        elif (self.party.upper()=='DEM'):
+            return '(D)'
+        else: 
+            return ''
+        # todo--add other parties, if there are any that are being used? 
+        
+        
 
 class Filing_Header(models.Model):
     raw_filer_id=models.CharField(max_length=9, blank=True)
@@ -459,7 +512,7 @@ class Race_Aggregate(models.Model):
             return '%s-%s (House)' % (self.state, self.district.lstrip('0')) 
             
     def get_absolute_url(self):
-        return "/super-pacs/race_detail/%s/%s/%s/" % (self.office, self.state, self.district) 
+        return "/outside-spending/race_detail/%s/%s/%s/" % (self.office, self.state, self.district) 
         
 class State_Aggregate(models.Model):
     state = models.CharField(max_length=2, blank=True, null=True)
@@ -482,7 +535,7 @@ class State_Aggregate(models.Model):
         return STATE_CHOICES[self.state]
     
     def get_absolute_url(self):
-        return "/super-pacs/state/%s/" % (self.state)
+        return "/outside-spending/state/%s/" % (self.state)
         
 #    def state_name(self):
 

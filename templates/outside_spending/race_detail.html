@@ -1,34 +1,34 @@
-{% extends "rebuckley/buckley_base.html" %}
+{% extends "outside_spending/buckley_base.html" %}
 
 {% load humanize %}
-{% load buckley %}
+
 
 {% block title %}{{ race_name }} - {{ block.super }}{% endblock %}
 
-{% block body %}{{ block.super }} expendituresRace{% endblock %}
+{% block body %}{{ block.super }} {% endblock %}
 
 {% block breadcrumb %}
-<li><a href="/super-pacs/races/">Races</a></li>
+<li><a href="/outside-spending/races/">Races</a></li>
 <li>{{ race_name }}</li>
 {% endblock breadcrumb %}
 
 {% block content %}
-    {% include "rebuckley/tabs.html" %}
+    {% include "outside_spending/tabs.html" %}
 
     
 
-    <h2>Super PAC spending by race: {{ race_name }}</h2>
+    <h2>Independent expenditures by race: {{ race_name }}</h2>
     <div>
-    <span class="amountLine">Total super PAC independent expenditures in this race: </span><span class="amount">${{race_aggregate.total_ind_exp|intcomma}}</span>
+    <span class="amountLine">Total independent expenditures in this race: </span><span class="amount">${{race_aggregate.total_ind_exp|intcomma}}</span>
 </div>
 <p>{{ explanatory_text|safe }}</p>
-<p class="tip">Select a super PAC or a candidate to see details.</p>
+<p class="tip">Select political group or a candidate to see details.</p>
 {% if candidates %}
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
             <th class="sort">Candidate</th>            
-            <th class="sort">Super PAC</th>
+            <th class="sort">Group</th>
             <th class="sort">Support/oppose</th>
             <th class="sort">Amount</th>
 
@@ -38,7 +38,7 @@
     {% for candidate_pac in candidates %}
     <tr>
     <td><a href="{{ candidate_pac.candidate.get_absolute_url }}">{{ candidate_pac.candidate.fec_name }} {{ candidate_pac.candidate.display_party }}</a> </td>
-    <td><a href="{{candidate_pac.committee.get_superpac_url}}">{{ candidate_pac.committee.name }}</a></td>    
+    <td><a href="{{candidate_pac.committee.get_absolute_url}}">{{ candidate_pac.committee.name }}</a></td>    
     <td>{{ candidate_pac.support_or_oppose }}</td>
     <td>{% if candidate_pac.total_ind_exp %}${{ candidate_pac.total_ind_exp|intcomma }}{% endif %}</td>   
     </tr>                
@@ -60,7 +60,7 @@
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
 
 {% with '[3,1]' as sortdir %}
-{% include "rebuckley/tablesorter.html" %}
+{% include "outside_spending/tablesorter.html" %}
 {% endwith %}
 <script type="text/javascript">
     $(document).ready(function () {

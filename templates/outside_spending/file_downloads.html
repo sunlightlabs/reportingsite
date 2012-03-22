@@ -1,18 +1,17 @@
-{% extends "rebuckley/buckley_base.html" %}
+{% extends "outside_spending/buckley_base.html" %}
 
-{% load buckley %}
 {% load humanize %}
 
 {% block title %}File downloads - {{ block.super }}{% endblock %}
 
-{% block body %}{{ block.super }} expendituresFiles{% endblock %}
+{% block body %}{{ block.super }} filedownloads {% endblock %}
 
 {% block breadcrumb %}
 <li>File downloads</li>
 {% endblock breadcrumb %}
 
 {% block content %}
-    {% include "rebuckley/tabs.html" %}
+    {% include "outside_spending/tabs.html" %}
 
     <h2>
         File downloads  (.csv format)
@@ -27,30 +26,32 @@
 <p>These files include all super PAC activity during the 2012 election cycle.</p>
     </div>
 
-<span class="amountLine"><a href="/super-pacs/csv/all/expenditures/">Independent Expenditures</a></span><br>
-<span class="amountLine"><a href="/super-pacs/csv/all/">Contributions</a></span><br>
-<a name="super-pacs"></a>
-<div class="space_above"><h3>Contributions / Expenditures by super PAC</h3></div>
-<p>Only super PACs that have made an independent expenditure during the 2012 election cycle are listed below. </p>
-    
-{% for superpac in superpacs %}
-<p>{{ superpac.fec_name}}: <span class="amountLine"><a href="{{superpac.superpachackdonorscsv}}">Donors</a> {% if superpac.cash_on_hand_date %}(As of {{superpac.cash_on_hand_date}}){% endif %}</span>&nbsp;|&nbsp;
-<span class="amountLine"><a href="{{superpac.superpachackcsv}}">Expenditures</a></span></p>
-{% endfor %}
+<span class="amountLine"><a href="/outside-spending/csv/all/expenditures/">Independent Expenditures</a></span><br>
+<span class="amountLine"><a href="/outside-spending/csv/all/">Contributions</a></span><br>
 
 <a name="states"></a>
-<div class="space_above"><h3>Independent expenditures by state</h3></div>
+<div class="space_above"><h3>State Files</h3></div>
 <p>Although the FEC requires PACs to assign a state to each independent expenditure made, many expenditures are missing this information. </p>
     
 {% for state in states %}
-<p>{{ state}}: <span class="amountLine"><a href="/super-pacs/csv/state/expenditures/{{ state.state }}">Expenditures</a></span></p>
+<p>{{ state}}: <span class="amountLine"><a href="/outside-spending/csv/state/expenditures/{{ state.state }}">Expenditures</a></span>&nbsp;|&nbsp;<span class="amountLine"><a href="/outside-spending/csv/state/{{ state.state }}">Donors</a></span></p>
 {% endfor %}
 
 <a name="races"></a>
 <div class="space_above"><h3>Expenditures by race</h3></div>
 
 {% for race in races %}
-<p>{{ race.race_name }}: <span class="amountLine"><a href="/super-pacs/csv/race/expenditures/{{ race.office }}/{{race.state}}/{{race.district}}/">Expenditures</a></span></p>
+<p>{{ race.race_name }}: <span class="amountLine"><a href="/outside-spending/csv/race/expenditures/{{ race.office }}/{{race.state}}/{{race.district}}/">Expenditures</a></span></p>
+{% endfor %}
+
+<a name="super-pacs"></a>
+<div class="space_above"><h3>Contributions / Expenditures by committee</h3></div>
+<p>Super PACS, hybrid super PACs and other groups that have recorded independent expenditures in the 2012 cycle are shown below. </p>
+    
+{% for committee in committees %}
+<p><a href="{{committee.get_absolute_url}}">{{ committee.name}}</a>: <span class="amountLine"><a href="{{committee.superpachackdonorscsv}}">Donors</a> {% if committee.cash_on_hand_date %}(As of {{committee.cash_on_hand_date}}){% endif %}</span>&nbsp;|&nbsp;
+<span class="amountLine"><a href="{{committee.superpachackcsv}}">Expenditures</a></span>&nbsp;|&nbsp;<span class="amountLine"><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">FEC filings</a></span>
+</p>
 {% endfor %}
 
 {% endblock content %}

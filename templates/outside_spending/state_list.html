@@ -1,4 +1,4 @@
-{% extends "rebuckley/buckley_base.html" %}
+{% extends "outside_spending/buckley_base.html" %}
 
 {% block title %}States - {{ block.super }}{% endblock %}
 
@@ -13,10 +13,10 @@
 {% endblock %}
 
 {% block content %}
-    {% include "rebuckley/tabs.html" %}
+    {% include "outside_spending/tabs.html" %}
 
     <h2>
-        Super PAC spending by state
+        Independent Expenditures by state
     </h2>
     <p>{{ explanatory_text|safe }}</p>
 {% if states %}
@@ -60,8 +60,8 @@
 {{ block.super }}
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
 
-{% with '[1,1]' as sortdir %}
-{% include "rebuckley/tablesorter.html" %}
+{% with '[3,1]' as sortdir %}
+{% include "outside_spending/tablesorter.html" %}
 {% endwith %}
 <script type="text/javascript">
     $(document).ready(function () {

@@ -1,22 +1,22 @@
-{% extends "rebuckley/buckley_base.html" %}
+{% extends "outside_spending/buckley_base.html" %}
 
 {% load humanize %}
 
 {% block title %}Recent Independent Expenditures made by super PACS{% endblock %}
 
-{% block body %} expendituresHome fullWidth expendituresIes{% endblock %}
+{% block body %}  fullWidth expendituresIes{% endblock %}
 
 {% block breadcrumb %}
-<li>Recent super PAC independent expenditures</li>
+<li>Recent  independent expenditures</li>
 {% endblock breadcrumb %}
 
 {% block content %}
 
-    {% include "rebuckley/tabs.html" %}
+    {% include "outside_spending/tabs.html" %}
 
 
     <h2>
-        Recent super PAC independent expenditures
+        Recent independent expenditures
     </h2>
     <p>{{ explanatory_text|safe }}</p>
 
@@ -42,7 +42,7 @@
             <tr class="{% cycle 'odd' 'even' %}">
                 <td>{{ ie.expenditure_date }}</td>
                 <td><a href="{{ie.candidate.get_race_url}}">{{ ie.candidate.race }}</a></td>
-                <td><a href="{{ie.committee.get_superpac_url}}">{{ ie.committee.name }}</a></td> 
+                <td><a href="{{ie.committee.get_absolute_url}}">{{ ie.committee.name }}</a></td> 
                 <td>{{ ie.support_or_oppose }}</td>
                 <td><a href="{{ie.candidate.get_absolute_url}}">{{ ie.candidate.fec_name }} {{ ie.candidate.display_party }}</a></td> 
                 <td>{% if ie.state %}{{ ie.state }}{% endif %}</td>
