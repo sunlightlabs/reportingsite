@@ -25,7 +25,10 @@
         <ul>
             <li>Independent expenditures made <b>supporting</b> this candidate: <span class="amount">{% if candidate.expenditures_supporting %}${{ candidate.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</span> </li>
             <li>Independent expenditures made <b>opposing</b> this candidate: <span class="amount">{% if candidate.expenditures_opposing %}${{ candidate.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</span> </li>
-        <ul>
+            {% if ec_total %}<li>Electioneering communications*: <span class="amount">${{ ec_total|intcomma }}</span> </li>
+            {% endif %}
+        </ul>
+        {% if ec_total %}<p>* Electioneering communications may be for or against this candidate, and may mention one or many candidates.</p>{% endif %}
     {% if object.transparencydata_id %}
     <br>
     View more data about this candidate at <a target="_new" href="{{ object.influence_explorer_url }}">Influence Explorer</a>
@@ -89,8 +92,41 @@
            </table>
            {% endif %}
 
-{% endblock content %}
 
+
+{% if ecs %}
+   <a name="ec"></a>
+   <div class="space_above"><h3>Electioneering Communications</h3></div>
+   {{ec_explanation|safe}}
+   <p class="tip">Click on a race, committee or candidate name for more details</p>
+
+
+   <table id="contrib_details" class="tablesorter">
+       <thead>
+           <tr>
+               <th class="sort">Date</th>
+               <th class="sort" >Committee</th>
+               <th class="sort">Amount</th>
+               <th class="sort">Purpose</th>
+               <th class="sort">Payee</th>
+               <th class="sort">Candidate(s) mentioned, state targeted</th>
+           </tr>
+       </thead>
+       <tbody>
+       {% for ec in ecs %}    
+           <tr class="{% cycle 'odd' 'even' %}">
+               <td>{{ ec.exp_date }}</td>
+               <td><a href="{{ec.committee.get_absolute_url}}">{{ ec.committee.name }}</a></td> 
+               <td>${{ ec.exp_amo|intcomma }}</td>                               
+               <td>{{ ec.purpose }} </td>
+               <td>{{ ec.payee }} </td>
+               <td>{% for t in ec.target.all %}{% if t.candidate %}<a href="{{t.candidate.get_absolute_url}}">{% endif %}{{t.can_name}}{% if t.candidate %}</a>{% endif %} ({{t.can_state}}){% if forloop.last %}{% else %}; {% endif %}{% endfor %}</td>
+           </tr>
+       {% endfor %}
+       </tbody>
+       </table>    
+{% endif %}
+{% endblock %}
 {% block js %}
 {{ block.super }}
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>

@@ -17,7 +17,7 @@
     {% include "outside_spending/tabs.html" %}
 
     <h2>
-        Independent expenditures in {{ state_name }}
+        Outside spending in {{ state_name }}
     </h2>
     <p>{{ explanatory_text|safe }}</p>
 
@@ -28,9 +28,8 @@
     <thead>
         <tr>
             <th class="sort">Race</th>
-            <th class="sort">Total</th>
-            <th class="sort">Opposing</th>
-            <th class="sort">Supporting</th>           
+            <th class="sort">Independent Expenditures</th>
+            <th class="sort">Electioneering Communications</th>           
         </tr>
     </thead>
     <tbody>
@@ -38,8 +37,7 @@
         <tr class="odd">
             <td>President (<a href="/outside-spending/president-state-detail/{{this_state.state}}/">{{this_state}} only)</a></td>
             <td>${{ this_state.total_pres_ind_exp|intcomma }}</td>
-            <td>{% if this_state.expenditures_opposing_president %}${{ this_state.expenditures_opposing_president|intcomma }}{% else %}$0{% endif %}</td>
-            <td>{% if this_state.expenditures_supporting_president %}${{ this_state.expenditures_supporting_president|intcomma }}{% else %}$0{% endif %}</td>
+            <td>{% if this_state.total_ec %}${{ this_state.total_ec|intcomma }}{% else %}$0{% endif %}</td>
         </tr>        
         {% endif %}
         
@@ -47,8 +45,7 @@
         <tr class="{% cycle 'even' 'odd' %}">
             <td><a href="{{race.get_absolute_url}}">{{ race.race_name }}</a></td>
             <td>${{ race.total_ind_exp|intcomma }}</td>
-            <td>{% if race.expenditures_opposing %}${{ race.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</td>
-            <td>{% if race.expenditures_supporting %}${{ race.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</td>
+            <td>{% if race.total_ec %}${{ race.total_ec|intcomma }}{% else %}$0{% endif %}</td>
         </tr>
         {% endfor %}
     </tbody>

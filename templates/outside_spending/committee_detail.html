@@ -27,10 +27,18 @@
 
 
 
-
+{% if committee.total_indy_expenditures%}
 <div class="space_above">
     <span class="amountLine">Independent Expenditures: </span><span class="amount">{% if committee.total_indy_expenditures%}${{ committee.total_indy_expenditures|intcomma }}{% endif %}</span><br>Jump to <a href="#spending">expenditures</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackcsv}}">.csv file of all independent expenditures</a>
     <br><br>
+{% endif %}   
+
+{% if ec_total%}
+<div class="space_above">
+    <span class="amountLine">Electioneering Communications: </span><span class="amount">${{ ec_total|intcomma }}</span><br>Jump to <a href="#ec">electioneering communications</a>
+    <br><br>
+{% endif %}
+ 
     {% if contributions %}
     <span class="amountLine">Contributions (as of {{ committee.cash_on_hand_date }}): </span><span class="amount">{% if committee.total_contributions %}${{ committee.total_contributions|intcomma }}{% endif %}</span><br>Jump to <a href="#contributors"> contributors</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackdonorscsv}}">.csv file of contributions</a>
 </div>
@@ -38,10 +46,11 @@
 
 <div class="clear"></div>
 
+{% if candidates %}
 
 <div class="space_above"><h3>Independent Expenditure Summary</h3></div>
 <p>{{ explanatory_text|safe }}</p>
-{% if candidates %}
+
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
@@ -64,7 +73,7 @@
     </tbody>
 </table>
 
-{% else %}
+
 <br/><br/>No candidates have been supported by independent expenditures this cycle.
 {% endif %}
 
@@ -134,6 +143,41 @@
               </tbody>
               </table>
               {% endif %}
+
+
+
+{% if ecs %}
+<a name="ec"></a>
+<div class="space_above"><h3>Electioneering Communications</h3></div>
+{{ec_explanation|safe}}
+<p class="tip">Click on a race, committee or candidate name for more details</p>
+
+
+<table id="contrib_details" class="tablesorter">
+  <thead>
+      <tr>
+          <th class="sort">Date</th>
+          <th class="sort" >Committee</th>
+          <th class="sort">Amount</th>
+          <th class="sort">Purpose</th>
+          <th class="sort">Payee</th>
+          <th class="sort">Candidate(s) mentioned, state targeted</th>
+      </tr>
+  </thead>
+  <tbody>
+  {% for ec in ecs %}    
+      <tr class="{% cycle 'odd' 'even' %}">
+          <td>{{ ec.exp_date }}</td>
+          <td><a href="{{ec.committee.get_absolute_url}}">{{ ec.committee.name }}</a></td> 
+          <td>${{ ec.exp_amo|intcomma }}</td>                               
+          <td>{{ ec.purpose }} </td>
+          <td>{{ ec.payee }} </td>
+          <td>{% for t in ec.target.all %}{% if t.candidate %}<a href="{{t.candidate.get_absolute_url}}">{% endif %}{{t.can_name}}{% if t.candidate %}</a>{% endif %} ({{t.can_state}}){% if forloop.last %}{% else %}; {% endif %}{% endfor %}</td>
+      </tr>
+  {% endfor %}
+  </tbody>
+  </table>    
+  {% endif %}
 
 {% endblock content %}
 

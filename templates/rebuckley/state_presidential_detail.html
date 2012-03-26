@@ -8,16 +8,14 @@
 {% block body %}{{ block.super }}  expendituresPresident{% endblock %}
 
 {% block breadcrumb %}
-<li><a href="/super-pacs/presidential/">Presidential Super PACs</a></li>
-<li>Spending by state: {{ state_name }}</li>
 {% endblock breadcrumb %}
 
 {% block content %}
     {% include "rebuckley/tabs.html" %}
-
+    <h2>Outside spending - Presidential race - {{ state_name }} </h2>
     
 
-    <h2>Super PAC presidential spending by state: {{ state_name }} </h2>
+    <div class="space_above"><h3>Independent expenditure summary</h2>
 {{ explanatory_text }}
 
 {% if state_pacs %}
@@ -25,7 +23,7 @@
     <thead>
         <tr>
             <th class="sort">Candidate</th>            
-            <th class="sort">Super PAC</th>
+            <th class="sort">Group</th>
             <th class="sort">Support/oppose</th>
             <th class="sort">Amount</th>
             <th class="sort">Recent Spending*</th>
@@ -52,7 +50,7 @@
 
 
 {% if expenditures %}
-<div class="space_above"><h3>Super PAC Independent Expenditures </h3></div>
+<div class="space_above"><h3>Independent Expenditures </h3></div>
 <p>{{ explanatory_text_details|safe }}</p>
 <table id="expenditure_details" class="tablesorter">
        <thead>

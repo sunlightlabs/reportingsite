@@ -162,6 +162,12 @@ def committee_detail(request,committee_id):
     explanatory_text = 'This table shows the overall total amount spent by this group supporting or opposing federal candidates in independent expenditures in the 2012 election cycle.'
     explanatory_text_details = 'This table shows the total independent expenditure by this group supporting or opposing federal candidates in the 2012 election cycle. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.superpachackcsv())
     explanatory_text_contribs = 'This table shows all contributions made to this group during the 2012 campaign cycle, as of %s. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.cash_on_hand_date,committee.superpachackdonorscsv())
+    
+    ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False, fec_id=committee_id).order_by('-exp_date')
+    ec_total_dict = ecs.aggregate(total=Sum('exp_amo'))
+    ec_total = ec_total_dict['total']
+    
+    
     return render_to_response('outside_spending/committee_detail.html',
                             {'committee':committee, 
                             'expenditures':expenditures,
@@ -169,7 +175,10 @@ def committee_detail(request,committee_id):
                             'candidates':candidates_supported,
                             'explanatory_text':explanatory_text,
                             'explanatory_text_details':explanatory_text_details,
-                            'explanatory_text_contribs':explanatory_text_contribs
+                            'explanatory_text_contribs':explanatory_text_contribs,
+                            'ecs':ecs,
+                            'ec_explanation':electioneering_details,
+                            'ec_total':ec_total
                             })   
                             
 
@@ -178,7 +187,8 @@ def presidential_superpacs(request):
 
     superpacs = Committee_Overlay.objects.filter(total_presidential_indy_expenditures__gte=1000)
     total = superpacs.aggregate(total=Sum('total_presidential_indy_expenditures'))
-    total_amt = total['total']    
+    total_amt = total['total']   
+     
 
     return render_to_response('outside_spending/presidential_superpac_list.html',
                             {'explanatory_text':explanatory_text, 
@@ -196,6 +206,10 @@ def presidential_state_summary(request, state):
     expenditures = Expenditure.objects.filter(superceded_by_amendment=False, state=state, office='P').select_related("committee", "candidate")
     explanatory_text = 'This is a list of groups that have made independent expenditures for or against a presidential candidate in the state of ' + state_name + '.'
     explanatory_text_details = 'This is a list all independent expenditures made for or against a presidential candidate in the state of ' + state_name + '.'
+    
+    ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False, target__candidate__office='P', target__can_state=state).order_by('-exp_date')
+    
+    
 
     return render_to_response('outside_spending/state_presidential_detail.html',
                             {'state_pacs':state_pacs, 
@@ -203,7 +217,9 @@ def presidential_state_summary(request, state):
                             'explanatory_text':explanatory_text,
                             'expenditures':expenditures,
                             'explanatory_text':explanatory_text,
-                            'explanatory_text_details':explanatory_text_details
+                            'explanatory_text_details':explanatory_text_details,
+                            'ecs':ecs,
+                            'ec_explanation':electioneering_details
                             })
 
 
@@ -218,6 +234,8 @@ def races(request):
 def race_detail(request, office, state, district):
     race_aggregate = get_object_or_404(Race_Aggregate, office=office, state=state, district=district)
     candidate_pacs = Pac_Candidate.objects.filter(candidate__office=office, candidate__state_race=state, candidate__district=district)
+    ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False, target__candidate__office=office, target__candidate__state_race=state, target__candidate__district=district).order_by('-exp_date')
+    
     explanatory_text = "This table shows the total amount of independent expenditures each group made to support or oppose a candidate in this race. For a downloadable file of this information, <a href=\"/outside-spending/csv/race/expenditures/%s/%s/%s/\">click here</a>." % (office, state, district)
     race_name = None
     if (office=='P'):
@@ -231,7 +249,9 @@ def race_detail(request, office, state, district):
                             {'candidates':candidate_pacs, 
                             'explanatory_text':explanatory_text, 
                             'race_name':race_name,
-                            'race_aggregate':race_aggregate
+                            'race_aggregate':race_aggregate, 
+                            'ecs':ecs,
+                            'ec_explanation':electioneering_details
                             })      
                             
 def candidates(request):
@@ -248,17 +268,25 @@ def candidate_detail(request, candidate_id):
     explanatory_text_details = 'This is a list of all super PAC independent expenditures made for or against this candidate.'
     superpacs = Pac_Candidate.objects.filter(candidate=candidate)
     expenditures = Expenditure.objects.filter(superceded_by_amendment=False, candidate=candidate).select_related("committee")
+    
+    ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False, target__candidate=candidate).order_by('-exp_date')
+    ec_total_dict = ecs.aggregate(total=Sum('exp_amo'))
+    ec_total = ec_total_dict['total']
+    
     return render_to_response('outside_spending/candidate_detail.html',
                             {'candidate':candidate, 
                             'explanatory_text':explanatory_text,
                             'explanatory_text_details':explanatory_text_details,
                             'superpacs':superpacs,
-                            'expenditures':expenditures
+                            'expenditures':expenditures,
+                            'ecs':ecs,
+                            'ec_explanation':electioneering_details,
+                            'ec_total':ec_total,
                             }) 
 
 def states(request):
     states = State_Aggregate.objects.filter(total_ind_exp__gt=0)
-    explanatory_text= 'This table lists the total of all independent expenditures reported to have been made in each state during the 2012 election cycle. While FEC rules require super PACs and other political groups to designate the state each independent expenditure is made in, many expenditures--particularly those spread across multiple states--are missing this information. Therefore, the totals on this page will not match overall totals found elsewhere on this site. For downloadable state-by-state files, see the <a href="/outside-spending/file-downloads/">downloads page</a>. ' + electioneering_details
+    explanatory_text= 'This table lists the sums of independent expenditures and electioneering communications reported to have been made in each state during the 2012 election cycle. While FEC rules require super PACs and other political groups to designate the state each independent expenditure is made in, many expenditures--particularly those spread across multiple states--are missing this information. Therefore, the totals on this page will not match overall totals found elsewhere on this site. For downloadable state-by-state files, see the <a href="/outside-spending/file-downloads/">downloads page</a>. ' + electioneering_details
     return render_to_response('outside_spending/state_list.html',
                             {'states':states, 
                             'explanatory_text':explanatory_text,
@@ -277,7 +305,7 @@ def state_detail(request, state_abbreviation):
 
     candidates = Candidate_Overlay.objects.filter(total_expenditures__gte=10, state_race__iexact=state_abbreviation)
 
-    explanatory_text= 'For a downloadable .csv file of this information, <a href="/outside-spending/csv/state/expenditures/%s/">click here</a>.</p><p>This table lists the total of all independent expenditures made in each state during the 2012 election cycle by race. While FEC rules require super PACs and other political groups to designate the state each independent expenditure is made in, many expenditures--particularly those spread across multiple states--are missing this information. Therefore, the totals on this page will not match overall totals found elsewhere on this site.' % (state_abbreviation)
+    explanatory_text= 'For a downloadable .csv file of this information, <a href="/outside-spending/csv/state/expenditures/%s/">click here</a>.</p><p>This table lists the total of all independent expenditures and electioneering communications made during the 2012 election cycle by race. While FEC rules require super PACs and other political groups to designate the state each independent expenditure is made in, many expenditures--particularly those spread across multiple states--are missing this information. Therefore, the totals on this page will not match overall totals found elsewhere on this site.' % (state_abbreviation)
     return render_to_response('outside_spending/state_detail.html',
                             {'races':races, 
                             'state_name':state_name,
@@ -302,7 +330,7 @@ def ecs(request):
     #today = datetime.date.today()
     #two_weeks_ago = today - datetime.timedelta(days=14)
     ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False).order_by('-exp_date')
-    explanatory_text= 'This page shows electioneering communications made in the last two weeks.'
+    explanatory_text= 'This page shows electioneering communications.'
     return render_to_response('outside_spending/electioneering_list.html',
                             {'ecs':ecs, 
                             'explanatory_text':explanatory_text + " " + electioneering_details,
