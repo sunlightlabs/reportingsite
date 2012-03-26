@@ -14,7 +14,7 @@
 {% block content %}
     {% include "outside_spending/tabs.html" %}
 
-    <h2>Candidates supported or opposed by independent expenditures</h2>
+    <h2>Candidates</h2>
 <p>{{ explanatory_text|safe }}</p>
 {% if candidates %}
 
@@ -24,11 +24,11 @@
         <thead>
             <tr>
                 <th class="sort">Candidate</th>
-                <th class="sort">Party</th>
                 <th class="sort">Race</th>
                 <th class="sort">Opposing Expenditures</th>
                 <th class="sort">Supporting Expenditures</th>
-                <th class="sort">Total Expenditures
+                <th class="sort">Total Expenditures</th>
+                <th class="sort">Electioneering Communications</th>                
 
             </tr>
         </thead>
@@ -36,12 +36,12 @@
 
     {% for candidate in candidates %}
     <tr>
-        <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.fec_name }}</a></td>
-        <td>{{ candidate.display_party }}</td>
+        <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.fec_name }}</a> {{ candidate.display_party }}</td>
         <td><a href="{{candidate.get_race_url}}">{{ candidate.race }}</a></td>
         <td>{% if candidate.expenditures_opposing %}${{ candidate.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</td>
         <td>{% if candidate.expenditures_supporting %}${{ candidate.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</td>
         <td>${{ candidate.total_expenditures|intcomma }}</td>
+        <td>{% if candidate.electioneering %}${{ candidate.electioneering|intcomma }}{% else %}$0{% endif %}</td>
     </tr>
     {% endfor %}
     </tbody>

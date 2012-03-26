@@ -28,8 +28,7 @@
         <tr>
             <th class="sort">Race</th>
             <th class="sort">Total Independent Expenditures</th>
-            <th class="sort">Opposing</th>
-            <th class="sort">Supporting</th>
+            <th class="sort">Electioneering Communications</th>
         </tr>
     </thead>
     <tbody>
@@ -37,8 +36,7 @@
     <tr class="{% cycle 'odd' 'even' %}">
         <td><a href="{{race.get_absolute_url}}">{{ race.race_name }}</a></td>
         <td>${{ race.total_ind_exp|intcomma }}</td>
-        <td>{% if race.expenditures_opposing %}${{ race.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</td>
-        <td>{% if race.expenditures_supporting %}${{ race.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</td>
+        <td>{% if race.total_ec %}${{ race.total_ec|intcomma }}{% else %}$0{% endif %}</td>
     </tr>
     {% endfor %}
     </tbody>

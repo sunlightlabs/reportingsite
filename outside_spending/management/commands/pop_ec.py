@@ -6,6 +6,7 @@ from django.template.defaultfilters import slugify
 from dateutil.parser import parse as dateparse
 from outside_spending.models import Electioneering_93, Electioneering_94
 from outside_spending.management.commands.overlay_utils import *
+from find_candidate import candidate_lookup
 
 #cycle=12
 
@@ -40,6 +41,35 @@ class Command(BaseCommand):
                 
         # Save the row 93 records first because the 94's refer back to them. 
         
+        for f94 in F94:
+            
+            try: 
+                ec_target = Electioneering_94.objects.get(filing_number=f94['REPID'], transaction_id=f94['TRAN_ID'])
+            except Electioneering_94.DoesNotExist:
+                print "missing!"
+                
+                this_candidate = get_or_create_candidate_overlay(f94['CANID'], cycle_year)
+                
+                
+                ec_target = Electioneering_94.objects.create(
+                    can_id=f94['CANID'],
+                    can_name=f94['CAND_NAME'],
+                    imageno=f94['IMAGENO'],
+                    ele_yr=f94['ELE_YR'],
+                    receipt_date=dateparse(f94['RECEIPT_DT']),
+                    can_off=f94['CAN_OFF'],
+                    can_state=f94['CAN_STATE'],
+                    transaction_id=f94['TRAN_ID'],
+                    filing_number=f94['REPID'],
+                    ele_typ=f94['ELE_TYP'],
+                    group_id=f94['GROUP_ID'],
+                    fec_id=f94['COMID'],
+                    br_tran_id=f94['BR_TRAN_ID'],
+                    amnd_ind=f94['AMNDT_IND'],
+                    candidate=this_candidate
+                )
+
+
         for f93 in F93:
             print f93
         
@@ -69,36 +99,16 @@ class Command(BaseCommand):
                         committee=this_committee,
                 )
             
-        for f94 in F94:
-            # get the related 93 line
-            ec = Electioneering_93.objects.get(filing_number=f94['REPID'], transaction_id=f94['BR_TRAN_ID'])
-            
-            try: 
-                ec_target = Electioneering_94.objects.get(filing_number=f94['REPID'], transaction_id=f94['TRAN_ID'])
-            except Electioneering_94.DoesNotExist:
-                print "missing!"
-                
-                this_candidate = get_or_create_candidate_overlay(f94['CANID'], cycle_year)
-                
-                
-                ec_target = Electioneering_94.objects.create(
-                    electioneering=ec,
-                    can_id=f94['CANID'],
-                    can_name=f94['CAND_NAME'],
-                    imageno=f94['IMAGENO'],
-                    ele_yr=f94['ELE_YR'],
-                    receipt_date=dateparse(f94['RECEIPT_DT']),
-                    can_off=f94['CAN_OFF'],
-                    can_state=f94['CAN_STATE'],
-                    transaction_id=f94['TRAN_ID'],
-                    filing_number=f94['REPID'],
-                    ele_typ=f94['ELE_TYP'],
-                    group_id=f94['GROUP_ID'],
-                    fec_id=f94['COMID'],
-                    br_tran_id=f94['BR_TRAN_ID'],
-                    amnd_ind=f94['AMNDT_IND'],
-                    candidate=this_candidate
-                )
-                    
 
-                # We still need to fix it where candidate ids are missing. 
+                    
+                # Only do this if we're creating the 93 for the first time!! 
+                # That means we gotta flush both sets of tables at once !!
+                # I suppose a smart way to do this would be a post delete hook or something, but fuck it. 
+                children = Electioneering_94.objects.filter(filing_number=f93['REPID'], br_tran_id=f93['TRAN_ID'])
+                for child in children:
+                    ec.target.add(child)
+                
+            
+            
+                
+        # We still need to fix it where candidate ids are missing.         

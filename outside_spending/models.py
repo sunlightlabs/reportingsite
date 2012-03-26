@@ -632,6 +632,39 @@ class Contribution(models.Model):
             return "*" 
         else: 
             return ""
+
+
+class Electioneering_94(models.Model):
+    #electioneering=models.ForeignKey(Electioneering_93)
+    can_id = models.CharField(max_length=9)
+    can_name = models.CharField(max_length=127)
+    imageno = models.BigIntegerField()
+    ele_yr = models.IntegerField()
+    receipt_date = models.DateField(null=True)
+    can_off = models.CharField(max_length=3, blank=True)
+    can_state = models.CharField(max_length=2, blank=True, null=True)
+    transaction_id = models.CharField(max_length=32)
+    filing_number = models.IntegerField()
+    ele_typ = models.CharField(max_length=15)
+    group_id = models.CharField(max_length=32, blank=True, null=True)
+    fec_id = models.CharField(max_length=9)
+    br_tran_id= models.CharField(max_length=32)
+    amnd_ind= models.CharField(max_length=32)
+
+
+
+    # added:
+    superceded_by_amendment=models.BooleanField(default=False)
+    candidate=models.ForeignKey(Candidate_Overlay, null=True)
+
+
+    class Meta:
+        unique_together = (("filing_number", "transaction_id"),)
+
+    def __unicode__(self):
+        return self.spe_nam, self.exp_amo, self.purpose    
+
+
             
 class Electioneering_93(models.Model):
     exp_amo = models.DecimalField(max_digits=19, decimal_places=2)
@@ -655,43 +688,15 @@ class Electioneering_93(models.Model):
     superceded_by_amendment=models.BooleanField(default=False)
     committee = models.ForeignKey(Committee_Overlay, null=True)
     
+    target = models.ManyToManyField(Electioneering_94, null=True)
+    
     class Meta:
         unique_together = (("filing_number", "transaction_id"),)
     
     def __unicode__(self):
         return self.spe_nam, self.exp_amo, self.purpose
         
-        
-class Electioneering_94(models.Model):
-    electioneering=models.ForeignKey(Electioneering_93)
-    can_id = models.CharField(max_length=9)
-    can_name = models.CharField(max_length=127)
-    imageno = models.BigIntegerField()
-    ele_yr = models.IntegerField()
-    receipt_date = models.DateField(null=True)
-    can_off = models.CharField(max_length=3, blank=True)
-    can_state = models.CharField(max_length=2, blank=True, null=True)
-    transaction_id = models.CharField(max_length=32)
-    filing_number = models.IntegerField()
-    ele_typ = models.CharField(max_length=15)
-    group_id = models.CharField(max_length=32, blank=True, null=True)
-    fec_id = models.CharField(max_length=9)
-    br_tran_id= models.CharField(max_length=32)
-    amnd_ind= models.CharField(max_length=32)
-       
-    
-    
-    # added:
-    superceded_by_amendment=models.BooleanField(default=False)
-    candidate=models.ForeignKey(Candidate_Overlay, null=True)
-    
-    
-    class Meta:
-        unique_together = (("filing_number", "transaction_id"),)
-    
-    def __unicode__(self):
-        return self.spe_nam, self.exp_amo, self.purpose    
-        
+                
         
 class F3X_Summary(models.Model):
     """The second line, aka 'form line' of a F3X filing"""

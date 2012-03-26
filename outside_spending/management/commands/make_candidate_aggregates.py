@@ -12,8 +12,8 @@ class Command(BaseCommand):
 
 
     def handle(self, *args, **options):
+        # Set IE flags
         candidate_ids = Expenditure.objects.filter(superceded_by_amendment=False).values('candidate__fec_id').distinct().order_by()
-        
         for candidate_id in candidate_ids:
             # ignore nulls
             if (candidate_id['candidate__fec_id']):
@@ -31,5 +31,19 @@ class Command(BaseCommand):
                 candidate.expenditures_opposing = total_opposing['total']
                 candidate.total_expenditures = total['total']
                 candidate.save()
+        
+        # set EC totals
+        candidate_ids = Electioneering_94.objects.filter(superceded_by_amendment=False).values('candidate__fec_id').distinct()
+        for candidate_id in candidate_ids: 
+            this_id = candidate_id['candidate__fec_id']
+            # skip missing values
+            if this_id:
+                print "Got id: %s" % (this_id)
+                total = Electioneering_93.objects.filter(superceded_by_amendment=False, target__candidate__fec_id=this_id).distinct().aggregate(total=Sum('exp_amo'))
+                candidate = Candidate_Overlay.objects.get(fec_id=this_id)
+                candidate.electioneering=total['total']
+                candidate.save()
+
+        
 
               

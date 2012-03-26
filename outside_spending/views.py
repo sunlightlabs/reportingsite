@@ -14,9 +14,17 @@ STATE_CHOICES = dict(STATE_CHOICES)
 
 from outside_spending.models import *
 
-data_disclaimer = """ "These files are being provided as quickly as possible--but we cannot guarantee their accuracy. For more information, see: http://reporting.sunlightfoundation.com/super-pac/data/about/year-end/2011/ Please note that contributions in these files are as of the most recent filing deadline--whic is Feb. 29 for monthly filers, but Dec. 31, 2011 for quarterly filers. Presidential spending totals may not match up to overall spending totals, which may include independent expenditures made in support of congressional candidates. Independent expenditures are not comparable to the itemized disbursements found in PACs year-end reports. For more on independent expenditures see here: http://www.fec.gov/pages/brochures/indexp.shtml" """
+data_disclaimer = """ These files are being provided as quickly as possible--but we cannot guarantee their accuracy. For more information, see: http://reporting.sunlightfoundation.com/super-pac/data/about/year-end/2011/ Please note that contributions in these files are as of the most recent filing deadline--whic is Feb. 29 for monthly filers, but Dec. 31, 2011 for quarterly filers. Presidential spending totals may not match up to overall spending totals, which may include independent expenditures made in support of congressional candidates. Independent expenditures are not comparable to the itemized disbursements found in PACs year-end reports. For more on independent expenditures see here: http://www.fec.gov/pages/brochures/indexp.shtml """
 
 hybrid_superpac_disclaimer ="\"Hybrid\" super PACs--committees that have separate accounts for \"hard\" and \"soft\" money, are not included. For a list of these committees, see <a href=\"http://www.fec.gov/press/press2011/2012PoliticalCommitteeswithNon-ContributionAccounts.shtml\">here</a>."
+
+electioneering_details="""<a target="_new" href="http://www.fec.gov/pages/brochures/electioneering.shtml">Electioneering communications</a>  are broadcast communications not otherwise
+reported as independent expenditures. Electioneering communication
+reports do not state whether the communication was in support of or in
+opposition to the candidate, and they sometimes refer to multiple
+candidates. In cases where a communication mentions more than one
+candidate, the amount is included in race totals only if both
+candidates are running in the same race."""
 
 def generic_csv(filename, fields, rows):
     response = HttpResponse(mimetype='text/csv')
@@ -201,7 +209,7 @@ def presidential_state_summary(request, state):
 
 def races(request):
     races = Race_Aggregate.objects.exclude(district__isnull=True)
-    explanatory_text = "This page shows independent expenditures made in the 2012 election cycle by race. Click on each race to see aggregate totals by candidate, and to get access to a downloadable file of all individual expenditures for this race."
+    explanatory_text = "This page shows independent expenditures made in the 2012 election cycle by race. Click on each race to see aggregate totals by candidate, and to get access to a downloadable file of all individual expenditures for this race. " + electioneering_details
     return render_to_response('outside_spending/race_list.html',
                             {'races':races, 
                             'explanatory_text':explanatory_text
@@ -228,7 +236,7 @@ def race_detail(request, office, state, district):
                             
 def candidates(request):
     candidates = Candidate_Overlay.objects.filter(total_expenditures__gte=10)
-    explanatory_text= 'This table lists the total of all independent expenditures made to support or oppose federal candidates during the 2012 election cycle. Candidates not receiving opposition or support from indendent expenditures are not shown.'
+    explanatory_text= 'This table lists all independent expenditures made to support or oppose federal candidates during the 2012 election cycle, and all electioneering communications. Candidates not targeted by either type of spending are not included. ' + electioneering_details
     return render_to_response('outside_spending/candidate_list.html',
                             {'candidates':candidates, 
                             'explanatory_text':explanatory_text,
@@ -250,7 +258,7 @@ def candidate_detail(request, candidate_id):
 
 def states(request):
     states = State_Aggregate.objects.filter(total_ind_exp__gt=0)
-    explanatory_text= 'This table lists the total of all independent expenditures reported to have been made in each state during the 2012 election cycle. While FEC rules require super PACs and other political groups to designate the state each independent expenditure is made in, many expenditures--particularly those spread across multiple states--are missing this information. Therefore, the totals on this page will not match overall totals found elsewhere on this site. For downloadable state-by-state files, see the <a href="/outside-spending/file-downloads/">downloads page</a>.'
+    explanatory_text= 'This table lists the total of all independent expenditures reported to have been made in each state during the 2012 election cycle. While FEC rules require super PACs and other political groups to designate the state each independent expenditure is made in, many expenditures--particularly those spread across multiple states--are missing this information. Therefore, the totals on this page will not match overall totals found elsewhere on this site. For downloadable state-by-state files, see the <a href="/outside-spending/file-downloads/">downloads page</a>. ' + electioneering_details
     return render_to_response('outside_spending/state_list.html',
                             {'states':states, 
                             'explanatory_text':explanatory_text,
@@ -283,11 +291,23 @@ def ies(request):
     today = datetime.date.today()
     two_weeks_ago = today - datetime.timedelta(days=14)
     ies = Expenditure.objects.select_related("committee", "candidate").filter(committee__is_superpac=True, superceded_by_amendment=False, expenditure_date__gte=two_weeks_ago).order_by('-expenditure_date')
-    explanatory_text= 'This page shows independent expenditures made in the last two weeks.'
+    explanatory_text= 'This page shows independent expenditures.'
     return render_to_response('outside_spending/expenditure_list.html',
                             {'ies':ies, 
                             'explanatory_text':explanatory_text,
                             })
+
+
+def ecs(request):
+    #today = datetime.date.today()
+    #two_weeks_ago = today - datetime.timedelta(days=14)
+    ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False).order_by('-exp_date')
+    explanatory_text= 'This page shows electioneering communications made in the last two weeks.'
+    return render_to_response('outside_spending/electioneering_list.html',
+                            {'ecs':ecs, 
+                            'explanatory_text':explanatory_text + " " + electioneering_details,
+                            })
+
 
 
 def organizational_superpac_contribs(request):
