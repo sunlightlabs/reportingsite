@@ -1,0 +1,64 @@
+{% extends "outside_spending/buckley_base.html" %}
+
+{% load humanize %}
+
+{% block title %}Electioneering Communications{% endblock %}
+
+{% block body %}  fullWidth electioneeringFiles {% endblock %}
+
+{% block breadcrumb %}
+<li>Recent electioneering communications</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    {% include "outside_spending/tabs.html" %}
+
+
+    <h2>
+        Electioneering communications
+    </h2>
+    <p>{{ explanatory_text|safe }}</p>
+
+    {% if ecs %}
+    <p class="tip">Click on a race, committee or candidate name for more details</p>
+
+   
+    <table id="contrib_details" class="tablesorter">
+        <thead>
+            <tr>
+                <th class="sort">Date</th>
+                <th class="sort" >Committee</th>
+                <th class="sort">Amount</th>
+                <th class="sort">Purpose</th>
+                <th class="sort">Payee</th>
+                <th class="sort">Candidate(s) targetted (state)</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for ec in ecs %}    
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td>{{ ec.exp_date }}</td>
+                <td><a href="{{ec.committee.get_absolute_url}}">{{ ec.committee.name }}</a></td> 
+                <td>${{ ec.exp_amo|intcomma }}</td>                               
+                <td>{{ ec.purpose }} </td>
+                <td>{{ ec.payee }} </td>
+                <td>{% for t in ec.target.all %}{% if t.candidate %}<a href="{{t.candidate.get_absolute_url}}">{% endif %}{{t.can_name}}{% if t.candidate %}</a>{% endif %} ({{t.can_state}}){% if forloop.last %}{% else %}; {% endif %}{% endfor %}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>    
+        {% endif %}
+        
+        {% block js %}
+        {{ block.super }}
+        <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+        {% with '[1,1]' as sortdir %}
+        {% include "outside_spending/tablesorter_contribs.html" %}
+        {% endwith %}
+
+        {% endblock %}        
+        
+
+{% endblock content %}
