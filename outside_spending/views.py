@@ -319,7 +319,7 @@ def ies(request):
     today = datetime.date.today()
     two_weeks_ago = today - datetime.timedelta(days=14)
     ies = Expenditure.objects.select_related("committee", "candidate").filter(committee__is_superpac=True, superceded_by_amendment=False, expenditure_date__gte=two_weeks_ago).order_by('-expenditure_date')
-    explanatory_text= 'This page shows independent expenditures.'
+    explanatory_text= 'This page shows independent expenditures made in the last two weeks.'
     return render_to_response('outside_spending/expenditure_list.html',
                             {'ies':ies, 
                             'explanatory_text':explanatory_text,
