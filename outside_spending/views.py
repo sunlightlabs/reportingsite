@@ -330,10 +330,10 @@ def ecs(request):
     #today = datetime.date.today()
     #two_weeks_ago = today - datetime.timedelta(days=14)
     ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False).order_by('-exp_date')
-    explanatory_text= 'This page shows electioneering communications.'
+    #explanatory_text= 'This page shows electioneering communications.'
     return render_to_response('outside_spending/electioneering_list.html',
                             {'ecs':ecs, 
-                            'explanatory_text':explanatory_text + " " + electioneering_details,
+                            'explanatory_text':electioneering_details
                             })
 
 
