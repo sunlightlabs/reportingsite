@@ -3,7 +3,7 @@ import csv
 import datetime
 
 from django.views.decorators.cache import cache_page
-from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
+from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response, redirect
 from django.http import Http404, HttpResponse
 from django.db.models import Sum
 from django.db.models import Q
@@ -361,4 +361,9 @@ def file_downloads(request):
                             {'committees':committees, 
                             'states':states,
                             'races':races,
-                            })                            
+                            })  
+# Not built yet! redirect for the time being
+# I think the projecst page points at this, so don't want url to break                        
+def overview(request):
+    return redirect("/outside-spending/super-pacs/")
+                              

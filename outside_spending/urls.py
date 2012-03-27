@@ -4,7 +4,7 @@ from outside_spending.models import *
 #from rebuckley.feeds import *
 from outside_spending.views import *
 from django.views.generic.simple import direct_to_template
-
+from django.shortcuts import redirect
 urlpatterns = patterns('',
 
     
@@ -39,6 +39,9 @@ urlpatterns = patterns('',
     url(r'^file-downloads\/?$', 'outside_spending.views.file_downloads'),    
 
     url(r'^electioneering-communications\/?$', 'outside_spending.views.ecs'),
+    
+    # placeholder redirect
+    url(r'$', 'outside_spending.views.overview')
         
     # all that are noteworthy
     #url(r'^csv/state_csv/','outside_spending.views.states_csv'),
