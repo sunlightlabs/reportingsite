@@ -3,7 +3,7 @@ import csv
 import datetime
 
 from django.views.decorators.cache import cache_page
-from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response
+from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response, redirect
 from django.http import Http404, HttpResponse
 from django.db.models import Sum
 from django.db.models import Q
@@ -163,93 +163,31 @@ def all_contribs_csv(request):
 def about(request):
     return render_to_response('rebuckley/about.html',
                             {})                                   
-                            
+
 def all_superpacs(request):
-    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACS--that have raised at least $10,000 since the beginning of 2011. For a complete list of all super PACS that includes the many that have not raised any money see <a href=\"/super-pacs/complete/\">here</a>. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
-    
-    superpacs = IEOnlyCommittee.objects.filter(total_contributions__gte=10000)
-    total = superpacs.aggregate(total=Sum('total_indy_expenditures'))
-    total_amt = total['total']
+    return redirect("/outside-spending/super-pacs/", permanent=True)
 
-    return render_to_response('rebuckley/superpac_list.html',
-                            {'explanatory_text':explanatory_text, 
-                            'superpacs':superpacs, 
-                            'total_amt':total_amt})
-                                
 def presidential_superpacs(request):
-    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have made independent expenditures in support of a presidential candidate during the 2012 election cycle. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
+    return redirect("/outside-spending/super-pacs/", permanent=True)
+    
 
-    superpacs = IEOnlyCommittee.objects.filter(total_presidential_indy_expenditures__gte=10)
-    total = superpacs.aggregate(total=Sum('total_presidential_indy_expenditures'))
-    total_amt = total['total']    
+def committee_detail(request,slug, ieonlycommittee_id):
+    newurl = "/outside-spending/committee/%s/%s/" % (slug, ieonlycommittee_id)
+    return redirect(newurl, permanent=True)
 
-    return render_to_response('rebuckley/presidential_superpac_list.html',
-                            {'explanatory_text':explanatory_text, 
-                            'superpacs':superpacs,
-                            'total_amt':total_amt}) 
-                            
-                             
-def committee_detail(request,ieonlycommittee_id):
-    committee = get_object_or_404(IEOnlyCommittee, fec_id=ieonlycommittee_id)
-    committee_master = get_object_or_404(Committee, fec_id=ieonlycommittee_id)
-    expenditures = Expenditure.objects.filter(committee=committee_master).filter(superceded_by_amendment=False)
-    contributions = Contribution.objects.filter(fec_committeeid=ieonlycommittee_id, superceded_by_amendment=False)
-    candidates_supported = Pac_Candidate.objects.filter(committee=committee_master)
-    explanatory_text = 'This table shows the overall total amount spent by this super PAC supporting or opposing federal candidates in independent expenditures in the 2012 election cycle.'
-    explanatory_text_details = 'This table shows all independent expenditures made by this super PAC during the 2012 campaign cycle. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.superpachackcsv())
-    explanatory_text_contribs = 'This table shows all contributions made to this super PAC during the 2012 campaign cycle, as of %s. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.cash_on_hand_date,committee.superpachackdonorscsv())
-    return render_to_response('rebuckley/committee_detail.html',
-                            {'committee':committee, 
-                            'committee_master':committee_master,
-                            'expenditures':expenditures,
-                            'contributions':contributions, 
-                            'candidates':candidates_supported,
-                            'explanatory_text':explanatory_text,
-                            'explanatory_text_details':explanatory_text_details,
-                            'explanatory_text_contribs':explanatory_text_contribs
-                            })
-                            
 def races(request):
-    races = Race_Aggregate.objects.exclude(district__isnull=True)
-    explanatory_text = "This page shows independent expenditures made by super PACS in the 2012 election cycle by race. Click on each race to see aggregate totals by candidate, and to get access to a downloadable file of all individual expenditures for this race."
-    return render_to_response('rebuckley/race_list.html',
-                            {'races':races, 
-                            'explanatory_text':explanatory_text
-                            })
+    return redirect("/outside-spending/races/", permanent=True)
+
 
 def race_detail(request, office, state, district):
-    race_aggregate = get_object_or_404(Race_Aggregate, office=office, state=state, district=district)
-    candidate_pacs = Pac_Candidate.objects.filter(candidate__office=office, candidate__state_race=state, candidate__district=district)
-    explanatory_text = "This table shows the total amount each super PAC made in independent expenditures to support or oppose a candidate in this race. For a downloadable file of this information, <a href=\"/super-pacs/csv/race/expenditures/%s/%s/%s/\">click here</a>." % (office, state, district)
-    race_name = None
-    if (office=='P'):
-        race_name = 'President'
-    elif office == 'S':
-        race_name = '%s (Senate)' % state
-    else:
-        race_name='%s-%s (House)' % (state, district.lstrip('0'))
-        
-    return render_to_response('rebuckley/race_detail.html',
-                            {'candidates':candidate_pacs, 
-                            'explanatory_text':explanatory_text, 
-                            'race_name':race_name,
-                            'race_aggregate':race_aggregate
-                            })  
+    newurl = "/outside-spending/race_detail/%s/%s/%s/" % (office, state, district)
+    return redirect(newurl, permanent=True)
+    
 def candidates(request):
-    candidates = Candidate.objects.filter(total_expenditures__gte=10)
-    explanatory_text= 'This table lists the total of all super PAC independent expenditures made to support or oppose federal candidates during the 2012 election cycle. Candidates not receiving opposition or support from super PACs are not shown.'
-    return render_to_response('rebuckley/candidate_list.html',
-                            {'candidates':candidates, 
-                            'explanatory_text':explanatory_text,
-                            })
+    return redirect("/outside-spending/candidates/", permanent=True)
                             
 def states(request):
-    states = State_Aggregate.objects.filter(total_ind_exp__gt=0)
-    explanatory_text= 'This table lists the total of all super PAC independent expenditures reported to have been made in each state during the 2012 election cycle. While FEC rules require super PACs to designate the state each independent expenditure is made in, many expenditures--particularly those spread across multiple states--are missing this information. Therefore, the totals on this page will not match overall totals found elsewhere on this site. For downloadable state-by-state files, see the <a href="/super-pacs/file-downloads/">downloads page</a>.'
-    return render_to_response('rebuckley/state_list.html',
-                            {'states':states, 
-                            'explanatory_text':explanatory_text,
-                            }) 
+    return redirect("/outside-spending/states/", permanent=True)
 
 def dollarify(num):
     if num:
@@ -268,108 +206,26 @@ def states_csv(request):
         rows.append([c.state, c,dollarify(c.total_ind_exp),dollarify(c.total_pres_ind_exp), dollarify(c.recent_pres_exp), dollarify(c.total_house_ind_exp), dollarify(c.total_senate_ind_exp)])
     return generic_csv_headless(file_name, fields, rows)  
 
-
-
 def presidential_state_summary(request, state):
-    try:
-        state_name = STATE_CHOICES[state]
-    except KeyError:
-        raise Http404
-    
-    state_pacs = President_State_Pac_Aggregate.objects.filter(state=state)
-    
-    expenditures = Expenditure.objects.filter(committee__is_superpac=True, superceded_by_amendment=False, state=state, office='P')
-    explanatory_text = 'This is a list of super PACs that have made independent expenditures for or against a presidential candidate in the state of ' + state_name + '.'
-    explanatory_text_details = 'This is a list all independent expenditures made by super PACs for or against a presidential candidate in the state of ' + state_name + '.'
-    
-    return render_to_response('rebuckley/state_presidential_detail.html',
-                            {'state_pacs':state_pacs, 
-                            'state_name':state_name,
-                            'explanatory_text':explanatory_text,
-                            'expenditures':expenditures,
-                            'explanatory_text':explanatory_text,
-                            'explanatory_text_details':explanatory_text_details
-                            })
-    
+    newurl = "/outside-spending/president-state-detail/%s/" % (state)
+    return redirect(newurl, permanent=True) 
 
 def state_detail(request, state_abbreviation):
-    
-    try:
-        state_name = STATE_CHOICES[state_abbreviation]
-    except KeyError:
-        raise Http404
-        
+    newurl = "/outside-spending/state/%s/" % (state_abbreviation)
+    return redirect(newurl, permanent=True)
 
-    races = Race_Aggregate.objects.filter(state__iexact=state_abbreviation).exclude(district__isnull=True)
-    this_state = State_Aggregate.objects.get(state=state_abbreviation)
-    
-    candidates = Candidate.objects.filter(total_expenditures__gte=10, state_race__iexact=state_abbreviation)
-
-    explanatory_text= 'For a downloadable .csv file of this information, <a href="/super-pacs/csv/state/expenditures/%s/">click here</a>.</p><p>This table lists the total of all super PAC independent expenditures made in each state during the 2012 election cycle by race. While FEC rules require super PACs to designate the state each independent expenditure is made in, many expenditures--particularly those spread across multiple states--are missing this information. Therefore, the totals on this page will not match overall totals found elsewhere on this site.' % (state_abbreviation)
-    return render_to_response('rebuckley/state_detail.html',
-                            {'races':races, 
-                            'state_name':state_name,
-                            'candidates':candidates,
-                            'explanatory_text':explanatory_text,
-                            'this_state':this_state
-                            }) 
-                            
-
-                                                       
 def ies(request):
-    today = datetime.date.today()
-    two_weeks_ago = today - datetime.timedelta(days=14)
-    ies = Expenditure.objects.select_related("committee", "candidate").filter(committee__is_superpac=True, superceded_by_amendment=False, expenditure_date__gte=two_weeks_ago).order_by('-expenditure_date')
-    explanatory_text= 'This page shows independent expenditures made by super PACs in the last two weeks.'
-    return render_to_response('rebuckley/expenditure_list.html',
-                            {'ies':ies, 
-                            'explanatory_text':explanatory_text,
-                            }) 
+    return redirect("/outside-spending/independent-expenditures/", permanent=True)
 
-def candidate_detail(request, candidate_id):
-    candidate = Candidate.objects.get(fec_id=candidate_id)
-    explanatory_text= 'This is a list of all super PACs that have made independent expenditures supporting or opposing this candidate.'
-    explanatory_text_details = 'This is a list of all super PAC independent expenditures made for or against this candidate.'
-    superpacs = Pac_Candidate.objects.filter(candidate=candidate)
-    expenditures = Expenditure.objects.filter(committee__is_superpac=True, superceded_by_amendment=False, candidate=candidate)
-    return render_to_response('rebuckley/candidate_detail.html',
-                            {'candidate':candidate, 
-                            'explanatory_text':explanatory_text,
-                            'explanatory_text_details':explanatory_text_details,
-                            'superpacs':superpacs,
-                            'expenditures':expenditures
-                            })                               
-                                                                                       
+def candidate_detail(request, slug, candidate_id):
+    newurl = "/outside-spending/candidate/%s/%s/" % (slug, candidate_id)
+    return redirect(newurl, permanent=True)                           
 
 def file_downloads(request):
-    superpacs = IEOnlyCommittee.objects.filter(total_indy_expenditures__gt=0).order_by('fec_name')
-    states = State_Aggregate.objects.filter(total_ind_exp__gt=0).order_by('state')
-    races = Race_Aggregate.objects.filter(total_ind_exp__gt=0).order_by('state', 'office', 'district')
-    
-    return render_to_response('rebuckley/file_downloads.html',
-                            {'superpacs':superpacs, 
-                            'states':states,
-                            'races':races,
-                            })
+    return redirect("/outside-spending/file-downloads/", permanent=True)
 
 def complete_superpac_list(request):
-    superpacs = IEOnlyCommittee.objects.order_by('total_all_expenditures')
-    explanatory_text= 'This is a list of all super PACs.'
-    return render_to_response('rebuckley/superpac_show_all.html',
-                            {'superpacs':superpacs,
-                            'explanatory_text':explanatory_text,
-                            })
+    return redirect("/outside-spending/complete-list/", permanent=True)
                             
 def organizational_superpac_contribs(request):
-    contribs = Contribution.objects.select_related("superpac").filter(superpac__isnull=False).exclude(contrib_org='').filter(line_type__in=['SA11AI', 'SA15'])
-    
-    
-    total = contribs.aggregate(total=Sum('contrib_amt'))
-    total_amt = total['total']
-    
-    explanatory_text= 'This is a list of all contributions to super PACs from organizations, including money received as operating expense offsets. These offsets, which are marked with an asterisk below, often include administrative overhead paid by a related organization, though sometimes include refund payments. This list does not include contributions from corporate--or any other--PACs. '
-    return render_to_response('rebuckley/organizational_contribs.html',
-                            {'contribs':contribs,
-                            'total_amt':total_amt,
-                            'explanatory_text':explanatory_text,
-                            })                            
+    return redirect("/outside-spending/super-pacs/donating-organizations/", permanent=True)
