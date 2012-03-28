@@ -107,7 +107,7 @@ class form_parser():
         
         #print "Trying to parse with v=%s line array=%s " % (version, line_array)
         form_type = line_array[0].replace('"','').upper()
-
+        #print "parsing form type: %s" % (form_type)
         # Ignore problem lines -- this may need more attention. What are these? 
         if (form_type=='H4' or form_type=='H1' or form_type=='H2' or form_type =='H3' or form_type=='H5' or form_type=='H6' or form_type=='F3Z'  or form_type=='F3ZT'  or form_type=='F3ZA'  or form_type=='F3ZN' or form_type=='SL'):
             return None
