@@ -327,6 +327,12 @@ class Candidate_Overlay(models.Model):
         # todo--add other parties, if there are any that are being used? 
         
         
+    def influence_explorer_url(self):
+        if not self.transparencydata_id:
+            return None
+        return 'http://influenceexplorer.com/politician/%s/%s' % (self.slug,
+                                                                  self.transparencydata_id)        
+        
 
 class Filing_Header(models.Model):
     raw_filer_id=models.CharField(max_length=9, blank=True)
@@ -446,8 +452,9 @@ class Expenditure(models.Model):
 # Dump of transparency ids
 class Transparency_Crosswalk(models.Model):
     year = models.IntegerField()
+    entity_type = models.CharField(max_length=32)
     td_name = models.CharField(max_length=255)
-    td_id = models.CharField(max_length=32)
+    td_id = models.CharField(max_length=40)
     fec_candidate_id = models.CharField(max_length=9)
     crp_candidate_id = models.CharField(max_length=9)
     
@@ -455,11 +462,13 @@ class Transparency_Crosswalk(models.Model):
         return self.td_name
 
 # need a real loading process. To get 2012 used the below with a dump from ethan.
-# load data infile '/Users/jfenton/unlimited_money_crash/transparency_data/td_crosswalk.csv'  into table rebuckley_transparency_crosswalk fields terminated by ',' ENCLOSED BY '"' ignore 1 lines (td_name, td_id, fec_candidate_id, crp_candidate_id);
-#  update rebuckley_transparency_crosswalk set year = 2012;
+#load data infile '...outside_spending/data/12/ie_crosswalk.csv'  into table outside_spending_transparency_crosswalk fields terminated by ',' ENCLOSED BY '"' ignore 1 lines (td_name, entity_type, td_id, fec_candidate_id, crp_candidate_id);
+#update outside_spending_transparency_crosswalk set year = 2012;
 
+#update outside_spending_candidate_overlay, outside_spending_transparency_crosswalk set outside_spending_candidate_overlay.crp_id = outside_spending_transparency_crosswalk.crp_candidate_id,  outside_spending_candidate_overlay.td_name=outside_spending_transparency_crosswalk.td_name , outside_spending_candidate_overlay.transparencydata_id =  outside_spending_transparency_crosswalk.td_id where  outside_spending_candidate_overlay.fec_id = outside_spending_transparency_crosswalk.fec_candidate_id;
 
-
+# Sometimes the transparency ids have extra '-' in them. So run
+#update outside_spending_candidate_overlay set transparencydata_id = replace(transparencydata_id, '-', '');
 
         
 # pac_candidate -- indicates a pac's total support or opposition towards a particular candidate. If a particular pac *both* supports and opposes a candidate, this should go in two separate entries. 

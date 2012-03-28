@@ -22,16 +22,16 @@
     
 
     <div class="amountLine clear">
-        <ul>
+        <ul><li><b>2012 election cycle outside spending summary</b></li>
             <li>Independent expenditures made <b>supporting</b> this candidate: <span class="amount">{% if candidate.expenditures_supporting %}${{ candidate.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</span> </li>
             <li>Independent expenditures made <b>opposing</b> this candidate: <span class="amount">{% if candidate.expenditures_opposing %}${{ candidate.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</span> </li>
             {% if ec_total %}<li>Electioneering communications*: <span class="amount">${{ ec_total|intcomma }}</span> </li>
             {% endif %}
         </ul>
         {% if ec_total %}<p>* Electioneering communications may be for or against this candidate, and may mention one or many candidates.</p>{% endif %}
-    {% if object.transparencydata_id %}
+    {% if candidate.transparencydata_id %}
     <br>
-    View more data about this candidate at <a target="_new" href="{{ object.influence_explorer_url }}">Influence Explorer</a>
+    See complete <a name="{{ candidate.fec_name }} on Influence Explorer" href="{{ candidate.influence_explorer_url }}">candidate profile on Influence Explorer</a>
     {% endif %}
     <p><a href="{{ candidate.get_race_url}}">Compare to other candidates in this race</a></p>
     
