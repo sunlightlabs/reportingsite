@@ -54,7 +54,7 @@ class Command(BaseCommand):
                 ts = Expenditure.objects.filter(superceded_by_amendment=False, candidate__office='S', state=state).aggregate(total=Sum('expenditure_amount'))
                 
                 # ec
-                ec = Electioneering_93.objects.filter(superceded_by_amendment=False, target__candidate__state_race=state).distinct().aggregate(total=Sum('exp_amo'))
+                ec = Electioneering_93.objects.filter(superceded_by_amendment=False, target__can_state=state).distinct().aggregate(total=Sum('exp_amo'))
                 print ec
             
             
