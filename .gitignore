@@ -8,3 +8,5 @@ rebuckley/data/
 rebuckley/data/10/
 rebuckley/data/12/
 *.DS_Store
+outside_spending/data/
+outside_spending/outside_spending_settings.py
