@@ -68,7 +68,13 @@ def all_expenditures_csv(request):
     file_name =  "all_expenditures.csv"
 
     for ie in expenditures:
-        rows.append([ie.committee.name, ie.committee.fec_id, ie.committee.superpac_status(), ie.committee.hybrid_status(), ie.candidate_name, ie.support_or_oppose(), ie.candidate.fec_id, ie.candidate.party, ie.candidate.office, ie.candidate.district, ie.candidate.state(), ie.expenditure_amount, ie.state, ie.expenditure_date, ie.payee, ie.expenditure_purpose, ie.transaction_id, ie.filing_number ])
+        if (ie.committee):
+            rows.append([ie.committee.name, ie.committee.fec_id, ie.committee.superpac_status(), ie.committee.hybrid_status(), ie.candidate_name, ie.support_or_oppose(), ie.candidate.fec_id, ie.candidate.party, ie.candidate.office, ie.candidate.district, ie.candidate.state(), ie.expenditure_amount, ie.state, ie.expenditure_date, ie.payee, ie.expenditure_purpose, ie.transaction_id, ie.filing_number ])
+            
+        else:
+        # hack
+            rows.append(['', ie.raw_committee_id, 'unknown', 'unknown', ie.candidate_name, ie.support_or_oppose(), ie.candidate.fec_id, ie.candidate.party, ie.candidate.office, ie.candidate.district, ie.candidate.state(), ie.expenditure_amount, ie.state, ie.expenditure_date, ie.payee, ie.expenditure_purpose, ie.transaction_id, ie.filing_number ])
+            
     return generic_csv(file_name, fields, rows)     
 
 def expenditure_csv_state(request, state):

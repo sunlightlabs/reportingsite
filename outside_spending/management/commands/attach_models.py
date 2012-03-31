@@ -29,6 +29,8 @@ class Command(BaseCommand):
                     ie.committee = this_committee
                     ie.committee_name = this_committee.name
                     ie.save()
+                else:
+                    print "** missing committee %s " % (ie.raw_committee_id)
                     
 
                 
@@ -55,6 +57,7 @@ class Command(BaseCommand):
                     if (this_candidate):
                         ie.candidate = this_candidate
                         ie.save()
+                    
                         
                         
 
@@ -63,7 +66,7 @@ class Command(BaseCommand):
         all_contribs = Contribution.objects.all()
         for ac in all_contribs:
             try:
-                print "looking for %s" % (ac.fec_committeeid)
+                #print "looking for %s" % (ac.fec_committeeid)
                 this_committee = Committee_Overlay.objects.get(fec_id=ac.fec_committeeid)
                 ac.committee=this_committee
                 ac.save()
