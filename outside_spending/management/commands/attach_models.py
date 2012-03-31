@@ -6,7 +6,7 @@ from outside_spending.models import *
 
 from find_candidate import candidate_lookup
 from outside_spending.management.commands.overlay_utils import *
-cycle = 12
+cycle = 2012
 
 class Command(BaseCommand):
     args = '<cycle>'
