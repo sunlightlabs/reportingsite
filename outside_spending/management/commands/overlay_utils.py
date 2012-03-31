@@ -3,7 +3,7 @@
 from outside_spending.models import Committee, Committee_Overlay, Candidate, Candidate_Overlay
 from django.template.defaultfilters import slugify
 
-def get_or_create_committee_overlay(fec_id, cycle, force_overwrite=False):
+def get_or_create_committee_overlay(fec_id, cycle):
     """ We can force it to overwrite if we want it updated"""
     
     # We're only handling these, so far
@@ -11,7 +11,16 @@ def get_or_create_committee_overlay(fec_id, cycle, force_overwrite=False):
         raise ValueError("Invalid election cycle: %s" % (cycle))
     
     cmte = None
+    cmte_overlay = None
     found_committee = True
+    found_committee_overlay = True
+    
+    # Is there already a committee overlay with this name?
+    try:
+        cmte_ovrly = Committee_Overlay.objects.get(fec_id=fec_id, cycle=cycle)
+        return cmte_ovrly
+    except Committee_Overlay.DoesNotExist:
+        found_committee_overlay = False
 
     # Get the original record
     try:
@@ -20,32 +29,7 @@ def get_or_create_committee_overlay(fec_id, cycle, force_overwrite=False):
         # if there's no original record, mark it but we can't overwrite later
         found_committee = False
 
-    try:
-        cmte_ovrly = Committee_Overlay.objects.get(fec_id=fec_id, cycle=cycle)
-        
-        if (force_overwrite and found_committee):
-            cmte_ovrly.cycle = cycle,
-            cmte_ovrly.name = cmte.name,
-            cmte_ovrly.slug = cmte.slug,
-            cmte_ovrly.party = cmte.party,
-            cmte_ovrly.treasurer = cmte.treasurer,
-            cmte_ovrly.street_1 = cmte.street_1,
-            cmte_ovrly.street_2 = cmte.street_2,
-            cmte_ovrly.city =cmte.city,
-            cmte_ovrly.zip_code = cmte.zip_code,
-            cmte_ovrly.state_race = cmte.state_race,
-            cmte_ovrly.connected_org_name=cmte.connected_org_name,
-            cmte_ovrly.filing_frequency = cmte.filing_frequency,
-            cmte_ovrly.candidate_id = cmte.candidate_id, 
-            cmte_ovrly.candidate_office = cmte.candidate_office,
-            cmte_ovrly.committee_master_record = cmte
-            
-            cmte_ovrly.save()
-        return cmte_ovrly
-        
-    except Committee_Overlay.DoesNotExist:
-        # We can't find the overlay, so copy the fields from the raw record
-        
+    if (found_committee):
         
         
         cmte_ovrly = Committee_Overlay.objects.create(
@@ -69,6 +53,8 @@ def get_or_create_committee_overlay(fec_id, cycle, force_overwrite=False):
             candidate_office = cmte.candidate_office)
             
         return cmte_ovrly
+        
+    return None
         
 def get_or_create_candidate_overlay(fec_id, cycle, force_overwrite=False):
     # We're only handling these, so far
