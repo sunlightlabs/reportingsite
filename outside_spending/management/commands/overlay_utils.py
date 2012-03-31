@@ -11,18 +11,19 @@ def get_or_create_committee_overlay(fec_id, cycle, force_overwrite=False):
         raise ValueError("Invalid election cycle: %s" % (cycle))
     
     cmte = None
-    
+    found_committee = True
+
     # Get the original record
     try:
         cmte = Committee.objects.get(fec_id=fec_id)
     except Committee.DoesNotExist:
-        # if there's no original record, so there's nothing to be done
-        return None
-    
+        # if there's no original record, mark it but we can't overwrite later
+        found_committee = False
+
     try:
         cmte_ovrly = Committee_Overlay.objects.get(fec_id=fec_id, cycle=cycle)
         
-        if (force_overwrite):
+        if (force_overwrite and found_committee):
             cmte_ovrly.cycle = cycle,
             cmte_ovrly.name = cmte.name,
             cmte_ovrly.slug = cmte.slug,
@@ -44,6 +45,8 @@ def get_or_create_committee_overlay(fec_id, cycle, force_overwrite=False):
         
     except Committee_Overlay.DoesNotExist:
         # We can't find the overlay, so copy the fields from the raw record
+        
+        
         
         cmte_ovrly = Committee_Overlay.objects.create(
             cycle=cycle,
