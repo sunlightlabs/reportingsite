@@ -1,0 +1,53 @@
+{% extends "outside_spending/buckley_base.html" %}
+
+
+{% load humanize %}
+
+{% block title %}Overview - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} {% endblock %}
+
+{% block breadcrumb %}{{ block.super }}
+<li>{{ committee.name }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "outside_spending/tabs.html" %}
+
+    <h2>
+        Overview: 2011-12 outside spending
+    </h2>
+
+<div>
+    <span class="amountLine">
+        Total independent expenditures made, 2012 cycle: ${{total_ies|intword}}
+    <br>Total electioneering communications made, 2012 cycle: ${{total_ecs|intword}}</span>
+</div>
+<div class="space_above">
+    
+<h3>Super PACs</h3>
+<span class="amountLine">
+    Number of super PACs: {{total_sps}}<br><br>
+            Total independent expenditures made by super PACs 2012 cycle: ${{total_sp_ies|intword}}
+            
+        <br><br>Total amount raised by super PACs, 2012 cycle: {% if total_contribs %}${{total_contribs|intword}}{% endif %}
+        <br>Total contributions to super PACs from organizations (not individuals): {% if total_organizational %}${{total_organizational|intword}}{% endif %}
+        
+        </span>
+        
+</div>
+<div class="space_above">
+<h3>All Independent Expenditures</h3>
+
+<span class="amountLine">
+            Total spent on Presidential candidates: ${{pres_ies|intword}}
+        <br>Total spent on Senate candidates: ${{senate_ies|intword}}
+        <br>Total spent on House candidates: ${{house_ies|intword}}
+        <br><br>
+        Total supporting a candidate: ${{supporting_ies|intword}}
+    <br>Total opposing a candidate: ${{opposing_ies|intword}}</span>
+            
+</div>
+
+
+{% endblock content %}

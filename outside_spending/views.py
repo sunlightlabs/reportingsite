@@ -345,7 +345,7 @@ def ecs(request):
 
 
 def organizational_superpac_contribs(request):
-    contribs = Contribution.objects.select_related("committee").filter(committee__isnull=False).exclude(contrib_org='').filter(line_type__in=['SA11AI', 'SA15'])
+    contribs = Contribution.objects.select_related("committee").filter(committee__isnull=False, superceded_by_amendment=False).exclude(contrib_org='').filter(line_type__in=['SA11AI', 'SA15'])
 
 
     total = contribs.aggregate(total=Sum('contrib_amt'))
@@ -372,4 +372,52 @@ def file_downloads(request):
 # I think the projecst page points at this, so don't want url to break                        
 def overview(request):
     return redirect("/outside-spending/super-pacs/")
-                              
+
+
+@cache_page(60 * 15)                              
+def overview(request):
+    ## should put these aggregates in a table, but... 
+    
+    all_ies = Committee_Overlay.objects.all()
+    #total_ie = all_ies.aggregate(total=Sum('total_indy_expenditures'))
+    #total_ies = total_ie['total']
+    
+    all_superpacs = all_ies.filter(is_superpac=True)
+    total_sp = all_superpacs.aggregate(total=Sum('total_indy_expenditures'))
+    total_sp_ies = total_sp['total']
+    total_sps = len(all_superpacs)
+    
+    ecs = Electioneering_93.objects.filter(superceded_by_amendment=False)
+    total_ecs = ecs.aggregate(total=Sum('exp_amo'))['total']
+
+    
+    contribs = Contribution.objects.filter(line_type__in=['SA11AI', 'SA15'])
+    total_contribs_amt = contribs.aggregate(total=Sum('contrib_amt'))
+    total_contribs = total_contribs_amt['total']
+    
+    list_all_ies = Expenditure.objects.filter(superceded_by_amendment=False).select_related("candidate")
+    total_ies = list_all_ies.aggregate(total=Sum('expenditure_amount'))['total']
+    pres_ies = list_all_ies.filter(candidate__office='P').aggregate(total=Sum('expenditure_amount'))['total']
+    house_ies = list_all_ies.filter(candidate__office='H').aggregate(total=Sum('expenditure_amount'))['total']
+    senate_ies = list_all_ies.filter(candidate__office='S').aggregate(total=Sum('expenditure_amount'))['total']
+    supporting_ies = list_all_ies.filter(support_oppose='S').aggregate(total=Sum('expenditure_amount'))['total']
+    opposing_ies = list_all_ies.filter(support_oppose='O').aggregate(total=Sum('expenditure_amount'))['total']
+    
+    contribs = Contribution.objects.select_related("committee").filter(committee__isnull=False).exclude(contrib_org='').filter(superceded_by_amendment=False, line_type__in=['SA11AI', 'SA15'])
+    total_organizational = contribs.aggregate(total=Sum('contrib_amt'))['total']
+
+    
+    
+    
+    return render_to_response('outside_spending/overview.html',
+        {'total_ies':total_ies,
+        'total_sp_ies':total_sp_ies,
+        'total_contribs':total_contribs,
+        'total_sps':total_sps,
+        'total_ecs':total_ecs,
+        'pres_ies':pres_ies, 
+        'senate_ies':senate_ies,
+        'house_ies':house_ies,
+        'supporting_ies':supporting_ies,
+        'opposing_ies':opposing_ies,
+        'total_organizational':total_organizational})
