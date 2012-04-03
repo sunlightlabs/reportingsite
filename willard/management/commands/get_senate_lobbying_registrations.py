@@ -66,9 +66,7 @@ def parse_xml(xml):
     encoding = smart_unicode(xml)
     print "Found encoding %s" % (encoding)
     filings = re.findall(r'<filing.*?<\/filing>', unicode(xml, encoding), re.I | re.S | re.U)
-    print "Running regex!"
     for filing_xml in filings:
-        print "running parse_xml on %s with encoding %s" % (filing_xml, encoding)
         try:
             filing = lxml.etree.fromstring(filing_xml)
         except lxml.etree.XMLSyntaxError:
