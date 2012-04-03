@@ -42,15 +42,33 @@ def get_xml(year, filename=None, all_quarters=False):
                 yield f.filename, xml
 
 
+def smart_unicode(s):
+    # Could also try the below
+    # but latin1 seems not to work
+    # 'ascii', 'latin1', 'windows-1252',
+    for enc in [ 'utf-8', 'utf-16']:
+        try:
+            s.decode(enc)
+            return (enc)
+        except UnicodeDecodeError:
+            pass
+
+    raise UnicodeDecodeError
+        
 def parse_xml(xml):
     # Because the XML file may have errors that would
     # prevent it from being parsed by lxml, we split up
     # the filings into separate objects. This way if there
     # is a parsing error, it should fail on only a single 
     # filing entity, not the entire file.
-    filings = re.findall(r'<filing.*?<\/filing>', xml, re.I | re.S)
-
+    #print "running parse_xml on %s" % xml
+    
+    encoding = smart_unicode(xml)
+    print "Found encoding %s" % (encoding)
+    filings = re.findall(r'<filing.*?<\/filing>', unicode(xml, encoding), re.I | re.S | re.U)
+    print "Running regex!"
     for filing_xml in filings:
+        print "running parse_xml on %s with encoding %s" % (filing_xml, encoding)
         try:
             filing = lxml.etree.fromstring(filing_xml)
         except lxml.etree.XMLSyntaxError:
@@ -86,6 +104,7 @@ def parse_xml(xml):
 
 
 def save_filing(data):
+    print "Saving filing %s" % (data['registrant']['RegistrantName'])
     if Registration.all_objects.filter(id=data['ID']):
         return
 
@@ -239,11 +258,13 @@ class Command(BaseCommand):
         filename = options['filename']
         all_quarters = options['all_quarters']
         years = options['years'].split(',')
+        
+        print "running command %s %s %s" % (filename, all_quarters, years)
 
         for year in years:
 
             for filename, xml in get_xml(year, filename, all_quarters):
-                print filename
+                print " ** " + filename
                 for filing in parse_xml(xml):
                     save_filing(filing)
 
