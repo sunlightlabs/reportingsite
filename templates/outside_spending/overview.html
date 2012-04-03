@@ -20,18 +20,18 @@
 
 <div>
     <span class="amountLine">
-        Total independent expenditures made, 2012 cycle: ${{total_ies|intword}}
-    <br>Total electioneering communications made, 2012 cycle: ${{total_ecs|intword}}</span>
+        Total independent expenditures made, 2012 cycle: </span><span class="amount">${{total_ies|intword}}</span>
+    <br><span class="amountLine">Total electioneering communications made, 2012 cycle: </span><span class="amount">${{total_ecs|intword}}</span>
 </div>
 <div class="space_above">
     
 <h3>Super PACs</h3>
 <span class="amountLine">
-    Number of super PACs: {{total_sps}}<br><br>
-            Total independent expenditures made by super PACs 2012 cycle: ${{total_sp_ies|intword}}
+    Number of super PACs: </span><span class="amount">{{total_sps}}</span><span class="amountLine"><br><br>
+            Total independent expenditures made by super PACs 2012 cycle: </span><span class="amount">${{total_sp_ies|intword}}</span>
             
-        <br><br>Total amount raised by super PACs, 2012 cycle: {% if total_contribs %}${{total_contribs|intword}}{% endif %}
-        <br>Total contributions to super PACs from organizations (not individuals): {% if total_organizational %}${{total_organizational|intword}}{% endif %}
+        <br><br><span class="amountLine">Total amount raised by super PACs, 2012 cycle:</span> <span class="amount">{% if total_contribs %}${{total_contribs|intword}}{% endif %}</span>
+        <br><span class="amountLine">Total contributions to super PACs from organizations (not individuals):</span><span class="amount"> {% if total_organizational %}${{total_organizational|intword}}{% endif %}</span>
         
         </span>
         
@@ -40,12 +40,12 @@
 <h3>All Independent Expenditures</h3>
 
 <span class="amountLine">
-            Total spent on Presidential candidates: ${{pres_ies|intword}}
-        <br>Total spent on Senate candidates: ${{senate_ies|intword}}
-        <br>Total spent on House candidates: ${{house_ies|intword}}
+            Total spent on Presidential candidates: </span><span class="amount"> ${{pres_ies|intword}}</span><span class="amountLine">
+        <br>Total spent on Senate candidates: </span><span class="amount"> ${{senate_ies|intword}}</span><span class="amountLine">
+        <br>Total spent on House candidates: </span><span class="amount"> ${{house_ies|intword}}</span><span class="amountLine">
         <br><br>
-        Total supporting a candidate: ${{supporting_ies|intword}}
-    <br>Total opposing a candidate: ${{opposing_ies|intword}}</span>
+        Total supporting a candidate: </span><span class="amount"> ${{supporting_ies|intword}}</span><span class="amountLine">
+    <br>Total opposing a candidate: </span><span class="amount"> ${{opposing_ies|intword}}</span>
             
 </div>
 
