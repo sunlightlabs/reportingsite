@@ -42,7 +42,7 @@ urlpatterns = patterns('',
     url(r'^overview\/?$', 'outside_spending.views.overview')
     
     # placeholder redirect
-    #url(r'$', 'outside_spending.views.overview')
+    url(r'$', 'outside_spending.views.all_superpacs')
         
     # all that are noteworthy
     #url(r'^csv/state_csv/','outside_spending.views.states_csv'),
