@@ -31,7 +31,7 @@
 
 <a name="states"></a>
 <div class="space_above"><h3>State Files</h3></div>
-<p>Although the FEC requires PACs to assign a state to each independent expenditure made, many expenditures are missing this information. </p>
+<p>Donor files include all donors to super PACs; expenditure files include all independent expenditures made in the listed state where a stat is listed on the disclosure notice. Although the FEC requires PACs to assign a state to each independent expenditure made, many expenditures are missing this information. </p>
     
 {% for state in states %}
 <p>{{ state}}: <span class="amountLine"><a href="/outside-spending/csv/state/expenditures/{{ state.state }}">Expenditures</a></span>&nbsp;|&nbsp;<span class="amountLine"><a href="/outside-spending/csv/state/{{ state.state }}">Donors</a></span></p>
