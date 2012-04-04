@@ -39,9 +39,10 @@ urlpatterns = patterns('',
     url(r'^file-downloads\/?$', 'outside_spending.views.file_downloads'),    
 
     url(r'^electioneering-communications\/?$', 'outside_spending.views.ecs'),
+    url(r'^overview\/?$', 'outside_spending.views.overview')
     
     # placeholder redirect
-    url(r'$', 'outside_spending.views.overview')
+    #url(r'$', 'outside_spending.views.overview')
         
     # all that are noteworthy
     #url(r'^csv/state_csv/','outside_spending.views.states_csv'),
