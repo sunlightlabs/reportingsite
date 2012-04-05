@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load media %}
+{% load timestamp %}
 
 {% block title %}Follow the Unlimited Money - {{ block.super }}{% endblock %}
 
@@ -16,6 +17,8 @@
 #filterExpenditures li:hover a, body.expendituresCommittee li#filter_committee a, body.expendituresCandidate li#filter_candidate a, body.expendituresRace li#filter_race a, body.expendituresStates li#filter_states a, body.expendituresPresident li#filter_president a, body.expendituresIes li#filter_ies a, body.expendituresFiles li#filter_files a, body.filedownloads li#filter_dl a, body.electioneeringFiles li#filter_ec a { color: #fff;}
 
 .space_above { margin-top: 15px; }
+
+.update_notice { width: 200px; margin: 0 0 0 0; padding: 0 0 0 0; float:right; font-style: oblique; font-size: 95%; font-family: Georgia, Times New Roman, Times, serif;  line-height: 18px; color: #7e7774;}
 
 div.share {
 		    margin: 0 0 0 0;
@@ -66,9 +69,15 @@ div.share {
                 <a href="https://twitter.com/share" class="twitter-share-button" data-via="sunfoundation" data-count="none"  data-text="Track the latest #superpac and other outside group spending">Tweet</a>
                 <script>!function(d,s,id){var js,fjs=d.getElementsByTagName(s)[0];if(!d.getElementById(id)){js=d.createElement(s);js.id=id;js.src="//platform.twitter.com/widgets.js";fjs.parentNode.insertBefore(js,fjs);}}(document,"script","twitter-wjs");</script>
 
+                <div class="update_notice">
+                    {% updatetime %}
+                </div>
+
             </div>
             	
+            	
             <div class="clear"></div>
+            
         </div>
         
 
