@@ -1,6 +1,3 @@
-#
-
-
 candidate_lookup={
     "RON, PAUL":"P80000748",
     "PAUL, RON":"P80000748",
@@ -36,7 +33,5 @@ candidate_lookup={
     "ALLEN, GEORGE":"S8VA00214",
     "BACHUS, SPENCER": "H2AL06035",
     "KRISHNAMOORTHI, RAJA": "H2IL08096",
-    "MOURDOCK, RICHARD E.": "S2IN00083",
-    "MOURDOCK, RICHARD": "S2IN00083",
-    "LUGAR, RICHARD":"S4IN00014"
+    "MOURDOCK, RICHARD E.": "S2IN00083"
 }
