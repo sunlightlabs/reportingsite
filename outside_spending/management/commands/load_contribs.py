@@ -41,9 +41,9 @@ def process_committee_page(pagehtml, committee_id):
             period_end = t.group(4)
             report_type = t.group(5)
 
-            print "-->F3X filed on %s %s for %s-%s\nhttp://query.nictusa.com/cgi-bin/dcdev/forms/%s/%s/\n\n" % (file_date, report_type, period_start, period_end, committee_id, file_id)
+            print "-->F3X filed on %s %s for %s-%s\nhttp://query.nictusa.com/cgi-bin/dcdev/forms/%s/%s/" % (file_date, report_type, period_start, period_end, committee_id, file_id)
             dl_url = 'http://query.nictusa.com/dcdev/posted/%s.fec' % (file_id)
-            if dateparse(period_end)>=dateparse('12/31/2010'):
+            if dateparse(period_end)>=dateparse('03/31/2012'):
 
                 print "Processing filing: %s, dl_url: %s" % (file_id, dl_url)
                 this_page = download_with_headers(dl_url)
@@ -62,16 +62,23 @@ class Command(BaseCommand):
         
         #all_superpacs = IEOnlyCommittee.objects.all().filter(total_presidential_indy_expenditures__gte=100)
         #all_superpacs = IEOnlyCommittee.objects.all()
-        all_superpacs = Committee_Overlay.objects.filter(filing_frequency__iexact='M', is_superpac=True)
+        all_superpacs = Committee_Overlay.objects.filter(filing_frequency__iexact='Q', is_superpac=True)
         for sp in all_superpacs:
             
+            try:
+                current_filing = F3X_Summary.objects.get(fec_id=sp.fec_id, coverage_to_date='2012-03-31')
+                print "Found 1st quarter filing from: %s" % (sp.name)
+                continue
+                            
+            except: 
+                print "Looking for filings from: %s" % (sp.name)
             
             
             print "%s - %s" % (sp.name, sp.fec_id)
             url = "http://query.nictusa.com/cgi-bin/dcdev/forms/%s/" % (sp.fec_id)
             #html = urllib.urlopen(url)
             response = download_with_headers(url)
-            print response
+            #print response
             process_committee_page(response, sp.fec_id)
             print "sleeping for 3 seconds:"
             time.sleep(3)
