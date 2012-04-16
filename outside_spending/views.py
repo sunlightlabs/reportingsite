@@ -142,9 +142,9 @@ def all_contribs_csv(request):
     
 
 def all_superpacs(request):
-    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACS--that have spent at least $10,000 since the beginning of 2011. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
+    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACS--that have raised at least $10,000 since the beginning of 2011. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
 
-    superpacs = Committee_Overlay.objects.filter(total_indy_expenditures__gte=10000, is_superpac=True)
+    superpacs = Committee_Overlay.objects.filter(total_contributions__gte=10000, is_superpac=True)
     total = superpacs.aggregate(total=Sum('total_indy_expenditures'))
     total_amt = total['total']
 
