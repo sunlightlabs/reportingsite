@@ -41,17 +41,17 @@ def process_committee_page(pagehtml, committee_id):
             period_end = t.group(4)
             report_type = t.group(5)
 
-            print "-->F3X filed on %s %s for %s-%s\nhttp://query.nictusa.com/cgi-bin/dcdev/forms/%s/%s/" % (file_date, report_type, period_start, period_end, committee_id, file_id)
+            #print "-->F3X filed on %s %s for %s-%s\nhttp://query.nictusa.com/cgi-bin/dcdev/forms/%s/%s/" % (file_date, report_type, period_start, period_end, committee_id, file_id)
             dl_url = 'http://query.nictusa.com/dcdev/posted/%s.fec' % (file_id)
             if dateparse(period_end)>=dateparse('03/31/2012'):
 
-                print "Processing filing: %s, dl_url: %s" % (file_id, dl_url)
+                print "\t===+Processing filing: %s, dl_url: %s" % (file_id, dl_url)
                 this_page = download_with_headers(dl_url)
                 time.sleep(1)
                 enter_form(this_page, file_id)
 
         else:
-            print "\n\n\n*****no match\n\n\n"
+            #print "\n\n\n*****no match\n\n\n"
 
 class Command(BaseCommand):
     help = "Watches for new superpac F3X[N|A] (contrib) reports"
