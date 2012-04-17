@@ -51,7 +51,7 @@ def process_committee_page(pagehtml, committee_id):
                 enter_form(this_page, file_id)
 
         else:
-            #print "\n\n\n*****no match\n\n\n"
+            print "\n\n\n*****no match\n\n\n"
 
 class Command(BaseCommand):
     help = "Watches for new superpac F3X[N|A] (contrib) reports"
