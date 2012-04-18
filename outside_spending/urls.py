@@ -40,8 +40,8 @@ urlpatterns = patterns('',
 
     url(r'^electioneering-communications\/?$', 'outside_spending.views.ecs'),
     url(r'^overview\/?$', 'outside_spending.views.overview'),
-    
-    url(r'^recent_FEC_filings\/?$', 'outside_spending.views.recent_fec_filings'),
+    url(r'^recent-FEC-filings\/independent-expenditures\/?$', 'outside_spending.views.recent_ie_filings'),    
+    url(r'^recent-FEC-filings\/?$', 'outside_spending.views.recent_fec_filings'),
     # placeholder redirect
     url(r'$', 'outside_spending.views.all_superpacs')    
     # all that are noteworthy

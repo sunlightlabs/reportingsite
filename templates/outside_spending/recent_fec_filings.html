@@ -2,12 +2,12 @@
 
 {% load humanize %}
 
-{% block title %}Recent FEC Filings{% endblock %}
+{% block title %}{{ title }}{% endblock %}
 
 {% block body %}  fullWidth {% endblock %}
 
 {% block breadcrumb %}
-<li>Recent FEC filings</li>
+<li>{{ title }}</li>
 {% endblock breadcrumb %}
 
 {% block content %}
@@ -16,9 +16,9 @@
 
 
     <h2>
-        Recent FEC filings
+        {{ title }}
     </h2>
-    <p>Recent filings, last updated {{ most_recent_time|date:"N j, P" }}</p>
+    <p>{{ explanatory_text }} Last updated {{ most_recent_time|date:"N j, P" }}. Filings are updated every 15 minutes during the day.</p>
     <!--
     <p>Display:&nbsp;<select id="display_id"><option value="all">All Filings</option><option value="2">Independent Expenditures</option></select>
     -->

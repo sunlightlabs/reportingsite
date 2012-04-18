@@ -426,9 +426,29 @@ def recent_fec_filings(request):
     
     filings = unprocessed_filing.objects.all().order_by('-filing_number')[:100]
     most_recent_time = filings[0].process_time
+    title="Recent FEC Filings"
+    explanatory_text="All recent FEC filings."
     
     return render_to_response('outside_spending/recent_fec_filings.html',
         {
+        'title':title,
+        'explanatory_text':explanatory_text,
+        'filings':filings,
+        'most_recent_time':most_recent_time
+        }
+    )    
+    
+def recent_ie_filings(request):
+
+    filings = unprocessed_filing.objects.filter(form_type__in=['F5A', 'F5N', 'F24A', 'F24N']).order_by('-filing_number')[:100]
+    most_recent_time = filings[0].process_time
+    title="Recent Independent Expenditure Filings"
+    explanatory_text="These are recent FEC filings that show independent expenditures--specifically, forms F24 and F5."
+
+    return render_to_response('outside_spending/recent_fec_filings.html',
+        {
+        'title':title,
+        'explanatory_text':explanatory_text,
         'filings':filings,
         'most_recent_time':most_recent_time
         }
