@@ -424,7 +424,7 @@ def overview(request):
         
 def recent_fec_filings(request):
     
-    filings = unprocessed_filing.objects.all().order_by('-process_time')[:100]
+    filings = unprocessed_filing.objects.all().order_by('-filing_number')[:100]
     most_recent_time = filings[0].process_time
     
     return render_to_response('outside_spending/recent_fec_filings.html',
