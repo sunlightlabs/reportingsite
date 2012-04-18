@@ -1,0 +1,52 @@
+{% extends "outside_spending/buckley_base.html" %}
+
+{% load humanize %}
+
+{% block title %}Recent FEC Filings{% endblock %}
+
+{% block body %}  fullWidth {% endblock %}
+
+{% block breadcrumb %}
+<li>Recent FEC filings</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    {% include "outside_spending/tabs.html" %}
+
+
+    <h2>
+        Recent FEC filings
+    </h2>
+    <p>Recent filings, last updated {{ most_recent_time|date:"N j, P" }}</p>
+    <!--
+    <p>Display:&nbsp;<select id="display_id"><option value="all">All Filings</option><option value="2">Independent Expenditures</option></select>
+    -->
+    <p class="tip">Click on a filing number to see details; click on a committee name to see all of its electronic filings.</p>
+
+   
+    <table id="expenditures">
+        <thead>
+            <tr>
+                <th>Filing ID</th>
+                <th>Committee</th>
+                <th>Form</th>
+                <th>Coverage Date</th>
+                <th>Approximate filing time*</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for filing in filings %}    
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td><a href="{{filing.get_fec_url}}">{{ filing.filing_number }}</a></td>
+                <td><a href="{{filing.fec_all_filings}}">{{ filing.committee_name}}</a></td>
+                <td>{{ filing.form_type }}</td>
+                <td>{% if filing.coverage_to_date %}{{ filing.coverage_from_date|date:"n/j/y" }} - {{ filing.coverage_to_date|date:"n/j/y" }}{% endif %}</td>                               
+                <td>{{ filing.process_time|date:"P"  }}</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>    
+        
+
+{% endblock content %}

@@ -339,6 +339,7 @@ class Filing_Header(models.Model):
     filer = models.ForeignKey(Committee_Overlay, null=True)
     form=models.CharField(max_length=7)
     filing_number=models.IntegerField(unique=True)
+    version=models.CharField(max_length=7)
     
     # is this an amended filing?
     is_amendment=models.BooleanField()
@@ -357,11 +358,17 @@ class Filing_Rows(models.Model):
     parent_filing=models.ForeignKey(Filing_Header)
     filer = models.ForeignKey(Committee_Overlay, null=True)
     filing_number=models.IntegerField()
+    version=models.CharField(max_length=7)    
     parent_form = models.CharField(max_length=7)
     superceded_by_amendment=models.BooleanField(default=False)
     line_type=models.CharField(max_length=15, blank=True)
     line_text=models.TextField()
     transaction_id = models.CharField(max_length=32)
+    
+    # Is this an IE counted elsewhere (on an F3X)
+    is_counted_elsewhere=models.NullBooleanField(default=False, null=True)
+    # If this is an IE, what is it's date? 
+    expenditure_date = models.DateField(null=True)
     
     class Meta:
         unique_together = ("filing_number", "transaction_id")
@@ -728,4 +735,29 @@ class F3X_Summary(models.Model):
     itemized = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
     unitemized = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
 
+# Models to track live bills
+# {'filing_number': '778528', 'committee_id': 'C00090209', 'date_filed': datetime.datetime(2012, 4, 16, 0, 0), 'date_from': datetime.datetime(2012, 3, 1, 0, 0), 'date_to': datetime.datetime(2012, 3, 31, 0, 0), 'form_type': 'F3XN', 'committee_name': 'YRC WORLDWIDE INC. PAC'}
+class unprocessed_filing(models.Model):
+    fec_id = models.CharField(max_length=9)
+    committee_name = models.CharField(max_length=200)
+    filing_number = models.IntegerField(primary_key=True)
+    form_type = models.CharField(max_length=7)
+    filed_date = models.DateField(null=True, blank=True)
+    coverage_from_date = models.DateField(null=True, blank=True)
+    coverage_to_date = models.DateField(null=True, blank=True)
+    process_time = models.DateTimeField()
+    
+    
+    def get_fec_url(self):
+        url = "http://query.nictusa.com/cgi-bin/dcdev/forms/%s/%s/" % (self.fec_id, self.filing_number)
+        return url
+        
+    def fec_all_filings(self):
+        url = "http://query.nictusa.com/cgi-bin/dcdev/forms/%s/" % (self.fec_id)
+        return url
+    
+class processing_memo(models.Model):
+    message = models.CharField(max_length=127)
+    value = models.IntegerField()
+    
         

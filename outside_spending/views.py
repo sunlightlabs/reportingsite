@@ -421,3 +421,15 @@ def overview(request):
         'supporting_ies':supporting_ies,
         'opposing_ies':opposing_ies,
         'total_organizational':total_organizational})
+        
+def recent_fec_filings(request):
+    
+    filings = unprocessed_filing.objects.all().order_by('-process_time')[:100]
+    most_recent_time = filings[0].process_time
+    
+    return render_to_response('outside_spending/recent_fec_filings.html',
+        {
+        'filings':filings,
+        'most_recent_time':most_recent_time
+        }
+    )    
