@@ -26,7 +26,7 @@ class Command(BaseCommand):
             total_ec = None
             # Now handle EC stuff: 
             if (r['candidate__office']=='P'):
-                total_ec = Electioneering_93.objects.filter(superceded_by_amendment=False, target__candidate__office=r['candidate__office'], target__can_state=r['candidate__state_race']).distinct().aggregate(total=Sum('exp_amo'))
+                total_ec = Electioneering_93.objects.filter(superceded_by_amendment=False, target__candidate__office=r['candidate__office']).distinct().aggregate(total=Sum('exp_amo'))
             else:
                 total_ec = Electioneering_93.objects.filter(superceded_by_amendment=False, target__candidate__office=r['candidate__office'], target__candidate__district=r['candidate__district'], target__can_state=r['candidate__state_race']).distinct().aggregate(total=Sum('exp_amo'))
             
