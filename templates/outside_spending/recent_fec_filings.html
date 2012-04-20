@@ -38,9 +38,9 @@
         <tbody>
         {% for filing in filings %}    
             <tr class="{% cycle 'odd' 'even' %}">
-                <td><a href="{{filing.get_fec_url}}">{{ filing.filing_number }}</a></td>
+                <td><a href="{{filing.get_fec_url}}">{{ filing.filing_number }} [{{ filing.form_type}}]</a></td>
                 <td><a href="{{filing.fec_all_filings}}">{{ filing.committee_name}}</a></td>
-                <td>{{ filing.form_type }}</td>
+                <td>{{ filing.get_form_name }}</td>
                 <td>{% if filing.coverage_to_date %}{{ filing.coverage_from_date|date:"n/j/y" }} - {{ filing.coverage_to_date|date:"n/j/y" }}{% endif %}</td>                               
                 <td>{{ filing.process_time|date:"N j, P"  }}</td>
             </tr>

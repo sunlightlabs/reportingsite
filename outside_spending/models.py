@@ -1,8 +1,28 @@
+import re
+
 from django.db import models
 from django.contrib.localflavor.us.us_states import STATE_CHOICES
 
 STATE_CHOICES = dict(STATE_CHOICES)
 # Create your models here.
+
+form_types = [['F3X','Monthly/quarterly report'],
+['F3P','Monthly/quarterly report'],
+['F3L','Report of contributions bundled by lobbyist/registrants and lobbyist/registrant pacs'],
+['F3','Monthly/quarterly report'],
+['F99','Miscellaneous'],
+['F10','24-hour notice of expenditure from candidate\'s personal funds'],
+['F13','Report of donations accepted for inaugural committee'],
+['F1M','Notification of multicandidate status'],
+['F1','Statement of organization'],
+['F24','24/48 hr notice of independent/coordinated expenditures'],
+['F2','Statement of candidacy'],
+['F4','Report of receipts and disbursements - convention cmte'],
+['F5','Report of independent expenditures made and contributions received'],
+['F6','48-hour notice of contributions/loans received'],
+['F7','Report of communication costs - corporations and membership orgs'],
+['F8','Debt settlement plan'],
+['F9','24-hour notice of disbursement/obligations for electioneering communications']]
 
 # whenever we run the scraper add it here. Periodically clear this out...
 class Scrape_Time(models.Model):
@@ -757,9 +777,14 @@ class unprocessed_filing(models.Model):
         url = "http://query.nictusa.com/cgi-bin/dcdev/forms/%s/" % (self.fec_id)
         return url
         
-    #def get_form_name(self):
-            
-    
+    def get_form_name(self):
+        amended = ""
+        if re.search('A', self.form_type):
+            amended="AMENDED "
+        for f in form_types:
+            if (re.match(f[0], self.form_type)):
+                return amended + f[1]
+        return ''
     
 class processing_memo(models.Model):
     message = models.CharField(max_length=127)
