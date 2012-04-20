@@ -8,7 +8,7 @@ from dateutil.parser import parse as dateparse
 
 from django.core.management.base import BaseCommand, CommandError
 
-from outside_spending.models import unprocessed_filing, processing_memo, Committee_Overlay
+from outside_spending.models import unprocessed_filing, processing_memo, Committee_Overlay, Filing_Scrape_Time
 
 from outside_spending.read_FEC_settings import FILECACHE_DIRECTORY, USER_AGENT, FEC_DOWNLOAD, DELAY_TIME, MAX_FILING_KEY
 
@@ -171,4 +171,5 @@ class Command(BaseCommand):
         
         self.max_value.value=temp_max
         self.max_value.save()
+        now = Filing_Scrape_Time.objects.create()
                 
