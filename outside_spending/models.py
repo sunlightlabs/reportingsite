@@ -28,7 +28,8 @@ form_types = [['F3X','Monthly/quarterly report'],
 class Scrape_Time(models.Model):
     run_time = models.DateTimeField(auto_now=True)
 
-
+class Filing_Scrape_Time(models.Model):
+    run_time = models.DateTimeField(auto_now=True)
 
 
 # Populated from fec's committee master            

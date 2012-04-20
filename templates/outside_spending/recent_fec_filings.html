@@ -18,7 +18,8 @@
     <h2>
         {{ title }}
     </h2>
-    <p>{{ explanatory_text }} Last updated {{ most_recent_time|date:"N j, P" }}. Filings are updated every 15 minutes during the day.</p>
+    <p>{{ explanatory_text }} Last updated {{ update_time.run_time|date:"N j, P" }} Filings are updated every 15 minutes.</p>
+    <p>See filings:&nbsp;<a href="/outside-spending/recent-FEC-filings/">Most recent</a>&nbsp;|&nbsp;<a href="/outside-spending/recent-FEC-filings/superpacs/">super PACs</a>&nbsp;|&nbsp;<a href="/outside-spending/recent-FEC-filings/independent-expenditures/">Independent Expenditures</a>&nbsp;|&nbsp;<a href="/outside-spending/recent-FEC-filings/significant-committees/">Notable committees</a>
     <!--
     <p>Display:&nbsp;<select id="display_id"><option value="all">All Filings</option><option value="2">Independent Expenditures</option></select>
     -->

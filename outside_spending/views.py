@@ -446,8 +446,8 @@ def overview(request):
         
 def recent_fec_filings(request):
     
+    update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
     filings = unprocessed_filing.objects.all().order_by('-filing_number')[:100]
-    most_recent_time = filings[0].process_time
     title="Recent FEC Filings"
     explanatory_text="All recent electronic FEC filings. Filings made on paper are not included."
     
@@ -456,14 +456,14 @@ def recent_fec_filings(request):
         'title':title,
         'explanatory_text':explanatory_text,
         'filings':filings,
-        'most_recent_time':most_recent_time
+        'update_time':update_time
         }
     )    
     
 def recent_ie_filings(request):
 
     filings = unprocessed_filing.objects.filter(form_type__in=['F5A', 'F5N', 'F24A', 'F24N']).order_by('-filing_number')[:100]
-    most_recent_time = filings[0].process_time
+    update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
     title="Recent Independent Expenditure Filings"
     explanatory_text="These are recent electronic FEC filings that show independent expenditures--specifically, forms F24 and F5."
 
@@ -472,14 +472,14 @@ def recent_ie_filings(request):
         'title':title,
         'explanatory_text':explanatory_text,
         'filings':filings,
-        'most_recent_time':most_recent_time
+        'update_time':update_time
         }
     )    
     
 def significant_committees(request):
 
     filings = unprocessed_filing.objects.filter(fec_id__in=['C00431171', 'C00496497', 'C00496034', 'C00495820', 'P80003338', 'C00010603', 'C00042366', 'C00000935', 'C00003418', 'C00027466', 'C00075820']).order_by('-filing_number')[:100]
-    most_recent_time = filings[0].process_time
+    update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
     title="Notable PAC Filings"
     explanatory_text="These are recent electronic FEC filings from major presidential candidates and party committees."
 
@@ -488,14 +488,14 @@ def significant_committees(request):
         'title':title,
         'explanatory_text':explanatory_text,
         'filings':filings,
-        'most_recent_time':most_recent_time
+        'update_time':update_time
         }
     )
     
 def recent_superpac_filings(request): 
     
     filings = unprocessed_filing.objects.filter(is_superpac=True).order_by('-filing_number')[:100]
-    most_recent_time = filings[0].process_time
+    update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
     title="Super PAC Filings"
     explanatory_text="These are recent electronic FEC filings from super PACs."
 
@@ -504,6 +504,6 @@ def recent_superpac_filings(request):
         'title':title,
         'explanatory_text':explanatory_text,
         'filings':filings,
-        'most_recent_time':most_recent_time
+        'update_time':update_time
         }
     )   
