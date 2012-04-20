@@ -40,7 +40,10 @@ urlpatterns = patterns('',
 
     url(r'^electioneering-communications\/?$', 'outside_spending.views.ecs'),
     url(r'^overview\/?$', 'outside_spending.views.overview'),
+    url(r'^recent-FEC-filings\/superpacs\/?$', 'outside_spending.views.recent_superpac_filings'),
     url(r'^recent-FEC-filings\/independent-expenditures\/?$', 'outside_spending.views.recent_ie_filings'),    
+    url(r'^recent-FEC-filings\/significant-committees\/?$', 'outside_spending.views.significant_committees'), 
+    url(r'^recent-FEC-filings\/48-hr-reports\/?$', 'outside_spending.views.48hrreports'), 
     url(r'^recent-FEC-filings\/?$', 'outside_spending.views.recent_fec_filings'),
     # placeholder redirect
     url(r'$', 'outside_spending.views.all_superpacs')    
