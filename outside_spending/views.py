@@ -48,43 +48,68 @@ def generic_csv_headless(filename, fields, rows):
         writer.writerow(row)
 
     return response
-
+    
+def make_expenditure_list(expenditure_queryset):
+    """ Make a list of expenditures; deal with possible null candidates/committees"""
+    rows = []
+    for ie in expenditure_queryset:
+        committee_name = ""
+        committee_fec_id = ""
+        superpac_status=""
+        hybrid_status=""
+        
+        if ie.committee:
+            committee_name = ie.committee.name
+            committee_fec_id = ie.committee.fec_id
+            superpac_status=ie.committee.superpac_status()
+            hybrid_status=ie.committee.hybrid_status()
+        else:
+            committee_name = ie.committee_name
+            committee_fec_id = ie.raw_committee_id     
+        
+        candidate_party=""
+        candidate_office = ""
+        candidate_district=""
+        candidate_state=""
+        candidate_fec_id=""
+        
+        if ie.candidate:
+            candidate_fec_id = ie.candidate.fec_id
+            candidate_party = ie.candidate.party
+            candidate_office = ie.candidate.office
+            candidate_district=ie.candidate.district
+            candidate_state=ie.candidate.state()
+        else:
+            candidate_fec_id = ie.raw_candidate_id
+            candidate_party = ie.candidate_party_affiliation
+            candidate_office = ie.office
+            candidate_district=ie.district
+            
+        rows.append([committee_name, committee_fec_id, superpac_status, hybrid_status, ie.candidate_name, ie.support_or_oppose(), candidate_fec_id, candidate_party, candidate_office, candidate_district, candidate_state, ie.expenditure_amount, ie.state, ie.expenditure_date, ie.payee, ie.expenditure_purpose, ie.transaction_id, ie.filing_number ])
+        
+    return rows
 
 def expenditure_csv(request, committee_id):
     committee = get_object_or_404(Committee_Overlay, fec_id=committee_id)
     expenditures = Expenditure.objects.select_related("committee", "candidate").filter(committee=committee).filter(superceded_by_amendment=False)
-    fields = ['Spending Committee', 'Spending Committee ID', 'Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
-    rows = []
+    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Hybrid PAC?','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
+    rows = make_expenditure_list(expenditures)
     file_name = committee.slug + "_expenditures.csv"
-
-    for ie in expenditures:
-        rows.append([committee.name, committee.fec_id, ie.candidate_name, ie.support_or_oppose(), ie.candidate.fec_id, ie.candidate.party, ie.candidate.office, ie.candidate.district, ie.candidate.state(), ie.expenditure_amount, ie.state, ie.expenditure_date, ie.payee, ie.expenditure_purpose, ie.transaction_id, ie.filing_number ])
     return generic_csv(file_name, fields, rows) 
 
 def all_expenditures_csv(request):
     expenditures = Expenditure.objects.select_related("committee", "candidate").filter(superceded_by_amendment=False)
     fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Hybrid PAC?','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
-    rows = []
+    rows = make_expenditure_list(expenditures)
     file_name =  "all_expenditures.csv"
-
-    for ie in expenditures:
-        if (ie.committee):
-            rows.append([ie.committee.name, ie.committee.fec_id, ie.committee.superpac_status(), ie.committee.hybrid_status(), ie.candidate_name, ie.support_or_oppose(), ie.candidate.fec_id, ie.candidate.party, ie.candidate.office, ie.candidate.district, ie.candidate.state(), ie.expenditure_amount, ie.state, ie.expenditure_date, ie.payee, ie.expenditure_purpose, ie.transaction_id, ie.filing_number ])
-            
-        else:
-        # hack
-            rows.append(['', ie.raw_committee_id, 'unknown', 'unknown', ie.candidate_name, ie.support_or_oppose(), ie.candidate.fec_id, ie.candidate.party, ie.candidate.office, ie.candidate.district, ie.candidate.state(), ie.expenditure_amount, ie.state, ie.expenditure_date, ie.payee, ie.expenditure_purpose, ie.transaction_id, ie.filing_number ])
             
     return generic_csv(file_name, fields, rows)     
 
 def expenditure_csv_state(request, state):
     expenditures = Expenditure.objects.select_related("committee", "candidate").filter(state=state).filter(superceded_by_amendment=False)
-    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Hybrid PAC?', 'Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number', 'unmatched amendment' ]
-    rows = []
+    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Hybrid PAC?','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
+    rows = make_expenditure_list(expenditures)
     file_name = state + "_expenditures.csv"
-
-    for ie in expenditures:
-        rows.append([ie.committee.name, ie.committee.fec_id, ie.committee.superpac_status(), ie.committee.hybrid_status(),ie.candidate_name, ie.support_or_oppose(), ie.candidate.fec_id, ie.candidate.party, ie.candidate.office, ie.candidate.district, ie.candidate.state(), ie.expenditure_amount, ie.state, ie.expenditure_date, ie.payee, ie.expenditure_purpose, ie.transaction_id, ie.filing_number, ie.unmatched_amendment() ])
     return generic_csv(file_name, fields, rows)    
 
 
@@ -95,12 +120,9 @@ def expenditure_csv_race(request, office, state, district):
     if (office == 'H'):
         expenditures = expenditures.filter(candidate__district=district)    
 
-    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Hybrid PAC?', 'Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number', 'unmatched amendment' ]
-    rows = []
+    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Hybrid PAC?','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
+    rows = make_expenditure_list(expenditures)
     file_name = office + "_" + state + "_" + district + "_expenditures.csv"
-
-    for ie in expenditures:
-        rows.append([ie.committee.name, ie.committee.fec_id, ie.committee.superpac_status(), ie.committee.hybrid_status(), ie.candidate_name, ie.support_or_oppose(), ie.candidate.fec_id, ie.candidate.party, ie.candidate.office, ie.candidate.district, ie.candidate.state(), ie.expenditure_amount, ie.state, ie.expenditure_date, ie.payee, ie.expenditure_purpose, ie.transaction_id, ie.filing_number, ie.unmatched_amendment() ])
     return generic_csv(file_name, fields, rows)
 
 def contribs_csv(request, committee_id):                            
@@ -427,7 +449,7 @@ def recent_fec_filings(request):
     filings = unprocessed_filing.objects.all().order_by('-filing_number')[:100]
     most_recent_time = filings[0].process_time
     title="Recent FEC Filings"
-    explanatory_text="All recent FEC filings."
+    explanatory_text="All recent electronic FEC filings. Filings made on paper are not included."
     
     return render_to_response('outside_spending/recent_fec_filings.html',
         {
@@ -443,7 +465,7 @@ def recent_ie_filings(request):
     filings = unprocessed_filing.objects.filter(form_type__in=['F5A', 'F5N', 'F24A', 'F24N']).order_by('-filing_number')[:100]
     most_recent_time = filings[0].process_time
     title="Recent Independent Expenditure Filings"
-    explanatory_text="These are recent FEC filings that show independent expenditures--specifically, forms F24 and F5."
+    explanatory_text="These are recent electronic FEC filings that show independent expenditures--specifically, forms F24 and F5."
 
     return render_to_response('outside_spending/recent_fec_filings.html',
         {
@@ -453,3 +475,19 @@ def recent_ie_filings(request):
         'most_recent_time':most_recent_time
         }
     )    
+    
+def recent_presidential_filings(request):
+
+    filings = unprocessed_filing.objects.filter(form_type__in=['F3PN', 'F3PA']).order_by('-filing_number')[:100]
+    most_recent_time = filings[0].process_time
+    title="Presidential Committee Monthly Filngs"
+    explanatory_text="These are recent electronic FEC filings from candidates backing presidential committees--committees making independent expenditures and not coordinating with presidential campaigns are non included."
+
+    return render_to_response('outside_spending/recent_fec_filings.html',
+        {
+        'title':title,
+        'explanatory_text':explanatory_text,
+        'filings':filings,
+        'most_recent_time':most_recent_time
+        }
+    )
