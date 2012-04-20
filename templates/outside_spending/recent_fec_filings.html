@@ -42,7 +42,7 @@
                 <td><a href="{{filing.fec_all_filings}}">{{ filing.committee_name}}</a></td>
                 <td>{{ filing.form_type }}</td>
                 <td>{% if filing.coverage_to_date %}{{ filing.coverage_from_date|date:"n/j/y" }} - {{ filing.coverage_to_date|date:"n/j/y" }}{% endif %}</td>                               
-                <td>{{ filing.process_time|date:"P"  }}</td>
+                <td>{{ filing.process_time|date:"N j, P"  }}</td>
             </tr>
         {% endfor %}
         </tbody>

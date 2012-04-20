@@ -476,12 +476,12 @@ def recent_ie_filings(request):
         }
     )    
     
-def recent_presidential_filings(request):
+def significant_committees(request):
 
-    filings = unprocessed_filing.objects.filter(form_type__in=['F3PN', 'F3PA']).order_by('-filing_number')[:100]
+    filings = unprocessed_filing.objects.filter(fec_id__in=['C00431171', 'C00496497', 'C00496034', 'C00495820', 'P80003338', 'C00010603', 'C00042366', 'C00000935', 'C00003418', 'C00027466', 'C00075820']).order_by('-filing_number')[:100]
     most_recent_time = filings[0].process_time
-    title="Presidential Committee Monthly Filngs"
-    explanatory_text="These are recent electronic FEC filings from candidates backing presidential committees--committees making independent expenditures and not coordinating with presidential campaigns are non included."
+    title="Notable PAC Filings"
+    explanatory_text="These are recent electronic FEC filings from major presidential candidates and party committees."
 
     return render_to_response('outside_spending/recent_fec_filings.html',
         {
@@ -491,3 +491,19 @@ def recent_presidential_filings(request):
         'most_recent_time':most_recent_time
         }
     )
+    
+def recent_superpac_filings(request): 
+    
+    filings = unprocessed_filing.objects.filter(is_superpac=True).order_by('-filing_number')[:100]
+    most_recent_time = filings[0].process_time
+    title="Super PAC Filings"
+    explanatory_text="These are recent electronic FEC filings from super PACs."
+
+    return render_to_response('outside_spending/recent_fec_filings.html',
+        {
+        'title':title,
+        'explanatory_text':explanatory_text,
+        'filings':filings,
+        'most_recent_time':most_recent_time
+        }
+    )   

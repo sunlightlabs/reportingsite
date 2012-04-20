@@ -746,6 +746,7 @@ class unprocessed_filing(models.Model):
     coverage_from_date = models.DateField(null=True, blank=True)
     coverage_to_date = models.DateField(null=True, blank=True)
     process_time = models.DateTimeField()
+    is_superpac = models.NullBooleanField()
     
     
     def get_fec_url(self):
@@ -755,6 +756,10 @@ class unprocessed_filing(models.Model):
     def fec_all_filings(self):
         url = "http://query.nictusa.com/cgi-bin/dcdev/forms/%s/" % (self.fec_id)
         return url
+        
+    #def get_form_name(self):
+            
+    
     
 class processing_memo(models.Model):
     message = models.CharField(max_length=127)

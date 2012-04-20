@@ -8,7 +8,7 @@ from dateutil.parser import parse as dateparse
 
 from django.core.management.base import BaseCommand, CommandError
 
-from outside_spending.models import unprocessed_filing, processing_memo
+from outside_spending.models import unprocessed_filing, processing_memo, Committee_Overlay
 
 from outside_spending.read_FEC_settings import FILECACHE_DIRECTORY, USER_AGENT, FEC_DOWNLOAD, DELAY_TIME, MAX_FILING_KEY
 
@@ -23,6 +23,13 @@ filed_re = "filed\s+(\d\d\/\d\d\/\d\d\d\d)\s+"
 
 def enter_filing(data_hash):
     print "\tentering %s" % (data_hash['filing_number'])
+    is_superpac=False
+    try:
+        Committee_Overlay.objects.get(fec_id=data_hash['committee_id'], is_superpac=True)
+        is_superpac=True
+    except Committee_Overlay.DoesNotExist:
+        pass
+    
     try:
         unprocessed_filing.objects.get(filing_number=data_hash['filing_number'])
     except unprocessed_filing.DoesNotExist:
@@ -32,7 +39,8 @@ def enter_filing(data_hash):
             filing_number = data_hash['filing_number'],
             form_type = data_hash['form_type'],
             filed_date = data_hash['date_filed'],
-            process_time = data_hash['process_time']
+            process_time = data_hash['process_time'],
+            is_superpac=is_superpac
         )
         needs_saving=False
         try:
@@ -150,7 +158,7 @@ class Command(BaseCommand):
         results = parse_response(filetoread)
 
         for result in results:
-            print "Processing filng number: %s" % (int(result['filing_number']))
+            print "Processing filing number: %s" % (int(result['filing_number']))
             
             # Test all entries.  
             result['process_time']=process_time             
