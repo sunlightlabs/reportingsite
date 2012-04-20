@@ -62,12 +62,12 @@ class Command(BaseCommand):
         
         #all_superpacs = IEOnlyCommittee.objects.all().filter(total_presidential_indy_expenditures__gte=100)
         #all_superpacs = IEOnlyCommittee.objects.all()
-        all_superpacs = Committee_Overlay.objects.filter(filing_frequency__iexact='Q', is_superpac=True)
+        all_superpacs = Committee_Overlay.objects.filter(filing_frequency__iexact='M', is_superpac=True)
         for sp in all_superpacs:
             
             try:
                 current_filing = F3X_Summary.objects.get(fec_id=sp.fec_id, coverage_to_date='2012-03-31')
-                print "Found 1st quarter filing from: %s" % (sp.name)
+                print "Found Mar monthly filing from: %s" % (sp.name)
                 continue
                             
             except: 
