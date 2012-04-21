@@ -478,7 +478,7 @@ def recent_ie_filings(request):
     
 def significant_committees(request):
 
-    filings = unprocessed_filing.objects.filter(fec_id__in=['C00431171', 'C00496497', 'C00496034', 'C00495820', 'P80003338', 'C00010603', 'C00042366', 'C00000935', 'C00003418', 'C00027466', 'C00075820']).order_by('-filing_number')[:100]
+    filings = unprocessed_filing.objects.filter(fec_id__in=['C00431171', 'C00496497', 'C00496034', 'C00495820', 'P80003338', 'C00010603', 'C00042366', 'C00000935', 'C00003418', 'C00027466', 'C00075820', 'C00431445']).order_by('-filing_number')[:100]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
     title="Notable PAC Filings"
     explanatory_text="These are recent electronic FEC filings from major presidential candidates and party committees."
@@ -496,7 +496,7 @@ def recent_superpac_filings(request):
     
     filings = unprocessed_filing.objects.filter(is_superpac=True).order_by('-filing_number')[:100]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
-    title="Super PAC Filings"
+    title='Super PAC Filings'
     explanatory_text="These are recent electronic FEC filings from super PACs."
 
     return render_to_response('outside_spending/recent_fec_filings.html',
