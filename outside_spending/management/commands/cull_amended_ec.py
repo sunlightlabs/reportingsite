@@ -42,7 +42,9 @@ class Command(BaseCommand):
         '767476':'764753',
         '767351':'764435',
         # american conservative union
-        '766315':'764912'
+        '766315':'764912',
+        # PLANNED PARENTHOOD ACTION FUND INC. - C30001945
+        '776628':'764197'
         }
         
         
