@@ -23,7 +23,10 @@ class Command(BaseCommand):
             support_list = Expenditure.objects.filter(committee=sp, superceded_by_amendment=False).values('candidate', 'support_oppose').distinct().order_by()
             for s in support_list:
                 total = Expenditure.objects.filter(committee=sp, candidate=s['candidate'], support_oppose=s['support_oppose'], superceded_by_amendment=False).aggregate(total_spent=Sum('expenditure_amount'))
-                print "looking for candidate %s" % (s['candidate'])
+                
+                if not s['candidate']:
+                    continue
+                
                 related_candidate = Candidate_Overlay.objects.get(pk=s['candidate'])
                 
                 print "%s %s %s" % (sp, related_candidate, s['support_oppose'])
