@@ -1,9 +1,13 @@
+""" Scrape today's daily filings; or, with 'yesterday' as an arg, scrape yesterdays filings, or, with a datestring, scrape a previous day's filings... """
+
 import urllib2
 import re
 import datetime
 
 
 from urllib import urlencode
+from optparse import make_option
+
 from dateutil.parser import parse as dateparse
 
 from django.core.management.base import BaseCommand, CommandError
@@ -11,6 +15,7 @@ from django.core.management.base import BaseCommand, CommandError
 from outside_spending.models import unprocessed_filing, processing_memo, Committee_Overlay, Filing_Scrape_Time
 
 from outside_spending.read_FEC_settings import FILECACHE_DIRECTORY, USER_AGENT, FEC_DOWNLOAD, DELAY_TIME, MAX_FILING_KEY
+from outside_spending.utils.fec_logging import fec_logger
 
 
 # parser regexes -- it's cleaner to use regexes than html parsing
@@ -21,9 +26,12 @@ form_re = "<A HREF='\/cgi-bin\/dcdev\/forms\/(C\d+)\/(\d+)\/'>View<\/A>&nbsp;&nb
 period_re = "-\s*period (\d\d\/\d\d\/\d\d\d\d)-(\d\d\/\d\d\/\d\d\d\d),"
 filed_re = "filed\s+(\d\d\/\d\d\/\d\d\d\d)\s+"
 
+my_logger=fec_logger()
+
 def enter_filing(data_hash):
     print "\tentering %s" % (data_hash['filing_number'])
     is_superpac=False
+    filing_created=False
     try:
         Committee_Overlay.objects.get(fec_id=data_hash['committee_id'], is_superpac=True)
         is_superpac=True
@@ -42,6 +50,7 @@ def enter_filing(data_hash):
             process_time = data_hash['process_time'],
             is_superpac=is_superpac
         )
+        filing_created=True
         needs_saving=False
         try:
             thisobj.coverage_from_date = data_hash['date_from']
@@ -55,7 +64,9 @@ def enter_filing(data_hash):
             pass
         if needs_saving:
             thisobj.save()
-        
+    
+    # return true if a new filing was created
+    return filing_created
 
 def parse_response(response_html):
     
@@ -89,7 +100,9 @@ def parse_response(response_html):
             form_type = formdetails.group(3)
             this_id = formdetails.group(1)
             if (this_id != current_pac_id):
+                my_logger.error('SCRAPE DAILY FILINGS: FORM MISMATCH ERROR!!')
                 raise ("Form mismatch!!!")
+                
             #print "Found details %s %s %s" % (formdetails.group(1), formdetails.group(2), formdetails.group(3) )
             
             period = re.search(period_re, line)
@@ -121,7 +134,8 @@ def parse_response(response_html):
     return results
 
 class Command(BaseCommand):
-    help = "Scrape daily filings; "
+    
+    
     requires_model_validation = False
     max_value = None
     
@@ -131,14 +145,37 @@ class Command(BaseCommand):
 
     def handle(self, *args, **options):
         
+        date_to_run = None
+        
+        
+        try:
+            arg0 = args[0]
+            
+            if arg0.upper()=='YESTERDAY':
+                date_to_run = datetime.date.today() - datetime.timedelta(days=1)
+            else:
+                date_to_run=dateparse(args[0])
+        except IndexError:
+            pass
                 
+        print "date to run is: %s" % date_to_run
+        
+        new_filings = 0
         temp_max = self.max_value.value
-        process_time = datetime.datetime.now()
         
-        print "Looking for filings higher than: %s" % (self.max_value.value)
         
-        today = datetime.date.today()
-        todays_date = today.strftime("%m/%d/%Y")
+        my_logger.info('SCRAPE_DAILY_FILINGS - starting regular run')
+        todays_date = date_to_run
+        if not todays_date:
+            today = datetime.date.today()
+            todays_date = today.strftime("%m/%d/%Y")
+            process_time = datetime.datetime.now()
+        else:
+            # assumes we're running it on an older date... 
+            process_time = datetime.datetime(date_to_run.year, date_to_run.month, date_to_run.day, 23, 59)
+            todays_date = date_to_run.strftime("%m/%d/%Y")
+        
+        my_logger.info("SCRAPE DAILY FILINGS: looking for filings from %s with process time of %s" % (todays_date, process_time))
         url = 'http://query.nictusa.com/cgi-bin/dcdev/forms/'
         values = {'comid' : 'C',
                   'name' : '',
@@ -158,11 +195,13 @@ class Command(BaseCommand):
         results = parse_response(filetoread)
 
         for result in results:
-            print "Processing filing number: %s" % (int(result['filing_number']))
+            #print "Processing filing number: %s" % (int(result['filing_number']))
             
             # Test all entries.  
             result['process_time']=process_time             
-            enter_filing(result)
+            filing_entered = enter_filing(result)
+            if filing_entered:
+                new_filings += 1
             this_filing = int(result['filing_number'])
             if this_filing > temp_max:
                 temp_max = this_filing
@@ -172,4 +211,5 @@ class Command(BaseCommand):
         self.max_value.value=temp_max
         self.max_value.save()
         now = Filing_Scrape_Time.objects.create()
+        my_logger.info("SCRAPE_DAILY_FILINGS - completing regular run--created %s new filings" % new_filings)
                 

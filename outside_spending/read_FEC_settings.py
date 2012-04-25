@@ -29,5 +29,5 @@ LOG_DIRECTORY = BASE_DIR + "/log/"
 LOG_NAME = "outside_spending"
 
 MAX_FILING_KEY = "max-filing-number"
-
+LAST_PROCESS_KEY="last-process-time"
 
