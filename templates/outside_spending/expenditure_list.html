@@ -1,10 +1,11 @@
 {% extends "outside_spending/buckley_base.html" %}
 
 {% load humanize %}
+{% load buckley %}
 
 {% block title %}Recent Independent Expenditures{% endblock %}
 
-{% block body %}  fullWidth expendituresIes{% endblock %}
+{% block body %}  {{ block.super }} expendituresIes {% endblock %}
 
 {% block breadcrumb %}
 <li>Recent independent expenditures</li>
@@ -18,19 +19,20 @@
     <h2>
         Recent independent expenditures
     </h2>
+    <div class="amountLine clear">
     <p>{{ explanatory_text|safe }}</p>
+    </div>
 
     {% if ies %}
     <p class="tip">Click on a race, committee or candidate name for more details</p>
 
-   
-    <table id="expenditures">
+<div class="clear"></div>   
+    <table id="expendituresData" class="tablesorter">
         <thead>
             <tr>
                 <th>Date</th>
                 <th>Race</th>
                 <th>Committee</th>
-                <th>Support/Oppose</th>
                 <th>Candidate</th>
                 <th>State</th>
                 <th>Amount</th>
@@ -43,8 +45,7 @@
                 <td>{{ ie.expenditure_date }}</td>
                 <td><a href="{{ie.candidate.get_race_url}}">{{ ie.candidate.race }}</a></td>
                 <td><a href="{{ie.committee.get_absolute_url}}">{{ ie.committee.name }}</a></td> 
-                <td>{{ ie.support_or_oppose }}</td>
-                <td><a href="{{ie.candidate.get_absolute_url}}">{{ ie.candidate.fec_name }} {{ ie.candidate.display_party }}</a></td> 
+                <td><a href="{{ie.candidate.get_absolute_url}}">{{ ie.candidate.fec_name }} {{ ie.candidate.display_party }}</a> <br>[ {{ ie.support_or_oppose }}  ]</td> 
                 <td>{% if ie.state %}{{ ie.state }}{% endif %}</td>
                 <td>${{ ie.expenditure_amount|intcomma }}</td>                               
                 <td>{{ ie.expenditure_purpose }}</td>
@@ -54,4 +55,24 @@
         </table>    
         {% endif %}
 
-{% endblock content %}
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[0,1]' as sortdir %}
+{% include "outside_spending/tablesorter.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}
+
