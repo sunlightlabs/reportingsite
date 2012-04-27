@@ -62,15 +62,3 @@ class Command(BaseCommand):
                         
 
                     #print "Couldn't attach candidate to expenditure: %s - %s" % (ie.raw_candidate_id, ie.candidate_name)
-
-        all_contribs = Contribution.objects.all()
-        for ac in all_contribs:
-            try:
-                #print "looking for %s" % (ac.fec_committeeid)
-                this_committee = Committee_Overlay.objects.get(fec_id=ac.fec_committeeid)
-                ac.committee=this_committee
-                ac.save()
-            except Committee_Overlay.DoesNotExist:
-                print "** Couldn't locate it"
-                pass
-            #
