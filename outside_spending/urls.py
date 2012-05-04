@@ -3,6 +3,7 @@ from django.conf.urls.defaults import *
 from outside_spending.models import *
 #from rebuckley.feeds import *
 from outside_spending.views import *
+from outside_spending.feeds import FilingFeed, FilingsFeed, FilingsFormFeed
 from django.views.generic.simple import direct_to_template
 from django.shortcuts import redirect
 urlpatterns = patterns('',
@@ -45,6 +46,9 @@ urlpatterns = patterns('',
     url(r'^recent-FEC-filings\/significant-committees\/?$', 'outside_spending.views.significant_committees'), 
     #url(r'^recent-FEC-filings\/48-hr-reports\/?$', 'outside_spending.views.48hrreports'), 
     url(r'^recent-FEC-filings\/?$', 'outside_spending.views.recent_fec_filings'),
+    (r'^recent-FEC-filings\/feeds\/committee\/(?P<committee_id>C\d+)/$', FilingFeed()),    
+    (r'^recent-FEC-filings\/feeds\/committees\/(?P<committee_ids>[C\d\-]+)/$', FilingsFeed()),      
+    (r'^recent-FEC-filings\/feeds\/committees\/(?P<committee_ids>[C\d\-]+)/forms/(?P<form_types>[\w\d\-]+)/$', FilingsFormFeed()),     
     url(r'$', 'outside_spending.views.all_superpacs')    
     # all that are noteworthy
     #url(r'^csv/state_csv/','outside_spending.views.states_csv'),

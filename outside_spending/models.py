@@ -10,7 +10,7 @@ form_types = [['F3X','Monthly/quarterly report'],
 ['F3P','Monthly/quarterly report'],
 ['F3L','Report of contributions bundled by lobbyist/registrants and lobbyist/registrant pacs'],
 ['F3','Monthly/quarterly report'],
-['F99','Miscellaneous'],
+['F99','Miscellaneous report'],
 ['F10','24-hour notice of expenditure from candidate\'s personal funds'],
 ['F13','Report of donations accepted for inaugural committee'],
 ['F1M','Notification of multicandidate status'],
@@ -107,6 +107,9 @@ class Committee(models.Model):
     is_nonprofit = models.NullBooleanField(null=True, default=False)
     # todo -- separate c4, c6, etc? 
     
+    def get_fec_url(self):
+        url = "http://query.nictusa.com/cgi-bin/dcdev/forms/%s/" % (self.fec_id)
+        return url
     
     
 # a local overlay.
@@ -443,15 +446,23 @@ class Expenditure(models.Model):
     amends_earlier_filing = models.BooleanField(default=False)
     # if this entry is amended by a more recent entry, link to it:
     amended_by=models.IntegerField(null=True)
-    
+    # If it's an amended version of an earlier filing, put the earlier filing here: 
+    amends_filing=models.IntegerField(null=True) 
+    # populated from the unprocessed_filing table.   
+    process_time = models.DateTimeField(null=True) 
 
 
     #objects = ExpenditureManager()
+    
+    # alter table outside_spending_expenditure add column `amends_filing` integer,
+    # alter table outside_spending_expenditure add column `process_time` datetime,
+    # alter table outside_spending_expenditure drop key image_number;
+    # alter table outside_spending_expenditure add unique key filing_tran (filing_number, transaction_id);
 
 
     class Meta:
         ordering = ('-expenditure_date', )
-        unique_together = (('image_number', 'transaction_id'), )
+        unique_together = (('filing_number', 'transaction_id'), )
 
     def __unicode__(self):
         return str(self.image_number)
@@ -774,6 +785,10 @@ class unprocessed_filing(models.Model):
         url = "http://query.nictusa.com/cgi-bin/dcdev/forms/%s/%s/" % (self.fec_id, self.filing_number)
         return url
         
+    def get_absolute_url(self):
+        url = "http://query.nictusa.com/cgi-bin/dcdev/forms/%s/%s/" % (self.fec_id, self.filing_number)
+        return url
+            
     def fec_all_filings(self):
         url = "http://query.nictusa.com/cgi-bin/dcdev/forms/%s/" % (self.fec_id)
         return url
