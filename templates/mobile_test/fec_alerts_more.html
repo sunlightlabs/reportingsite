@@ -1,0 +1,32 @@
+{% extends "mobile_test/fec_base.html" %}
+
+
+{% block title %}MOBILE TEST - FEC FILINGS{% endblock %}
+
+
+{% block pagecontent %}
+
+
+<h1 class="remove-bottom" style="margin-top: 0px; margin-bottom: 0px;">FEC filings</h1>
+<h5>Last updated {{ update_time.run_time|date:"N j, P" }}</h5>
+<hr />
+
+			<ul class="tabs"style="margin-top: 0px;">
+							<li><a href="/outside-spending/FEC-alerts/#about">About</a></li>
+							<li><a href="/outside-spending/FEC-alerts/#filings">Recent</a></li>
+							<li><a class="active" href="/outside-spending/FEC-alerts/#more">More Filings</a></li>
+			</ul>
+
+			<p>{{ explanatory_text }}</p>
+			<hr />
+			{% for filing in filings %}
+			<p>    
+	            
+	                {{ filing.process_time|date:"N j, P"  }} <a href="{{filing.get_fec_url}}">{{ filing.filing_number }} [{{ filing.form_type}}]</a> Filed by <a href="{{filing.fec_all_filings}}">{{ filing.committee_name}}</a> {{ filing.get_form_name }} {% if filing.coverage_to_date %}{{ filing.coverage_from_date|date:"n/j/y" }} - {{ filing.coverage_to_date|date:"n/j/y" }}{% endif %} 
+		</p>
+	
+	        {% endfor %}
+
+
+
+{% endblock %}

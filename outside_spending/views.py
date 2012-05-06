@@ -507,3 +507,68 @@ def recent_superpac_filings(request):
         'update_time':update_time
         }
     )   
+    
+    
+def recent_fec_filings_mobile(request):
+
+    update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
+    filings = unprocessed_filing.objects.all().order_by('-filing_number')[:100]
+    title="Recent FEC Filings"
+    explanatory_text="All recent electronic FEC filings. Filings made on paper are not included."
+
+    return render_to_response('mobile_test/fec_alerts_index.html',
+        {
+        'title':title,
+        'explanatory_text':explanatory_text,
+        'filings':filings,
+        'update_time':update_time
+        }
+    )
+    
+def recent_fec_filings_ies(request):
+
+    filings = unprocessed_filing.objects.filter(form_type__in=['F5A', 'F5N', 'F24A', 'F24N']).order_by('-filing_number')[:100]
+    update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
+    title="Recent Independent Expenditure Filings"
+    explanatory_text="These are recent electronic FEC filings that show independent expenditures--specifically, forms F24 and F5."
+
+    return render_to_response('mobile_test/fec_alerts_more.html',
+        {
+        'title':title,
+        'explanatory_text':explanatory_text,
+        'filings':filings,
+        'update_time':update_time
+        }
+    )    
+
+def recent_fec_filings_significant(request):
+
+    filings = unprocessed_filing.objects.filter(fec_id__in=['C00431171', 'C00496497', 'C00496034', 'C00495820', 'C00010603', 'C00042366', 'C00000935', 'C00003418', 'C00027466', 'C00075820', 'C00431445']).order_by('-filing_number')[:100]
+    update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
+    title="Notable PAC Filings"
+    explanatory_text="These are recent electronic FEC filings from major presidential candidates and party committees."
+
+    return render_to_response('mobile_test/fec_alerts_more.html',
+        {
+        'title':title,
+        'explanatory_text':explanatory_text,
+        'filings':filings,
+        'update_time':update_time
+        }
+    )
+
+def recent_fec_filings_superpacs(request): 
+
+    filings = unprocessed_filing.objects.filter(is_superpac=True).order_by('-filing_number')[:100]
+    update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
+    title='Super PAC Filings'
+    explanatory_text="These are recent electronic FEC filings from super PACs."
+
+    return render_to_response('mobile_test/fec_alerts_more.html',
+        {
+        'title':title,
+        'explanatory_text':explanatory_text,
+        'filings':filings,
+        'update_time':update_time
+        }
+    )    

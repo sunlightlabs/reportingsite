@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<!--[if lt IE 7 ]><html class="ie ie6" lang="en"> <![endif]-->
+<!--[if IE 7 ]><html class="ie ie7" lang="en"> <![endif]-->
+<!--[if IE 8 ]><html class="ie ie8" lang="en"> <![endif]-->
+<!--[if (gte IE 9)|!(IE)]><!--><html lang="en"> <!--<![endif]-->
+<head>
+
+	<!-- Basic Page Needs
+  ================================================== -->
+	<meta charset="utf-8">
+	<title>{% block title %}{% endblock %}</title>
+	<meta name="description" content="{% block description %}{% endblock %}">
+
+
+	<!-- Mobile Specific Metas
+  ================================================== -->
+	<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1">
+
+	<!-- CSS
+  ================================================== -->
+    {% block css %}
+	<link rel="stylesheet" href="http://jacobfenton.s3.amazonaws.com/mobile/stylesheets/base.css">
+	<link rel="stylesheet" href="http://jacobfenton.s3.amazonaws.com/mobile/stylesheets/skeleton.css">
+	<link rel="stylesheet" href="http://jacobfenton.s3.amazonaws.com/mobile/stylesheets/layout.css">
+    {% endblock %}
+
+	<!--[if lt IE 9]>
+		<script src="http://html5shim.googlecode.com/svn/trunk/html5.js"></script>
+	<![endif]-->
+
+	<!-- Favicons should go here. -->
+
+</head>
+<body>
+
+
+
+	<!-- start container -->
+	<div class="container">
+		<div class="sixteen columns">
+		    {% block pagecontent %}
+		    
+            {% endblock %}
+		</div>
+		
+    <!-- Should actually use footer instead, but... -->
+		<a href="http://sunlightfoundation.com/"><div class="sixteen columns" style="background-color:#414042;">
+			<img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_sunlightFoundation.png" />
+		</div></a>
+	<!-- end defacto footer -->
+	
+	<!-- end container -->
+    </div>
+
+	{% block inpagejs %}
+	<!-- JS
+	================================================== -->
+	<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
+	<script src="http://jacobfenton.s3.amazonaws.com/mobile/javascripts/tabs.js"></script>
+	{% endblock %}
+
+<!-- End Document
+================================================== -->
+</body>
+</html>

@@ -46,9 +46,14 @@ urlpatterns = patterns('',
     url(r'^recent-FEC-filings\/significant-committees\/?$', 'outside_spending.views.significant_committees'), 
     #url(r'^recent-FEC-filings\/48-hr-reports\/?$', 'outside_spending.views.48hrreports'), 
     url(r'^recent-FEC-filings\/?$', 'outside_spending.views.recent_fec_filings'),
-    (r'^recent-FEC-filings\/feeds\/committee\/(?P<committee_id>C\d+)/$', FilingFeed()),    
-    (r'^recent-FEC-filings\/feeds\/committees\/(?P<committee_ids>[C\d\-]+)/$', FilingsFeed()),      
-    (r'^recent-FEC-filings\/feeds\/committees\/(?P<committee_ids>[C\d\-]+)/forms/(?P<form_types>[\w\d\-]+)/$', FilingsFormFeed()),     
+    url(r'^recent-FEC-filings\/feeds\/committee\/(?P<committee_id>C\d+)/$', FilingFeed()),    
+    url(r'^recent-FEC-filings\/feeds\/committees\/(?P<committee_ids>[C\d\-]+)/$', FilingsFeed()),      
+    url(r'^recent-FEC-filings\/feeds\/committees\/(?P<committee_ids>[C\d\-]+)/forms/(?P<form_types>[\w\d\-]+)/$', FilingsFormFeed()),
+    url(r'^FEC-alerts\/$', 'outside_spending.views.recent_fec_filings_mobile'),
+    url(r'^FEC-alerts\/superpacs\/?$', 'outside_spending.views.recent_fec_filings_superpacs'),
+    url(r'^FEC-alerts\/independent-expenditures\/?$', 'outside_spending.views.recent_fec_filings_ies'),
+    url(r'^FEC-alerts\/significant-committees\/?$', 'outside_spending.views.recent_fec_filings_significant'),    
+    #     
     url(r'$', 'outside_spending.views.all_superpacs')    
     # all that are noteworthy
     #url(r'^csv/state_csv/','outside_spending.views.states_csv'),
