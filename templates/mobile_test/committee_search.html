@@ -10,7 +10,7 @@
     <tbody>   
     {% for committee in committees %}
 	<tr class="{% cycle 'odd' 'even' %}">
-    	<td style="width: 140px;"><a data-fecid="{{ committee.fec_id }}" href="" class="subscribe_to_committee" name="{{ committee.name }}">Subscribe</a>&nbsp;|&nbsp;<a data-fecid="{{ committee.fec_id }}" href="" class="go_to_committee_feed" name="{{ committee.name }}">Go to feed</a></td>
+    	<td style="width: 170px;"><a data-fecid="{{ committee.fec_id }}" href="" class="subscribe_to_committee" name="{{ committee.name }}">Subscribe</a>&nbsp;|&nbsp;<a data-fecid="{{ committee.fec_id }}" href="" class="go_to_committee_feed" name="{{ committee.name }}">Go to feed</a></td>
 		<td><a href="{{committee.get_fec_url}}">{{ committee.name }}</a></td>
 	<td>{% if committee.related_candidate %}{{ committee.related_candidate.fec_name }}{% endif %}</td>
 	</tr>
