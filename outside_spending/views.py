@@ -571,4 +571,55 @@ def recent_fec_filings_superpacs(request):
         'filings':filings,
         'update_time':update_time
         }
+    )
+    
+def committee_search_json(request): 
+    params = request.GET
+    committees = None
+    
+    try:
+        committee_name_fragment =  params['name']
+        if len(committee_name_fragment) > 3:
+            print committee_name_fragment
+            
+            
+            committees = Committee.objects.filter(Q(name__icontains=committee_name_fragment) | Q(related_candidate__fec_name__icontains=committee_name_fragment)).select_related()
+        else:
+            committees = None
+    except KeyError:
+        committees = None
+
+    return render_to_response('mobile_test/committee_search.json',
+        {
+        'committees':committees,
+        }
+    ) 
+    
+    
+def committee_search_html(request): 
+    params = request.GET
+    committees = None
+
+    try:
+        committee_name_fragment =  params['name']
+        if len(committee_name_fragment) > 3:
+            print committee_name_fragment
+
+
+            committees = Committee.objects.filter(Q(name__icontains=committee_name_fragment) | Q(related_candidate__fec_name__icontains=committee_name_fragment)).select_related()
+        else:
+            committees = None
+    except KeyError:
+        committees = None
+
+    return render_to_response('mobile_test/committee_search.html',
+        {
+        'committees':committees,
+        }
     )    
+def subscribe_to_alerts(request):
+    
+    return render_to_response('outside_spending/subscribe.html',
+        {}
+    )
+       
