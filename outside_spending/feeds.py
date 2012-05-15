@@ -30,9 +30,9 @@ class FilingFeed(FilingFeedBase):
         
     def get_object(self, request, committee_id):
         return get_object_or_404(Committee, fec_id=committee_id) 
-
-    def description(self):
-        return "Recent electronic campaign finance filings filed by %s" % (obj.name)        
+        
+    def description(self, obj):
+        return "Recent electronic campaign finance filings filed by %s" % (obj.name)             
 
     def items(self, obj):
         return unprocessed_filing.objects.filter(fec_id=obj.fec_id).order_by('-process_time')[:30]  
@@ -43,7 +43,7 @@ class CommitteeFormsFeed(FilingFeedBase):
     def title(self, obj):
         return "%s - RECENT FORMS %s" % (obj.name, ", ".join(self.form_list) )
 
-    def description(self):
+    def description(self, obj):
         return "Recent electronic campaign finance filings filed by %s" % (obj.name)        
 
     def get_object(self, request, committee_id, form_types):
