@@ -1,0 +1,10 @@
+results = {
+    {% for committee in committees %}
+    "committee": {
+        "name": "{{ committee.name }}",
+        "fec_id": "{{ committee.fec_id }}",
+        "location":"{{ committee.city }}, {{ committee.state}}"
+        "supporting": "{% if committee.related_candidate %}{{ committee.related_candidate.fec_name }}{% endif %}"
+    }{% if forloop.last %}{% else %},{% endif %}
+    {% endfor %}
+}

@@ -1,0 +1,22 @@
+{% if committees %}
+<table id="expenditures">
+    <thead>
+        <tr>
+			<th></th>
+            <th>Committee Name</th>
+            <th>Candidate Supporting*</th>
+        </tr>
+    </thead>
+    <tbody>   
+    {% for committee in committees %}
+	<tr class="{% cycle 'odd' 'even' %}">
+    	<td style="width: 140px;"><a data-fecid="{{ committee.fec_id }}" href="" class="subscribe_to_committee" name="{{ committee.name }}">Subscribe</a>&nbsp;|&nbsp;<a data-fecid="{{ committee.fec_id }}" href="" class="go_to_committee_feed" name="{{ committee.name }}">Go to feed</a></td>
+		<td><a href="{{committee.get_fec_url}}">{{ committee.name }}</a></td>
+	<td>{% if committee.related_candidate %}{{ committee.related_candidate.fec_name }}{% endif %}</td>
+	</tr>
+    {% endfor %}
+</table>
+<p>* Only non-independent committees must disclose who they are supporting. Independent committees--which include all Super PACs--are not required to list a specific candidate (and may support multiple candidates).</p>
+{% else %}
+No results found. Try another search.
+{% endif %}
