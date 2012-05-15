@@ -32,6 +32,28 @@ class Filing_Scrape_Time(models.Model):
     run_time = models.DateTimeField(auto_now=True)
 
 
+# populated from fec's candidate master
+class Candidate(models.Model):
+    cycle = models.CharField(max_length=4)
+    fec_id = models.CharField(max_length=9, blank=True)
+    fec_name = models.CharField(max_length=255) 
+    party = models.CharField(max_length=3, blank=True)
+    office = models.CharField(max_length=1,
+                              choices=(('H', 'House'), ('S', 'Senate'), ('P', 'President'))
+                              )
+    seat_status = models.CharField(max_length=1,
+                                  choices=(('I', 'Incumbent'), ('C', 'Challenger'), ('O', 'Open'))
+                                  )
+    candidate_status = models.CharField(max_length=1,
+                                        choices=(('C', 'STATUTORY CANDIDATE'), ('F', 'STATUTORY CANDIDATE FOR FUTURE ELECTION'), ('N', 'NOT YET A STATUTORY CANDIDATE'), ('P', 'STATUTORY CANDIDATE IN PRIOR CYCLE'))
+                                         )
+    # state is from the candidate's address (?)                                     
+    state_address = models.CharField(max_length=2, blank=True)    
+    district = models.CharField(max_length=2, blank=True)
+    # the state where the race is taking place (from the candidate id)
+    state_race = models.CharField(max_length=2, blank=True, null=True) 
+    campaign_com_fec_id = models.CharField(max_length=9, blank=True)
+
 # Populated from fec's committee master            
 class Committee(models.Model):
     name = models.CharField(max_length=255)
@@ -105,12 +127,25 @@ class Committee(models.Model):
     is_superpac = models.NullBooleanField(null=True, default=False)    
     is_hybrid = models.NullBooleanField(null=True, default=False)  
     is_nonprofit = models.NullBooleanField(null=True, default=False)
+    
+    # related candidate, if there is one. From the candidate_id only. 
+    related_candidate = models.ForeignKey(Candidate, null=True)
     # todo -- separate c4, c6, etc? 
     
     def get_fec_url(self):
         url = "http://query.nictusa.com/cgi-bin/dcdev/forms/%s/" % (self.fec_id)
         return url
     
+    def set_candidate(self):
+        #print "committee id: %s candidate id %s" % (self.fec_id, self.candidate_id)
+        try:
+            this_candidate = Candidate.objects.get(fec_id=self.candidate_id)
+            
+            self.related_candidate = this_candidate
+            self.save()
+        except Candidate.DoesNotExist:
+            #print "No match found"
+            return
     
 # a local overlay.
 class Committee_Overlay(models.Model):
@@ -215,27 +250,7 @@ class Committee_Overlay(models.Model):
             return "Administratively Terminated"            
                
 
-# populated from fec's candidate master
-class Candidate(models.Model):
-    cycle = models.CharField(max_length=4)
-    fec_id = models.CharField(max_length=9, blank=True)
-    fec_name = models.CharField(max_length=255) 
-    party = models.CharField(max_length=3, blank=True)
-    office = models.CharField(max_length=1,
-                              choices=(('H', 'House'), ('S', 'Senate'), ('P', 'President'))
-                              )
-    seat_status = models.CharField(max_length=1,
-                                  choices=(('I', 'Incumbent'), ('C', 'Challenger'), ('O', 'Open'))
-                                  )
-    candidate_status = models.CharField(max_length=1,
-                                        choices=(('C', 'STATUTORY CANDIDATE'), ('F', 'STATUTORY CANDIDATE FOR FUTURE ELECTION'), ('N', 'NOT YET A STATUTORY CANDIDATE'), ('P', 'STATUTORY CANDIDATE IN PRIOR CYCLE'))
-                                         )
-    # state is from the candidate's address (?)                                     
-    state_address = models.CharField(max_length=2, blank=True)    
-    district = models.CharField(max_length=2, blank=True)
-    # the state where the race is taking place (from the candidate id)
-    state_race = models.CharField(max_length=2, blank=True, null=True) 
-    campaign_com_fec_id = models.CharField(max_length=9, blank=True)
+
 
 
 # a local overlay        
