@@ -28,7 +28,7 @@
 
 <div class="space_above">
 {% if committee.total_indy_expenditures%}
-    <span class="amountLine">Independent Expenditures: </span><span class="amount">{% if committee.total_indy_expenditures%}${{ committee.total_indy_expenditures|intcomma }}{% endif %}</span><br>Jump to <a href="#spending">expenditures</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackcsv}}">.csv file of all independent expenditures</a>
+    <span class="amountLine">Independent Expenditures: </span><span class="amount">{% if committee.total_indy_expenditures%}${{ committee.total_indy_expenditures|intcomma }}{% endif %}</span><br>Jump to <a href="#spending">expenditures</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackcsv}}" onClick="javascript: _gaq.push(['_trackPageview', '{{committee.superpachackcsv}}']);">.csv file of all independent expenditures</a>
     <br><br>
 {% endif %}   
 
@@ -38,7 +38,7 @@
 {% endif %}
  
     {% if contributions %}
-    <span class="amountLine">Contributions (as of {{ committee.cash_on_hand_date }}): </span><span class="amount">{% if committee.total_contributions %}${{ committee.total_contributions|intcomma }}{% endif %}</span><br>Jump to <a href="#contributors"> contributors</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackdonorscsv}}">.csv file of contributions</a>
+    <span class="amountLine">Contributions (as of {{ committee.cash_on_hand_date }}): </span><span class="amount">{% if committee.total_contributions %}${{ committee.total_contributions|intcomma }}{% endif %}</span><br>Jump to <a href="#contributors"> contributors</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackdonorscsv}}" onClick="javascript: _gaq.push(['_trackPageview', '{{committee.superpachackdonorscsv}}']);">.csv file of contributions</a>
 
     {% endif %}
 </div>    
