@@ -9,7 +9,7 @@ class FilingFeedBase(Feed):
 
     # What is this used for?
     def link(self, obj):
-        return 'link'
+        return ''
 
     def description(self):
         return "Recent electronic campaign finance filings."
@@ -34,6 +34,18 @@ class FilingFeed(FilingFeedBase):
     def items(self, obj):
         return unprocessed_filing.objects.filter(fec_id=obj.fec_id).order_by('-process_time')[:30]  
 
+class CommitteeFormsFeed(FilingFeedBase): 
+    form_list=[]
+
+    def title(self, obj):
+        return "RECENT FORMS %s FILED BY: %s" % ( ", ".join(self.form_list), obj.name )
+
+    def get_object(self, request, committee_id, form_types):
+        self.form_list=form_types.split("-")
+        return get_object_or_404(Committee, fec_id=committee_id) 
+
+    def items(self, obj):
+        return unprocessed_filing.objects.filter(fec_id=obj.fec_id, form_type__in=self.form_list).order_by('-process_time')[:30]
     
 class FilingsFeed(FilingFeedBase):
     committee_list=[]
@@ -59,4 +71,18 @@ class FilingsFormFeed(FilingFeedBase):
 
     def items(self, obj):
         return unprocessed_filing.objects.filter(fec_id__in=self.committee_list, form_type__in=self.form_list).order_by('-process_time')[:30]
+        
+class FilingsForms(FilingFeedBase):
+    form_list=[]
+
+    def get_object(self, request, form_types):
+        self.form_list=form_types.split("-")
+        return Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
+    
+    def description(self):
+        return "Recent electronic finance filings of forms: " + " ".join(self.form_list)
+
+    def items(self, obj):
+        return unprocessed_filing.objects.filter(form_type__in=self.form_list).order_by('-process_time')[:30]    
+    
 

@@ -3,7 +3,7 @@ from django.conf.urls.defaults import *
 from outside_spending.models import *
 #from rebuckley.feeds import *
 from outside_spending.views import *
-from outside_spending.feeds import FilingFeed, FilingsFeed, FilingsFormFeed
+from outside_spending.feeds import FilingFeed, FilingsFeed, FilingsFormFeed, FilingsForms, CommitteeFormsFeed
 from django.views.generic.simple import direct_to_template
 from django.shortcuts import redirect
 urlpatterns = patterns('',
@@ -47,16 +47,24 @@ urlpatterns = patterns('',
     #url(r'^recent-FEC-filings\/48-hr-reports\/?$', 'outside_spending.views.48hrreports'), 
     url(r'^recent-FEC-filings\/?$', 'outside_spending.views.recent_fec_filings'),
     url(r'^recent-FEC-filings\/feeds\/committee\/(?P<committee_id>C\d+)/$', FilingFeed()),    
+    url(r'^recent-FEC-filings\/feeds\/committee\/(?P<committee_id>C\d+)/forms/(?P<form_types>[\w\d\-]+)/$', CommitteeFormsFeed()),
     url(r'^recent-FEC-filings\/feeds\/committees\/(?P<committee_ids>[C\d\-]+)/$', FilingsFeed()),      
     url(r'^recent-FEC-filings\/feeds\/committees\/(?P<committee_ids>[C\d\-]+)/forms/(?P<form_types>[\w\d\-]+)/$', FilingsFormFeed()),
+    url(r'^recent-FEC-filings\/feeds\/forms/(?P<form_types>[\w\d\-]+)/$', FilingsForms()),
     url(r'^FEC-alerts\/$', 'outside_spending.views.recent_fec_filings_mobile'),
     url(r'^FEC-alerts\/superpacs\/?$', 'outside_spending.views.recent_fec_filings_superpacs'),
     url(r'^FEC-alerts\/independent-expenditures\/?$', 'outside_spending.views.recent_fec_filings_ies'),
-    url(r'^FEC-alerts\/significant-committees\/?$', 'outside_spending.views.recent_fec_filings_significant'),    
-    #     
-    url(r'$', 'outside_spending.views.all_superpacs')    
+    url(r'^FEC-alerts\/significant-committees\/?$', 'outside_spending.views.recent_fec_filings_significant'),
+    url(r'^committee-search-json\/$', 'outside_spending.views.committee_search_json'),           
+    url(r'^committee-search-html\/$', 'outside_spending.views.committee_search_html'), 
+    #url(r'^subscribe-to-alerts\/$', 'outside_spending.views.subscribe_to_alerts'), 
+    
+    #url(r'^searchtest\/$', 'django.views.generic.simple.direct_to_template', {'template': 'mobile_test/searchtest.html'}),      
+    url(r'$', 'outside_spending.views.all_superpacs')
+   
     # all that are noteworthy
     #url(r'^csv/state_csv/','outside_spending.views.states_csv'),
     #url(r'^map/',direct_to_template, {'template': 'rebuckley/map.html'}),  
 
 )
+
