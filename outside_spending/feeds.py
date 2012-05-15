@@ -26,7 +26,7 @@ class FilingFeedBase(Feed):
 class FilingFeed(FilingFeedBase): 
        
     def title(self, obj):
-        return "RECENT FILINGS FROM: %s" % obj.name
+        return "%s - RECENT FILINGS" % obj.name
         
     def get_object(self, request, committee_id):
         return get_object_or_404(Committee, fec_id=committee_id) 
@@ -38,7 +38,10 @@ class CommitteeFormsFeed(FilingFeedBase):
     form_list=[]
 
     def title(self, obj):
-        return "RECENT FORMS %s FILED BY: %s" % ( ", ".join(self.form_list), obj.name )
+        return "%s - RECENT FORMS %s" % (obj.name, ", ".join(self.form_list) )
+
+    def description(self):
+        return "Recent electronic campaign finance filings filed by %s" % (obj.name)        
 
     def get_object(self, request, committee_id, form_types):
         self.form_list=form_types.split("-")
