@@ -16,7 +16,7 @@ most_recent_scrape=Scrape_Time.objects.all().order_by('-run_time')[0]
 
 from outside_spending.models import *
 
-data_disclaimer = """ These files are preliminary and current through %s but we cannot guarantee their accuracy. For more information, see: http://reporting.sunlightfoundation.com/outside-spending/about/ Please note that contributions in these files are as of the most recent filing deadline--whic is Feb. 29 for monthly filers, but Dec. 31, 2011 for quarterly filers. Presidential spending totals may not match up to overall spending totals, which may include independent expenditures made in support of congressional candidates. Independent expenditures are not comparable to the itemized disbursements found in PAC's year-end reports. For more on independent expenditures see here: http://www.fec.gov/pages/brochures/indexp.shtml """ % (most_recent_scrape.run_time)
+data_disclaimer = """ These files are preliminary and current through %s but we cannot guarantee their accuracy. For more information, see: http://reporting.sunlightfoundation.com/outside-spending/about/ Please note that contributions in these files are as of the most recent filing deadline. Independent expenditures are not comparable to the itemized disbursements found in PAC's year-end reports. For more on independent expenditures see here: http://www.fec.gov/pages/brochures/indexp.shtml """ % (most_recent_scrape.run_time)
 
 hybrid_superpac_disclaimer ="\"Hybrid\" super PACs--committees that have separate accounts for \"hard\" and \"soft\" money, are not included. For a list of these committees, see <a href=\"http://www.fec.gov/press/press2011/2012PoliticalCommitteeswithNon-ContributionAccounts.shtml\">here</a>."
 
