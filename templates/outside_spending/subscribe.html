@@ -19,6 +19,7 @@
 #form_filings .filing_label {
 	margin:0px;
 	padding:0px;
+	font-size: 14px;
 	width:270px;
 }
 
@@ -27,21 +28,10 @@
 	padding:0px;
 	width:300px;
 	font-size: 14px;
+	font-weight: bold;
 }
 
 #form_filings .filing_radio {
-	margin:0px;
-	padding:0px;
-	width: 50px;
-	}
-
-#form_filings .amendment_radio{
-	margin:0px;
-	padding:0px;
-	width: 50px;
-	}	
-	
-#search_results .amendment_radio{
 	margin:0px;
 	padding:0px;
 	width: 50px;
@@ -57,15 +47,6 @@
 	margin-left: 30px;
 }	
 
-.formrightcol {
-	float:right;
-	width: 430px;
-}
-
-.formleftcol {
-	float:left;
-	width: 430px;
-}
 
 #committee_search {
 	width: 200px;
@@ -73,8 +54,6 @@
 	border:1px solid black;	
 }
 
-#download_btn { display: block; text-indent: -9999em; background: url(../img/btn_download.png) top left no-repeat; width: 160px; height: 66px; float: left; margin-left: 30px; margin-top: 25px;}
-#download_btn:hover { background: url(../img/btn_download.png) bottom left no-repeat;}
 
 
 </style>
@@ -97,7 +76,7 @@
 	You can sign up to receive notifications about all filings, or only certain types. </p>
     <hr />
 	<div id="form_filings" class="formtwocols">
-	<div class="formleftcol">
+
 	<p>
 	<b>Step 1. What kind of reports?</b>
 	</p>
@@ -110,35 +89,25 @@
 	<label for="only_selected" class="filing_label_big">Only the ones chosen below:</label>
 	
 	<fieldset class="check_indent">
-	<input type="checkbox" class="filing_check" id="monthly" /><label class="filing_label" for="check">Monthly/Quarterly filings</label>
-	<br><input type="checkbox" class="filing_check" id="ie" /><label class="filing_label" for="check1">24/48-hour Independent Expenditure Notices</label>
-	<br><input type="checkbox" class="filing_check" id="ec" /><label class="filing_label" for="check2">Electioneering Communication Notices </label>
+	<input type="checkbox" class="filing_check" id="monthly" /><label class="filing_label" for="check">Monthly/quarterly filings</label>
+	<br><input type="checkbox" class="filing_check" id="ie" /><label class="filing_label" for="check1">24/48-hour independent expenditure Notices</label>
+	<br><input type="checkbox" class="filing_check" id="ec" /><label class="filing_label" for="check2">Electioneering communication notices </label>
 	<br><input type="checkbox" class="filing_check" id="F6" /><label class="filing_label" for="check3">48-hour contribution reports</label>
 	</fieldset>
 	</p>
-	</div>
 
 
 
+
 	</div>
 	
 	</div>
 	
 	
-	<div style="clear:both;"></div>
 	
 	
 	<div class="amountLine">
 	<p><b>2. Which committee?</b></p>	
-	<!--
-	<div style="width: 600px;">
-	Type the name of a committee or candidate:
-	<form id="lobbyingSearch" style="float:right; height:27px;"><input id="searchbox" type="text" style="width: 200px; margin:0px; height:17px;" value="Committee or candidate">
-		<button id="search_committees" class="goBtn" value="Search" style="margin-left:10px;"><span>Go</span></button>
-	</form>
-	</div>	
-	</div>
-	-->
 	<div>
 		
 	<form id="searchform">
@@ -226,7 +195,7 @@ function submit_subscribe(fecid, name) {
 	feedurl = get_feed_url(fecid);
 	scouturl = "http://scout.sunlightlabs.com/import/feed?url=" + encodeURIComponent(feedurl);
 	
-	var gotoscout = confirm("You're going to be sent to Scout to subscribe to feeds for " + name + ". If you don't have an account with Scout you'll be prompted to create one. Click cancel to stay on this page.");
+	var gotoscout = confirm("You're being sent to Scout to subscribe to feeds for " + name + ". If you don't have an account with Scout you'll be prompted to create one.");
 	if (gotoscout) {
 		window.location = scouturl;
 		return false;
