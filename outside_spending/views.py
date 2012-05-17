@@ -587,7 +587,21 @@ def recent_fec_filings_significant(request):
         }
     )
 
+def recent_fec_filings_significant_new(request):
 
+    filings = unprocessed_filing.objects.filter(fec_id__in=['C00431171', 'C00496497', 'C00496034', 'C00495820', 'C00010603', 'C00042366', 'C00000935', 'C00003418', 'C00027466', 'C00075820', 'C00431445'], form_type__in=['F3XN', 'F3N', 'F3PN']).order_by('-filing_number')[:25]
+    update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
+    title="Notable PAC Filings"
+    explanatory_text="These are recent electronic monthly / quarterly filings from major presidential candidates and party committees."
+
+    return render_to_response('mobile_test/fec_alerts_more.html',
+        {
+        'title':title,
+        'explanatory_text':explanatory_text,
+        'filings':filings,
+        'update_time':update_time
+        }
+    )
 
 def recent_fec_filings_superpacs(request): 
 
@@ -604,6 +618,25 @@ def recent_fec_filings_superpacs(request):
         'update_time':update_time
         }
     )
+
+def recent_fec_filings_superpacs_f3x(request): 
+
+    filings = unprocessed_filing.objects.filter(is_superpac=True, form_type="F3XN").order_by('-filing_number')[:25]
+    update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
+    title='Super PAC Filings'
+    explanatory_text="These are recent electronic monthly / quarterly reports from super PACs."
+
+    return render_to_response('mobile_test/fec_alerts_more.html',
+        {
+        'title':title,
+        'explanatory_text':explanatory_text,
+        'filings':filings,
+        'update_time':update_time
+        }
+    )
+
+
+    
     
 def committee_search_json(request): 
     params = request.GET
