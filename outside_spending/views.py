@@ -492,6 +492,21 @@ def significant_committees(request):
         }
     )
     
+def significant_committees_new(request):
+
+    filings = unprocessed_filing.objects.filter(fec_id__in=['C00431171', 'C00496497', 'C00496034', 'C00495820', 'C00010603', 'C00042366', 'C00000935', 'C00003418', 'C00027466', 'C00075820', 'C00431445'], form_type__in=['F3XN', 'F3N', 'F3PN']).order_by('-filing_number')[:100]
+    update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
+    title="Monthly / Quarterly Filings From Major PACs"
+    explanatory_text="These are recent monthly / quarterly electronic FEC filings from major presidential candidates and party committees. Amended filings are not included. "
+
+    return render_to_response('outside_spending/recent_fec_filings.html',
+        {
+        'title':title,
+        'explanatory_text':explanatory_text,
+        'filings':filings,
+        'update_time':update_time
+        }
+    )    
 def recent_superpac_filings(request): 
     
     filings = unprocessed_filing.objects.filter(is_superpac=True).order_by('-filing_number')[:100]
@@ -508,6 +523,21 @@ def recent_superpac_filings(request):
         }
     )   
     
+def recent_superpac_filings_f3x(request): 
+
+    filings = unprocessed_filing.objects.filter(is_superpac=True, form_type='F3XN').order_by('-filing_number')[:100]
+    update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
+    title='Original Monthly / Quarterly Super PAC Filings'
+    explanatory_text="These are new monthly / quarterly reports from super PACs (ie form F3XN). Amended filings are not included. "
+
+    return render_to_response('outside_spending/recent_fec_filings.html',
+        {
+        'title':title,
+        'explanatory_text':explanatory_text,
+        'filings':filings,
+        'update_time':update_time
+        }
+    )    
     
 def recent_fec_filings_mobile(request):
 
@@ -556,6 +586,8 @@ def recent_fec_filings_significant(request):
         'update_time':update_time
         }
     )
+
+
 
 def recent_fec_filings_superpacs(request): 
 
