@@ -104,5 +104,7 @@ class SuperpacsForms(FilingFeedBase):
     def items(self, obj):
         return unprocessed_filing.objects.filter(form_type__in=self.form_list, is_superpac=True).order_by('-process_time')[:30]    
     
+    def title(self, obj):
+        return "Super PAC filings -- forms: " + " ".join(self.form_list)
     
 
