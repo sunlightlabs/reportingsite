@@ -3,7 +3,7 @@ from django.conf.urls.defaults import *
 from outside_spending.models import *
 #from rebuckley.feeds import *
 from outside_spending.views import *
-from outside_spending.feeds import FilingFeed, FilingsFeed, FilingsFormFeed, FilingsForms, CommitteeFormsFeed
+from outside_spending.feeds import FilingFeed, FilingsFeed, FilingsFormFeed, FilingsForms, CommitteeFormsFeed, SuperpacsForms
 from django.views.generic.simple import direct_to_template
 from django.shortcuts import redirect
 urlpatterns = patterns('',
@@ -53,7 +53,7 @@ urlpatterns = patterns('',
     url(r'^recent-FEC-filings\/feeds\/committees\/(?P<committee_ids>[C\d\-]+)/$', FilingsFeed()),      
     url(r'^recent-FEC-filings\/feeds\/committees\/(?P<committee_ids>[C\d\-]+)/forms/(?P<form_types>[\w\d\-]+)/$', FilingsFormFeed()),
     url(r'^recent-FEC-filings\/feeds\/forms/(?P<form_types>[\w\d\-]+)/$', FilingsForms()),
-    #url(r'^recent-FEC-filings\/feeds\/superpacs\/forms/(?P<form_types>[\w\d\-]+)/$', FilingsForms()),    
+    url(r'^recent-FEC-filings\/feeds\/superpacs\/forms/(?P<form_types>[\w\d\-]+)/$', SuperpacsForms()),    
     url(r'^FEC-alerts\/$', 'outside_spending.views.recent_fec_filings_mobile'),
     url(r'^FEC-alerts\/superpacs\/?$', 'outside_spending.views.recent_fec_filings_superpacs'),
     url(r'^FEC-alerts\/independent-expenditures\/?$', 'outside_spending.views.recent_fec_filings_ies'),
