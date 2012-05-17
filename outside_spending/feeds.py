@@ -99,7 +99,7 @@ class SuperpacsForms(FilingFeedBase):
         return Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
     
     def description(self):
-        return "Recent electronic finance filings of forms: " + " ".join(self.form_list)
+        return "Superpac filings of forms: " + " ".join(self.form_list)
 
     def items(self, obj):
         return unprocessed_filing.objects.filter(form_type__in=self.form_list, is_superpac=True).order_by('-process_time')[:30]    
