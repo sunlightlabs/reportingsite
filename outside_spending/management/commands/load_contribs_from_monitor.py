@@ -13,10 +13,13 @@ from django.db.models import Sum
 
 from outside_spending.models import *
 
+from outside_spending.utils.fec_logging import fec_logger
+
 from enter_f3x import enter_form
 
 # Give 'em 15 seconds to respond. 
 socket.setdefaulttimeout(15000)
+my_logger=fec_logger()
 
 
 def download_with_headers(url):
@@ -39,17 +42,17 @@ class Command(BaseCommand):
         for sp in all_superpacs:
             
             try:
-                current_filing = F3X_Summary.objects.get(fec_id=sp.fec_id, coverage_to_date='2012-03-31')
+                current_filing = F3X_Summary.objects.get(fec_id=sp.fec_id, coverage_to_date='2012-04-30')
                 print "Found Mar monthly filing from: %s" % (sp.name)
                 continue
                             
             except: 
-                print "Looking for filings from: %s" % (sp.name)
+                #print "Looking for filings from: %s" % (sp.name)
             
                 # look for filings in the unprocess_filings model
                 f = None
                 try:
-                    f = unprocessed_filing.objects.get(form_type='F3XN', fec_id=sp.fec_id, coverage_to_date='2012-03-31')
+                    f = unprocessed_filing.objects.get(form_type='F3XN', fec_id=sp.fec_id, coverage_to_date='2012-04-30')
                 except:
                     continue
                 
@@ -58,6 +61,7 @@ class Command(BaseCommand):
                 
                 dl_url = 'http://query.nictusa.com/dcdev/posted/%s.fec' % (f.filing_number)
                 print "\t===+Processing filing: %s, dl_url: %s" % (f.filing_number, dl_url)
+                my_logger.info('LOAD_CONTRIBS_FROM_MONITOR - loading file %s' % f.filing_number)
                 this_page = download_with_headers(dl_url)
                 time.sleep(3)
                 enter_form(this_page, f.filing_number)
