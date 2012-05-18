@@ -52,7 +52,7 @@ class Command(BaseCommand):
                 # look for filings in the unprocess_filings model
                 f = None
                 try:
-                    f = unprocessed_filing.objects.get(form_type='F3XN', fec_id=sp.fec_id, coverage_to_date='2012-04-30')
+                    f = unprocessed_filing.objects.get(form_type='F3XN', fec_id=sp.fec_id, coverage_to_date__in=['2012-04-30', '2012-05-02', '2012-05-09'])
                 except:
                     continue
                 
