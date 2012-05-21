@@ -128,28 +128,28 @@ def expenditure_csv_race(request, office, state, district):
 def contribs_csv(request, committee_id):                            
     committee = get_object_or_404(Committee_Overlay, fec_id=committee_id)
     contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False)
-    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Transaction ID', 'Filing Number']
+    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC','Transaction ID', 'Filing Number']
     rows = []
     file_name = committee.slug + "_donors.csv"
 
     for c in contributions:
-        rows.append([c.contrib_source(), committee.name, committee_id, c.contrib_org, c.contrib_last, c.contrib_first, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
+        rows.append([c.contrib_source(), committee.name, committee_id, c.contrib_org, c.contrib_last, c.contrib_first, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.contrib_agg, c.transaction_id, c.filing_number])
     return generic_csv(file_name, fields, rows)
 
 def state_contribs_csv(request, state):                            
     contributions = Contribution.objects.filter(contrib_state=state.upper(), superceded_by_amendment=False)
-    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Transaction ID', 'Filing Number']
+    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC', 'Transaction ID', 'Filing Number']
     rows = []
     file_name = state + "_donors.csv"
 
     for c in contributions:
-        rows.append([ c.contrib_source(), c.committee.name, c.fec_committeeid, c.contrib_org.replace('"',''), c.contrib_last.replace('"',''), c.contrib_first.replace('"',''), c.contrib_city.replace('"',''), c.contrib_state.replace('"',''), c.contrib_occupation.replace('"',''), c.contrib_employer.replace('"',''), c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
+        rows.append([ c.contrib_source(), c.committee.name, c.fec_committeeid, c.contrib_org.replace('"',''), c.contrib_last.replace('"',''), c.contrib_first.replace('"',''), c.contrib_city.replace('"',''), c.contrib_state.replace('"',''), c.contrib_occupation.replace('"',''), c.contrib_employer.replace('"',''), c.contrib_amt, c.contrib_date, c.contrib_agg, c.transaction_id, c.filing_number])
     return generic_csv(file_name, fields, rows)        
 
 
 def all_contribs_csv(request):                            
     contributions = Contribution.objects.filter(superceded_by_amendment=False)
-    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Transaction ID', 'Filing Number']
+    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC', 'Transaction ID', 'Filing Number']
     rows = []
     file_name = "all_donors.csv"
 
@@ -158,7 +158,7 @@ def all_contribs_csv(request):
         if (c.committee):
             name = c.committee.name
 
-        rows.append([ c.contrib_source(), name, c.fec_committeeid, c.contrib_org.replace('"',''), c.contrib_last.replace('"',''), c.contrib_first.replace('"',''), c.contrib_city.replace('"',''), c.contrib_state.replace('"',''), c.contrib_occupation.replace('"',''), c.contrib_employer.replace('"',''), c.contrib_amt, c.contrib_date, c.transaction_id, c.filing_number])
+        rows.append([ c.contrib_source(), name, c.fec_committeeid, c.contrib_org.replace('"',''), c.contrib_last.replace('"',''), c.contrib_first.replace('"',''), c.contrib_city.replace('"',''), c.contrib_state.replace('"',''), c.contrib_occupation.replace('"',''), c.contrib_employer.replace('"',''), c.contrib_amt, c.contrib_date, c.contrib_agg, c.transaction_id, c.filing_number])
     return generic_csv(file_name, fields, rows)
     
     
