@@ -1,5 +1,6 @@
 from outside_spending.models import *
 
+from django.core.management.base import BaseCommand, CommandError
 from find_candidate import candidate_lookup
 from outside_spending.management.commands.overlay_utils import *
 cycle = 2012
