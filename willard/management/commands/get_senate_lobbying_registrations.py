@@ -117,8 +117,13 @@ def save_filing(data):
                     slug=slug,
                     id=data['registrant']['RegistrantID'],
                     name=data['registrant']['RegistrantName'])
-
-    this_client_status = smart_unicode(data['client']['ClientStatus'])    
+                    
+    this_client_status = None
+    try:
+        int(data['client']['ClientStatus'])
+    except:
+        print "Bad client status: %s" % (data['client']['ClientStatus'])
+        pass
     client, created = Client.objects.get_or_create(
             slug=slugify(data['client']['ClientName'])[:50],
             defaults=dict(
