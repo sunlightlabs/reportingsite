@@ -52,9 +52,18 @@ def smart_unicode(s):
             return (enc)
         except UnicodeDecodeError:
             pass
-
     raise UnicodeDecodeError
-        
+
+# if it's just a mess, kill the bad characters        
+def kill_ascii_unprintable(s):
+    a = s.decode(smart_unicode(s))
+    ascii_cleaned = ''
+    for i in a:
+        if ord(i)<128:
+            ascii_cleaned += i
+    return ascii_cleaned
+             
+    
 def parse_xml(xml):
     # Because the XML file may have errors that would
     # prevent it from being parsed by lxml, we split up
@@ -118,18 +127,13 @@ def save_filing(data):
                     id=data['registrant']['RegistrantID'],
                     name=data['registrant']['RegistrantName'])
                     
-    this_client_status = -999
-    try:
-        int(data['client']['ClientStatus'])
-    except:
-        print "Bad client status: %s" % (data['client']['ClientStatus'])
-        pass
+
     client, created = Client.objects.get_or_create(
             slug=slugify(data['client']['ClientName'])[:50],
             defaults=dict(
-                name=data['client']['ClientName'],
-                client_id=data['client']['ClientID'],
-                status=this_client_status)
+                name=kill_ascii_unprintable(data['client']['ClientName']),
+                client_id=kill_ascii_unprintable(data['client']['ClientID']),
+                status=int(data['client']['ClientStatus']))
             )
 
     registration, created = Registration.all_objects.get_or_create(
