@@ -118,12 +118,13 @@ def save_filing(data):
                     id=data['registrant']['RegistrantID'],
                     name=data['registrant']['RegistrantName'])
 
+    this_client_status = smart_unicode(data['client']['ClientStatus'])    
     client, created = Client.objects.get_or_create(
             slug=slugify(data['client']['ClientName'])[:50],
             defaults=dict(
                 name=data['client']['ClientName'],
                 client_id=data['client']['ClientID'],
-                status=int(data['client']['ClientStatus']))
+                status=int(this_client_status)
             )
 
     registration, created = Registration.all_objects.get_or_create(
