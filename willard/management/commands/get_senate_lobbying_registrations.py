@@ -118,7 +118,7 @@ def save_filing(data):
                     id=data['registrant']['RegistrantID'],
                     name=data['registrant']['RegistrantName'])
                     
-    this_client_status = None
+    this_client_status = -999
     try:
         int(data['client']['ClientStatus'])
     except:
