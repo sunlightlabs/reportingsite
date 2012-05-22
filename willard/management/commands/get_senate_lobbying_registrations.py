@@ -124,7 +124,7 @@ def save_filing(data):
             defaults=dict(
                 name=data['client']['ClientName'],
                 client_id=data['client']['ClientID'],
-                status=int(this_client_status)
+                status=int(this_client_status))
             )
 
     registration, created = Registration.all_objects.get_or_create(
