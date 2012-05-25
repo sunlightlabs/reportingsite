@@ -28,8 +28,8 @@
         <tr>
             <th class="sort">State</th>
             <th class="sort">Total Independent Expenditures</th>            
-            <th class="sort">Presidential Independent Expenditures</th>
-            <th class="sort">Recent Presidential Independent Expenditures*</th>          
+            <th class="sort">Senate Independent Expenditures</th>
+            <th class="sort">House Independent Expenditures*</th>          
             <th class="sort">Electioneering Communications</th> 
         </tr>
     </thead>
@@ -38,7 +38,7 @@
     <tr class="{% cycle 'odd' 'even' %}">
         <td><a href="{{ state.get_absolute_url}}">{{ state }}</a></td>
         <td>{% if state.total_ind_exp %}${{ state.total_ind_exp|intcomma }}{% else %}$0{% endif %}</td>
-        <td>{% if state.total_pres_ind_exp %}${{ state.total_pres_ind_exp|intcomma }}{% else %}$0{% endif %}</td>
+        <td>{% if state.total_senate_ind_exp %}${{ state.total_senate_ind_exp|intcomma }}{% else %}$0{% endif %}</td>
         <td>{% if state.recent_pres_exp %}${{ state.recent_pres_exp|intcomma }}{% else %}$0{% endif %}</td>               
         <td>{% if state.total_ec %}${{ state.total_ec|intcomma }}{% else %}$0{% endif %}</td> 
     </tr>
