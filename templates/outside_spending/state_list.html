@@ -39,7 +39,7 @@
         <td><a href="{{ state.get_absolute_url}}">{{ state }}</a></td>
         <td>{% if state.total_ind_exp %}${{ state.total_ind_exp|intcomma }}{% else %}$0{% endif %}</td>
         <td>{% if state.total_senate_ind_exp %}${{ state.total_senate_ind_exp|intcomma }}{% else %}$0{% endif %}</td>
-        <td>{% if state.recent_pres_exp %}${{ state.recent_pres_exp|intcomma }}{% else %}$0{% endif %}</td>               
+        <td>{% if state.total_house_ind_exp %}${{ state.total_house_ind_exp|intcomma }}{% else %}$0{% endif %}</td>               
         <td>{% if state.total_ec %}${{ state.total_ec|intcomma }}{% else %}$0{% endif %}</td> 
     </tr>
     {% endfor %}
