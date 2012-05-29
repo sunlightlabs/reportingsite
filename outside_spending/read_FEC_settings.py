@@ -1,5 +1,5 @@
 
-BASE_DIR = '/Users/jfenton/reporting/reportingsitenew/reportingsite/outside_spending'
+BASE_DIR = '/projects/reporting/src/reportingsite/outside_spending'
 
 # where can we save local files?
 FILECACHE_DIRECTORY = BASE_DIR + '/data/fec_filings'
