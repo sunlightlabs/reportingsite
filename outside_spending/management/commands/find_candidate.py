@@ -1,3 +1,5 @@
+# ignore adan ballasteros -- shouldn't be filed with fec http://www.adanballesteros.com/
+
 candidate_lookup={
     "RON, PAUL":"P80000748",
     "PAUL, RON":"P80000748",
@@ -52,5 +54,11 @@ candidate_lookup={
     "KELLY, JESSE": "H0AZ08015",
     "WARREN, ELIZABETH":"S2MA00170",
     "KANG, SUKHEE":"H2CA48087",
-    "COOK, PAUL": "H2CA08164"
+    "COOK, PAUL": "H2CA08164",
+    "CHRIS, WINN":"H2TX19064",
+    "TAJ, CLAYTON":"H2TX30087",
+    "BILBRAY, BRIAN":"H4CA49032",
+    "BONO MACK, MARY":"H8CA44034",
+    "DENHAM, JEFF":"H0CA19173",
+    "LUNGREN, DAN":"H6CA34112"
 }
