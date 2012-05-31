@@ -1,4 +1,5 @@
 {% extends "doddfrank/doddfrank_base.html" %}
+{% load doddfrank %}
 
 {% block body %}{{ block.super }} federalReserve{% endblock %}
 
@@ -7,39 +8,41 @@
 <h2>Federal Reserve</h2>
 <p class="tip">The Federal Reserve's main responsibilities are conducting the nation's monetary policy by influencing money and credit conditions; supervising and regulating banks and other financial institutions; maintaining the stability of the financial system and containing systemic risk; and providing financial services to the government and financial institutions. (<a href="http://www.federalreserve.gov/faqs/about_12594.htm">source</a>)</p>
 
-<h3>{{ meeting.meeting_time|date:"F j, Y" }}</h3>
-<p><strong>Type</strong>: {{ meeting.type|title }}</p>
-{% if meeting.title %}
-    <p>{{ meeting.title }}</p>
-{% endif %}
+<h3>{{ meeting.date|date:"F j, Y" }}</h3>
+<p><strong>Type</strong>: {{ meeting.communication_type }}</p>
+<p><strong>Topic</strong>: {% firstof meeting.topic meeting.subcategory meeting.category %}
 
-{% if meeting.summary %}
+{% if meeting.description %}
 <h4 style="float: left;">Summary</h4>
-<p style="float: right; width: 65%">{{ meeting.summary }}</p>
+<p style="float: right; width: 65%">{{ meeting.description }}</p>
 {% endif %}
 
+<div class="clear"></div>
+<hr/>
+<h3>Participants</h3>
+{% if not organizations and not attendees %}
+<p>We could not find the list of persons attending this meeting nor a list of organizations represented. The Federal Reserve publishes these lists in many slightly different formats that make it impossible to reliably extract the list of participants. Please review the source material for a list of attendees.</p>
+<div class="clear"></div>
+{% endif %}
 
-{% if meeting.participants %}
-<!--<h3>Participants</h3>//-->
-{% for participant_group in meeting.participants %}
-            <div class="clear"></div>
-            <hr/>
-<h4 style="float: left;">{{ participant_group.organization }}</h4>
-<ul style="float: right; width: 65%">
-    {% for participant in participant_group.names %}
-    <li>{{ participant }}</li>
-    {% endfor %}
-</ul>
+{% for org in organizations %}
+    <div class="clear"></div>
+    <h4 style="float: left;"><a href="{% url doddfrank_organization_detail organization_slug=org.slug %}">{{ org }}</a></h4>
+    <ul style="float: right; width: 65%">
+        {% for attendee in attendees %}
+            {% if attendee.org == org %}
+            <li>{{ attendee.name }}</li>
+            {% endif %}
+        {% endfor %}
+    </ul>
 {% endfor %}
-{% endif %}
+<div class="clear"></div>
+<hr/>
 
-            <div class="clear"></div>
-            <hr/>
-
-{% if meeting.url %}
+{% if meeting.source_url %}
 <h4 style="float: left;">Documents</h4>
 <ul style="float: right; width: 65%">
-    <li><a href="{{ meeting.url }}">{{ meeting.type }} information</a></li>
+    <li><a href="{{ meeting.source_url }}">{{ meeting.communication_type }} information</a></li>
 </ul>
 {% endif %}
 
