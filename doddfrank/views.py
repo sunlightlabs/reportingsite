@@ -12,22 +12,9 @@ from django.template.defaultfilters import slugify
 from django.views.decorators.cache import cache_page
 from django.db.models import Q
 from django.db.models import Count
-from pymongo import Connection
-from pymongo.objectid import ObjectId
 
 from doddfrank.models import Agency, Meeting, Attendee, Organization
 
-def _cache_prefix():
-    use_mongo = getattr(settings, 'USE_MONGO', True)
-    if use_mongo:
-        c = Connection()
-        coll = c.test.cache_prefixes
-        m = coll.find_one({'key': 'doddfrank'})
-        if not m:
-            return ''
-        return m['prefix']
-    else:
-        return ''
 
 
 def index(request):
