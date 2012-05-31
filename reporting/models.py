@@ -11,7 +11,7 @@ from django.template.loader import render_to_string
 from tagging.fields import TagField
 import tagging
 
-from reportingsite.reporting.comments import BlogdorModerator
+from reporting.comments import BlogdorModerator
 
 COMMENT_FILTERS = getattr(settings, "BLOGDOR_COMMENT_FILTERS", [])
 WP_PERMALINKS = getattr(settings, "BLOGDOR_WP_PERMALINKS", False)
