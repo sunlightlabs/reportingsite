@@ -11,33 +11,33 @@ from django.db.models import Sum, Min
 from django.db.models import Q
 from django.contrib.localflavor.us.us_states import STATE_CHOICES
 from django.contrib.humanize.templatetags.humanize import intcomma
-from outside_spending.models import Scrape_Time
-
-STATE_CHOICES = dict(STATE_CHOICES)
-most_recent_scrape=Scrape_Time.objects.all().order_by('-run_time')[0]
 
 from outside_spending.models import *
 from outside_spending.utils.json_helpers import render_to_json
 from outside_spending.utils.chart_helpers import summarize_monthly
 
 from settings import CSV_EXPORT_DIR
+
 CACHE_TIME = 60 * 15
+STATE_CHOICES = dict(STATE_CHOICES)
 
-
-data_disclaimer = """ These files are preliminary and current through %s but we cannot guarantee their accuracy. For more information, see: http://reporting.sunlightfoundation.com/super-pac/data/about/2012-june-update/ Please note that contributions in these files are as of the most recent filing deadline. Independent expenditures are not comparable to the itemized disbursements found in PAC's year-end reports. For more on independent expenditures see here: http://www.fec.gov/pages/brochures/indexp.shtml """ % (most_recent_scrape.run_time)
-
-hybrid_superpac_disclaimer ="\"Hybrid\" super PACs--committees that have separate accounts for \"hard\" and \"soft\" money, are not included. For a list of these committees, see <a href=\"http://www.fec.gov/press/press2011/2012PoliticalCommitteeswithNon-ContributionAccounts.shtml\">here</a>."
-
-electioneering_details="""<a target="_new" href="http://www.fec.gov/pages/brochures/electioneering.shtml">Electioneering communications</a>  are broadcast communications not otherwise
-reported as independent expenditures. Electioneering communication
-reports do not state whether the communication was in support of or in
-opposition to the candidate, and they sometimes refer to multiple
-candidates. """
-
+try:
+    most_recent_scrape=Scrape_Time.objects.all().order_by('-run_time')[0]
+    data_disclaimer = """ These files are preliminary and current through %s but we cannot guarantee their accuracy. For more information, see: http://reporting.sunlightfoundation.com/super-pac/data/about/2012-june-update/ Please note that contributions in these files are as of the most recent filing deadline. Independent expenditures are not comparable to the itemized disbursements found in PAC's year-end reports. For more on independent expenditures see here: http://www.fec.gov/pages/brochures/indexp.shtml """ % (most_recent_scrape.run_time)
+    hybrid_superpac_disclaimer ="\"Hybrid\" super PACs--committees that have separate accounts for \"hard\" and \"soft\" money, are not included. For a list of these committees, see <a href=\"http://www.fec.gov/press/press2011/2012PoliticalCommitteeswithNon-ContributionAccounts.shtml\">here</a>."
+    electioneering_details="""<a target="_new" href="http://www.fec.gov/pages/brochures/electioneering.shtml">Electioneering communications</a>  are broadcast communications not otherwise
+    reported as independent expenditures. Electioneering communication
+    reports do not state whether the communication was in support of or in
+    opposition to the candidate, and they sometimes refer to multiple
+    candidates."""
+except IndexError:
+    most_recent_scrape = None
 
 expenditure_file_description = """ This file contains all schedule E transactions reported electronically. Filers are generally required to report these transactions twice: within 24-hours, and then again in a monthly/quarterly report. The numbers reported on 24-hour reports are only used when monthly reports covering that time period are not available."""
 
 contribution_file_description = """ This file contains a wider range of receipt types than those listed on the web pages. Specifically, contributions (11AI, 11B, and 11C) ; Transfers through affiliates (SA12), Loan repayments received (SA14); Offsets to operating expenses (SA15); Refunds of contributions made to Federal Candidates and Other Political Committees and (SA17) other Federal Receipts."""
+
+
 
 organizational_file_description = """ This file contains contributions (11AI, 11B, and 11C) and offsets to operating expenses (SA15)."""
 
