@@ -14,16 +14,12 @@
 <ul>
 {% for meeting in meetings %}
     <li>
-    <h4>Agency: {{ meeting.agency }} - {{ meeting.meeting_time|date:"F j, Y" }}</h4>
-    {% if meeting.description %}
-        {% if meeting.agency == 'Treasury' %}
-        {{ meeting.description|join:", " }}
-        {% else %}
-        {{ meeting.description }}
-        {% endif %}
+    <h4>Agency: {{ meeting.agency }} - {{ meeting.date }}</h4>
+    {% if meeting.topic %}
+        {% firstof meeting.topic meeting.subcategory meeting.topic %}
         <br/>
     {% endif %}
-        <a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency|slugify id=meeting|get_id %}">
+        <a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.pk %}">
             View Details
         </a>
             <div class="clear"></div>

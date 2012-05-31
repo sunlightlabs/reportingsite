@@ -21,27 +21,25 @@ urlpatterns = patterns('',
                            {},
                            name='doddfrank_organization_list'),
 
+                       url(r'^organization/frequency\/?$',
+                           organization_frequency_table,
+                           {},
+                           name='doddfrank_organization_frequency'),
+
                        url(r'^organization\/list_of_orgs\/?$',
                            organization_cleanup_csv,
                            {},
                            name='doddfrank_organization_cleanup_csv'),
 
+                       url(r'^organization\/(?P<organization_id>[\d]+)\/?$',
+                           organization_detail,
+                           {},
+                           name='doddfrank_organization_detail_unamb'),
+
                        url(r'^organization\/(?P<organization_slug>[-\w]+)\/?$',
                            organization_detail,
                            {},
                            name='doddfrank_organization_detail'),
-
-                       url(r'^agency/federal-reserve/?$',
-                           'django.views.generic.simple.direct_to_template',
-                           {'template': 'doddfrank/federal_reserve_takedown_notice.html'}),
-
-                       url(r'^agency/sec/?$',
-                           'django.views.generic.simple.direct_to_template',
-                           {'template': 'doddfrank/sec_takedown_notice.html'}),
-
-                       url(r'^agency/treasury/?$',
-                           'django.views.generic.simple.direct_to_template',
-                           {'template': 'doddfrank/treasury_takedown_notice.html'}),
 
                        url(r'^agency\/(?P<agency_slug>[-\w]+)\/?$',
                            agency_detail,

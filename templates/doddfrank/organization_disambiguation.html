@@ -1,0 +1,20 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% load partition %}
+
+{% block body %}{{ block.super }} organizations{% endblock %}
+
+{% block content %}
+
+<h3>There are multiple organizations with a very similar name:</h3>
+<table>
+{% for organization in organizations %}
+    <tr>
+        <td><a href="{% url doddfrank_organization_detail_unamb organization_id=organization.pk %}">{{ organization }}</a> </td>
+    </tr>
+{% endfor %}
+</table>
+
+{% endblock content %}
+
+

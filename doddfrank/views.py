@@ -1,6 +1,6 @@
 from collections import defaultdict
 from itertools import groupby
-from operator import itemgetter
+from operator import attrgetter
 import datetime
 import re
 
@@ -10,8 +10,12 @@ from django.shortcuts import render_to_response
 from django.template import RequestContext
 from django.template.defaultfilters import slugify
 from django.views.decorators.cache import cache_page
+from django.db.models import Q
+from django.db.models import Count
 from pymongo import Connection
 from pymongo.objectid import ObjectId
+
+from doddfrank.models import Agency, Meeting, Attendee, Organization
 
 def _cache_prefix():
     use_mongo = getattr(settings, 'USE_MONGO', True)
@@ -25,121 +29,70 @@ def _cache_prefix():
     else:
         return ''
 
-def _collection():
-    c = Connection()
-    db = c.test
-    return db.meetings
 
-def _list_agencies():
-    return _collection().distinct(key='agency')
-
-def _list_organizations():
-    return [x for x in sorted(list(set(sum(_collection().distinct(key='organizations'), [])))) if x and x.strip()]
-
-@cache_page(60*5, key_prefix=_cache_prefix())
 def index(request):
-    collection = _collection()
+    latest_meetings = Meeting.objects.order_by('-date')[:20]
     
-    agencies = _list_agencies()
-    latest_meetings = collection.find(sort=[('meeting_time', -1),])
+    agencies = Agency.objects.all()
 
-    return render_to_response('doddfrank/index.html',
-                              {'agencies': agencies,
-                               'meetings': latest_meetings, }
-                              )
-
-def _organization_search(regex):
-    matches = _collection().find({'organizations': {'$regex': regex, '$options': 'i'}}, fields=['organizations', ])
-    organizations = [x for x in set(sum([x['organizations'] for x in matches], [])) if re.match(regex, x, re.I)]
-    return organizations
-
-def _visitor_search(regex):
-    matches = _collection().find({'visitors.name': {'$regex': regex, '$options': 'i'}}, fields=['visitors.name', 'visitors.org', ])
-    visitors = [x for x in set(sum([[(x['name'], x['org']) for x in m['visitors']] for m in matches], [])) if re.match(regex, x[0], re.I)]
-    return visitors
-
-def _staff_search(regex):
-    cftc = _collection().find({'cftc_staff': {'$regex': regex, '$options': 'i'}}, fields=['cftc_staff', ])
-    fdic = _collection().find({'agency': 'FDIC', 'staff': {'$regex': regex, '$options': 'i'}}, fields=['staff', ])
-
-def search(request):
-    q = request.GET.get('q')
-
-    regex = '.*%s.*' % q
-
-    re_query = {'$regex': regex, '$options': 'i'}
-    fields = ['visitors.name', 
-              'organizations', 
-              'description', 
-              'summary', 
-              'staff', 
-              'cftc_staff', 
-              'treasury_officials',
-              'participants.names', ]
-    meeting_ids = []
-    for field in fields:
-        meeting_ids += _collection().find({field: re_query}).distinct(key='_id')
-
-    meetings = _collection().find({'_id': {'$in': meeting_ids, }, }).sort([('meeting_time', -1)])
-
-    return render_to_response('doddfrank/search.html',
-                             {'meetings': meetings,
-                              'q': q,
-                             }
-                             )
+    scope = {
+        'agencies': agencies,
+        'meetings': latest_meetings
+    }
+    return render_to_response('doddfrank/index.html', scope)
 
 
-def _agency_lookup(agency_slug):
-    """Look up an agency's full name based on its slug.
-    """
-    agencies = _list_agencies()
-    return dict([(slugify(agency), agency) for agency in agencies]).get(agency_slug)
-
-
-def _organization_lookup(organization_slug):
-    """Look up an organization's full name based on its slug.
-    """
-    organizations = _list_organizations()
-    return dict([(slugify(organization), organization) for organization in organizations]).get(organization_slug)
-
-
-@cache_page(60*5, key_prefix=_cache_prefix())
 def agency_detail(request, agency_slug):
-    collection = _collection()
-    agency = _agency_lookup(agency_slug)
-    if not agency:
+    try:
+        agency = Agency.objects.get(slug=agency_slug)
+    except Agency.DoesNotExist:
         raise Http404
 
-    meetings = collection.find({'agency': agency, }, sort=[('meeting_time', -1), ])
+    meetings = Meeting.objects.filter(agency=agency).order_by('-date')
 
     template = 'doddfrank/%s_detail.html' % agency_slug
+    scope = {
+        'agency': agency,
+        'meetings': meetings
+    }
+    return render_to_response(template, scope)
 
-    return render_to_response(template,
-                              {'agency': agency,
-                               'meetings': meetings, }
-                              )
 
-@cache_page(60*5, key_prefix=_cache_prefix())
-def organization_detail(request, organization_slug):
-    collection = _collection()
-    organization = _organization_lookup(organization_slug)
-    if not organization:
+def organization_disambiguation(request, organization_slug):
+    organizations = Organization.objects.filter(slug=organization_slug)
+    scope = {
+        'organizations': organizations
+    }
+    return render_to_response('doddfrank/organization_disambiguation.html', scope)
+
+
+def organization_detail(request, organization_slug=None, organization_id=None):
+    try:
+        if organization_slug:
+            organization = Organization.objects.get(slug=organization_slug)
+        elif organization_id is not None:
+            organization = Organization.objects.get(pk=organization_id)
+    except Organization.DoesNotExist:
         raise Http404
+    except Organization.MultipleObjectsReturned:
+        return organization_disambiguation(request, organization_slug)
 
-    meetings = collection.find({'organizations': organization, }, sort=[('meeting_time', -1), ])
-    return render_to_response('doddfrank/organization_detail.html',
-                              {'organization': organization,
-                               'meetings': meetings, }
-                              )
+    scope = {
+        'meetings': organization.meetings.order_by('date'),
+        'organization': organization
+    }
+    return render_to_response('doddfrank/organization_detail.html', scope)
 
-@cache_page(60*5, key_prefix=_cache_prefix())
+
 def organization_list(request):
-    organizations = _list_organizations()
+    organizations = Organization.objects.order_by('name')
 
-    def grouper(x):
-        if not re.search(r'^[A-Za-z]', x):
+    def grouper(org):
+        first_letter = org.name[0].upper() if org.name else ''
+        if first_letter.isalpha():
+            return first_letter
+        else:
             return '0-9'
-        return x[0].upper()
 
     grouped = groupby(organizations, grouper)
     grouped = [(grouper, list(organizations)) for grouper, organizations in grouped]
@@ -147,35 +100,77 @@ def organization_list(request):
     return render_to_response('doddfrank/organization_list.html',
                               {'organizations': organizations, 
                                'grouped': grouped,
-                              }
-                             )
+                              })
 
 
-@cache_page(60*5, key_prefix=_cache_prefix())
+def organization_frequency_table(request, agency=None):
+    organizations = Organization.objects
+    if agency:
+        organizations = organizations.filter(agency=agency)
+
+    organizations = organizations.annotate(num_meetings=Count('meetings')).order_by('-num_meetings')[:30]
+    organizations = [org
+                     for org in organizations 
+                     if org.name not in [agency.name 
+                                         for agency in Agency.objects.all()]]
+    scope = {
+        'agency': agency,
+        'organizations': organizations
+    }
+    return render_to_response('doddfrank/organization_freq.html', scope)
+
+
+def solidify_grouping(grouping):
+    return dict(((k, list(vs))
+                 for (k, vs) in grouping))
+
+
 def meeting_detail(request, agency_slug, id):
-    agency = _agency_lookup(agency_slug)
-    if not agency:
+    try:
+        agency = Agency.objects.get(slug=agency_slug)
+    except Agency.DoesNotExist:
         raise Http404
 
-    meeting = _collection().find_one({'_id': ObjectId(id), 'agency': agency, })
-    if not meeting:
+    try:
+        meeting = Meeting.objects.get(agency=agency, pk=id)
+    except Meeting.DoesNotExist:
         raise Http404
+
+    organizations = meeting.organizations.all()
+    attendees = meeting.attendees.order_by('org', 'name')
+    attendee_groups = groupby(attendees, attrgetter('org'))
 
     template = 'doddfrank/%s_meeting_detail.html' % agency_slug
+    scope = {
+        'agency': agency,
+        'meeting': meeting,
+        'attendees': attendees,
+        'attendee_groups': solidify_grouping(attendee_groups),
+        'organizations': organizations,
+    }
+    return render_to_response(template, scope)
 
-    return render_to_response(template,
-                              {'agency': agency,
-                               'meeting': meeting, }
-                             )
 
+def search(request):
+    pass
 
 def meetings_widget(request):
     cutoff = datetime.datetime.now() - datetime.timedelta(60)
-    meetings = _collection().find({'meeting_time': {'$gt': cutoff}}, fields=['meeting_time', 'agency', 'organizations',]).sort([('meeting_time', -1),])
-    meetings_by_date = sorted([{'date': grouper, 'meetings': list(meetings)} for grouper, meetings in groupby(meetings, lambda x: x['meeting_time'].date())], key=itemgetter('date'), reverse=True)
+    meetings = Meeting.objects.filter(date__gt=cutoff).order_by('-date')
+
+    meetings_by_date = [{'date': d, 
+                         'meetings': [{'id': m.id,
+                                       'topic': m.topic,
+                                       'category': m.category,
+                                       'subcategory': m.subcategory,
+                                       'agency': m.agency,
+                                       'attendees': m.attendees.all(),
+                                       'organizations': m.organizations.filter(~Q(name=m.agency.name))}
+                                      for m in ms]}
+                        for (d, ms) in groupby(meetings, attrgetter('date'))]
+
     return render_to_response('doddfrank/widget.html',
-                              {'meetings_by_date': meetings_by_date,
-                              },
+                              {'meetings_by_date': meetings_by_date},
                               context_instance=RequestContext(request))
 
 
