@@ -43,7 +43,7 @@ def process_committee_page(pagehtml, committee_id):
 
             #print "-->F3X filed on %s %s for %s-%s\nhttp://query.nictusa.com/cgi-bin/dcdev/forms/%s/%s/" % (file_date, report_type, period_start, period_end, committee_id, file_id)
             dl_url = 'http://query.nictusa.com/dcdev/posted/%s.fec' % (file_id)
-            if dateparse(period_end)==dateparse('05/09/2012'):
+            if dateparse(period_end)==dateparse('05/16/2012'):
 
                 print "\t===+Processing filing: %s, dl_url: %s" % (file_id, dl_url)
                 this_page = download_with_headers(dl_url)
@@ -63,7 +63,7 @@ class Command(BaseCommand):
         #all_superpacs = IEOnlyCommittee.objects.all().filter(total_presidential_indy_expenditures__gte=100)
         #all_superpacs = IEOnlyCommittee.objects.all()
         #all_superpacs = Committee_Overlay.objects.filter(filing_frequency__iexact='Q', is_superpac=True)
-        all_superpacs = Committee_Overlay.objects.filter(fec_id__in=(['C00510941', 'C00510727', 'C00518779', 'C00488759']))
+        all_superpacs = Committee_Overlay.objects.filter(fec_id__in=(['C00509075', 'C00515379', 'C00492595', 'C00513036', 'C00507228', 'C00495028']))
         for sp in all_superpacs:
             
             """
