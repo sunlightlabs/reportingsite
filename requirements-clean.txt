@@ -16,5 +16,7 @@ lxml==2.2.6
 django-gatekeeper==0.3.0
 pymongo
 markdown
+progressbar
+requests
 
 django-tastypie
