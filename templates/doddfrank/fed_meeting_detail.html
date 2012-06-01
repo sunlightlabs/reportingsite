@@ -8,7 +8,7 @@
 <h2>Federal Reserve</h2>
 <p class="tip">The Federal Reserve's main responsibilities are conducting the nation's monetary policy by influencing money and credit conditions; supervising and regulating banks and other financial institutions; maintaining the stability of the financial system and containing systemic risk; and providing financial services to the government and financial institutions. (<a href="http://www.federalreserve.gov/faqs/about_12594.htm">source</a>)</p>
 
-<h3>{{ meeting.date|date:"F j, Y" }}</h3>
+<h3>{{ meeting.date }}</h3>
 <p><strong>Type</strong>: {{ meeting.communication_type }}</p>
 <p><strong>Topic</strong>: {% firstof meeting.topic meeting.subcategory meeting.category %}
 
@@ -19,23 +19,33 @@
 
 <div class="clear"></div>
 <hr/>
-<h3>Participants</h3>
+<h4>Participants</h4>
 {% if not organizations and not attendees %}
-<p>We could not find the list of persons attending this meeting nor a list of organizations represented. The Federal Reserve publishes these lists in many slightly different formats that make it impossible to reliably extract the list of participants. Please review the source material for a list of attendees.</p>
+<p class="clear">We could not find the list of persons attending this meeting nor a list of organizations represented. The Federal Reserve publishes these lists in many slightly different formats that make it impossible to reliably extract the list of participants. Please review the source material for a list of attendees.</p>
 <div class="clear"></div>
 {% endif %}
 
-{% for org in organizations %}
-    <div class="clear"></div>
-    <h4 style="float: left;"><a href="{% url doddfrank_organization_detail organization_slug=org.slug %}">{{ org }}</a></h4>
-    <ul style="float: right; width: 65%">
-        {% for attendee in attendees %}
-            {% if attendee.org == org %}
-            <li>{{ attendee.name }}</li>
-            {% endif %}
+
+{% if attendees %}
+    {% regroup attendees by org as org_attendees %}
+    {% for group in org_attendees %}
+        <div class="clear"></div>
+        <h4 style="float: left;"><a href="{% url doddfrank_organization_detail organization_slug=group.grouper.slug %}">{{ group.grouper.name }}</a></h4>
+        <ul style="float: right; width: 65%">
+            {% for attendee in group.list %}
+                <li>{{ attendee.name }}</li>
+            {% endfor %}
+        </ul>
         {% endfor %}
-    </ul>
-{% endfor %}
+{% endif %}
+
+{% if organizations %}
+    {% for org in organizations %}
+        <div class="clear"></div>
+        <h4 style="float: left;"><a href="{% url doddfrank_organization_detail organization_slug=org.slug %}">{{ org }}</a></h4>
+    {% endfor %}
+{% endif %}
+
 <div class="clear"></div>
 <hr/>
 
@@ -46,6 +56,6 @@
 </ul>
 {% endif %}
 
-{% include "doddfrank/federal-reserve_source.html" %}
+{% include "doddfrank/fed_source.html" %}
 
 {% endblock content %}

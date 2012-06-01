@@ -12,7 +12,8 @@
     <thead>
         <tr>
             <th>Date</th>
-            <th>Participants</th>
+            <th>Topics</th>
+            <th>Attendees</th>
             <th></th>
         </tr>
     </thead>
@@ -21,6 +22,13 @@
         <td style="width: 150px;">{{ meeting.date }}</td>
         <td>
             {{ meeting.topic }}
+        </td>
+        <td>
+            {% if meeting.organizations.count %}
+            {{ meeting.organizations.all|and_others }}
+            {% else %}
+            {{ meeting.attendees.all|and_others }}
+            {% endif %}
         </td>
         <td><a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.pk %}">Details</a></td>
     </tr>

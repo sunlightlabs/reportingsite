@@ -1,6 +1,5 @@
 
 from django.conf.urls.defaults import *
-from django.views.decorators.cache import cache_page
 
 from doddfrank.views import *
 
@@ -20,6 +19,21 @@ urlpatterns = patterns('',
                            organization_list,
                            {},
                            name='doddfrank_organization_list'),
+
+                       url(r'agency/(?P<agency_slug>[-\w]+)/topics/(?P<year>\d{4})/?$',
+                           agency_topic_xtab, 
+                           {},
+                           name='doddfrank_agency_topic_xtab'),
+
+                       url(r'agency/(?P<agency_slug>[-\w]+)/topics/?$',
+                           agency_topic_freq,
+                           {},
+                           name='doddfrank_agency_topics'),
+
+                       url(r'agency/frequency/?$',
+                           agency_meeting_freq_table,
+                           {},
+                           name='doddfrank_agency_frequency'),
 
                        url(r'^organization/frequency\/?$',
                            organization_frequency_table,

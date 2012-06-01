@@ -25,11 +25,16 @@
             <ul>
                 <li class="organizations"><a href="{% url doddfrank_organization_list  %}">Browse organizations</a></li>
                 <li style="border-right: none;">By agency:</li>
+				{% for agency in agencies %}
+				<li><a href="{% url doddfrank_agency_detail agency_slug=agency.slug %}">{{ agency.initials }}</a></li>
+				{% endfor %}
+				<!--
                 <li class="cftc"><a href="{% url doddfrank_agency_detail agency_slug='cftc' %}">CFTC</a></li>
                 <li class="fdic"><a href="{% url doddfrank_agency_detail agency_slug='fdic' %}">FDIC</a></li>
             <li class="federalReserve"><a href="{% url doddfrank_agency_detail agency_slug='federal-reserve' %}">Fed</a></li>
                 <li class="sec"><a href="{% url doddfrank_agency_detail agency_slug='sec' %}">SEC</a></li>
                 <li class="treasury"><a href="{% url doddfrank_agency_detail agency_slug='treasury' %}">Treasury</a></li>
+				-->
 
                 <form id="lobbyingSearch" action="{% url doddfrank_search %}" method="GET">
                     <input id="searchbox" {% if q %}value="{{ q }}"{% else %}value="Participant, official or topic"{% endif %} type="text" name="q" style="width: 200px;"/>
@@ -47,15 +52,19 @@
 
 </div>
 
-<script type="text/javascript">
-    $(document).ready(function () {
-        $("#searchbox").focus(function () {
-            if ($(this)[0].value === 'Participant, official or topic') {
-                $(this).val('');
-            }
-        });
-    });
-</script>
+{% block js %}
+    {{ block.super }}
+    <script type="text/javascript">
+        $(document).ready(function () {
+                $("#searchbox").focus(function () {
+                    if ($(this)[0].value === 'Participant, official or topic') {
+                    $(this).val('');
+                    }
+                    });
+                });
+    </script>
+{% endblock js %}
+
 
 {% endblock main_content %}
 

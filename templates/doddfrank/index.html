@@ -28,7 +28,7 @@
             <td>{{ meeting.date }}</td>
             <td>{{ meeting.agency }}</td>
             <td>{% firstof meeting.topic meeting.subcategory meeting.category %}</td>
-            <td><a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.initials|slugify id=meeting.pk %}">Details</a></td>
+            <td><a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.pk %}">Details</a></td>
         </tr>
         {% endfor %}
     </tbody>

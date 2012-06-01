@@ -35,7 +35,7 @@ def meeting_keyfunc(record, record_hash):
 
 
 def meeting_copyfunc(record, meeting):
-    meeting.communiation_type = 'Meeting'
+    meeting.communication_type = 'Meeting'
     meeting.date = dateutil.parser.parse(record['Date']).date()
     meeting.category = ''
     meeting.subcategory = ''
@@ -85,11 +85,10 @@ def main():
 
         (attendee, created) = Attendee.objects.get_or_create(name=a['Attendee'],
                                                              org=organization)
-        if created:
-            meeting.attendees.add(attendee)
-            if organization:
-                meeting.organizations.add(organization)
-            attendee.save()
+        meeting.attendees.add(attendee)
+        if organization:
+            meeting.organizations.add(organization)
+        attendee.save()
 
     meeting_objects = Meeting.objects.filter(agency=treasury)
     reconcile_database(meeting_objects, meetings)

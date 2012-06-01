@@ -66,3 +66,17 @@ def and_others(parties, n=3):
         return ', '.join([str(p) for p in parties])
 
 
+@register.filter
+def getitem(d, key):
+    return d[key]
+
+@register.filter
+def dictdig(d, keys):
+    e = d
+    for key in keys:
+        try:
+            e = e.get[key]
+        except KeyError:
+            return None
+    return e
+

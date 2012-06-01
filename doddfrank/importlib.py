@@ -8,7 +8,7 @@ import dateutil.parser
 
 from django.db.models import Count
 
-from doddfrank.models import Agency, Meeting, Attendee
+from doddfrank.models import Agency, Meeting, Attendee, Organization
 
 
 def agency_or_die(initials):
@@ -105,6 +105,9 @@ def import_meetings(meetings, keyfunc, copyfunc):
     copyfunc is a function of a record and a Meeting object. It
     should copy fields from the record to the appropriate fields
     of the database object.
+
+    TODO: Add an argument that enables updating existing objects.
+          This is needed if the copyfunc function is changed.
     """
 
     progress = progressbar.ProgressBar()
@@ -116,6 +119,57 @@ def import_meetings(meetings, keyfunc, copyfunc):
             copyfunc(m, meeting)
             meeting.import_hash = m_hash
             meeting.save()
+
+
+def import_attendees(meetings, attendees, shared_keys,
+                     keyfunc, copyfunc,
+                     meeting_keyfunc, meeting_copyfunc,
+                     org_field):
+    """
+    This function mimics an inner join between the attendees records and the
+    metings records in order to create Attendee objectss and link them to the
+    the corresponding Meeting objects.
+
+    meetings and attendees are both lists of objects pulled from ScraperWiki
+
+    keyfunc is a function of an attendee record and the hash of that record.
+    It should return a dictionary suitable for selecting a unique
+    Attendee object.
+
+    copyfunc is a function of an attendee record and an Attendee object. 
+    It should copy fields from the attendee record to the appropriate fields
+    of the Attendee object.
+    """
+
+    meeting_index = index_dict_list(meetings, shared_keys)
+    get_shared_keys = DictSlicer(*shared_keys)
+    progress = progressbar.ProgressBar()
+    for a in progress(attendees):
+        a_hash = dict_hash(a)
+        m_index_key = dict_hash(get_shared_keys(a))
+        m = meeting_index[m_index_key]
+
+        m_hash = dict_hash(m)
+        m_keys = meeting_keyfunc(m, m_hash)
+        meeting = Meeting.objects.get(**m_keys)
+
+        org_name = a.get(org_field)
+        if org_name:
+            (org, created) = Organization.objects.get_or_create(name=org_name)
+            if created:
+                org.save()
+            meeting.organizations.add(org)
+        else:
+            org = None
+
+        a_keys = keyfunc(a, a_hash)
+        (attendee, created) = Attendee.objects.get_or_create(**a_keys)
+        if created:
+            copyfunc(a, attendee)
+            attendee.import_hash = a_hash
+            attendee.save()
+        meeting.attendees.add(attendee)
+        meeting.save()
 
 
 def prune_attendees():
