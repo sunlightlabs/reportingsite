@@ -60,5 +60,36 @@ candidate_lookup={
     "BILBRAY, BRIAN":"H4CA49032",
     "BONO MACK, MARY":"H8CA44034",
     "DENHAM, JEFF":"H0CA19173",
-    "LUNGREN, DAN":"H6CA34112"
+    "LUNGREN, DAN":"H6CA34112",
+    "HARRIS, ANDY":"H8MD01094",
+    "ANGLE, SHARRON":"H6NV02172", # she's running for the house this time round, but her senate committee is still around
+    "LEE, MIKE": "S0UT00165", 
+    "BRIDGEWATER, TIM":"S0UT00157",
+    "FIORINA, CARLY":"S0CA00330",
+    "HERGER, WALLY":"H6CA02010",
+#    "BRIGHT, BOBBY":
+    "BARLETTA, LOU":"H2PA11098",
+    "CHABOT, STEVE":"H8OH01043",
+    "GIBSON, CHRIS":"H0NY20095",
+    "PANTANO, ILARIO":"H0NC07108",
+    "HEINRICH, MARTIN":"S2NM00088", # he's running for both house and senate at the same time? 
+    "FEINSTEIN, DIANNE":"S0CA00199",
+#    "CARLOS, LUNA":
+#    "CANDIDATE, GENERAL":
+#    "HAWK, DAVID":
+    "CARDIN, BENJAMIN L":"S6MD03177",
+    "BALDWIN, TAMMY":"S2WI00219", # she's in the house? 
+    "LUGAR, DICK":"S4IN00014",
+    "KUCINICH, DENNIS":"H6OH23033",
+#    "UNKNOWN, UNKNOWN":
+    "REILLY, CHRIS":"H0PA19095",
+#    "DICKERSON, STEVE":
+    "SANDERS, BERNARD":"S4VT00033",
+    "LEWIS, JOHN R":"H6GA05217",
+    "SALDANA, LORI":"H2CA52063",
+#    "HUNTER, CHUCK":
+    "CAPPS, LOIS":"H8CA22089",
+    "ROGERS, LEE":"H2CA25143",
+    "GARAMENDI, JOHN":"H0CA10149"
+#    "THOMPSON, MIKE": # ambiguous -- is this oklahoma or pennsylania. 
 }

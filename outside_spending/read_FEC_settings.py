@@ -1,8 +1,12 @@
+from django.conf import settings
 
-BASE_DIR = '/projects/reporting/src/reportingsite/outside_spending'
+#BASE_DIR = '/projects/reporting/src/reportingsite/outside_spending'
+#BASE_DIR = '/Users/jfenton/reporting/reportingsitenew/reportingsite/outside_spending'
+BASE_DIR = settings.FEC_BASE_DIR
 
 # where can we save local files?
-FILECACHE_DIRECTORY = BASE_DIR + '/data/fec_filings'
+#FILECACHE_DIRECTORY = BASE_DIR + '/data/fec_filings'
+FILECACHE_DIRECTORY = settings.FEC_FILECACHE_DIRECTORY
 
 # where can we save raw zip files downloaded from the FEC before unzipping
 ZIP_DIRECTORY = BASE_DIR + '/data/zipped_fec_filings'

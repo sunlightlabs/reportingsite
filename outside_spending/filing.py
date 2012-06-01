@@ -4,10 +4,11 @@ import re
 
 from time import sleep
 
-from outside_spending_settings import filecache_directory, user_agent, fec_download, delay_time
+from read_FEC_settings import FILECACHE_DIRECTORY, USER_AGENT, FEC_DOWNLOAD, DELAY_TIME
 
 ## THIS WON'T WORK ON V 6.0 AND LOWER BECAUSE WE'RE ASSUMING ASCII 28 DELIMITER
 # versions used since 1/1/11: 6.4, 7.0, 8.0
+
 
 # The new FCC files are delimited by ascii 28
 delimiter = chr(28)
@@ -16,7 +17,7 @@ delimiter = chr(28)
 
 ## older versions are in here just theoretically
 # versions 3-5
-old_headers = ['record_type', 'ef_type', 'fec_version', 'soft_name', 'soft_ver', 'name_delim', 'report_id', 'report_number'he]
+old_headers = ['record_type', 'ef_type', 'fec_version', 'soft_name', 'soft_ver', 'name_delim', 'report_id', 'report_number']
 
 # versions 6+
 new_headers = ['record_type', 'ef_type', 'fec_version', 'soft_name', 'soft_ver', 'report_id', 'report_number']
@@ -29,7 +30,7 @@ def clean_entry(entry):
     return entry.replace('"', "").upper()
 
 
-class filing():
+class filing(object):
 
     # Have we downloaded the file?
     downloaded = False
@@ -55,33 +56,33 @@ class filing():
         self.read_from_cache = read_from_cache
         self.write_to_cache = write_to_cache
         # This is where we *expect* it--and where it will go if it's not already there
-        self.local_file_location = "%s/%s.fec" % (filecache_directory, self.filing_number)
+        self.local_file_location = "%s/%s.fec" % (FILECACHE_DIRECTORY, self.filing_number)
 
     def save_to_cache(self):
         """Save a file to cache."""
-        if (self.page_read and not os.path.isfile(self.local_file_location)):
+        if self.page_read and not os.path.isfile(self.local_file_location):
             local_filing = open(self.local_file_location, "w")
             local_filing.write(self.page_read)
             local_filing.close()
 
     def _download_with_headers(self):
         """Add a user agent to our download request"""
-        url = fec_download % (self.filing_number)
+        url = FEC_DOWNLOAD % (self.filing_number)
         print "url is: %s" % (url)
-        headers = {'User-Agent': user_agent}
+        headers = {'User-Agent': USER_AGENT}
         req = urllib2.Request(url, None, headers)
         page_read = urllib2.urlopen(req).read()
-        sleep(delay_time)
+        sleep(DELAY_TIME)
 
         self.page_read = page_read
         self.filing_lines = page_read.split("\n")
 
         # Save it to the file system if it's not there
-        if (self.write_to_cache):
+        if self.write_to_cache:
             self.save_to_cache()
 
     def _parse_headers(self):
-        if (self.downloaded):
+        if self.downloaded:
 
             header_arr = self.filing_lines[0].split(delimiter)
             summary_line = self.filing_lines[1].split(delimiter)
@@ -94,7 +95,7 @@ class filing():
             self.version = clean_entry(header_arr[2])
             headers_list = new_headers
 
-            if (float(self.version) <= 5):
+            if float(self.version) <= 5:
                 headers_list = old_headers
 
             header_hash = {}
@@ -111,11 +112,11 @@ class filing():
 
             # figure out if this is an amendment, and if so, what's being amended.
             form_last_char = self.headers['form'][-1].upper()
-            if (form_last_char == 'A'):
+            if form_last_char == 'A':
                 self.is_amendment = True
                 #print "Found amendment %s : %s " % (self.filing_number, self.headers['report_id'])
                 amendment_match = re.search('^FEC-(\d+)', self.headers['report_id'])
-                if (amendment_match):
+                if amendment_match:
                     original = amendment_match.group(1)
                     #print "Amends filing: %s" % original
                     self.headers['filing_amended'] = original

@@ -44,6 +44,7 @@ class Command(BaseCommand):
             except Candidate_Overlay.DoesNotExist:
                 
                 upper_candidate = str(ie.candidate_name.upper()).strip()
+                upper_candidate = upper_candidate.replace('"','')
                 
                 try:
                     found_id = candidate_lookup[upper_candidate]

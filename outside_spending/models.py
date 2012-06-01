@@ -445,7 +445,7 @@ class Expenditure(models.Model):
     state = models.CharField(max_length=2, blank=True, null=True)
     district = models.CharField(max_length=2, blank=True, null=True)
     transaction_id = models.CharField(max_length=32)
-    receipt_date = models.DateField()
+    receipt_date = models.DateField(null=True)
     filing_number = models.IntegerField()
     amendment = models.CharField(max_length=2)
 
@@ -473,6 +473,25 @@ class Expenditure(models.Model):
     # alter table outside_spending_expenditure add column `process_time` datetime,
     # alter table outside_spending_expenditure drop key image_number;
     # alter table outside_spending_expenditure add unique key filing_tran (filing_number, transaction_id);
+    
+    # where did this file come from? F24, IEFILE, F5, F3X, etc;
+    # alter table outside_spending_expenditure add column 'filing_source' char(7)
+    
+    
+    filing_source = models.CharField(max_length=7, null=True, blank=True)
+    # special flag to note that it's been amended by an F3X
+    # alter table outside_spending_expenditure add column `superceded_by_f3x` bool;
+    superceded_by_f3x=models.NullBooleanField(default=False)
+    # alter table outside_spending_expenditure add column superceding_f3x int;
+    superceding_f3x=models.IntegerField(null=True)
+    
+    # ALTER TABLE outside_spending_expenditure MODIFY receipt_date date;
+    # alter table outside_spending_expenditure add column memo_code varchar(100);
+    # alter table outside_spending_expenditure add column memo_text_description varchar(100);
+    
+    memo_code = models.CharField(max_length=100, blank=True)
+    memo_text_description =  models.CharField(max_length=100, blank=True)
+    
 
 
     class Meta:
@@ -666,7 +685,9 @@ class Contribution(models.Model):
     amends_earlier_filing = models.BooleanField(default=False)
     # if this entry is amended by a more recent entry, link to it:
     amended_by=models.IntegerField(null=True)
+    original=models.IntegerField(null=True)
 
+    # alter table outside_spending_contribution add column original int;
 
     def __unicode__(self):
         return self.display_name
@@ -781,6 +802,34 @@ class F3X_Summary(models.Model):
     coh_close = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
     itemized = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
     unitemized = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    
+    ## adding: 
+    debts_owed = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    total_sched_e = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    
+    ytd_total_receipts = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    ytd_total_disbursements = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    ytd_sched_e = models.DecimalField(max_digits=19, decimal_places=2, null=True, blank=True)
+    
+    ## New: 
+    # Should we disregard this line item because it appears later in an amended filing?
+    superceded_by_amendment=models.NullBooleanField(default=False, null=True)
+    amends_earlier_filing = models.NullBooleanField(default=False, null=True)
+    # if this entry is amended by a more recent entry, link to it:
+    amended_by=models.IntegerField(null=True)
+    original=models.IntegerField(null=True)
+    
+    ###
+    #alter table `outside_spending_f3x_summary` add column `debts_owed` numeric(19, 2);
+    #alter table `outside_spending_f3x_summary` add column `total_sched_e` numeric(19, 2);
+    #alter table `outside_spending_f3x_summary` add column `ytd_total_receipts` numeric(19, 2);
+    #alter table `outside_spending_f3x_summary` add column `ytd_total_disbursements` numeric(19, 2);
+    #alter table `outside_spending_f3x_summary` add column `ytd_sched_e` numeric(19, 2);
+    #alter table `outside_spending_f3x_summary` add column `superceded_by_amendment` bool;
+    #alter table `outside_spending_f3x_summary` add column `amends_earlier_filing` bool;
+    #alter table `outside_spending_f3x_summary` add column `amended_by` integer;
+    #alter table `outside_spending_f3x_summary` add column `original` integer;
+    ###
 
 # Models to track live bills
 # {'filing_number': '778528', 'committee_id': 'C00090209', 'date_filed': datetime.datetime(2012, 4, 16, 0, 0), 'date_from': datetime.datetime(2012, 3, 1, 0, 0), 'date_to': datetime.datetime(2012, 3, 31, 0, 0), 'form_type': 'F3XN', 'committee_name': 'YRC WORLDWIDE INC. PAC'}
@@ -794,6 +843,10 @@ class unprocessed_filing(models.Model):
     coverage_to_date = models.DateField(null=True, blank=True)
     process_time = models.DateTimeField()
     is_superpac = models.NullBooleanField()
+    
+    # have we processed this filing? 
+    filing_is_parsed = models.NullBooleanField(default=False)
+    # alter table outside_spending_unprocessed_filing add column filing_is_parsed boolean;
     
     
     def get_fec_url(self):

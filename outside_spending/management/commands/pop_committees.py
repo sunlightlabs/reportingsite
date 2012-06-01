@@ -53,7 +53,9 @@ def get_or_create_committee(record):
             zip_code=record['zipcode'],
             designation=record['designation'],
             ctype=record['type'],
-            filing_frequency=record['filing_frequency']
+            filing_frequency=record['filing_frequency'], 
+            connected_org_name=record['connected_org_name'],
+            candidate_id=record['candidate_id']
             )
             
 

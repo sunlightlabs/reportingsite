@@ -18,7 +18,7 @@ class Command(BaseCommand):
         for sp in all_superpacs:
             try:
                 
-                f3s = F3X_Summary.objects.filter(fec_id=sp.fec_id).order_by('-filing_number')
+                f3s = F3X_Summary.objects.filter(fec_id=sp.fec_id).filter(superceded_by_amendment=False).order_by('-coverage_to_date')
                 f3 = f3s[0]
                 
                 total_contributions = f3s.aggregate(receipts=Sum('total_receipts'))
@@ -41,7 +41,7 @@ class Command(BaseCommand):
             
 
             
-            num_contributions = Contribution.objects.filter(fec_committeeid=sp.fec_id).filter(contrib_date__gte='2011-01-01').aggregate(num=Count('fec_committeeid'))
+            num_contributions = Contribution.objects.filter(fec_committeeid=sp.fec_id, superceded_by_amendment=False,contrib_date__gte='2011-01-01').aggregate(num=Count('fec_committeeid'))
             if (num_contributions['num']>0):
                 sp.has_contributions=True
             else:
