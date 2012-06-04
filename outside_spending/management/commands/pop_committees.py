@@ -38,7 +38,7 @@ def parse_file(filename):
 def get_or_create_committee(record):
     try:
         cmte = Committee.objects.get(fec_id=record['committee_id'])
-        print ">>Found committee  %s %s" % (record['committee_id'], record['committee_name'])
+        #print ">>Found committee  %s %s" % (record['committee_id'], record['committee_name'])
     except Committee.DoesNotExist:
         print "Creating committee %s %s" % (record['committee_id'], record['committee_name'])
         cmte = Committee.objects.create(
