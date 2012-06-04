@@ -16,6 +16,13 @@ from outside_spending.management.commands.overlay_utils import *
 # Ignore anything before this date.
 epoch_start = dateparse('2011-01-01')
 
+def clean_currency_field(currency_string):
+    """ We return a string here; python 2.6 can't convert a float to a decimal, but can convert a string. """
+    cs = currency_string.replace("$","")
+    cs= cs.replace(",","")
+    if (cs==''):
+        cs='0'
+    return cs
 
 def process_F24(f24_to_process, fp):
 
@@ -148,7 +155,7 @@ def process_F24(f24_to_process, fp):
                 payee = payee_name,
                 expenditure_purpose = thisrow['expenditure_purpose_descrip'],
                 expenditure_date =  expenditure_date,
-                expenditure_amount = float(thisrow['expenditure_amount']),
+                expenditure_amount = clean_currency_field(thisrow['expenditure_amount']),
                 support_oppose = thisrow['support_oppose_code'],
                 election_type = election_code,
                 candidate_name = candidate_name,
@@ -286,7 +293,7 @@ def process_F3X(f3x_to_process, fp):
                 payee = payee_name,
                 expenditure_purpose = thisrow['expenditure_purpose_descrip'],
                 expenditure_date =  expenditure_date,
-                expenditure_amount = float(thisrow['expenditure_amount']),
+                expenditure_amount = clean_currency_field(thisrow['expenditure_amount']),
                 support_oppose = thisrow['support_oppose_code'],
                 election_type = election_code,
                 candidate_name = candidate_name,
@@ -347,13 +354,7 @@ def process_F3X(f3x_to_process, fp):
 
     return len(schedule_e_lines)
     
-def clean_currency_field(currency_string):
-    """ We return a string here; python 2.6 can't convert a float to a decimal, but can convert a string. """
-    cs = currency_string.replace("$","")
-    cs= cs.replace(",","")
-    if (cs==''):
-        cs='0'
-    return cs
+
 
 # the rest is for processing contrib stuff. 
 
