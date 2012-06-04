@@ -9,8 +9,7 @@ from django.shortcuts import redirect
 urlpatterns = patterns('',
 
     # temporary takedown
-    #url(r'^.*', direct_to_template,
-        {'template': 'outside_spending/maintenance.html'}, name='maintenance'),
+    #url(r'^.*', direct_to_template, {'template': 'outside_spending/maintenance.html'}, name='maintenance'),
     
     url(r'^csv/committee\/[\w-]+\/(?P<committee_id>C\d{8})\/?$', 'outside_spending.views.expenditure_csv'),
     url(r'^csv/contributions\/[\w-]+\/(?P<committee_id>C\d{8})\/?$', 'outside_spending.views.contribs_csv'),    
