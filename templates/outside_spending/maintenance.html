@@ -1,0 +1,35 @@
+{% extends "outside_spending/buckley_base.html" %}
+
+{% load humanize %}
+{% load buckley %}
+
+{% block title %}Down for Maintenance{% endblock %}
+
+{% block body %}  {{ block.super }} {% endblock %}
+
+{% block css %}
+{{ block.super }}
+<style type="text/css">
+
+</style>
+{% endblock %}
+
+{% block breadcrumb %}
+<li>Down for Maintenance</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    {% include "outside_spending/tabs.html" %}
+
+
+    <h2>
+        Down for Maintenance
+    </h2>
+    <div class="amountLine clear">
+    <p>Follow the Unlimited Money is down for maintenance. Check back in a few hours. </p>
+    <hr />
+	</div>
+
+{% endblock %}
+

@@ -63,10 +63,14 @@ urlpatterns = patterns('',
     url(r'^committee-search-json\/$', 'outside_spending.views.committee_search_json'),           
     url(r'^committee-search-html\/$', 'outside_spending.views.committee_search_html'), 
     #url(r'^subscribe-to-alerts\/$', 'outside_spending.views.subscribe_to_alerts'), 
+
+    url(r'^maintenance/', direct_to_template,
+        {'template': 'outside_spending/maintenance.html'}, name='maintenance'),
     
     #url(r'^searchtest\/$', 'django.views.generic.simple.direct_to_template', {'template': 'mobile_test/searchtest.html'}),      
     url(r'$', 'outside_spending.views.all_superpacs')
-   
+    
+
     # all that are noteworthy
     #url(r'^csv/state_csv/','outside_spending.views.states_csv'),
     #url(r'^map/',direct_to_template, {'template': 'rebuckley/map.html'}),  
