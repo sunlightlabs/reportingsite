@@ -46,7 +46,11 @@ def process_F24(f24_to_process, fp):
     firstrow = fp.parse_form_line(f1.get_first_row(), version)    
     #print firstrow
     committee_id = firstrow['filer_committee_id_number']
-    committee_name = firstrow['committee_name']
+    committee_name = ''
+    try:
+        committee_name = firstrow['committee_name']
+    except KeyError:
+        pass
     
     all_ie_spending = []
     
