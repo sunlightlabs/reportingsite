@@ -4,6 +4,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.template.defaultfilters import slugify
 
 from outside_spending.models import Candidate
+from outside_spending.read_FEC_settings import DATA_DIR
 
 
 class Command(BaseCommand):
@@ -27,7 +28,7 @@ class Command(BaseCommand):
                   ('election_year', (162, 163)),
                   ('current_district', (164, 165)), ]
 
-        data_filename = "outside_spending/data/%s/foiacn.dta" % (cycle)
+        data_filename = "%s/%s/foiacn.dta" % (DATA_DIR, cycle)
         data_file = open(data_filename, "r")
         for line in data_file:
             data_dict = {}

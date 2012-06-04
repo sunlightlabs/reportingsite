@@ -7,6 +7,7 @@ from dateutil.parser import parse as dateparse
 from outside_spending.models import Electioneering_93, Electioneering_94
 from outside_spending.management.commands.overlay_utils import *
 from find_candidate import candidate_lookup
+from outside_spending.read_FEC_settings import DATA_DIR
 
 #cycle=12
 
@@ -25,7 +26,7 @@ class Command(BaseCommand):
         cycle_year = 2000 + int(cycle)
         assert cycle, "You must enter a two-digit cycle"
         
-        datafile = "outside_spending/data/%s/ec_exp_20%s.csv" % (cycle, cycle)
+        datafile = "%s/%s/ec_exp_20%s.csv" % (DATA_DIR, cycle, cycle)
         reader = csv.DictReader(open(datafile))
         
         # There are two kinds of records we care about: F93 and F94

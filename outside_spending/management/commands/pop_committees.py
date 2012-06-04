@@ -2,7 +2,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.template.defaultfilters import slugify
 
 from outside_spending.models import Committee
-
+from outside_spending.read_FEC_settings import DATA_DIR
 
 def parse_file(filename):
     fields = [('committee_id', (1,9)),
@@ -70,7 +70,7 @@ class Command(BaseCommand):
         cycle = args[0]
         cycle_year = 2000 + int(cycle)
         assert cycle, "You must enter a two-digit cycle"
-        data_filename = "outside_spending/data/%s/foiacm.dta" % (cycle)
+        data_filename = "%s/%s/foiacm.dta" % (DATA_DIR, cycle)
 
         records = parse_file(data_filename)
         for record in records:

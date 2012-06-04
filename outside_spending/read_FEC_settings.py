@@ -4,6 +4,8 @@ from django.conf import settings
 #BASE_DIR = '/Users/jfenton/reporting/reportingsitenew/reportingsite/outside_spending'
 BASE_DIR = settings.FEC_BASE_DIR
 
+DATA_DIR = BASE_DIR + '/data'
+
 # where can we save local files?
 #FILECACHE_DIRECTORY = BASE_DIR + '/data/fec_filings'
 FILECACHE_DIRECTORY = settings.FEC_FILECACHE_DIRECTORY
