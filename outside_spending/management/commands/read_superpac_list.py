@@ -50,7 +50,7 @@ class Command(BaseCommand):
             
             # 
             if (superpac):
-                print "Processing superpac: %s" % (superpac)
+                #print "Processing superpac: %s" % (superpac)
                 if (not superpac.is_superpac):
                     superpac.is_superpac = True
                     superpac.save()
