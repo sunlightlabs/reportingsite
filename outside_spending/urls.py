@@ -8,6 +8,9 @@ from django.views.generic.simple import direct_to_template
 from django.shortcuts import redirect
 urlpatterns = patterns('',
 
+    # temporary takedown
+    url(r'^.*', direct_to_template,
+        {'template': 'outside_spending/maintenance.html'}, name='maintenance'),
     
     url(r'^csv/committee\/[\w-]+\/(?P<committee_id>C\d{8})\/?$', 'outside_spending.views.expenditure_csv'),
     url(r'^csv/contributions\/[\w-]+\/(?P<committee_id>C\d{8})\/?$', 'outside_spending.views.contribs_csv'),    
@@ -64,8 +67,7 @@ urlpatterns = patterns('',
     url(r'^committee-search-html\/$', 'outside_spending.views.committee_search_html'), 
     #url(r'^subscribe-to-alerts\/$', 'outside_spending.views.subscribe_to_alerts'), 
 
-    url(r'^maintenance/', direct_to_template,
-        {'template': 'outside_spending/maintenance.html'}, name='maintenance'),
+    #url(r'^maintenance/', direct_to_template, {'template': 'outside_spending/maintenance.html'}, name='maintenance'),
     
     #url(r'^searchtest\/$', 'django.views.generic.simple.direct_to_template', {'template': 'mobile_test/searchtest.html'}),      
     url(r'$', 'outside_spending.views.all_superpacs')
