@@ -17,6 +17,6 @@ class Command(BaseCommand):
 
         all_x_expends = Expenditure.objects.filter(memo_code__icontains='x', superceded_by_amendment=False)
         for x in all_x_expends:
-            print "Hiding X-ed memo field expenditure: '%s' - '%s' - '%s' - '%s' - '%s' - '%s'  - '%s'" % (x.filing_number, x.raw_committee_id, x.payee, x.expenditure_amount, x.expenditure_purpose, x.memo_code, x.memo_text_descript)
+            print "Hiding X-ed memo field expenditure: '%s' - '%s' - '%s' - '%s' - '%s' - '%s'  - '%s'" % (x.filing_number, x.raw_committee_id, x.payee, x.expenditure_amount, x.expenditure_purpose, x.memo_code, x.memo_text_description)
             x.superceded_by_amendment=True
             x.save()            
