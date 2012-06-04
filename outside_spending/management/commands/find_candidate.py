@@ -74,7 +74,7 @@ candidate_lookup={
     "PANTANO, ILARIO":"H0NC07108",
     "HEINRICH, MARTIN":"S2NM00088", # he's running for both house and senate at the same time? 
     "FEINSTEIN, DIANNE":"S0CA00199",
-#    "CARLOS, LUNA":
+#    "CARLOS, LUNA": -- I think he's used in the $45 million ie test.
 #    "CANDIDATE, GENERAL":
 #    "HAWK, DAVID":
     "CARDIN, BENJAMIN L":"S6MD03177",
@@ -90,6 +90,14 @@ candidate_lookup={
 #    "HUNTER, CHUCK":
     "CAPPS, LOIS":"H8CA22089",
     "ROGERS, LEE":"H2CA25143",
-    "GARAMENDI, JOHN":"H0CA10149"
+    "GARAMENDI, JOHN":"H0CA10149",
 #    "THOMPSON, MIKE": # ambiguous -- is this oklahoma or pennsylania. 
+#    "CLOUD, CYNTHIA": unknown
+    "VANN, KIM": 'H2CA03090',
+# EMANUEL, RAHM  outta congress now
+# HUNTER, CHUCK           |
+# WALKER, SCOTT -- not a federal candidate (wisconsin recall)
+    'BERG, RICK' :'S2ND00073', # running for congress and senate -- probably this is for senate
+    'CRIMMINS, MICHAEL':'H8CA53019',
+    'WILSON, HEATHER':'S8NM00168'
 }
