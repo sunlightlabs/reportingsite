@@ -418,11 +418,11 @@ def overview(request):
     total_ecs = ecs.aggregate(total=Sum('exp_amo'))['total']
 
     
-    contribs = Contribution.objects.filter(line_type__in=['SA11AI', 'SA15'])
+    contribs = Contribution.objects.filter(line_type__in=['SA11AI', 'SA15'], superceded_by_amendment=False)
     total_contribs_amt = contribs.aggregate(total=Sum('contrib_amt'))
     total_contribs = total_contribs_amt['total']
     
-    list_all_ies = Expenditure.objects.filter(superceded_by_amendment=False).select_related("candidate")
+    list_all_ies = Expenditure.objects.filter(superceded_by_amendment=False, committee__isnull=False).select_related("candidate")
     total_ies = list_all_ies.aggregate(total=Sum('expenditure_amount'))['total']
     pres_ies = list_all_ies.filter(candidate__office='P').aggregate(total=Sum('expenditure_amount'))['total']
     house_ies = list_all_ies.filter(candidate__office='H').aggregate(total=Sum('expenditure_amount'))['total']
