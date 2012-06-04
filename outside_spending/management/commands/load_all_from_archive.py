@@ -10,7 +10,7 @@ from outside_spending.form_parser import form_parser
 #from outside_spending.models import Filing_Header, Filing_Rows
 #from outside_spending.management.commands.overlay_utils import *
 
-from outside_spending.outside_spending_settings import filecache_directory
+from outside_spending.read_FEC_settings import FILECACHE_DIRECTORY
 
 from form_helpers import process_F24, process_F3X, process_F3X_contribs, process_file
 
@@ -30,7 +30,7 @@ class Command(BaseCommand):
         filecount = 0
         filenums = []
         
-        for d, _, files in os.walk(filecache_directory):
+        for d, _, files in os.walk(FILECACHE_DIRECTORY):
             for a in files:
 
                 filecount += 1
@@ -49,6 +49,6 @@ class Command(BaseCommand):
         print "Processing files"
         for filingnum in filenums:
             print "processing %s" % (filingnum)
-            #process_file(filingnum, self.fp)
+            process_file(filingnum, self.fp)
             
 
