@@ -1,5 +1,65 @@
+Notes on the new process...
+
 -- count ies:
 
 select count(*) from outside_spending_filing_rows, outside_spending_filing_header where outside_spending_filing_rows.parent_filing_id = outside_spending_filing_header.id and outside_spending_filing_header.form='F24';
 
 select count(*) from outside_spending_filing_rows, outside_spending_filing_header where outside_spending_filing_rows.parent_filing_id = outside_spending_filing_header.id and outside_spending_filing_header.form='F24' and outside_spending_filing_header.is_amended;
+
+--- narrative for switching to continuous loading:
+
+load from archive with 
+
+- enter_contribs_from_archive.py
+- enter_spending_from_archive_2.py
+
+* these are now superceded / combined into 
+load_all_from_archive.py
+
+
+--* need to make it ignore f24s that have already been entered. 
+
+select count(*) from outside_spending_expenditure where filing_source = 'F24' and expenditure_date > date('4/1/2012') and superceded_by_amendment = False;
+--> 
+# gotta keep the superpac list up to date! 
+python manage.py read_superpac_list
+
+[ or python manage.py load_all_from_archive ]
+python manage.py load_from_unprocessed_filings
+python manage.py exclude_x_memo_fields
+python manage.py check_old_F24_ies
+python manage.py attach_models
+python manage.py fix_office
+
+python manage.py calculate_sums
+python manage.py make_candidate_pacs
+python manage.py make_race_aggregates
+python manage.py make_candidate_aggregates
+python manage.py make_state_aggregates
+python manage.py make_presidential_state_pac_aggregates
+
+-- for contribs: 
+
+python manage.py attach_contribs
+python manage.py set_contrib_flags
+
+
+python manage.py set_update_time
+
+--> still need ot periodically do ECs ; read superpac list; add new committees and candidates ; and log all of this. 
+
+=== -- open questions -- unattached contribs. 
+
+also: does it make sense to erase F3X's -- I think that means we have to reload them later, but.. 
+
+== get list of all filing numbers: 
+ mysql -uroot -p < dump_all_filing_numbers.sql  > filing_numbers.txt
+
+===
+
+ok rebasing all the code for load_all_from_archive
+
+---> need to spit out unique file numbers
+select distinct filing_number from outside_spending_contribution;
+select distinct filing_number from outside_spending_expenditure;
+select distinct filing_number from outside_spending_F3X_summary;
