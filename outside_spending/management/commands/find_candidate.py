@@ -99,5 +99,7 @@ candidate_lookup={
 # WALKER, SCOTT -- not a federal candidate (wisconsin recall)
     'BERG, RICK' :'S2ND00073', # running for congress and senate -- probably this is for senate
     'CRIMMINS, MICHAEL':'H8CA53019',
-    'WILSON, HEATHER':'S8NM00168'
+    'WILSON, HEATHER':'S8NM00168',
+    'RANGEL, CHARLES': 'H6NY19029',
+    'CRAMER, KEVIN J': 'H0ND01026'
 }
