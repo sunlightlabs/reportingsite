@@ -13,17 +13,13 @@
 
 <ul>
 {% for meeting in meetings %}
-    <li>
-    <h4>Agency: {{ meeting.agency }} - {{ meeting.date }}</h4>
-    {% if meeting.topic %}
-        {% firstof meeting.topic meeting.subcategory meeting.topic %}
-        <br/>
-    {% endif %}
-        <a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.pk %}">
-            View Details
-        </a>
-            <div class="clear"></div>
-            <hr/>
+<li>On <b>{{ meeting.date }}</b>, {{ meeting.visitor_list|and_others }} met with the <b>{{ meeting.agency.initials }}</b> to discuss <b>{% firstof meeting.topic meeting.subcategory meeting.category %}</b>
+    <br/>
+    <a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.pk %}">
+        View Details
+    </a>
+    <div class="clear"></div>
+    <hr/>
     </li>
 {% endfor %}
 </ul>

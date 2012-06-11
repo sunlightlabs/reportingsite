@@ -1,0 +1,40 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% load doddfrank %}
+{% load humanize %}
+
+{% block content %}
+
+<div id="lobbyFeature_wrapper">
+    <div id="lobbyFeature" style="background: none; margin-bottom: 15px;">
+        <p style="width: 800px; margin-bottom: 0px;">
+        The {{ agency.name }} has held many meetings with stakeholders while implementing the rules of Dodd-Frank. Here is a breakdown of what they discussed.
+        </p>
+    </div>
+</div>
+
+<a href="{% url doddfrank_agency_topics agency_slug=agency.slug %}">Overall</a> {% for year in years %},<a href="{% url doddfrank_agency_topic_xtab agency_slug=agency.slug year=year %}">{{ year }}</a>{% endfor %}
+
+<h3>{{ year }}</h3>
+
+<table>
+<tr>
+    <th>{{ rowlabel }}</th>
+    {% for colkey in colkeys %}
+        <th>{{ collabels|getitem:colkey }}</th>
+    {% endfor %}
+</tr>
+
+{% for rowkey in rowkeys %}
+    <tr>
+    <td>{{ rowkey }}</td>
+    {% for colkey in colkeys %}
+        <td>{{ rows|getitem:rowkey|getitem:colkey }}</td>
+    {% endfor %}
+    </tr>
+{% endfor %}
+</table>
+
+{% endblock %}
+
+

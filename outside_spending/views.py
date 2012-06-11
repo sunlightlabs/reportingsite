@@ -11,20 +11,24 @@ from django.contrib.localflavor.us.us_states import STATE_CHOICES
 from django.contrib.humanize.templatetags.humanize import intcomma
 from outside_spending.models import Scrape_Time
 
-STATE_CHOICES = dict(STATE_CHOICES)
-most_recent_scrape=Scrape_Time.objects.all().order_by('-run_time')[0]
-
 from outside_spending.models import *
 
-data_disclaimer = """ These files are preliminary and current through %s but we cannot guarantee their accuracy. For more information, see: http://reporting.sunlightfoundation.com/outside-spending/about/ Please note that contributions in these files are as of the most recent filing deadline. Independent expenditures are not comparable to the itemized disbursements found in PAC's year-end reports. For more on independent expenditures see here: http://www.fec.gov/pages/brochures/indexp.shtml """ % (most_recent_scrape.run_time)
+STATE_CHOICES = dict(STATE_CHOICES)
+try:
+    most_recent_scrape=Scrape_Time.objects.all().order_by('-run_time')[0]
 
-hybrid_superpac_disclaimer ="\"Hybrid\" super PACs--committees that have separate accounts for \"hard\" and \"soft\" money, are not included. For a list of these committees, see <a href=\"http://www.fec.gov/press/press2011/2012PoliticalCommitteeswithNon-ContributionAccounts.shtml\">here</a>."
 
-electioneering_details="""<a target="_new" href="http://www.fec.gov/pages/brochures/electioneering.shtml">Electioneering communications</a>  are broadcast communications not otherwise
-reported as independent expenditures. Electioneering communication
-reports do not state whether the communication was in support of or in
-opposition to the candidate, and they sometimes refer to multiple
-candidates."""
+    data_disclaimer = """ These files are preliminary and current through %s but we cannot guarantee their accuracy. For more information, see: http://reporting.sunlightfoundation.com/outside-spending/about/ Please note that contributions in these files are as of the most recent filing deadline. Independent expenditures are not comparable to the itemized disbursements found in PAC's year-end reports. For more on independent expenditures see here: http://www.fec.gov/pages/brochures/indexp.shtml """ % (most_recent_scrape.run_time)
+
+    hybrid_superpac_disclaimer ="\"Hybrid\" super PACs--committees that have separate accounts for \"hard\" and \"soft\" money, are not included. For a list of these committees, see <a href=\"http://www.fec.gov/press/press2011/2012PoliticalCommitteeswithNon-ContributionAccounts.shtml\">here</a>."
+
+    electioneering_details="""<a target="_new" href="http://www.fec.gov/pages/brochures/electioneering.shtml">Electioneering communications</a>  are broadcast communications not otherwise
+    reported as independent expenditures. Electioneering communication
+    reports do not state whether the communication was in support of or in
+    opposition to the candidate, and they sometimes refer to multiple
+    candidates."""
+except IndexError:
+    most_recent_scrape = None
 
 def generic_csv(filename, fields, rows):
     response = HttpResponse(mimetype='text/csv')

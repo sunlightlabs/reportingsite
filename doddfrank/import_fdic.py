@@ -26,32 +26,28 @@ def meeting_keyfunc(record, record_hash):
     return {
         'date': dateutil.parser.parse(record['Date']).date(),
         'import_hash': record_hash,
-        'agency': Treasury
+        'agency': FDIC
     }
 
 
 def meeting_copyfunc(record, meeting):
-    meeting.communiation_type = 'Meeting'
+    meeting.communication_type = 'Meeting'
     meeting.date = dateutil.parser.parse(record['Date']).date()
     meeting.category = ''
     meeting.subcategory = ''
     meeting.topic = record['Topics']
-    meeting.attendee_hash = record['AttendeeHash']
-    meeting.source_url = record['Url']
+    meeting.source_url = 'http://www.fdic.gov/regulations/meetings/'
 
 
 def main():
-    (treasury, created) = Agency.objects.get_or_create(initials='Treasury')
-    if created:
-        treasury.name = 'Treasury'
-        treasury.meeting_list_url = 'http://www.treasury.gov/initiatives/wsr/Pages/transparency.aspx'
-        treasury.save()
-
     print_object_counts()
 
     print 'Importing meetings'
     meetings = slurp_data(SCRAPER_MEETINGS_URL)
     import_meetings(meetings, meeting_keyfunc, meeting_copyfunc)
+
+    meeting_objects = Meeting.objects.filter(agency=FDIC)
+    reconcile_database(meeting_objects, meetings)
 
     print 'Importing attendees'
     attendees = slurp_data(SCRAPER_ATTENDEES_URL)
@@ -60,7 +56,7 @@ def main():
     for a in progress(attendees):
         a_date = dateutil.parser.parse(a['Date']).date()
         try:
-            meeting = Meeting.objects.get(agency=treasury,
+            meeting = Meeting.objects.get(agency=FDIC,
                                           date=a_date,
                                           topic=a['Topics'],
                                           attendee_hash=a['AttendeeHash'])
@@ -84,8 +80,6 @@ def main():
             meeting.attendees.add(attendee)
             attendee.save()
 
-    meeting_objects = Meeting.objects.filter(agency=treasury)
-    reconcile_database(meeting_objects, meetings)
 
     prune_attendees()
 

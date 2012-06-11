@@ -1,0 +1,49 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% load doddfrank %}
+{% load humanize %}
+
+{% block content %}
+
+<div id="lobbyFeature_wrapper">
+    <div id="lobbyFeature" style="background: none; margin-bottom: 15px;">
+        <p style="width: 800px; margin-bottom: 0px;">
+        Agencies have held many meetings with stakeholders while implementing the rules of Dodd-Frank. Here is a breakdown of the number of meetings each agency has held.
+        </p>
+    </div>
+</div>
+
+{% for agency in agencies %}
+    <h3><a href="{% url doddfrank_agency_detail agency_slug=agency.slug %}">{{ agency.name }}</a></h3>
+    <table>
+        <tr>
+            <th>Year</th>
+            {% for (month, month_abbr, month_name) in months %}
+            <th>{{ month_abbr }}</th>
+            {% endfor %}
+            <th>Total</th>
+        </tr>
+    {% for year in years %}
+        <tr>
+            <th>{{ year }}</th>
+            {% for month in months %}
+            {% with meetings|getitem:agency.id as agency_years %}
+            {% with agency_years|getitem:year as per_month %}
+            <td>{{ per_month|getitem:month.0 }}</td>
+            {% endwith %}
+            {% endwith %}
+            {% endfor %}
+            <td>{{ meetings_per_year|getitem:agency.id|getitem:year }}</td>
+        </tr>
+    {% endfor %}
+    <tr>
+        <th>Total</th>
+        {% for month in months %}
+            <td>{{ meetings_per_month|getitem:agency.id|getitem:month.0 }}</td>
+        {% endfor %}
+        <td>{{ agency.meeting_cnt }} </td> {# Grand total #}
+    </table>
+{% endfor %}
+
+{% endblock %}
+

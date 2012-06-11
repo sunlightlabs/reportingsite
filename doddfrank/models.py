@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 
 from django.db import models
+from django.db.models import Q
 from django.template.defaultfilters import slugify
 
 
@@ -36,7 +37,7 @@ class Agency(models.Model):
     meeting_list_url = models.TextField(blank=False, null=True)
 
     def save(self, *args, **kwargs):
-        self.slug = slugify(self.name)
+        self.slug = slugify(self.initials)
         super(Agency, self).save(*args, **kwargs)
 
     def __unicode__(self):
@@ -101,6 +102,9 @@ class Meeting(models.Model):
 
     def attendee_list(self):
         return Attendee.objects.filter(meeting=self)
+
+    def visitor_list(self):
+        return self.attendees.exclude(org__name__icontains=self.agency.name)
 
     def __unicode__(self):
         return u'{0.pk}, {0.date!r}, {0.topic!r}, {0.attendee_hash!r}'.format(self)
