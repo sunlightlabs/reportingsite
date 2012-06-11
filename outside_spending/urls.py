@@ -64,7 +64,7 @@ urlpatterns = patterns('',
     url(r'^FEC-alerts\/significant-committees\/new-periodic\/?$', 'outside_spending.views.recent_fec_filings_significant_new'),
     url(r'^committee-search-json\/$', 'outside_spending.views.committee_search_json'),           
     url(r'^committee-search-html\/$', 'outside_spending.views.committee_search_html'), 
-    #url(r'^subscribe-to-alerts\/$', 'outside_spending.views.subscribe_to_alerts'), 
+    url(r'^subscribe-to-alerts\/$', 'outside_spending.views.subscribe_to_alerts'), 
 
     url(r'^maintenance/', direct_to_template, {'template': 'outside_spending/maintenance.html'}, name='maintenance'),
     
