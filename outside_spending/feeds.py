@@ -9,7 +9,7 @@ class FilingFeedBase(Feed):
 
     # What is this used for?
     def link(self, obj):
-        return ''
+        return 'http://reporting.sunlightfoundation.com/outside-spending/super-pacs/'
 
     def description(self):
         return "Recent electronic campaign finance filings."

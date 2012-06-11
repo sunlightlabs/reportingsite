@@ -5,7 +5,7 @@
 
 {% block title %}Subscribe to FEC filing alerts{% endblock %}
 
-{% block body %}  {{ block.super }} {% endblock %}
+{% block body %}  {{ block.super }} expendituresNotification {% endblock %}
 
 {% block css %}
 {{ block.super }}
@@ -48,21 +48,6 @@
 }	
 
 
-#committee_search {
-	width: 200px;
-	color:#00f;
-	border:1px solid black;	
-}
-
-.subscribe_to_committee {
-	font-size: 14px;
-	font-weight: bold;
-}
-
-.go_to_committee_feed {
-	font-size: 14px;
-	font-weight: bold;
-}
 
 </style>
 {% endblock %}
@@ -81,12 +66,17 @@
     </h2>
     <div class="amountLine clear">
     <p>Sign up to receive notifications any time a particular committee you're interested in files a new electronic report with the Federal Election Commission. Notifications are provided through <a href="http://scout.sunlightfoundation.com/">Scout</a>, the Sunlight Foundation's search and monitoring tool covering state and federal legislation, the congressional record, and federal regulations.</p>
-	You can sign up to receive notifications about all filings, or only certain types. </p>
+	<p>You can sign up to receive notifications about all filings, or only certain types. You can set up as many alerts as you'd like. If you have any trouble setting up the alerts you want, email <a href="mailto:jfenton@sunlightfoundation.com">jfenton@sunlightfoundation.com</a></p>
+	</div>
     <hr />
-	<div id="form_filings" class="formtwocols">
+	<div id="selected_committees"><p>No committees selected</p></div>
+	
+	<div class="fullwidth">
+		
+	<div id="form_filings" style="float:right; width: 337px;">
 
 	<p>
-	<b>Step 1. What kind of reports?</b>
+	<b>Step 2. What kind of reports?</b>
 	</p>
 	<p>
 	<input type="radio" name="filing_types" id="all" class="filing_radio" />
@@ -98,8 +88,8 @@
 	
 	<fieldset class="check_indent">
 	<input type="checkbox" class="filing_check" id="monthly" /><label class="filing_label" for="check">Monthly/quarterly filings</label>
-	<br><input type="checkbox" class="filing_check" id="ie" /><label class="filing_label" for="check1">24/48-hour independent expenditure Notices</label>
-	<br><input type="checkbox" class="filing_check" id="ec" /><label class="filing_label" for="check2">Electioneering communication notices </label>
+	<br><input type="checkbox" class="filing_check" id="ie" /><label class="filing_label" for="check1">24/48-hour independent expenditures</label>
+	<br><input type="checkbox" class="filing_check" id="ec" /><label class="filing_label" for="check2">Electioneering communications </label>
 	<br><input type="checkbox" class="filing_check" id="F6" /><label class="filing_label" for="check3">48-hour contribution reports</label>
 	</fieldset>
 	</p>
@@ -109,27 +99,29 @@
 
 	</div>
 	
-	</div>
 	
 	
 	
 	
-	<div class="amountLine">
-	<p><b>2. Which committee?</b></p>	
-	<div>
+	<div style="float:left; width: 550px;">
+	<div style="height: 90px;">	
+	<p><b>1. Which committees?</b></p>	
+
 		
 	<form id="searchform">
-	    <input type="text" id="searchbox" value="Committee or candidate" style="width: 200px;" >
+	    <input type="text" id="searchbox" value="Committee or candidate" style="width: 200px;"  />
 	    <button class="searchBtn" type="submit" id="search_committees">
-	      <span>Search</span>
+	      <span>Search!</span>
 	    </button>
 	  </form>	
-
 	</div>
+	
+	
+	<div id="search_results">No committees chosen. </div>
+		
 	</div>
-
-	<div id="search_results">No committees chosen</div>
-
+	<div style="clear:both" />
+	</div>
 
 
 {% endblock %}
@@ -137,6 +129,8 @@
 {% block js %}
 {{ block.super }}
 <script type="text/javascript">
+
+var selected_committees = [];
 
 function get_amendment_list(form, include_new, include_amended) {
 	var results = [];
@@ -157,8 +151,20 @@ function hyphenate(form_list, needs_hyphen) {
 	return form_list;	
 }
 
-function get_feed_url(fecid) {
-	feedurl = "http://reporting.sunlightfoundation.com/outside-spending/recent-FEC-filings/feeds/committee/" + fecid + "/" 
+function get_feed_url() {
+	committee_list = "";
+	num_committees = selected_committees.length;
+	for (i=0; i<num_committees; i++) {
+		if (i>0) {
+			committee_list += "-";
+		}
+		committee_list += selected_committees[i].fecid;
+	}
+	url_committee = "committee";
+	if (num_committees > 1) {
+		url_committee = "committees";
+	} 
+	feedurl = "http://reporting.sunlightfoundation.com/outside-spending/recent-FEC-filings/feeds/" + url_committee + "/" + committee_list + "/" 
 
 	if($("#only_selected").is(":checked")) {
 		form_list = "";
@@ -197,23 +203,91 @@ function get_feed_url(fecid) {
 	
 }
 
+function regen_committees_selected_list() {
+	$('#selected_committees').html("");
+	var update_html = "";
+	
+	
+	if (selected_committees.length == 0)
+	{
+		current_html = "<p>No committees selected</p>";
+		$('#selected_committees').html(current_html);
+		return false;
+	} else {
+		
+		var committee_ref = "this committee";
+		if (selected_committees.length > 1) {
+			committee_ref = "these committees";
+		}
+		current_html = "<p>You've selected " + selected_committees.length + " committees (shown below). &nbsp;&nbsp;<a href='' style='font-size:18px;' id='gotoscout'>Get alerts about " + committee_ref + "</a>";
+		for (i=0; i<selected_committees.length; i++) {
+			this_committee = selected_committees[i];
+			this_committee_row="<br> [<a class='selected_committee_display' name='" + this_committee.committee_name + "' href='' data-fecid='" + this_committee.fecid +"'> Unselect </a> ]&nbsp;&nbsp;<b>" + this_committee.committeename + "</b>";
+			current_html += this_committee_row;
+		}
+		current_html += "</p>";
+		$('#selected_committees').html(current_html);
+		$('#gotoscout').click(function() {
+				submit_goto_scout();
+		        return false;
+		    });
+		$('.selected_committee_display').click(function() {
+		        remove_from_selections($(this).data('fecid'));
+		        return false;
+		    });
+	}
+}
 
-function submit_subscribe(fecid, name) {
+function remove_from_selections(this_fecid) {
+	pruned_selections = []
+	for (i=0; i<selected_committees.length; i++) {
+		if (selected_committees[i].fecid != this_fecid) {
+			pruned_selections.push(selected_committees[i]);
+		}
+	}
+	if (pruned_selections.length==0) {
+		selected_committees = [];
+	} else {
+		selected_committees = pruned_selections;
+	}
+	regen_committees_selected_list();	
+}
+
+function submit_add_to_array(this_fecid, this_name) {
+	if (selected_committees.length == 10) {
+		alert("No more than 10 committees can be selected.");
+		return;
+	}
 	
-	feedurl = get_feed_url(fecid);
-	scouturl = "http://scout.sunlightlabs.com/import/feed?url=" + encodeURIComponent(feedurl);
+	// is it already in the array?
+	for (i=0; i<selected_committees.length; i++) {
+		if (selected_committees[i].fecid == this_fecid) {
+			alert(this_name + " is  already selected.");
+			return;
+		}
+	}
+	var this_committee = {
+		fecid: this_fecid,
+		committeename: this_name
+	}
+	selected_committees.push(this_committee);
+	regen_committees_selected_list();
+	}
+
+
+function gotoscout(feedurl) {
+	scouturl = "http://scout.sunlightfoundation.com/import/feed?url=" + encodeURIComponent(feedurl);
 	
-	var gotoscout = confirm("You're being sent to Scout to subscribe to feeds for " + name + ". If you don't have an account with Scout you'll be prompted to create one.");
+	var gotoscout = confirm("You're being sent to Scout to subscribe to feeds for your selections. If you don't have an account with Scout you'll be prompted to create one.");
 	if (gotoscout) {
 		window.location = scouturl;
 		return false;
 	}
-	
 	return false;
 }
 
-function submit_goto_feed(fecid) {
-	window.location = get_feed_url(fecid);
+function submit_goto_scout() {
+	gotoscout(get_feed_url());
 	return false;
 }
 	
@@ -245,7 +319,7 @@ $(document).ready(function () {
 			$('#search_results').load(searchurl, function(thisdata) {
 			  //alert('Got data!');
 				$('.subscribe_to_committee').click(function() {
-				        submit_subscribe($(this).data('fecid'), $(this).attr('name'));
+				        submit_add_to_array($(this).data('fecid'), $(this).attr('name'));
 				        return false;
 				    });
 				$('.go_to_committee_feed').click(function() {

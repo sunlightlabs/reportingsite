@@ -1,0 +1,9 @@
+{% if committees %}
+   <p><b>Search results</b>
+    {% for committee in committees %}
+	<br>[ <a data-fecid="{{ committee.fec_id }}" href="" class="subscribe_to_committee" name="{{ committee.name }}">Select</a> ]&nbsp;&nbsp;<b>{{ committee.name }} </b> {% if committee.related_candidate %}( supports {{ committee.related_candidate.fec_name }}){% endif %}
+    {% endfor %}</p>
+<p>* Only non-independent committees must disclose who they are supporting. Independent committees--which include all Super PACs--are not required to list a specific candidate (and may support multiple candidates).</p>
+{% else %}
+No results found. Try another search.
+{% endif %}

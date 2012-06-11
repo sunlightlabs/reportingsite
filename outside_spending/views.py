@@ -682,7 +682,7 @@ def committee_search_html(request):
     except KeyError:
         committees = None
 
-    return render_to_response('mobile_test/committee_search.html',
+    return render_to_response('mobile_test/committee_search_2.html',
         {
         'committees':committees,
         }
