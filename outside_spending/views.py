@@ -452,7 +452,7 @@ def overview(request):
 def recent_fec_filings(request):
     
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
-    filings = unprocessed_filing.objects.all().order_by('-filing_number')[:100]
+    filings = unprocessed_filing.objects.all().order_by('-filing_number')[:50]
     title="Recent FEC Filings"
     explanatory_text="All recent electronic FEC filings. Filings made on paper are not included."
     
@@ -467,7 +467,7 @@ def recent_fec_filings(request):
     
 def recent_ie_filings(request):
 
-    filings = unprocessed_filing.objects.filter(form_type__in=['F5A', 'F5N', 'F24A', 'F24N']).order_by('-filing_number')[:100]
+    filings = unprocessed_filing.objects.filter(form_type__in=['F5A', 'F5N', 'F24A', 'F24N']).order_by('-filing_number')[:50]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
     title="Recent Independent Expenditure Filings"
     explanatory_text="These are recent electronic FEC filings that show independent expenditures--specifically, forms F24 and F5."
@@ -483,7 +483,7 @@ def recent_ie_filings(request):
     
 def significant_committees(request):
 
-    filings = unprocessed_filing.objects.filter(fec_id__in=['C00431171', 'C00496497', 'C00496034', 'C00495820', 'C00010603', 'C00042366', 'C00000935', 'C00003418', 'C00027466', 'C00075820', 'C00431445']).order_by('-filing_number')[:100]
+    filings = unprocessed_filing.objects.filter(fec_id__in=['C00431171', 'C00496497', 'C00496034', 'C00495820', 'C00010603', 'C00042366', 'C00000935', 'C00003418', 'C00027466', 'C00075820', 'C00431445']).order_by('-filing_number')[:50]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
     title="Notable PAC Filings"
     explanatory_text="These are recent electronic FEC filings from major presidential candidates and party committees."
@@ -499,7 +499,7 @@ def significant_committees(request):
     
 def significant_committees_new(request):
 
-    filings = unprocessed_filing.objects.filter(fec_id__in=['C00431171', 'C00496497', 'C00496034', 'C00495820', 'C00010603', 'C00042366', 'C00000935', 'C00003418', 'C00027466', 'C00075820', 'C00431445'], form_type__in=['F3XN', 'F3N', 'F3PN']).order_by('-filing_number')[:100]
+    filings = unprocessed_filing.objects.filter(fec_id__in=['C00431171', 'C00496497', 'C00496034', 'C00495820', 'C00010603', 'C00042366', 'C00000935', 'C00003418', 'C00027466', 'C00075820', 'C00431445'], form_type__in=['F3XN', 'F3N', 'F3PN']).order_by('-filing_number')[:50]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
     title="Monthly / Quarterly Filings From Major PACs"
     explanatory_text="These are recent monthly / quarterly electronic FEC filings from major presidential candidates and party committees. Amended filings are not included. "
@@ -514,7 +514,7 @@ def significant_committees_new(request):
     )    
 def recent_superpac_filings(request): 
     
-    filings = unprocessed_filing.objects.filter(is_superpac=True).order_by('-filing_number')[:100]
+    filings = unprocessed_filing.objects.filter(is_superpac=True).order_by('-filing_number')[:50]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
     title='Super PAC Filings'
     explanatory_text="These are recent electronic FEC filings from super PACs."
@@ -530,7 +530,7 @@ def recent_superpac_filings(request):
     
 def recent_superpac_filings_f3x(request): 
 
-    filings = unprocessed_filing.objects.filter(is_superpac=True, form_type='F3XN').order_by('-filing_number')[:100]
+    filings = unprocessed_filing.objects.filter(is_superpac=True, form_type='F3XN').order_by('-filing_number')[:50]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
     title='Original Monthly / Quarterly Super PAC Filings'
     explanatory_text="These are new monthly / quarterly reports from super PACs (ie form F3XN). Amended filings are not included. "
