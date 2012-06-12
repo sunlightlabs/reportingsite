@@ -54,9 +54,9 @@
 <br>
 <span class="amountLine"><b>Positive: {{ committee.pos_percent|floatformat:0}}%</b> </span>&nbsp;&nbsp;<span class="amountLine">Supports Democrats: </span><span class="amount">${{ committee.ie_support_dems|intcomma }}</span> &nbsp; <span class="amountLine">Supports Republicans: </span><span class="amount">${{ committee.ie_support_reps|intcomma }}</span>
 </div>
-
+<div class="space_above">
 <p>{{ explanatory_text|safe }}</p>
-
+</div>
 <table id="expendituresData" class="tablesorter">
     <thead>
         <tr>
