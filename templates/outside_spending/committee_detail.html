@@ -48,11 +48,12 @@
 
 {% if candidates %}
 
-<div class="space_above"><h3>Independent Expenditure Summary</h3></div>
+<div class="space_above"><h3>Independent Expenditure Summary</h3>
 
 <span class="amountLine"><b>Negative: {{ committee.neg_percent|floatformat:0}}%</b> </span>&nbsp;&nbsp;<span class="amountLine">Opposes Democrats: </span><span class="amount">${{ committee.ie_oppose_dems|intcomma }}</span> &nbsp; <span class="amountLine">Opposes Republicans: </span><span class="amount">${{ committee.ie_oppose_reps|intcomma }}</span>
 <br>
 <span class="amountLine"><b>Positive: {{ committee.pos_percent|floatformat:0}}%</b> </span>&nbsp;&nbsp;<span class="amountLine">Supports Democrats: </span><span class="amount">${{ committee.ie_support_dems|intcomma }}</span> &nbsp; <span class="amountLine">Supports Republicans: </span><span class="amount">${{ committee.ie_support_reps|intcomma }}</span>
+</div>
 
 <p>{{ explanatory_text|safe }}</p>
 
