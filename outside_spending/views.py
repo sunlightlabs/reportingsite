@@ -169,16 +169,27 @@ def all_contribs_csv(request):
     
 
 def all_superpacs(request):
-    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACS--that have raised at least $10,000 since the beginning of 2011. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. For the much longer list of <a href='/outside-spending/super-pacs/complete-list/'>all superpacs</a> click <a href='/outside-spending/super-pacs/complete-list/'>here</a>."
+    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have raised at least $10,000 since the beginning of 2011. The totals, listed above, are for all super PACs. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. For the much longer list of <a href='/outside-spending/super-pacs/complete-list/'>all superpacs</a> click <a href='/outside-spending/super-pacs/complete-list/'>here</a>."
 
-    superpacs = Committee_Overlay.objects.filter(total_contributions__gte=10000, is_superpac=True)
-    total = superpacs.aggregate(total=Sum('total_indy_expenditures'))
-    total_amt = total['total']
-
+    all_superpacs = Committee_Overlay.objects.filter(is_superpac=True)
+    
+    totals = all_superpacs.aggregate(support_dems=Sum('ie_support_dems'), oppose_dems=Sum('ie_oppose_dems'), oppose_reps=Sum('ie_oppose_reps'), support_reps=Sum('ie_support_reps'), total=Sum('total_indy_expenditures'))
+    
+    total_amt = totals['total']
+    neg_percent = 100*(totals['oppose_dems']+totals['oppose_reps'])/totals['total']
+    positive_percent = 100*(totals['support_dems']+totals['support_reps'])/totals['total']
+    
+    
+    
+    superpacs = all_superpacs.filter(total_contributions__gte=10000)
+    
     return render_to_response('outside_spending/superpac_list.html',
                             {'explanatory_text':explanatory_text, 
                             'superpacs':superpacs, 
-                            'total_amt':total_amt}) 
+                            'total_amt':total_amt, 
+                            'neg_percent':neg_percent,
+                            'pos_percent':positive_percent,
+                            }) 
 
 def complete_superpac_list(request):
     superpacs = Committee_Overlay.objects.filter(is_superpac=True).order_by('total_indy_expenditures')
@@ -692,4 +703,18 @@ def subscribe_to_alerts(request):
     return render_to_response('outside_spending/subscribe.html',
         {}
     )
-       
+
+def noncommittees(request):
+    noncommittees = Committee_Overlay.objects.filter(committee_master_record__ctype='I')
+    totals = noncommittees.aggregate(support_dems=Sum('ie_support_dems'), oppose_dems=Sum('ie_oppose_dems'), oppose_reps=Sum('ie_oppose_reps'), support_reps=Sum('ie_support_reps'), total=Sum('total_indy_expenditures'))
+    neg_percent = 100*(totals['oppose_dems']+totals['oppose_reps'])/totals['total']
+    positive_percent = 100*(totals['support_dems']+totals['support_reps'])/totals['total']
+    return render_to_response('outside_spending/noncommittees.html',
+        {
+        'noncommittees':noncommittees,
+        'totals':totals,
+        'neg_percent':neg_percent,
+        'pos_percent':positive_percent,
+        }
+    )
+    

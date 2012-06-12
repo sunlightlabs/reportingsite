@@ -91,7 +91,8 @@ class Committee(models.Model):
                                       ('X', 'Non-Qualified Party'),
                                       ('Y', 'Qualified Party'),
                                       ('Z', 'National Party Organization'),
-                                      ('E', 'Electioneering Communication')])
+                                      ('E', 'Electioneering Communication'),
+                                      ('O', 'INDEPENDENT EXPENDITURE-ONLY COMMITTEE') ])
 
     tax_status = models.CharField(max_length=10,
             choices=(('501(c)(4)', '501(c)(4)'),
@@ -191,6 +192,12 @@ class Committee_Overlay(models.Model):
     
     total_indy_expenditures = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     # Include all spending reported on summary reports. Should this also include total_indy_expenditures after last report closing date?
+    ie_support_dems = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    ie_oppose_dems = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    ie_support_reps = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    ie_oppose_reps = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    
+    
     total_presidential_indy_expenditures = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     total_electioneering = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     
@@ -209,7 +216,19 @@ class Committee_Overlay(models.Model):
 
     def get_absolute_url(self):  
         return ("/outside-spending/committee/%s/%s/" % (self.slug, self.fec_id))
+        
+    def is_not_a_committee(self):
+        if self.committee_master_record.ctype=='I':
+            return True
+        return False
+    
+    def neg_percent(self):
+        return 100*(self.ie_oppose_reps + self.ie_oppose_dems ) / self.total_indy_expenditures
+    
+    def pos_percent(self):
+        return 100*(self.ie_support_reps + self.ie_support_dems ) / self.total_indy_expenditures
 
+        
     def __unicode__(self):
         return self.name        
         

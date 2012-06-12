@@ -19,7 +19,8 @@
     </h2>
 
 <div><span class="amountLine">{% if committee.supporting %}Supporting: {{committee.supporting}}<br>{% endif %}
-{%if committee.is_superpac %}<b>This group is a super PAC</b><br>{% endif %}
+{% if committee.is_superpac %}<b>This group is a super PAC</b><br>{% endif %}
+{% if committee.is_not_a_committee  %}<b>This group is not a political committee</b><br>{% endif %}
 {%if committee.is_hybrid %}<b>This group is a hybrid super PAC</b><br>{% endif %}
 {% if committee.has_linkable_url %}Read <a href="{{committee.profile_url}}" name="PROFILE: {{ committee.name }}">a profile of this group{% endif %}{% if committee.has_linkable_url %}</a><br>{% endif %}Filing Frequency: {{committee.filing_frequency_text}}</span>
 <br>See <a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">FEC filings</a>
@@ -48,6 +49,11 @@
 {% if candidates %}
 
 <div class="space_above"><h3>Independent Expenditure Summary</h3></div>
+
+<span class="amountLine"><b>Negative: {{ committee.neg_percent|floatformat:0}}%</b> </span>&nbsp;&nbsp;<span class="amountLine">Opposes Democrats: </span><span class="amount">${{ committee.ie_oppose_dems|intcomma }}</span> &nbsp; <span class="amountLine">Opposes Republicans: </span><span class="amount">${{ committee.ie_oppose_reps|intcomma }}</span>
+<br>
+<span class="amountLine"><b>Positive: {{ committee.pos_percent|floatformat:0}}%</b> </span>&nbsp;&nbsp;<span class="amountLine">Supports Democrats: </span><span class="amount">${{ committee.ie_support_dems|intcomma }}</span> &nbsp; <span class="amountLine">Supports Republicans: </span><span class="amount">${{ committee.ie_support_reps|intcomma }}</span>
+
 <p>{{ explanatory_text|safe }}</p>
 
 <table id="expendituresData" class="tablesorter">
@@ -97,7 +103,7 @@
            <tr class="{% cycle 'odd' 'even' %}">
                <td>{{ ie.expenditure_date }}</td>
                <td><a href="{{ie.committee.get_absolute_url}}">{{ ie.committee.name }}</a></td>
-               <td><a href="{{ie.candidate.get_absolute_url}}">{{ ie.candidate.fec_name }}</a></td>                
+               <td><a href="{{ie.candidate.get_absolute_url}}">{{ ie.candidate.fec_name }}</a> {{ ie.candidate.display_party}}</td>                
                <td>{{ ie.support_or_oppose }}</td>
                <td>${{ ie.expenditure_amount|intcomma }}</td>   
                <td>{% if ie.state %}{{ ie.state }}{% endif %}</td>                                               
