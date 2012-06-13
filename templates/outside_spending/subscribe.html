@@ -93,6 +93,34 @@
     	<div id="selected_committees">
 
         </div>
+		
+		<div id="filing_types" class="filing_radio">
+		<input type="radio" name="filing_types" id="all" />
+		<label for="all" class="filing_label_big">All filings</label>
+
+		<br>
+		<input type="radio" name="filing_types" id="only_selected" />
+		<label for="only_selected" class="filing_label_big">Only the ones chosen below:</label>
+		
+		<ul class="check_indent">
+                <li>
+                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="monthly" /><label class="filing_label" for="check">Monthly/quarterly filings</label>
+                </li>
+                <li>
+                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="ie" /><label class="filing_label" for="check1">24/48-hour independent expenditures</label>
+                </li>
+                <li>
+                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="ec" /><label class="filing_label" for="check2">Electioneering communications </label>
+                </li>
+                <li>
+                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="F6" /><label class="filing_label" for="check3">48-hour contribution reports</label>
+                </li>
+        </ul>
+
+		<a href='' id='gotoscout'>Get alerts</a>
+    	
+		</div>
+
 	</div>
 	<div class="clear"></div>
 
@@ -183,10 +211,12 @@ function regen_committees_selected_list() {
 	
 	if (selected_committees.length == 0)
 	{
+		$("#filing_types").hide();
 		current_html = "<p>Search to find committees</p>";
 		$('#selected_committees').html(current_html);
 		return false;
 	} else {
+		$("#filing_types").show();
 		
 		var committee_ref = "this committee";
 		if (selected_committees.length > 1) {
@@ -208,21 +238,6 @@ function regen_committees_selected_list() {
 		        remove_from_selections($(this).data('fecid'));
 		        return false;
 		    });
-		/* <ul>
-                <li>
-                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="monthly" /><label class="filing_label" for="check">Monthly/quarterly filings</label>
-                </li>
-                <li>
-                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="ie" /><label class="filing_label" for="check1">24/48-hour independent expenditures</label>
-                </li>
-                <li>
-                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="ec" /><label class="filing_label" for="check2">Electioneering communications </label>
-                </li>
-                <li>
-                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="F6" /><label class="filing_label" for="check3">48-hour contribution reports</label>
-                </li>
-        	</ul> */
-        	current_html = "<a href='' id='gotoscout'>Get alerts about " + committee_ref + "</a>"
 	}
 }
 
@@ -242,6 +257,7 @@ function remove_from_selections(this_fecid) {
 }
 
 function submit_add_to_array(this_fecid, this_name) {
+	
 	if (selected_committees.length == 10) {
 		alert("No more than 10 committees can be selected.");
 		return;
@@ -285,6 +301,7 @@ function submit_goto_scout() {
 
 $(document).ready(function () {
 	$(".filing_check").attr("disabled", "disabled");
+	$("#filing_types").hide();
 	
 	$("#all").attr("checked", "checked");
 	$(".filing_check").attr("checked", "");
