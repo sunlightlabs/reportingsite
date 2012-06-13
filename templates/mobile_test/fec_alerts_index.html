@@ -7,50 +7,50 @@
 {% block pagecontent %}
 
 
-<h1 class="remove-bottom" style="margin-top: 0px; margin-bottom: 0px;">FEC filings</h1>
-<h5>Last updated {{ update_time.run_time|date:"N j, P" }}</h5>
-<hr />
-
-<ul class="tabs"style="margin-top: 0px;">
-							<li><a href="#about">About</a></li>
-							<li><a class="active" href="#filings">Recent</a></li>
-							<li><a href="#more">More Filings</a></li>
-						</ul>
-						<ul class="tabs-content">
-							<li id="about">
-							<p>These pages contain links to the 25 most recent electronic filings made at the FEC. For a complete list of the most recent filings, see <a href="#filings">recent</a>.</p><p>Dozens, if not hundreds, of filings are made daily. For links to more targetted collections of filings, see <a href="#more">more filings</a>.
-							</li>
-							
-							<li class="active" id="filings">
-								<p>All recent electronic FEC filings. Filings made on paper are not included. Filings are updated every 15 minutes.</p>
-								<hr />
-								{% for filing in filings %}
-								<p>    
-						            
-						                {{ filing.process_time|date:"N j, P"  }} <a href="{{filing.get_fec_url}}">{{ filing.filing_number }} [{{ filing.form_type}}]</a> Filed by <a href="{{filing.fec_all_filings}}">{{ filing.committee_name}}</a> {{ filing.get_form_name }} {% if filing.coverage_to_date %}{{ filing.coverage_from_date|date:"n/j/y" }} - {{ filing.coverage_to_date|date:"n/j/y" }}{% endif %} 
-							</p>
-						
-						        {% endfor %}
-								
-								
-								
-								
-							</li>
-							
-							<li id="more"><p>The <a href="#filings">Recent</a> tab shows all recent filings, but other sets of filings are available. 
-								<ul>
-									<li><a href="/outside-spending/FEC-alerts/superpacs/new-F3X/">Super PAC monthly/quarterly filings</a> shows new original monthly and quarterly reports only; amended filings are not included.</li>
-									<li><a href="/outside-spending/FEC-alerts/significant-committees/new-periodic/">Significant committee monthly/quarterly filings</a> shows only new monthly and quarterly filings from major committees; amended filings are excluded.</li>
-								</ul>
-								
-								<ul>
-									<li><a href="/outside-spending/FEC-alerts/superpacs/">Super PACs</a>&nbsp;shows all recent filings from independent expenditure only committees--better known as super PACs.</li>
-									<li><a href="/outside-spending/FEC-alerts/independent-expenditures/">Independent Expenditures</a>&nbsp; shows 24- and 48- hour notices of independent expenditures.</li>
-									<li><a href="/outside-spending/FEC-alerts/significant-committees/">Significant Committees</a>&nbsp; shows all filings from major presidential and party committees.</li>
-								</ul></p>
-							</li>
-						</ul>
-
+    <ul class="tabs-content">
+        <li id="about">
+            <p>These pages contain links to the 25 most recent electronic filings made at the FEC. For a complete list of the most recent filings, see <a href="#filings">recent</a>.</p>
+            <p>Dozens, if not hundreds, of filings are made daily. For links to more targetted collections of filings, see <a href="#more">more filings</a>.</p>
+        </li>
+        <li class="active" id="filings">
+            <p class="tip">All non-paper recent electronic FEC filings, updated every 15 minutes.</p>
+            <table>
+		        <thead>
+			        <tr id="titles">
+						<th>Filed</th>
+						<th>ID</th>
+						<th>Form & <br />Coverage</th>
+					</tr>
+				</thead>
+		        <tbody>
+			        {% for filing in filings %}
+			            <tr class="{% cycle 'even' 'odd' %}">
+                            <td>
+                                <span class="tip">{{ filing.process_time|date:"n/j, P"  }}</span>
+                                <a href="{{filing.fec_all_filings}}">{{ filing.committee_name}}</a>
+                            </td> 
+                            <td><a href="{{filing.get_fec_url}}">{{ filing.filing_number }} [{{ filing.form_type}}]</a></td>
+                            <td>
+                                {{ filing.get_form_name }}
+                                <br />
+                                <span class="tip">{% if filing.coverage_to_date %}  {{ filing.coverage_from_date|date:"n/j/y" }} - {{ filing.coverage_to_date|date:"n/j/y" }}{% endif %}</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+		        </tbody>    
+		    </table>
+        </li>
+        
+        <li id="more">
+            <p class="tip">Discover all other filings that are made available below.</p>
+            <ul class="withLine">
+                <li>
+                    <a class="standOut" href="/outside-spending/FEC-alerts/superpacs/new-F3X/">Super PAC monthly/quarterly filings</a> shows new original monthly and quarterly reports only; amended filings are not included.</li>
+                <li><a class="standOut" href="/outside-spending/FEC-alerts/significant-committees/new-periodic/">Significant committee monthly/quarterly filings</a> shows only new monthly and quarterly filings from major committees; amended filings are excluded.</li>
+                <li><a class="standOut" href="/outside-spending/FEC-alerts/superpacs/">Super PACs</a>&nbsp;shows all recent filings from independent expenditure only committees--better known as super PACs.</li>
+                <li><a class="standOut" href="/outside-spending/FEC-alerts/independent-expenditures/">Independent Expenditures</a>&nbsp; shows 24- and 48- hour notices of independent expenditures.</li>
+                <li><a class="standOut" href="/outside-spending/FEC-alerts/significant-committees/">Significant Committees</a>&nbsp; shows all filings from major presidential and party committees.</li>
+            </ul>
 
 
 {% endblock %}

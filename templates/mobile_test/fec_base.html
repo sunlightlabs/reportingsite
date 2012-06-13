@@ -19,9 +19,26 @@
 	<!-- CSS
   ================================================== -->
     {% block css %}
+    {% load media %}
 	<link rel="stylesheet" href="http://assets.sunlightfoundation.com/reporting/mobile_testing/stylesheets/base.css">
 	<link rel="stylesheet" href="http://assets.sunlightfoundation.com/reporting/mobile_testing/stylesheets/skeleton.css">
 	<link rel="stylesheet" href="http://assets.sunlightfoundation.com/reporting/mobile_testing/stylesheets/layout.css">
+	
+	<style>
+	    h1 { font-size: 250%; font-family: Georgia, "Times New Roman", Times, serif; padding-top: 20px;}
+        .tip {  font-family: Georgia, "Times New Roman", Times, serif; font-style: oblique; color: #766f6b; margin-bottom: 15px; display: block;}
+        .even { background-color: #f9f9f9;}
+        td { padding: 10px; }
+        table { margin: 30px 0 40px; font-size: 90%;}
+        .commName { text-transform: lowercase; }
+        th { color: #524b4b; font-weight: bold; text-align: left; padding: 0 0 10px 10px;}
+        #sunLogo { display: block; width: 160px; height: 48px; text-indent: -9999em; background: url("{% media_url %}/img/foundationLogo.png") top bottom no-repeat; float: left; margin-right: 30px;}
+        #footer { padding-top: 30px; margin-top: 50px; border-top: 1px solid #e2dfdf; margin-bottom: 30px;}
+        .withLine { margin: 0; }
+        .withLine li { padding: 10px 0; border-bottom: 1px solid #f4f3f3; }
+        .standOut { display: block; font-size: 110%; margin-bottom: 5px;}
+        #footer .tip { font-size: 90%;}
+    </style>
     {% endblock %}
 
 	<!--[if lt IE 9]>
@@ -32,24 +49,31 @@
 
 </head>
 <body>
-
-
-
+ 
 	<!-- start container -->
 	<div class="container">
 		<div class="sixteen columns">
+		    <header>
+		        <h1 class="remove-bottom" style="margin-top: 0px; margin-bottom: 0px;">FEC filings</h1>
+                <span class="tip">Last updated {{ update_time.run_time|date:"N j, P" }}</span>
+                <nav>
+                    <ul class="tabs">
+                        <li><a href="#about">About</a></li>
+                        <li><a class="active" href="#filings">Recent</a></li>
+                        <li><a href="#more">More Filings</a></li>
+                    </ul>
+                </nav>
+            </header>
 		    {% block pagecontent %}
 		    
             {% endblock %}
+            
 		</div>
-		
-    <!-- Should actually use footer instead, but... -->
-		<a href="http://sunlightfoundation.com/"><div class="sixteen columns" style="background-color:#414042;">
-			<img src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_sunlightFoundation.png" />
-		</div></a>
-	<!-- end defacto footer -->
-	
-	<!-- end container -->
+		<div class="clear"></div>
+		<div id="footer">
+            <a id="sunLogo" href="http://sunlightfoundation.com/">Sunlight Foundation</a>
+            <p class="tip">Founded in 2006, the Sunlight Foundation is a non-partisan non-profit that uses cutting-edge technology and ideas to make government transparent and accountable. Visit <a href="http://sunlightfoundation.com/">SunlightFoundation.com</a> to learn more.</p>
+        </div>
     </div>
 
 	{% block inpagejs %}
