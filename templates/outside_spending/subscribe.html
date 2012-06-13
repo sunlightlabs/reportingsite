@@ -47,7 +47,17 @@
 	margin-left: 30px;
 }	
 
+.span8 { float: left; width: 540px; margin-right: 25px;}
+.span4 { float: left; width: 272px; margin-left: 25px;}
 
+.subscribe_to_committee { display: block; text-indent: -9999em; float: left; margin-right: 10px; background: url(http://s3.amazonaws.com/sunlight-assets/site/4.0/images/btn_add.png) left top no-repeat; width: 16px; height: 14px; padding-bottom: 3px; margin-top: 2px;}
+.subscribe_to_committee:hover { background: url(http://s3.amazonaws.com/sunlight-assets/site/4.0/images/btn_add.png) left -17px no-repeat; height: 15px; padding-bottom: 1px; }
+
+.selected_committee_display { display: block; text-indent: -9999em; float: left; margin-right: 10px; background: url(http://s3.amazonaws.com/sunlight-assets/site/4.0/images/btn_subtract.png) left top no-repeat; width: 16px; height: 14px; padding-bottom: 3px; margin-top: 2px;}
+.selected_committee_display:hover { background: url(http://s3.amazonaws.com/sunlight-assets/site/4.0/images/btn_subtract.png) left -17px no-repeat; height: 15px; padding-bottom: 1px; }
+
+#alertSet { background-color: #fafaf8; -moz-border-radius: 3px; -webkit-border-radius: 3px; padding: 15px;}
+.module { margin-bottom: 30px;}
 
 </style>
 {% endblock %}
@@ -60,68 +70,31 @@
 
     {% include "outside_spending/tabs.html" %}
 
-
-    <h2>
-        Get notified about new campaign finance reports
-    </h2>
+    <h2>Get notified about new campaign finance reports</h2>
     <div class="amountLine clear">
-    <p>Sign up to receive notifications any time a particular committee you're interested in files a new electronic report with the Federal Election Commission. Notifications are provided through <a href="http://scout.sunlightfoundation.com/">Scout</a>, the Sunlight Foundation's search and alert tool covering state and federal legislation, the Congressional Record and federal regulations.</p>
-	<p>You can sign up to receive notifications about all filings, or only certain types. You can set up as many alerts as you'd like. If you have any trouble setting up the alerts you want, email <a href="mailto:jfenton@sunlightfoundation.com">jfenton@sunlightfoundation.com</a>.</p>
-	</div>
-    <hr />
-	<div id="selected_committees"><p>No committees selected</p></div>
-	
-	<div class="fullwidth">
-		
-	<div id="form_filings" style="float:right; width: 337px;">
-
-	<p>
-	<b>Step 2. What kind of reports?</b>
-	</p>
-	<p>
-	<input type="radio" name="filing_types" id="all" class="filing_radio" />
-	<label for="all" class="filing_label_big">All filings</label>
-	
-	<br>
-	<input type="radio" name="filing_types" id="only_selected" class="filing_radio" />
-	<label for="only_selected" class="filing_label_big">Only the ones chosen below:</label>
-	
-	<fieldset class="check_indent">
-	<input type="checkbox" class="filing_check" id="monthly" /><label class="filing_label" for="check">Monthly/quarterly filings</label>
-	<br><input type="checkbox" class="filing_check" id="ie" /><label class="filing_label" for="check1">24/48-hour independent expenditures</label>
-	<br><input type="checkbox" class="filing_check" id="ec" /><label class="filing_label" for="check2">Electioneering communications </label>
-	<br><input type="checkbox" class="filing_check" id="F6" /><label class="filing_label" for="check3">48-hour contribution reports</label>
-	</fieldset>
-	</p>
-
-
-
-
+        <p class="tip">Receive notifications on committee whenever they file a new electronic report with the Federal Election Commission. Have questions? Contact <a href="mailto:jfenton@sunlightfoundation.com">jfenton@sunlightfoundation.com</a>.</p>
+	    <p class="tip">Notifications are provided through <a href="http://scout.sunlightfoundation.com/">Scout</a>, the Sunlight Foundation's search and alert tool covering state and federal legislation, the Congressional Record and federal regulations.</p>
 	</div>
 	
-	
-	
-	
-	
-	<div style="float:left; width: 550px;">
-	<div style="height: 90px;">	
-	<p><b>1. Which committees?</b></p>	
+	<div class="span8" id="form_filings">
+        <h3>Choose Committees to Follow</h3>
+	    <form id="searchform" class="module">
+    	    <input type="text" id="searchbox" value="Committee or candidate" style="width: 200px;"  />
+    	    <button class="searchBtn" type="submit" id="search_committees">
+    	      <span>Search!</span>
+    	    </button>
+        </form>	
+    	<div id="search_results" class="span8">
+    	   
+    	</div>
+	</div>
+	<div class="span4" id="alertSet">
+    	<h4>Set Your Alert</h4>
+    	<div id="selected_committees">
 
-		
-	<form id="searchform">
-	    <input type="text" id="searchbox" value="Committee or candidate" style="width: 200px;"  />
-	    <button class="searchBtn" type="submit" id="search_committees">
-	      <span>Search!</span>
-	    </button>
-	  </form>	
+        </div>
 	</div>
-	
-	
-	<div id="search_results">No committees chosen. </div>
-		
-	</div>
-	<div style="clear:both" />
-	</div>
+	<div class="clear"></div>
 
 
 {% endblock %}
@@ -210,7 +183,7 @@ function regen_committees_selected_list() {
 	
 	if (selected_committees.length == 0)
 	{
-		current_html = "<p>No committees selected</p>";
+		current_html = "<p>Search to find committees</p>";
 		$('#selected_committees').html(current_html);
 		return false;
 	} else {
@@ -219,13 +192,13 @@ function regen_committees_selected_list() {
 		if (selected_committees.length > 1) {
 			committee_ref = "these committees";
 		}
-		current_html = "<p>You've selected " + selected_committees.length + " committees (shown below). &nbsp;&nbsp;<a href='' style='font-size:18px;' id='gotoscout'>Get alerts about " + committee_ref + "</a>";
+		current_html = "<h5>Selected Committees</h5><ul>";
 		for (i=0; i<selected_committees.length; i++) {
 			this_committee = selected_committees[i];
-			this_committee_row="<br> [<a class='selected_committee_display' name='" + this_committee.committee_name + "' href='' data-fecid='" + this_committee.fecid +"'> Unselect </a> ]&nbsp;&nbsp;<b>" + this_committee.committeename + "</b>";
+			this_committee_row="<li><a class='selected_committee_display' name='" + this_committee.committee_name + "' href='' data-fecid='" + this_committee.fecid +"'> Unselect </a>" + this_committee.committeename + "</li>";
 			current_html += this_committee_row;
 		}
-		current_html += "</p>";
+		current_html += "</ul>";
 		$('#selected_committees').html(current_html);
 		$('#gotoscout').click(function() {
 				submit_goto_scout();
@@ -235,6 +208,21 @@ function regen_committees_selected_list() {
 		        remove_from_selections($(this).data('fecid'));
 		        return false;
 		    });
+		/* <ul>
+                <li>
+                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="monthly" /><label class="filing_label" for="check">Monthly/quarterly filings</label>
+                </li>
+                <li>
+                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="ie" /><label class="filing_label" for="check1">24/48-hour independent expenditures</label>
+                </li>
+                <li>
+                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="ec" /><label class="filing_label" for="check2">Electioneering communications </label>
+                </li>
+                <li>
+                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="F6" /><label class="filing_label" for="check3">48-hour contribution reports</label>
+                </li>
+        	</ul> */
+        	current_html = "<a href='' id='gotoscout'>Get alerts about " + committee_ref + "</a>"
 	}
 }
 
