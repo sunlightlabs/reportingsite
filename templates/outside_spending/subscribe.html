@@ -11,42 +11,6 @@
 {{ block.super }}
 <style type="text/css">
 
-#form_filings .filing_check {
-	margin:0px;
-	padding:0px;
-	width: 50px;
-	}
-#form_filings .filing_label {
-	margin:0px;
-	padding:0px;
-	font-size: 14px;
-	width:270px;
-}
-
-#form_filings .filing_label_big {
-	margin:0px;
-	padding:0px;
-	width:300px;
-	font-size: 14px;
-	font-weight: bold;
-}
-
-#form_filings .filing_radio {
-	margin:0px;
-	padding:0px;
-	width: 50px;
-	}
-		
-#search_results .filing_label {
-	margin:0px;
-	padding:0px;
-	width:270px;
-}		
-	
-#form_filings .check_indent {
-	margin-left: 30px;
-}	
-
 .span8 { float: left; width: 540px; margin-right: 25px;}
 .span4 { float: left; width: 272px; margin-left: 25px;}
 
@@ -58,6 +22,11 @@
 
 #alertSet { background-color: #fafaf8; -moz-border-radius: 3px; -webkit-border-radius: 3px; padding: 15px;}
 .module { margin-bottom: 30px;}
+
+#gotoscout { background: url(http://s3.amazonaws.com/sunlight-assets/site/4.0/images/btn_getAlert.png) left top no-repeat;  display: block; text-indent: -9999em; width: 118px; height: 39px; margin-top: 20px; }
+#gotoscout:hover { background: url(http://s3.amazonaws.com/sunlight-assets/site/4.0/images/btn_getAlert.png) left bottom no-repeat;  }
+
+#alertSettings { padding-left: 20px;}
 
 </style>
 {% endblock %}
@@ -90,35 +59,29 @@
 	</div>
 	<div class="span4" id="alertSet">
     	<h4>Set Your Alert</h4>
-    	<div id="selected_committees">
+    	<div id="alertSettings">
+        	<div id="selected_committees" class="module">
 
-        </div>
-		
-		<div id="filing_types" class="filing_radio">
-		<input type="radio" name="filing_types" id="all" />
-		<label for="all" class="filing_label_big">All filings</label>
+            </div>
+    		<div id="filing_types" class="filing_radio">
+    		    <h6>Filter Further by Selecting Specific Filings</h6>
+        		<ul class="check_indent">
+                        <li>
+                            <label><input class="filing_check checkbox" type="checkbox" name="word" id="monthly" />Monthly/quarterly filings</label>
+                        </li>
+                        <li>
+                            <label><input class="filing_check checkbox" type="checkbox" name="word" id="ie" />24/48-hour independent expenditures</label>
+                        </li>
+                        <li>
+                            <label><input class="filing_check checkbox" type="checkbox" name="word" id="ec" />Electioneering communications</label>
+                        </li>
+                        <li>
+                            <label><input class="filing_check checkbox" type="checkbox" name="word" id="F6" />48-hour contribution reports</label>
+                        </li>
+                </ul>
 
-		<br>
-		<input type="radio" name="filing_types" id="only_selected" />
-		<label for="only_selected" class="filing_label_big">Only the ones chosen below:</label>
-		
-		<ul class="check_indent">
-                <li>
-                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="monthly" /><label class="filing_label" for="check">Monthly/quarterly filings</label>
-                </li>
-                <li>
-                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="ie" /><label class="filing_label" for="check1">24/48-hour independent expenditures</label>
-                </li>
-                <li>
-                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="ec" /><label class="filing_label" for="check2">Electioneering communications </label>
-                </li>
-                <li>
-                    <input type="checkbox" checked="checked" class="filing_check checkbox" id="F6" /><label class="filing_label" for="check3">48-hour contribution reports</label>
-                </li>
-        </ul>
-
-		<a href='' id='gotoscout'>Get alerts</a>
-    	
+        		<a href='' id='gotoscout'>Get alerts</a>
+    	    </div>
 		</div>
 
 	</div>

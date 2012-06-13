@@ -131,6 +131,7 @@ a.title:hover { color: #457b80;}
 h3.linkedTitle a { color: #020000;}
 h3.linkedTitle a:hover { color: #457b80;}
 h5, .h5 { font-size: 120%; font-weight: bold; margin-bottom: 10px;}
+h6 { font-weight: bold; margin-bottom: 8px; line-height: 16px;}
 
 span.title { margin-bottom: 10px; display: block;}
 
