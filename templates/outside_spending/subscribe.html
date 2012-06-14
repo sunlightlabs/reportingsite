@@ -247,8 +247,6 @@ function gotoscout(feedurl) {
 	appended_url = feedurl.replace("http://reporting.sunlightfoundation.com/outside-spending/recent-FEC-filings/","");
 	var gotoscout = confirm("You're being sent to Scout to subscribe to feeds for your selections. If you don't have an account with Scout you'll be prompted to create one.");
 	if (gotoscout) {
-		var pageTracker = _gat._getTracker('UA-1265484-45'); 
-		pageTracker._trackPageview('/FEC-tracker-subscribe/' + appended_url);
 		window.location = scouturl;
 		return false;
 	}
