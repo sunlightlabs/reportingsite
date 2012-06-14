@@ -130,37 +130,35 @@ function get_feed_url() {
 	} 
 	feedurl = "http://reporting.sunlightfoundation.com/outside-spending/recent-FEC-filings/feeds/" + url_committee + "/" + committee_list + "/" 
 
-	if($("#only_selected").is(":checked")) {
-		form_list = "";
-		var needs_hyphen = false;
-		
-		if ($("#monthly").is(":checked")) {
-			form_list += "F3N-F3A-F3T-F3XN-F3XA-F3XT-F3PN-F3PA-F3PA";
-			needs_hyphen = true;
-		}
-		if ($("#ie").is(":checked")) {
-			form_list = hyphenate(form_list, needs_hyphen);
-			form_list += "F24N-F24A-F5N-F5A";
-			needs_hyphen = true;
-		}
-		if ($("#ec").is(":checked")) {
-			form_list = hyphenate(form_list, needs_hyphen);
-			form_list += "F9N-F9A";
-			needs_hyphen = true;
-		}
-		if ($("#F6").is(":checked")) {
-			form_list = hyphenate(form_list, needs_hyphen);
-			form_list += "F6N-F6A";
-			needs_hyphen = true;
-		} 
-		
-		if (needs_hyphen==false) {
-			alert("You haven't picked any forms. Please pick some forms and then submit.");
-			return false;
-		}
-		feedurl += "forms/" + form_list + "/";
-		
+
+	form_list = "";
+	var needs_hyphen = false;
+	
+	if ($("#monthly").is(":checked")) {
+		form_list += "F3N-F3A-F3T-F3XN-F3XA-F3XT-F3PN-F3PA-F3PA";
+		needs_hyphen = true;
 	}
+	if ($("#ie").is(":checked")) {
+		form_list = hyphenate(form_list, needs_hyphen);
+		form_list += "F24N-F24A-F5N-F5A";
+		needs_hyphen = true;
+	}
+	if ($("#ec").is(":checked")) {
+		form_list = hyphenate(form_list, needs_hyphen);
+		form_list += "F9N-F9A";
+		needs_hyphen = true;
+	}
+	if ($("#F6").is(":checked")) {
+		form_list = hyphenate(form_list, needs_hyphen);
+		form_list += "F6N-F6A";
+		needs_hyphen = true;
+	} 
+	
+	if (needs_hyphen==false) {
+		alert("You haven't picked any forms. Please pick some forms and then submit.");
+		return false;
+	}
+	feedurl += "forms/" + form_list + "/";
 	
 	return feedurl;
 	
@@ -261,20 +259,13 @@ function submit_goto_scout() {
 
 
 $(document).ready(function () {
-	$(".filing_check").attr("disabled", "disabled");
 	$("#filing_types").hide();
 	
 	$("#all").attr("checked", "checked");
-	$(".filing_check").attr("checked", "");
+	$(".filing_check").attr("checked", "checked");
+	$(".filing_check").attr("disabled", "");
 	
-	$('.filing_radio').change(function(){
-		if($("#only_selected").is(":checked") ) {	
-			$(".filing_check").attr("disabled", "");
-		} else {
-			$(".filing_check").attr("disabled", "disabled");
-			$(".filing_check").attr("checked", "");	
-		}	
-	});	
+
 	$("#search_committees").bind('click', function() {
 		var searchterm = $("#searchbox")[0].value;
 		if ( (searchterm.length < 4) || ( searchterm == 'Committee or candidate' )) {

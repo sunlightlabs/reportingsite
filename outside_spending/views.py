@@ -709,8 +709,11 @@ def noncommittees(request):
     totals = noncommittees.aggregate(support_dems=Sum('ie_support_dems'), oppose_dems=Sum('ie_oppose_dems'), oppose_reps=Sum('ie_oppose_reps'), support_reps=Sum('ie_support_reps'), total=Sum('total_indy_expenditures'))
     neg_percent = 100*(totals['oppose_dems']+totals['oppose_reps'])/totals['total']
     positive_percent = 100*(totals['support_dems']+totals['support_reps'])/totals['total']
+    explanatory_text = """The following groups and individuals are not registered with the Federal Election Commission as political committees because they say their major purpose is not political. But they can still make independent expenditures. They rarely report their donors because they would only have to do so if the contribution was made for the purpose of a specific independent expenditure."""
+    
     return render_to_response('outside_spending/noncommittees.html',
         {
+        'explanatory_text':explanatory_text,
         'noncommittees':noncommittees,
         'totals':totals,
         'neg_percent':neg_percent,
