@@ -3,30 +3,46 @@
 
 {% block title %}MOBILE TEST - FEC FILINGS{% endblock %}
 
+{% block nav %}
+<ul class="tabs"style="margin-top: 0px;">
+				<li><a href="/outside-spending/FEC-alerts/#about">About</a></li>
+				<li><a href="/outside-spending/FEC-alerts/#filings">Recent</a></li>
+				<li><a href="/outside-spending/FEC-alerts/#more">More Filings</a></li>
+</ul>
+{% endblock %}
 
 {% block pagecontent %}
 
 
-<h1 class="remove-bottom" style="margin-top: 0px; margin-bottom: 0px;">FEC filings</h1>
-<h5>Last updated {{ update_time.run_time|date:"N j, P" }}</h5>
-<hr />
 
-			<ul class="tabs"style="margin-top: 0px;">
-							<li><a href="/outside-spending/FEC-alerts/#about">About</a></li>
-							<li><a href="/outside-spending/FEC-alerts/#filings">Recent</a></li>
-							<li><a class="active" href="/outside-spending/FEC-alerts/#more">More Filings</a></li>
-			</ul>
+            <p class="tip">{{ explanatory_text }} </p>
+            <table>
+		        <thead>
+			        <tr id="titles">
+						<th>Time filed & <br /> committee</th>
+						<th>Filing number</th>
+						<th>Form & <br />coverage</th>
+					</tr>
+				</thead>
+		        <tbody>
+			        {% for filing in filings %}
+			            <tr class="{% cycle 'even' 'odd' %}">
+                            <td>
+                                <span class="tip">{{ filing.process_time|date:"n/j, P"  }}</span>
+                                <a href="{{filing.fec_all_filings}}">{{ filing.committee_name}}</a>
+                            </td> 
+                            <td><a href="{{filing.get_fec_url}}">{{ filing.filing_number }}</a></td>
+                            <td>
+                                {{ filing.form_type}} - {{ filing.get_form_name }}
+                                <br />
+                                <span class="tip">{% if filing.coverage_to_date %}  {{ filing.coverage_from_date|date:"n/j/y" }} - {{ filing.coverage_to_date|date:"n/j/y" }}{% endif %}</span>
+                            </td>
+                        </tr>
+                    {% endfor %}
+		        </tbody>    
+		    </table>
 
-			<p>{{ explanatory_text }}</p>
-			<hr />
-			{% for filing in filings %}
-			<p>    
-	            
-	                {{ filing.process_time|date:"N j, P"  }} <a href="{{filing.get_fec_url}}">{{ filing.filing_number }} [{{ filing.form_type}}]</a> Filed by <a href="{{filing.fec_all_filings}}">{{ filing.committee_name}}</a> {{ filing.get_form_name }} {% if filing.coverage_to_date %}{{ filing.coverage_from_date|date:"n/j/y" }} - {{ filing.coverage_to_date|date:"n/j/y" }}{% endif %} 
-		</p>
-	
-	        {% endfor %}
-
-
+        
+      
 
 {% endblock %}

@@ -13,13 +13,13 @@
             <p>Dozens, if not hundreds, of filings are made daily. For links to more targetted collections of filings, see <a href="#more">more filings</a>.</p>
         </li>
         <li class="active" id="filings">
-            <p class="tip">All non-paper recent electronic FEC filings, updated every 15 minutes.</p>
+            <p class="tip">All non-paper recent electronic FEC filings, updated every 15 minutes.<br />Click on a filing number to see the original.</p>
             <table>
 		        <thead>
 			        <tr id="titles">
-						<th>Filed</th>
-						<th>ID</th>
-						<th>Form & <br />Coverage</th>
+						<th>Time filed & <br /> committee</th>
+						<th>Filing number</th>
+						<th>Form & <br />coverage</th>
 					</tr>
 				</thead>
 		        <tbody>
@@ -29,9 +29,9 @@
                                 <span class="tip">{{ filing.process_time|date:"n/j, P"  }}</span>
                                 <a href="{{filing.fec_all_filings}}">{{ filing.committee_name}}</a>
                             </td> 
-                            <td><a href="{{filing.get_fec_url}}">{{ filing.filing_number }} [{{ filing.form_type}}]</a></td>
+                            <td><a href="{{filing.get_fec_url}}">{{ filing.filing_number }}</a></td>
                             <td>
-                                {{ filing.get_form_name }}
+                                {{ filing.form_type}} - {{ filing.get_form_name }}
                                 <br />
                                 <span class="tip">{% if filing.coverage_to_date %}  {{ filing.coverage_from_date|date:"n/j/y" }} - {{ filing.coverage_to_date|date:"n/j/y" }}{% endif %}</span>
                             </td>

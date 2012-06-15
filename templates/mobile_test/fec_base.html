@@ -56,13 +56,15 @@
 		    <header>
 		        <h1 class="remove-bottom" style="margin-top: 0px; margin-bottom: 0px;">FEC filings</h1>
                 <span class="tip">Last updated {{ update_time.run_time|date:"N j, P" }}</span>
-                <nav>
+                {% block nav %}
+				<nav>
                     <ul class="tabs">
                         <li><a href="#about">About</a></li>
                         <li><a class="active" href="#filings">Recent</a></li>
                         <li><a href="#more">More Filings</a></li>
                     </ul>
                 </nav>
+				{% endblock %}
             </header>
 		    {% block pagecontent %}
 		    
