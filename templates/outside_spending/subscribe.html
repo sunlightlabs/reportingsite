@@ -41,7 +41,7 @@
 
     <h2>Get notified about new campaign finance reports</h2>
     <div class="amountLine clear">
-        <p class="tip">Receive notifications on committee whenever they file a new electronic report with the Federal Election Commission. Have questions? Contact <a href="mailto:jfenton@sunlightfoundation.com">jfenton@sunlightfoundation.com</a>.</p>
+        <p class="tip">Receive notifications about a committee or committees whenever they file a new electronic report with the Federal Election Commission. Have questions? Contact <a href="mailto:jfenton@sunlightfoundation.com">jfenton@sunlightfoundation.com</a>.</p>
 	    <p class="tip">Notifications are provided through <a href="http://scout.sunlightfoundation.com/">Scout</a>, the Sunlight Foundation's search and alert tool covering state and federal legislation, the Congressional Record and federal regulations.</p>
 	</div>
 	
@@ -64,16 +64,13 @@
 
             </div>
     		<div id="filing_types" class="filing_radio">
-    		    <h6>Filter Further by Selecting Specific Filings</h6>
+    		    <h6>Get notified about which filings?</h6>
         		<ul class="check_indent">
-                        <li>
-                            <label><input class="filing_check checkbox" type="checkbox" name="word" id="monthly" />Monthly/quarterly filings</label>
+                        <li style="margin-bottom: 5px;">
+                            <label><input class="filing_check checkbox" type="checkbox" name="word" id="monthly" />Monthly/quarterly reports<br>(Includes pre-election reports)</label>
                         </li>
                         <li>
                             <label><input class="filing_check checkbox" type="checkbox" name="word" id="ie" />24/48-hour independent expenditures</label>
-                        </li>
-                        <li>
-                            <label><input class="filing_check checkbox" type="checkbox" name="word" id="ec" />Electioneering communications</label>
                         </li>
                         <li>
                             <label><input class="filing_check checkbox" type="checkbox" name="word" id="F6" />48-hour contribution reports</label>
@@ -110,7 +107,7 @@ function get_amendment_list(form, include_new, include_amended) {
 
 function hyphenate(form_list, needs_hyphen) {
 	if (needs_hyphen) {
-		form_list += form_list + "-";
+		form_list += "-";
 	} 
 	return form_list;	
 }
@@ -183,7 +180,7 @@ function regen_committees_selected_list() {
 		if (selected_committees.length > 1) {
 			committee_ref = "these committees";
 		}
-		current_html = "<h5>Selected Committees</h5><ul>";
+		current_html = "<h5>Selected Committees</h5><p>Click the yellow minus sign to remove</p><ul>";
 		for (i=0; i<selected_committees.length; i++) {
 			this_committee = selected_committees[i];
 			this_committee_row="<li><a class='selected_committee_display' name='" + this_committee.committee_name + "' href='' data-fecid='" + this_committee.fecid +"'> Unselect </a>" + this_committee.committeename + "</li>";
@@ -241,6 +238,7 @@ function submit_add_to_array(this_fecid, this_name) {
 
 
 function gotoscout(feedurl) {
+	alert("feedurl is + " + feedurl);
 	scouturl = "http://scout.sunlightfoundation.com/import/feed?url=" + encodeURIComponent(feedurl);
 	appended_url = feedurl.replace("http://reporting.sunlightfoundation.com/outside-spending/recent-FEC-filings/","");
 	var gotoscout = confirm("You're being sent to Scout to subscribe to feeds for your selections. If you don't have an account with Scout you'll be prompted to create one.");
