@@ -238,7 +238,6 @@ function submit_add_to_array(this_fecid, this_name) {
 
 
 function gotoscout(feedurl) {
-	alert("feedurl is + " + feedurl);
 	scouturl = "http://scout.sunlightfoundation.com/import/feed?url=" + encodeURIComponent(feedurl);
 	appended_url = feedurl.replace("http://reporting.sunlightfoundation.com/outside-spending/recent-FEC-filings/","");
 	var gotoscout = confirm("You're being sent to Scout to subscribe to feeds for your selections. If you don't have an account with Scout you'll be prompted to create one.");
