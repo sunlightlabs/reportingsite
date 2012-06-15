@@ -101,5 +101,12 @@ candidate_lookup={
     'CRIMMINS, MICHAEL':'H8CA53019',
     'WILSON, HEATHER':'S8NM00168',
     'RANGEL, CHARLES': 'H6NY19029',
-    'CRAMER, KEVIN J': 'H0ND01026'
+    'CRAMER, KEVIN J': 'H0ND01026',
+#    'JOHN, SULLIVAN': This is ambiguous - H2OK and H6IL
+#+-----------+------------------+
+#| fec_id    | fec_name         |
+#+-----------+------------------+
+#| H2OK01093 | SULLIVAN, JOHN   |
+#| H6IL03114 | SULLIVAN, JOHN P | 
+    "D'AMBOISE, SCOTT": 'S2ME00042'
 }
