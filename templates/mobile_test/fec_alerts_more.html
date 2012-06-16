@@ -30,7 +30,7 @@
                                 <span class="tip">{{ filing.process_time|date:"n/j, P"  }}</span>
                                 <a href="{{filing.fec_all_filings}}">{{ filing.committee_name}}</a>
                             </td> 
-                            <td><a href="{{filing.get_fec_url}}">{{ filing.form_type}} : {{ filing.filing_number }}</a> - {{ filing.get_form_name }}</td><span class="tip">{% if filing.coverage_to_date %}<br />  {{ filing.coverage_from_date|date:"n/j/y" }} - {{ filing.coverage_to_date|date:"n/j/y" }}{% endif %}</span>
+                            <td><a href="{{filing.get_fec_url}}">{{ filing.form_type}} : {{ filing.filing_number }}</a> - {{ filing.get_form_name }}<span class="tip">{% if filing.coverage_to_date %}<br />  {{ filing.coverage_from_date|date:"n/j/y" }} - {{ filing.coverage_to_date|date:"n/j/y" }}{% endif %}</span>
                             </td>
                         </tr>
                     {% endfor %}
