@@ -10,7 +10,7 @@
     <ul class="tabs-content">
         <li id="about">
             <p>These pages contain links to the 25 most recent electronic filings made at the FEC. For a complete list of the most recent filings, see <a href="#filings">recent</a>.</p>
-            <p>Dozens, if not hundreds, of filings are made daily. For links to more targetted collections of filings, see <a href="#more">more filings</a>.</p>
+            <p>Dozens, if not hundreds, of filings are made daily. For links to more targeted collections of filings, see <a href="#more">more filings</a>.</p>
         </li>
         <li class="active" id="filings">
             <p class="tip">All non-paper recent electronic FEC filings, updated every 15 minutes.<br />Click on a filing number to see the original.</p>
@@ -18,8 +18,7 @@
 		        <thead>
 			        <tr id="titles">
 						<th>Time filed & <br /> committee</th>
-						<th>Filing number</th>
-						<th>Form & <br />coverage</th>
+						<th>Filing & <br />coverage</th>
 					</tr>
 				</thead>
 		        <tbody>
@@ -29,9 +28,7 @@
                                 <span class="tip">{{ filing.process_time|date:"n/j, P"  }}</span>
                                 <a href="{{filing.fec_all_filings}}">{{ filing.committee_name}}</a>
                             </td> 
-                            <td><a href="{{filing.get_fec_url}}">{{ filing.filing_number }}</a></td>
-                            <td>
-                                {{ filing.form_type}} - {{ filing.get_form_name }}
+                            <td><a href="{{filing.get_fec_url}}">{{ filing.form_type}}: {{ filing.filing_number }}</a> - {{ filing.get_form_name }}
                                 <br />
                                 <span class="tip">{% if filing.coverage_to_date %}  {{ filing.coverage_from_date|date:"n/j/y" }} - {{ filing.coverage_to_date|date:"n/j/y" }}{% endif %}</span>
                             </td>
@@ -42,14 +39,14 @@
         </li>
         
         <li id="more">
-            <p class="tip">Discover all other filings that are made available below.</p>
             <ul class="withLine">
-                <li>
-                    <a class="standOut" href="/outside-spending/FEC-alerts/superpacs/new-F3X/">Super PAC monthly/quarterly filings</a> shows new original monthly and quarterly reports only; amended filings are not included.</li>
-                <li><a class="standOut" href="/outside-spending/FEC-alerts/significant-committees/new-periodic/">Significant committee monthly/quarterly filings</a> shows only new monthly and quarterly filings from major committees; amended filings are excluded.</li>
-                <li><a class="standOut" href="/outside-spending/FEC-alerts/superpacs/">Super PACs</a>&nbsp;shows all recent filings from independent expenditure only committees--better known as super PACs.</li>
-                <li><a class="standOut" href="/outside-spending/FEC-alerts/independent-expenditures/">Independent Expenditures</a>&nbsp; shows 24- and 48- hour notices of independent expenditures.</li>
-                <li><a class="standOut" href="/outside-spending/FEC-alerts/significant-committees/">Significant Committees</a>&nbsp; shows all filings from major presidential and party committees.</li>
+                <li><a class="standOut" href="/outside-spending/FEC-alerts/superpacs/new-F3X/">Super PAC monthly/quarterly filings</a>New original monthly and quarterly reports only; amended filings are not included.</li>
+				<li><a class="standOut" href="/outside-spending/FEC-alerts/48-hr-contrib-reports">48-hour contribution reports</a>Filed by candidate committees to disclose last-minute contributions over $1,000.</li>
+                <li><a class="standOut" href="/outside-spending/FEC-alerts/significant-committees/new-periodic/">Significant committee monthly/quarterly filings</a>New monthly and quarterly filings from major committees; amended filings are excluded.</li>
+                <li><a class="standOut" href="/outside-spending/FEC-alerts/superpacs/">Super PACs</a>All recent filings from independent expenditure only committees--better known as super PACs.</li>
+                <li><a class="standOut" href="/outside-spending/FEC-alerts/independent-expenditures/">Independent Expenditures</a>Shows 24- and 48- hour notices of independent expenditures.</li>
+                <li><a class="standOut" href="/outside-spending/FEC-alerts/significant-committees/">Significant Committees</a>All filings from major presidential and party committees.</li>
+				
             </ul>
 
 

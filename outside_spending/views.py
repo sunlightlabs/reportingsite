@@ -651,6 +651,20 @@ def recent_fec_filings_superpacs_f3x(request):
         }
     )
 
+def recent_fec_filings_48hr_contrib(request):
+    filings = unprocessed_filing.objects.filter(form_type='F6N').order_by('-filing_number')[:25]
+    update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
+    title='48-hr Contribution Reports'
+    explanatory_text="These 48 hour reports are used to disclose the receipt of last-minute contributions of $1,000 or more. Principal campaign committees must file these notices for contributions received after the 20th day, but more than 48 hours, before the day the candidate's election."
+
+    return render_to_response('mobile_test/fec_alerts_more.html',
+        {
+        'title':title,
+        'explanatory_text':explanatory_text,
+        'filings':filings,
+        'update_time':update_time
+        }
+    )
 
     
     
