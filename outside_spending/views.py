@@ -559,7 +559,7 @@ def recent_fec_filings_mobile(request):
 
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
     filings = unprocessed_filing.objects.all().order_by('-filing_number')[:25]
-    title="Recent FEC Filings"
+    title="Recent FEC Filings  - FEC filings - Sunlight Foundation"
     explanatory_text="All recent electronic FEC filings. Filings made on paper are not included."
 
     return render_to_response('mobile_test/fec_alerts_index.html',
@@ -575,7 +575,7 @@ def recent_fec_filings_ies(request):
 
     filings = unprocessed_filing.objects.filter(form_type__in=['F5A', 'F5N', 'F24A', 'F24N']).order_by('-filing_number')[:25]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
-    title="Recent Independent Expenditure Filings"
+    title="Recent Independent Expenditures - FEC filings - Sunlight Foundation"
     explanatory_text="These are recent electronic FEC filings that show independent expenditures--specifically, forms F24 and F5."
 
     return render_to_response('mobile_test/fec_alerts_more.html',
@@ -591,7 +591,7 @@ def recent_fec_filings_significant(request):
 
     filings = unprocessed_filing.objects.filter(fec_id__in=['C00431171', 'C00496497', 'C00496034', 'C00495820', 'C00010603', 'C00042366', 'C00000935', 'C00003418', 'C00027466', 'C00075820', 'C00431445']).order_by('-filing_number')[:25]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
-    title="Notable PAC Filings"
+    title="Notable PACs  - FEC filings - Sunlight Foundation"
     explanatory_text="These are recent electronic FEC filings from major presidential candidates and party committees."
 
     return render_to_response('mobile_test/fec_alerts_more.html',
@@ -607,7 +607,7 @@ def recent_fec_filings_significant_new(request):
 
     filings = unprocessed_filing.objects.filter(fec_id__in=['C00431171', 'C00496497', 'C00496034', 'C00495820', 'C00010603', 'C00042366', 'C00000935', 'C00003418', 'C00027466', 'C00075820', 'C00431445'], form_type__in=['F3XN', 'F3N', 'F3PN']).order_by('-filing_number')[:25]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
-    title="Notable PAC Filings"
+    title="Notable PACs  - FEC filings - Sunlight Foundation"
     explanatory_text="These are recent electronic monthly / quarterly filings from major presidential candidates and party committees."
 
     return render_to_response('mobile_test/fec_alerts_more.html',
@@ -623,7 +623,7 @@ def recent_fec_filings_superpacs(request):
 
     filings = unprocessed_filing.objects.filter(is_superpac=True).order_by('-filing_number')[:25]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
-    title='Super PAC Filings'
+    title='Super PAC Filings - FEC filings - Sunlight Foundation'
     explanatory_text="These are recent electronic FEC filings from super PACs."
 
     return render_to_response('mobile_test/fec_alerts_more.html',
@@ -639,7 +639,7 @@ def recent_fec_filings_superpacs_f3x(request):
 
     filings = unprocessed_filing.objects.filter(is_superpac=True, form_type="F3XN").order_by('-filing_number')[:25]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
-    title='Super PAC Filings'
+    title='Super PAC Filings - FEC filings - Sunlight Foundation'
     explanatory_text="These are recent electronic monthly / quarterly reports from super PACs."
 
     return render_to_response('mobile_test/fec_alerts_more.html',
@@ -654,7 +654,7 @@ def recent_fec_filings_superpacs_f3x(request):
 def recent_fec_filings_48hr_contrib(request):
     filings = unprocessed_filing.objects.filter(form_type='F6N').order_by('-filing_number')[:25]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
-    title='48-hr Contribution Reports'
+    title='48-hr Contribution Reports - FEC filings - Sunlight Foundation'
     explanatory_text="These 48 hour reports are used to disclose the receipt of last-minute contributions of $1,000 or more. Principal campaign committees must file these notices for contributions received after the 20th day, but more than 48 hours, before the day the candidate's election."
 
     return render_to_response('mobile_test/fec_alerts_more.html',

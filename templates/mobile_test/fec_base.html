@@ -10,6 +10,8 @@
 	<meta charset="utf-8">
 	<title>{% block title %}{% endblock %}</title>
 	<meta name="description" content="{% block description %}{% endblock %}">
+	<meta name="google-site-verification" content="3wa4E5iGsKSwN886ts897uQBnZWj_kXWxnnQ2EOaheE" />
+ 
 
 
 	<!-- Mobile Specific Metas
@@ -81,6 +83,16 @@
 	{% block inpagejs %}
 	<!-- JS
 	================================================== -->
+	<script>
+      var gaJsHost = (("https:" == document.location.protocol) ? "https://ssl." : "http://www.");
+      document.write(unescape("%3Cscript src='" + gaJsHost + "google-analytics.com/ga.js' type='text/javascript'%3E%3C/script%3E"));
+    </script>
+    <script>
+      try {
+        var pageTracker = _gat._getTracker("UA-1265484-45");
+        pageTracker._trackPageview();
+      } catch(err) {}
+    </script>
 	<script src="http://code.jquery.com/jquery-1.7.1.min.js"></script>
 	<script src="http://assets.sunlightfoundation.com/reporting/mobile_testing/javascripts/tabs.js"></script>
 	{% endblock %}
