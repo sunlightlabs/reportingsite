@@ -6,7 +6,7 @@
     "committees":[
     {% for candidate_pac in superpacs %}
         {
-            "committee_href":"http://reporting.sunlightfoundation.com/{{candidate_pac.committee.get_absolute_url}}",
+            "committee_href":"http://reporting.sunlightfoundation.com{{candidate_pac.committee.get_absolute_url}}",
             "committee_fecid":"{{candidate_pac.committee.fec_id}}",
             "is_superpac":{{candidate_pac.committee.is_superpac}},
             "committee_type":"{{candidate_pac.committee.committee_master_record.ctype}}",
