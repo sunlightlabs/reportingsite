@@ -1,0 +1,20 @@
+{   "summary":{
+        "ie_supporting":"{% if candidate.expenditures_supporting %}{{ candidate.expenditures_supporting }}{% else %}0{% endif %}",
+        "ie_opposing":"{% if candidate.expenditures_opposing %}{{ candidate.expenditures_opposing }}{% else %}0{% endif %}",
+        "candidate_name":"{{ candidate.fec_name }}"
+    },
+    "committees":[
+    {% for candidate_pac in superpacs %}
+        {
+            "committee_href":"http://reporting.sunlightfoundation.com/{{candidate_pac.committee.get_absolute_url}}",
+            "committee_fecid":"{{candidate_pac.committee.fec_id}}",
+            "is_superpac":{{candidate_pac.committee.is_superpac}},
+            "committee_type":"{{candidate_pac.committee.committee_master_record.ctype}}",
+            "committee_designation":"{{candidate_pac.committee.committee_master_record.designation}}",
+            "name":"{{candidate_pac.committee.name }}",
+            "support_oppose":"{{ candidate_pac.support_or_oppose }}",
+            "amt":{% if candidate_pac.total_ind_exp %}{{ candidate_pac.total_ind_exp}}{% endif %}
+        }{% if forloop.last %}{% else %},{% endif %}
+    {% endfor %}
+    ]
+}

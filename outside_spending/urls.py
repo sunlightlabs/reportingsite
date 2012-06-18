@@ -69,6 +69,7 @@ urlpatterns = patterns('',
     url(r'^noncommittees\/$', 'outside_spending.views.noncommittees'),
     url(r'^maintenance/', direct_to_template, {'template': 'outside_spending/maintenance.html'}, name='maintenance'),
     
+    url(r'^API\/candidate_summary\/(?P<candidate_id>[\w\d]+)\/?$', 'outside_spending.views.candidate_summary_json'),
     
     #url(r'^searchtest\/$', 'django.views.generic.simple.direct_to_template', {'template': 'mobile_test/searchtest.html'}),      
     url(r'$', 'outside_spending.views.all_superpacs')

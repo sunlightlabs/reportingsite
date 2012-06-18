@@ -735,3 +735,12 @@ def noncommittees(request):
         }
     )
     
+def candidate_summary_json(request, candidate_id):
+    candidate = Candidate_Overlay.objects.get(fec_id=candidate_id)
+    superpacs = Pac_Candidate.objects.filter(candidate=candidate).select_related()
+    
+    return render_to_response('outside_spending/candidate_summary.json',
+                            {'candidate':candidate, 
+                            'superpacs':superpacs,
+                           })    
+    
