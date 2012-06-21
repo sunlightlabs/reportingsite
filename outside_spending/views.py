@@ -4,6 +4,9 @@ import datetime
 
 from django.views.decorators.cache import cache_page
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response, redirect
+from django.template.loader import get_template
+from django.template import Context, Template
+# in 1.3 there's django.shortcuts.render . D'oh!
 from django.http import Http404, HttpResponse
 from django.db.models import Sum
 from django.db.models import Q
@@ -739,8 +742,14 @@ def candidate_summary_json(request, candidate_id):
     candidate = Candidate_Overlay.objects.get(fec_id=candidate_id)
     superpacs = Pac_Candidate.objects.filter(candidate=candidate).select_related()
     
-    return render_to_response('outside_spending/candidate_summary.json',
-                            {'candidate':candidate, 
-                            'superpacs':superpacs,
-                           })    
+    t = get_template('outside_spending/candidate_summary.json')
+    c = Context({'candidate':candidate, 
+                'superpacs':superpacs,
+                })
+    rendered_template = t.render(c)
+    response = HttpResponse(rendered_template)
+    response['Content-Type']='application/json'
+    
+    return response
+    
     
