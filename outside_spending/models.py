@@ -208,6 +208,14 @@ class Committee_Overlay(models.Model):
     is_superpac = models.NullBooleanField(null=True, default=False)    
     is_hybrid = models.NullBooleanField(null=True, default=False)  
     is_c4 = models.NullBooleanField(null=True, default=False)
+    
+    # what's their orientation
+    political_orientation = models.CharField(max_length=1,null=True, choices=[
+                            ('R', 'backs Republicans'),
+                            ('D', 'backs Democrats'),
+                            ('U', 'unknown'),
+                            ('C', 'opposes incumbents--supports Tea Party'),
+                          ])
 
 
     class Meta:
