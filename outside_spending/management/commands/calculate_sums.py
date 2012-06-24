@@ -27,13 +27,24 @@ class Command(BaseCommand):
             
             if total_dem_support:
                 sp.ie_support_dems = total_dem_support
+            else: 
+                sp.ie_support_dems = 0
+                
             if total_rep_support:
                 sp.ie_support_reps = total_rep_support
+            else: 
+                sp.ie_support_reps = 0
+                
             if total_dem_oppose:
                 sp.ie_oppose_dems = total_dem_oppose
+            else:
+                sp.ie_oppose_dems = 0
+                
             if total_rep_oppose:
                 sp.ie_oppose_reps = total_rep_oppose
-            
+            else:
+                sp.ie_oppose_reps = 0
+                
             total = all_ies.aggregate(total_spent=Sum('expenditure_amount'))
             
             

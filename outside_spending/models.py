@@ -192,10 +192,10 @@ class Committee_Overlay(models.Model):
     
     total_indy_expenditures = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     # Include all spending reported on summary reports. Should this also include total_indy_expenditures after last report closing date?
-    ie_support_dems = models.DecimalField(max_digits=19, decimal_places=2, null=True)
-    ie_oppose_dems = models.DecimalField(max_digits=19, decimal_places=2, null=True)
-    ie_support_reps = models.DecimalField(max_digits=19, decimal_places=2, null=True)
-    ie_oppose_reps = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    ie_support_dems = models.DecimalField(max_digits=19, decimal_places=2, null=True, default=0)
+    ie_oppose_dems = models.DecimalField(max_digits=19, decimal_places=2, null=True, default=0)
+    ie_support_reps = models.DecimalField(max_digits=19, decimal_places=2, null=True, default=0)
+    ie_oppose_reps = models.DecimalField(max_digits=19, decimal_places=2, null=True, default=0)
     
     
     total_presidential_indy_expenditures = models.DecimalField(max_digits=19, decimal_places=2, null=True)
