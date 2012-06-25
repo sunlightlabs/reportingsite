@@ -32,10 +32,8 @@ for sp in superpacs:
         print "%s supports dems ; pro_dem: %s anti_dem: %s pro_rep: %s anti_rep: %s" % (sp.name, ie_support_dems, ie_oppose_dems, ie_support_reps, ie_oppose_reps)
         sp.political_orientation = 'D'
         sp.save()
-        total_dem_contribs += total_contributions
     elif (ie_support_reps > 0 and ie_support_dems == 0):
         print "%s supports reps ; pro_dem: %s anti_dem: %s pro_rep: %s anti_rep: %s" % (sp.name, ie_support_dems, ie_oppose_dems, ie_support_reps, ie_oppose_reps)
-        total_rep_contribs += total_contributions
         sp.political_orientation = 'R'
         sp.save()
     elif (ie_support_reps > 0 and ie_support_dems > 0):
@@ -96,9 +94,28 @@ for sp in superpacs:
             print "%s Presumed Democrat - only played in democratic primary and didn't play in general " % (sp.name)
             sp.political_orientation = 'D'
             sp.save()
+            
+        if (opposed_dems_in_general and not only_played_in_rep_primary):
+            print "%s Presumed Republican - didn't only play in republican primary but opposed dems in general" % (sp.name)
+            sp.political_orientation = 'R'
+            sp.save()
+
+        if (opposed_reps_in_general and not only_played_in_dem_primary):
+            print "%s Presumed Democrat - didn't only play in democatic primary but opposed dems in general" % (sp.name)
+            sp.political_orientation = 'R'
+            sp.save()        
+        
+        
         if ( (only_played_in_dem_primary and opposed_dems_in_general) or (only_played_in_rep_primary and opposed_reps_in_general )):
             print "!!!! confusing:%s" % (sp.name)
+            sp.political_orientation = 'U'
+            # but don't save it! 
             
+        
+    if (sp.political_orientation=='R'):
+        total_rep_contribs += total_contributions
+    elif (sp.political_orientation=='D'):
+        total_dem_contribs += total_contributions            
         
 print "totals D: %s R: %s" % (total_dem_contribs, total_rep_contribs)
 #    total_contribs = sp.total_contributions
