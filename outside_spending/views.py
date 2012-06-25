@@ -351,7 +351,7 @@ def state_detail(request, state_abbreviation):
 
     candidates = Candidate_Overlay.objects.filter(total_expenditures__gte=10, state_race__iexact=state_abbreviation)
 
-    explanatory_text= 'For a downloadable .csv file of this information, <a href="/outside-spending/csv/state/expenditures/%s/">click here</a>.</p><p>This table lists the total of all independent expenditures and electioneering communications designated to a particular state during the 2012 election cycle by race. The FEC does not require that general election spending in support of a president be designated to a particular state. Moreover, the state designation is sometimes omitted from reports where it should be included.' % (state_abbreviation)
+    explanatory_text= 'For a downloadable .csv file of this information, <a href="/outside-spending/csv/state/expenditures/%s/">click here</a>.</p><p>This table lists the total of all independent expenditures and electioneering communications designated to this state during the 2012 election cycle by race. The FEC does not require that general election spending in support of a president be designated to a particular state. Moreover, the state designation is sometimes omitted from reports where it should be included.' % (state_abbreviation)
     return render_to_response('outside_spending/state_detail.html',
                             {'races':races, 
                             'state_name':state_name,
