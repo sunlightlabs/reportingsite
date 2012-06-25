@@ -229,7 +229,7 @@ def committee_detail(request,committee_id):
                             
 
 def presidential_superpacs(request):
-    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have spent more than $1,000 in independent expenditures in support of a presidential candidate during the 2012 election cycle. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
+    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have spent more than $1,000 in independent expenditures in support of a presidential candidate during the 2012 primrary election cycle. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
 
     superpacs = Committee_Overlay.objects.filter(total_presidential_indy_expenditures__gte=1000)
     total = superpacs.aggregate(total=Sum('total_presidential_indy_expenditures'))
@@ -250,8 +250,8 @@ def presidential_state_summary(request, state):
     state_pacs = President_State_Pac_Aggregate.objects.filter(state=state)
 
     expenditures = Expenditure.objects.filter(superceded_by_amendment=False, state=state, office='P').select_related("committee", "candidate")
-    explanatory_text = 'This is a list of groups that have made independent expenditures for or against a presidential candidate in the state of ' + state_name + '.'
-    explanatory_text_details = 'This is a list all independent expenditures made for or against a presidential candidate in the state of ' + state_name + '.'
+    explanatory_text = 'This is a list of groups that have made independent expenditures for or against a presidential candidate during the primary election in the state of ' + state_name + '. The FEC does not require political groups to say what state they spent their money in during the general election.'
+    explanatory_text_details = 'This is a list all independent expenditures made for or against a presidential candidate during the primary election in the state of ' + state_name + '. The FEC does not require political groups to say what state they spent their money in during the general election.'
     
     ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False, target__candidate__office='P', target__can_state=state).order_by('-exp_date')
     
@@ -332,7 +332,7 @@ def candidate_detail(request, candidate_id):
 
 def states(request):
     states = State_Aggregate.objects.filter(total_ind_exp__gt=0)
-    explanatory_text= 'This table lists the sums of independent expenditures and electioneering communications reported to have been made in each state during the 2012 election cycle. While FEC rules require super PACs and other political groups to designate the state each independent expenditure is made in, many expenditures--particularly those spread across multiple states--are missing this information. Therefore, the totals on this page will not match overall totals found elsewhere on this site. For downloadable state-by-state files, see the <a href="/outside-spending/file-downloads/">downloads page</a>. ' + electioneering_details
+    explanatory_text= 'This table lists the sums of independent expenditures and electioneering communications reported to have been made in each state during the 2012 election cycle. The FEC does not require that general election spending in support of a president be designated to a particular state. Moreover, the state designation is sometimes omitted from reports where it should be included. Therefore, the totals on this page will not match overall totals found elsewhere on this site. For downloadable state-by-state files, see the <a href="/outside-spending/file-downloads/">downloads page</a>. ' + electioneering_details
     return render_to_response('outside_spending/state_list.html',
                             {'states':states, 
                             'explanatory_text':explanatory_text,
@@ -351,7 +351,7 @@ def state_detail(request, state_abbreviation):
 
     candidates = Candidate_Overlay.objects.filter(total_expenditures__gte=10, state_race__iexact=state_abbreviation)
 
-    explanatory_text= 'For a downloadable .csv file of this information, <a href="/outside-spending/csv/state/expenditures/%s/">click here</a>.</p><p>This table lists the total of all independent expenditures and electioneering communications made during the 2012 election cycle by race. While FEC rules require super PACs and other political groups to designate the state each independent expenditure is made in, many expenditures--particularly those spread across multiple states--are missing this information. Therefore, the totals on this page will not match overall totals found elsewhere on this site.' % (state_abbreviation)
+    explanatory_text= 'For a downloadable .csv file of this information, <a href="/outside-spending/csv/state/expenditures/%s/">click here</a>.</p><p>This table lists the total of all independent expenditures and electioneering communications designated to a particular state during the 2012 election cycle by race. The FEC does not require that general election spending in support of a president be designated to a particular state. Moreover, the state designation is sometimes omitted from reports where it should be included.' % (state_abbreviation)
     return render_to_response('outside_spending/state_detail.html',
                             {'races':races, 
                             'state_name':state_name,

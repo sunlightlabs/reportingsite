@@ -35,7 +35,7 @@
     <tbody>
         {% if this_state.total_pres_ind_exp %}
         <tr class="odd">
-            <td>President (<a href="/outside-spending/president-state-detail/{{this_state.state}}/">{{this_state}} only)</a></td>
+            <td>Presidential primary (<a href="/outside-spending/president-state-detail/{{this_state.state}}/">{{this_state}} only)</a></td>
             <td>${{ this_state.total_pres_ind_exp|intcomma }}</td>
             <td>{% if this_state.total_ec %}${{ this_state.total_ec|intcomma }}{% else %}$0{% endif %}</td>
         </tr>        

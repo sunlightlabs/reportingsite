@@ -13,8 +13,8 @@
 <!-- Temporary style adds for superpac etc tabs -->
 
 <style type="text/css">
-#filterExpenditures li:hover, body.expendituresCommittee li#filter_committee, body.expendituresCandidate li#filter_candidate, body.expendituresRace li#filter_race, body.expendituresNotification li#filter_notification, body.expendituresRecent li#filter_recent, body.expendituresOrganizational li#filter_og, body.expendituresFiles li#filter_files, body.expendituresIes li#filter_ies,  body.filedownloads li#filter_dl,  body.electioneeringFiles li#filter_ec {  background-color: #2a5f65; border-top: 1px solid #134045; border-left: 1px solid #134045; border-right: 1px solid #134045; }
-#filterExpenditures li:hover a, body.expendituresCommittee li#filter_committee a, body.expendituresCandidate li#filter_candidate a, body.expendituresRace li#filter_race a, body.expendituresNotification li#filter_notification a, body.expendituresRecent li#filter_recent a, body.expendituresOrganizational li#filter_og a, body.expendituresIes li#filter_ies a, body.expendituresFiles li#filter_files a, body.filedownloads li#filter_dl a, body.electioneeringFiles li#filter_ec a { color: #fff;}
+#filterExpenditures li:hover, body.expendituresCommittee li#filter_committee, body.expendituresCandidate li#filter_candidate, body.expendituresRace li#filter_race, body.expendituresNotification li#filter_notification, body.expendituresStates li#filter_states, body.expendituresOrganizational li#filter_og, body.expendituresFiles li#filter_files, body.expendituresIes li#filter_ies,  body.more_links li#filter_more,  body.electioneeringFiles li#filter_ec {  background-color: #2a5f65; border-top: 1px solid #134045; border-left: 1px solid #134045; border-right: 1px solid #134045; }
+#filterExpenditures li:hover a, body.expendituresCommittee li#filter_committee a, body.expendituresCandidate li#filter_candidate a, body.expendituresRace li#filter_race a, body.expendituresNotification li#filter_notification a, body.expendituresStates li#filter_states a, body.expendituresOrganizational li#filter_og a, body.expendituresIes li#filter_ies a, body.expendituresFiles li#filter_files a, body.more_links li#filter_more a, body.electioneeringFiles li#filter_ec a { color: #fff;}
 
 .space_above { margin-top: 15px; }
 
@@ -41,18 +41,19 @@ div.share {
         <h2 id="featureHeader">Follow the Unlimited Money</h2>
         <div id="featureMainNav">
             <ul>
-                <li id="expenditures"><a href="/outside-spending/super-pacs/">All Super PACs</a></li>
+<!--				<li id="expenditures"><a href="/outside-spending/overview/">Overview</a></li>  -->
+                <li id="expenditures"><a href="/outside-spending/file-downloads/">Download data</a></li>
                 <li id="about"><a href="http://reporting.sunlightfoundation.com/super-pac/data/about/2012-june-update/">About this data</a></li>
                 <li id="stories" class="last"><a href="http://reporting.sunlightfoundation.com/tag/Super%20PAC/">Stories</a></li>
             </ul>  
-            <!--
+<!--            
             <form id="expenditureSearch" action="" method="GET">
                 <input id="searchbox" {% if terms %}value="{{ terms }}"{% else %}value="Search for a candidate or committee"{% endif %} type="text" name="q" />
                 <button class="goBtn" type="submit" value="Search" >
                   <span>Go</span>
                 </button>
             </form>
-            -->
+-->            
             <div class="clear"></div>  
         </div>
         
