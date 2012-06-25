@@ -101,7 +101,7 @@ for sp in superpacs:
             sp.save()
 
         if (opposed_reps_in_general and not only_played_in_dem_primary):
-            print "%s Presumed Democrat - didn't only play in democatic primary but opposed dems in general" % (sp.name)
+            print "%s Presumed Democrat - didn't only play in democatic primary but opposed reps in general" % (sp.name)
             sp.political_orientation = 'R'
             sp.save()        
         
