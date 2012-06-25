@@ -108,5 +108,15 @@ candidate_lookup={
 #+-----------+------------------+
 #| H2OK01093 | SULLIVAN, JOHN   |
 #| H6IL03114 | SULLIVAN, JOHN P | 
-    "D'AMBOISE, SCOTT": 'S2ME00042'
+    "D'AMBOISE, SCOTT": 'S2ME00042',
+    'CROWLEY, ELIZABETH': 'H2NY06124'
+    'LAMALFA, DOUG':'H2CA02142',
+    'MATSUI, DORIS':'H6CA05195',
+    'MCDOWELL, GARY':'H0MI01153',
+    'REHBERG, DENNY':'S6MT00097',
+    | STEWART, JOHN MARK
+    'AUBUCHON, GARY':'H2FL14145'    
+    
+    
+    
 }
