@@ -175,7 +175,7 @@ def all_superpacs(request):
 
     all_superpacs = Committee_Overlay.objects.filter(is_superpac=True)
     
-    totals = all_superpacs.aggregate(support_dems=Sum('ie_support_dems'), oppose_dems=Sum('ie_oppose_dems'), oppose_reps=Sum('ie_oppose_reps'), support_reps=Sum('ie_support_reps'), total=Sum('total_indy_expenditures'))
+    totals = all_superpacs.aggregate(support_dems=Sum('ie_support_dems'), oppose_dems=Sum('ie_oppose_dems'), oppose_reps=Sum('ie_oppose_reps'), support_reps=Sum('ie_support_reps'), total=Sum('total_indy_expenditures'), total_contribs=Sum('total_contributions'))
     
     total_amt = totals['total']
     neg_percent = 100*(totals['oppose_dems']+totals['oppose_reps'])/totals['total']
@@ -189,6 +189,7 @@ def all_superpacs(request):
                             {'explanatory_text':explanatory_text, 
                             'superpacs':superpacs, 
                             'total_amt':total_amt, 
+                            'total_contribs':totals['total_contribs'],
                             'neg_percent':neg_percent,
                             'pos_percent':positive_percent,
                             }) 
