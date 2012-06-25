@@ -19,7 +19,7 @@
 
     <h2>Outside spending - Presidential - {{ state_name }} </h2>
 <p>{{ explanatory_text }}
-<br>Jump to <a href="#ie">independent expenditures</a>&nbsp;|&nbsp;Jump to <a href="#ec">electioneering communications</a>
+<br>Jump to <a href="#ie">independent expenditures</a>{% if ecs %}&nbsp;|&nbsp;Jump to <a href="#ec">electioneering communications</a>{% endif %}
 </p>
 
 {% if state_pacs %}
