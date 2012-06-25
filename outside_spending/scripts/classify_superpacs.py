@@ -1,7 +1,8 @@
 import sys
 
 from django.core.management import setup_environ
-sys.path.append('/Users/jfenton/reporting/reportingsitenew/reportingsite')
+#sys.path.append('/Users/jfenton/reporting/reportingsitenew/reportingsite')
+sys.path.append('/projects/reporting/src/reportingsite')
 
 import settings
 setup_environ(settings)
