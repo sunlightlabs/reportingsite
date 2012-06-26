@@ -2,6 +2,7 @@
 
 from django.db import models
 from django.db.models import Q
+from django.core.exceptions import ValidationError
 from django.template.defaultfilters import slugify
 
 
@@ -109,4 +110,74 @@ class Meeting(models.Model):
     def __unicode__(self):
         return u'{0.pk}, {0.date!r}, {0.topic!r}, {0.attendee_hash!r}'.format(self)
 
-    
+
+class OrganizationNameCorrection(models.Model):
+    """
+    We maintain a mapping of name replacements to avoid re-importing mis-spellings.
+    """
+
+    original = models.CharField(max_length=255,
+                                blank=False, 
+                                null=False,
+                                unique=True)
+
+    replacement = models.CharField(max_length=255,
+                                   blank=False, 
+                                   null=False)
+
+    def encoded_original(self):
+        return repr(self.original.encode('utf-8'))
+
+    def encoded_replacement(self):
+        return repr(self.replacement.encode('utf-8'))
+
+    def __unicode__(self):
+        return u'{0.original} => {0.replacement}'.format(self)
+
+    def clean(self):
+        corrections = OrganizationNameCorrection.objects.filter(
+            Q(original=self.replacement) | Q(replacement=self.original))
+        if corrections.count() > 0:
+            raise ValidationError("Correction loop detected {0!r}".format(list(corrections)))
+
+    def save(self, *args, **kwargs):
+        super(OrganizationNameCorrection, self).save(*args, **kwargs)
+
+        # If there is no existing organization, then there's nothing to
+        # correct right now and this is just being created for future use.
+        try:
+            original_org = Organization.objects.get(name=self.original)
+        except Organization.DoesNotExist:
+            return
+
+        try:
+            replacement_org = Organization.objects.get(name=self.replacement)
+            # If an organization already exists with the replacement name then 
+            # the correction needs to be done on the Meeting and Organization
+            # objects.
+            for meeting in original_org.meetings.all():
+                meeting.organizations.remove(original_org)
+                meeting.organizations.add(replacement_org)
+                meeting.save()
+
+            for attendee in original_org.representatives.all():
+                attendee.org = replacement_org
+                attendee.save()
+
+            original_org.delete()
+
+        except Organization.DoesNotExist:
+            # If there isn't already an Organization object with the replacement
+            # name then there are no Meeting or Attendee objects to update and we
+            # can just rename the original Organization object.
+            original_org.name = self.replacement
+            original_org.save()
+
+
+class ScrapingError(models.Model):
+    agency = models.ForeignKey(Agency, related_name='scraping_errors')
+    url = models.TextField(null=False, blank=False)
+    description = models.TextField(null=True)
+    context = models.TextField(null=True)
+    timestamp = models.DateTimeField(null=True)
+

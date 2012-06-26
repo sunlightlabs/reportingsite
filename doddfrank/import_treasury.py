@@ -4,12 +4,13 @@ import dateutil.parser
 
 from doddfrank.importlib import (dict_hash, slurp_data, 
                                  reconcile_database, import_meetings,
-                                 prune_attendees)
+                                 import_attendees, prune_attendees, prune_organizations)
 from doddfrank.models import Agency, Attendee, Organization, Meeting
 
 
-SCRAPER_MEETINGS_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=doddfranktreasurymeetings&query=select%20*%20from%20meetings%3B'
-SCRAPER_ATTENDEES_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=doddfranktreasurymeetings&query=select%20*%20from%20attendees%3B'
+SCRAPER_MEETINGS_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=doddfranktreasury&query=select%20*%20from%20%60meetings%60'
+SCRAPER_ATTENDEES_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=doddfranktreasury&query=select%20*%20from%20%60attendees%60'
+
 
 try:
     Treasury = Agency.objects.get(initials='Treasury')
@@ -44,6 +45,19 @@ def meeting_copyfunc(record, meeting):
     meeting.source_url = record['Url']
 
 
+def attendee_keyfunc(record, record_hash):
+    return {
+        'name': record['Attendee']
+    }
+
+
+def attendee_copyfunc(record, attendee):
+    attendee.name = record['Attendee']
+
+
+SharedKeys = ['Topics', 'MonthName', 'Year', 'Date', 'AttendeeHash']
+
+
 def main():
     (treasury, created) = Agency.objects.get_or_create(initials='Treasury')
     if created:
@@ -59,41 +73,16 @@ def main():
 
     print 'Importing attendees'
     attendees = slurp_data(SCRAPER_ATTENDEES_URL)
-    progress = progressbar.ProgressBar()
-
-
-    for a in progress(attendees):
-        a_date = dateutil.parser.parse(a['Date']).date()
-        try:
-            meeting = Meeting.objects.get(agency=treasury,
-                                          date=a_date,
-                                          topic=a['Topics'],
-                                          attendee_hash=a['AttendeeHash'])
-        except Meeting.DoesNotExist:
-            print 'No such meeting found for attendee record ({0})'.format(a)
-            continue
-        except Meeting.MultipleObjectsReturned:
-            print 'Database integrity failed: multiple meetings for attendee record ({0})'.format(a)
-            continue
-
-        if a['Org']:
-            (organization, created) = Organization.objects.get_or_create(name=a['Org'])
-            if created:
-                organization.save()
-        else:
-            organization = None
-
-        (attendee, created) = Attendee.objects.get_or_create(name=a['Attendee'],
-                                                             org=organization)
-        meeting.attendees.add(attendee)
-        if organization:
-            meeting.organizations.add(organization)
-        attendee.save()
+    import_attendees(meetings, attendees, SharedKeys,
+                     attendee_keyfunc, attendee_copyfunc,
+                     meeting_keyfunc, meeting_copyfunc,
+                     'Org')
 
     meeting_objects = Meeting.objects.filter(agency=treasury)
     reconcile_database(meeting_objects, meetings)
 
     prune_attendees()
+    prune_organizations()
 
     print 'Done'
 

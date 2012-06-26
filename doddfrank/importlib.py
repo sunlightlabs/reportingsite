@@ -1,6 +1,9 @@
 import sys
 import hashlib
 import json
+import re
+
+from copy import deepcopy
 
 import requests
 import progressbar
@@ -8,7 +11,9 @@ import dateutil.parser
 
 from django.db.models import Count
 
-from doddfrank.models import Agency, Meeting, Attendee, Organization
+from doddfrank.models import (Agency, Meeting, Attendee,
+                              Organization, OrganizationNameCorrection,
+                              ScrapingError)
 
 
 def agency_or_die(initials):
@@ -94,7 +99,7 @@ def reconcile_database(objects, records):
             print repr(obj)
 
 
-def import_meetings(meetings, keyfunc, copyfunc):
+def import_meetings(meetings, keyfunc, copyfunc, update_existing=False):
     """
     meetings is a list of objects pulled from ScraperWiki
 
@@ -115,16 +120,20 @@ def import_meetings(meetings, keyfunc, copyfunc):
         m_hash = dict_hash(m)
         keys = keyfunc(m, m_hash)
         (meeting, created) = Meeting.objects.get_or_create(**keys)
-        if created:
+        if created or update_existing:
             copyfunc(m, meeting)
             meeting.import_hash = m_hash
+            if update_existing:
+                meeting.organizations.all().delete()
+                meeting.attendees.all().delete()
             meeting.save()
 
 
 def import_attendees(meetings, attendees, shared_keys,
                      keyfunc, copyfunc,
                      meeting_keyfunc, meeting_copyfunc,
-                     org_field):
+                     org_field,
+                     update_existing=False):
     """
     This function mimics an inner join between the attendees records and the
     metings records in order to create Attendee objectss and link them to the
@@ -155,6 +164,9 @@ def import_attendees(meetings, attendees, shared_keys,
 
         org_name = a.get(org_field)
         if org_name:
+            org_name.strip()
+            org_name = correct_organization_name(org_name).strip()
+        if org_name:
             (org, created) = Organization.objects.get_or_create(name=org_name)
             if created:
                 org.save()
@@ -163,13 +175,48 @@ def import_attendees(meetings, attendees, shared_keys,
             org = None
 
         a_keys = keyfunc(a, a_hash)
-        (attendee, created) = Attendee.objects.get_or_create(**a_keys)
-        if created:
+        print u'Looking up Attendee object for (org={0}, {1})'.format(org, a_keys)
+        (attendee, created) = Attendee.objects.get_or_create(org=org, **a_keys)
+        if created or update_existing:
             copyfunc(a, attendee)
+            attendee.org = org
             attendee.import_hash = a_hash
             attendee.save()
         meeting.attendees.add(attendee)
         meeting.save()
+
+
+def import_organizations(meetings, organizations, shared_keys,
+                         org_field,
+                         meeting_keyfunc, meeting_copyfunc):
+    """
+    This function mimics an inner join between the organizations records and the
+    meetings records in order to create Organization objects and link them to the
+    the corresponding Meeting objects.
+
+    meetings and organizations are both lists of objects pulled from ScraperWiki
+    """
+
+    meeting_index = index_dict_list(meetings, shared_keys)
+    get_shared_keys = DictSlicer(*shared_keys)
+    progress = progressbar.ProgressBar()
+    for o in progress(organizations):
+        if o.get('name', '').strip():
+            m_index_key = dict_hash(get_shared_keys(o))
+            m = meeting_index[m_index_key]
+
+            m_hash = dict_hash(m)
+            m_keys = meeting_keyfunc(m, m_hash)
+            meeting = Meeting.objects.get(**m_keys)
+
+            org_name = o.get(org_field)
+            if org_name:
+                org_name = correct_organization_name(org_name)
+            if org_name:
+                (org, created) = Organization.objects.get_or_create(name=org_name)
+                if created:
+                    org.save()
+                meeting.organizations.add(org)
 
 
 def prune_attendees():
@@ -188,3 +235,160 @@ def prune_attendees():
         print 'Dropping {0} orphaned Attendees objects.'.format(cnt)
         attendees_to_drop.delete()
 
+
+def prune_organizations():
+    """
+    Similar to the prune_attendees function, this function removes
+    Organization objects that are not associated with any meetings
+    or attendees.
+    """
+    orgs_to_drop = Organization.objects.annotate(mcnt=Count('meetings'), acnt=Count('representatives')).filter(mcnt=0, acnt=0)
+    cnt = orgs_to_drop.count()
+    if cnt > 0:
+        print 'Dropping {0} orphaned Organization objects.'.format(cnt)
+        orgs_to_drop.delete()
+
+
+def correct_organization_name(name):
+    try:
+        correction = OrganizationNameCorrection.objects.get(original=name)
+        return correction.replacement
+    except OrganizationNameCorrection.DoesNotExist:
+        return name
+
+
+BasicUnicodeToAscii = {
+    u'\xa0': ' ',
+
+    u'\u007e': '~',
+    u'\u00a0': ' ',
+    u'\u00a9': '(C)',
+    u'\u00aE': '(R)',
+
+    u'\u2000': '',
+    u'\u2001': '',
+    u'\u2002': '',
+    u'\u2003': '',
+    u'\u2004': '',
+    u'\u2005': '',
+    u'\u2006': '',
+    u'\u2007': '',
+    u'\u2008': '',
+    u'\u2009': '',
+    u'\u200A': '',
+    u'\u200B': '',
+    u'\u200C': '',
+    u'\u200D': '',
+    u'\u200E': '',
+    u'\u200F': '',
+
+    u'\u2010': '-',
+    u'\u2011': '-',
+    u'\u2012': '-',
+    u'\u2013': '-',
+    u'\u2014': '--',
+    u'\u2015': '--',
+    u'\u2016': '||',
+    u'\u2017': '_',
+    u'\u2018': '\'',
+    u'\u2019': '\'',
+    u'\u201A': '\'',
+    u'\u201B': '\'',
+    u'\u201C': '"',
+    u'\u201D': '"',
+    u'\u201E': '"',
+    u'\u201F': '"',
+
+    u'\u2020': '+',
+    u'\u2021': '+',
+    u'\u2022': '*',
+    u'\u2023': '>',
+    u'\u2024': '.',
+    u'\u2025': '..',
+    u'\u2026': '...',
+    u'\u2027': '*',
+    u'\u2028': '\n',
+    u'\u2029': '\n',
+    u'\u202A': '',
+    u'\u202B': '',
+    u'\u202C': '',
+    u'\u202D': '',
+    u'\u202E': '',
+    u'\u202F': ' ',
+
+    u'\u2030': '%%',
+    u'\u2031': '%%%',
+    u'\u2032': '\'',
+    u'\u2033': '\'\'',
+    u'\u2034': '\'\'\'',
+    u'\u2035': '`',
+    u'\u2036': '``',
+    u'\u2037': '```',
+    u'\u2038': '^',
+    u'\u2039': '<',
+    u'\u203A': '>',
+    u'\u203B': 'x',
+    u'\u203C': '!!',
+    u'\u203D': '?',
+    u'\u203E': '-',
+    u'\u203F': '_'
+}
+def substitute_characters(s, subs=BasicUnicodeToAscii):
+    chars = []
+    for c in s:
+        chars.append(subs.get(c, c))
+    return u"".join(chars)
+
+
+def strip_whitespace(s, also=u''):
+    return s.strip(u' \t\u00a0' + also)
+
+
+CompanySuffixPattern1 = re.compile(r'[,]? (LLC|LLP|MLP|Corp(?:oration)?|Inc|N[.]?A[.]?)[.]?', re.IGNORECASE)
+CompanySuffixPattern2 = re.compile(r'& Co(?:mpany|\.)?\b', re.IGNORECASE)
+CompanySuffixPattern3 = re.compile(r'(^The |\bGroup\b)', re.IGNORECASE)
+ConsequtiveSpacesPattern = re.compile(r'\s{2,}', re.UNICODE)
+def fix_company_suffixes(s):
+
+    # Remove company structure suffixes
+    t = CompanySuffixPattern1.sub(r' ', s)
+    t = strip_whitespace(t)
+
+    words = re.split(r'\s+', t)
+    if len(words) > 3:
+        # Drop '& Company' from longer names
+        u = CompanySuffixPattern2.sub(r' ', t)
+    else:
+        # For short names, standardize to '& Co'
+        u = CompanySuffixPattern2.sub(r'& Co', t)
+    u = strip_whitespace(u)
+
+    v = CompanySuffixPattern3.sub(r'', u)
+    v = strip_whitespace(v)
+
+    w = ConsequtiveSpacesPattern.sub(r' ', v)
+    w = strip_whitespace(w, also=u'.')
+    return w
+    
+
+OrgNameCharacterSubs = deepcopy(BasicUnicodeToAscii)
+def standardized_organization_name(name):
+    OrgNameCharacterSubs[u'\u201f'] = '\'' # A name should never have double quotes
+    
+    normalized = substitute_characters(name, OrgNameCharacterSubs)
+    return fix_company_suffixes(normalized)
+
+
+def import_scraping_errors(agency, errors):
+    for error in errors:
+        for key in ('url', 'agency', 'description', 'context'):
+            if key not in error:
+                print >>sys.stderr, u'Key ({0}) missing from error record.'.format(key)
+                continue
+
+        (error, created) = ScrapingError.objects.get_or_create(agency=agency, url=error['url'])
+        error.description = error['description']
+        error.context = error['context']
+        error.timestamp = error['timestamp']
+        error.save()
+        

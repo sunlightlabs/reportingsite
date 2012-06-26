@@ -1,6 +1,3 @@
-import sys
-import progressbar
-
 import dateutil.parser
 
 from doddfrank.importlib import (slurp_data, agency_or_die,
@@ -9,8 +6,8 @@ from doddfrank.importlib import (slurp_data, agency_or_die,
 from doddfrank.models import Agency, Attendee, Organization, Meeting
 
 
-SCRAPER_MEETINGS_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=fed_meeting_log_v3&query=select%20*%20from%20%60MeetingTable1%60'
-SCRAPER_ATTENDEES_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=fed_meeting_log_v3&query=select%20*%20from%20%60AttendeeTable1%60'
+SCRAPER_MEETINGS_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=doddfrankfed&query=select%20*%20from%20%60MeetingTable1%60'
+SCRAPER_ATTENDEES_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=doddfrankfed&query=select%20*%20from%20%60AttendeeTable1%60'
 
 
 TheFed = agency_or_die('Fed')
@@ -43,18 +40,13 @@ def meeting_copyfunc(record, meeting):
 
 
 def attendee_keyfunc(record, record_hash):
-    org = None
-    if record['affiliation']:
-        org = Organization.objects.get(name=record['affiliation'])
     return {
-        'name': record['attendee_name'],
-        'org': org
+        'name': record['attendee_name']
     }
 
 
 def attendee_copyfunc(record, attendee):
     attendee.name = record['attendee_name']
-    attendee.org = record['affiliation']
 
 
 SharedKeys = ['date', 'name', 'category']
@@ -67,15 +59,16 @@ def main():
     meetings = slurp_data(SCRAPER_MEETINGS_URL)
     import_meetings(meetings, meeting_keyfunc, meeting_copyfunc)
 
-    meeting_objects = Meeting.objects.filter(agency=TheFed)
-    reconcile_database(meeting_objects, meetings)
 
     print 'Importing attendees'
     attendees = slurp_data(SCRAPER_ATTENDEES_URL)
     import_attendees(meetings, attendees, SharedKeys,
                      attendee_keyfunc, attendee_copyfunc,
                      meeting_keyfunc, meeting_copyfunc,
-                     'org')
+                     'affiliation')
+
+    meeting_objects = Meeting.objects.filter(agency=TheFed)
+    reconcile_database(meeting_objects, meetings)
 
     prune_attendees()
 

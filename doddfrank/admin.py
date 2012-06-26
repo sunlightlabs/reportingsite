@@ -1,5 +1,6 @@
+from django import forms
 from django.contrib import admin
-from doddfrank.models import Agency, Meeting, Attendee, Organization
+from doddfrank.models import Agency, Meeting, Attendee, Organization, OrganizationNameCorrection
 
 
 admin.site.register(Agency)
@@ -22,3 +23,13 @@ class OrganizationAdmin(admin.ModelAdmin):
 
 admin.site.register(Organization, OrganizationAdmin)
 
+
+class OrganizationNameCorrectionForm(forms.ModelForm):
+    class Meta:
+        model = OrganizationNameCorrection
+
+class OrganizationNameCorrectionAdmin(admin.ModelAdmin):
+    list_display = ['id', 'original', 'replacement']
+    ordering = ['original', 'replacement']
+    form = OrganizationNameCorrectionForm
+admin.site.register(OrganizationNameCorrection, OrganizationNameCorrectionAdmin)

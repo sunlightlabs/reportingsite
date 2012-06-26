@@ -37,7 +37,7 @@ Agencies = Agency.objects.order_by('name')
 
 
 def index(request):
-    latest_meetings = Meeting.objects.order_by('-date')[:20]
+    latest_meetings = Meeting.objects.order_by('-created', '-date')[:20]
     
     scope = {
         'agencies': Agencies,
