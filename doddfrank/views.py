@@ -271,20 +271,22 @@ def agency_meeting_freq_table(request):
     
 
 def organization_frequency_table(request, agency=None):
-    organizations = Organization.objects
+    agency_names = [a.initials for a in Agency.objects.all()]
+    organizations = Organization.objects.filter(~Q(name__in=agency_names))
     if agency:
         organizations = organizations.filter(agency=agency)
 
     organizations = organizations.annotate(num_meetings=Count('meetings')).order_by('-num_meetings')[:30]
     organizations = [org
                      for org in organizations 
-                     if org.name not in [agency.name 
-                                         for agency in Agency.objects.all()]]
+                     if org.name not in [a.name 
+                                         for a in Agency.objects.all()]]
     scope = {
         'agencies': Agencies,
-        'agency': agency,
         'organizations': organizations
     }
+    if agency:
+        scope['agency'] = agency
     return render_to_response('doddfrank/organization_freq.html', scope)
 
 

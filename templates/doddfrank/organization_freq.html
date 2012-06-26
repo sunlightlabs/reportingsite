@@ -6,7 +6,7 @@
 
 {% block content %}
 
-<h3>Organizations with the most meetings{% if agency %} with the {{ agency }}{% endif %}:</h3>
+<h3>Organizations with the most meetings{% if agency %} with the {{ agency.initials }}{% endif %}:</h3>
 <table>
 {% for organization in organizations %}
     <tr>
