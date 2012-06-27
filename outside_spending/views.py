@@ -767,6 +767,10 @@ def search(request):
         terms = query
         search_terms = terms.split(" ")
         
+        # Hack to keep a search for "mitt" from matching every comMITTee
+        for index,term in enumerate(search_terms):
+            if term.upper()=='MITT':
+                search_terms[index] = term + " "
         
         committee_overlays = Committee_Overlay.objects.filter(  Q(total_indy_expenditures__gt=0)|Q(is_superpac=True) ).select_related()
         for i in search_terms:
