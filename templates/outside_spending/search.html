@@ -107,5 +107,19 @@
     {% endif %}
     {% endif %}
 
+	 {% block js %}
+        {{ block.super }}
+		<script type="text/javascript">
+		    $(document).ready(function () {
+		        $("#searchbox").focus(function () {
+		            if ($(this)[0].value === '{{ terms }}') {
+		                $(this).val('');
+		            }
+		        });
+		    });
+		</script>
+
+       {% endblock %}
+
 {% endblock %}
 
