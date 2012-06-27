@@ -6,10 +6,10 @@
 
 <h2>Search{% if q %} results{% endif %}</h2>
 <b>These results do not include all recent meetings with officials at the Fed, the Treasury Department or at the SEC; these agencies do not make this information available in a machine-readable format.</b><br />
-{{ meetings.count }} meeting{{ meetings.count|pluralize }} found
 <br/><br/>
 
-{% if meetings %}
+{% if meetings.count > 0 %}
+<h3>Meeting Results</h3>
 <table>
     <thead>
         <tr>
@@ -19,15 +19,69 @@
         </tr>
     </thead>
     <tbody>
-        {% for meeting in meetings %}
+        {% for meeting in meetings|slice:":7" %}
         <tr class="{% cycle 'odd' 'even' %}">
-            <td>{{ meeting.meeting_time|date:"F j, Y" }}</td>
-            <td>{{ meeting.agency }}</td>
-            <td><a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency|slugify id=meeting|get_id %}">Details</a></td>
+            <td>{{ meeting.date }}</td>
+            <td>{{ meeting.agency.initials }}</td>
+            <td><a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.pk %}">Details</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
+    {% if meetings.count < meetings_count %}
+    <a href="{% url doddfrank_meeting_search %}?q={{ q }}">Show {{ meetings_count }} meeting result{{ meetings_count|pluralize }}</a>
+    {% endif %}
+{% endif %}
+
+{% if orgs.count > 0 %}
+<h3>Organization Results</h3>
+<table>
+    <tbody>
+        {% for org in orgs %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td><a href="{% url doddfrank_organization_detail organization_slug=org.slug %}">{{ org.name }}</a></td>
         </tr>
         {% endfor %}
     </tbody>
 </table>
 {% endif %}
+
+{% if attendees.count > 0 %}
+<h3>Attendee Results</h3>
+{% for attendee in attendees %}
+<table class="attendee-result">
+    <tbody>
+        <tr>
+            <td class="attendee-name">{{ attendee.name }}</td>
+            <td class="attendee-org">{% if attendee.org.name %}<a href="{% url doddfrank_organization_detail organization_slug=attendee.org.slug %}">{{ attendee.org.name }}</a>{% else %}affiliation unknown{% endif %}</td>
+        </tr>
+    </tbody>
+</table>
+<table class="attendee-meetings">
+<!--    <thead>
+        <tr>
+            <th></th>
+            <th>Date</th>
+            <th>Agency</th>
+            <th></th>
+        </tr>
+    </thead> -->
+    <tbody>
+        {% for meeting in attendee.meetings.all %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <th style="width 80px;"></td>
+            <td>{{ meeting.date }}</td>
+            <td>{{ meeting.agency.initials }}</td>
+            <td><a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.pk %}">Details</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+{% endfor %}
+{% endif %}
+
+
+
 
 {% endblock %}

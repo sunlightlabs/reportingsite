@@ -30,8 +30,9 @@ RecentListUrl = 'http://www.cftc.gov/LawRegulation/DoddFrankAct/ExternalMeetings
 
 class MalformattedMeetingPage(Exception):
     def __init__(self, *args, **kwargs):
-        super(MalformattedMeetingPage, self).__init__(*args, **kwargs)
         self.context = kwargs.get('context')
+        del kwargs['context']
+        super(MalformattedMeetingPage, self).__init__(*args, **kwargs)
 
 
 def slurp(url, params={}, method='GET', retries=2):
@@ -184,7 +185,7 @@ def parse_index(page):
 
 def attendee_formatting_guard(div):
     if len(div.cssselect('br')) == 0:
-        raise MalformattedMeetingPage('No line breaks found.', context=locals())
+        raise MalformattedMeetingPage(msg=u'No line breaks found.', context=locals())
 
 
 def has_line_breaks(div):
@@ -204,15 +205,14 @@ def parse_meeting_page(doc):
         cftc_staff_strlist = data_from_row(cftc_staff_div)
         cftc_staff = parse_visitors(cftc_staff_strlist)
     else:
-        cftc_staff = parse_inline_visitors(cftc_staff_div)
-    for staff in cftc_staff:
-        staff['org'] = 'CFTC'
+        cftc_staff = parse_inline_visitors_with_regex(cftc_staff_div)
+    cftc_staff = [staff['name'] for staff in cftc_staff]
 
     if has_line_breaks(visitors_div):
         visitors_strlist = data_from_row(visitors_div)
         visitors = parse_visitors(visitors_strlist)
     else:
-        visitors = parse_inline_visitors(visitors_div)
+        visitors = parse_inline_visitors_with_regex(visitors_div)
 
     organizations = data_from_row(organizations_div)
     organizations = parse_organizations(organizations)
@@ -251,6 +251,7 @@ def parse_inline_visitors(visitors_elem):
     for sep in separator_candidates:
         if sep in visitors:
             separator = sep
+            break
     if separator == None:
         # In this case there was no line break because there was only one person listed.
         return parse_visitors(data_from_row(visitors_elem))
@@ -261,6 +262,27 @@ def parse_inline_visitors(visitors_elem):
              for n in names]
     return [{'name': n, 'org': None} for n in names]
 
+def parse_inline_visitors_with_regex(visitors_elem):
+    visitors = visitors_elem.text_content()
+    print u'Using parse_inline_visitors_with_regex for {0!r}'.format(visitors)
+    visitors = re.compile(ur'^[\w\s]+:').sub('', visitors).strip()
+    matches = re.compile(ur'(?:(?:(?P<name1>.*?)\s*\((?P<org1>.*?)\)\s*[,;]\s*)|(?:(?P<name2>.*?)\s*,\s*(?P<org2>.*?)\s*;\s*)|(?:(?P<name3>.*?)\s*[-\u2013]\s*(?P<org3>.*?)\s*[,;]\s*)|(?:(?P<name4>.+?)\s*[,;]?$))').finditer(visitors)
+    visitor_list = []
+    for match in matches:
+        m = match.groupdict()
+        for n in ['1', '2', '3']:
+            if m['org' + n] and m['name' + n]:
+                visitor_list.append({'name': m['name' + n],
+                                     'org': m['org' + n]})
+        if m['name4']:
+            if len(m['name4']) > 100:
+                name = m['name4']
+                print type(name)
+                raise MalformattedMeetingPage('Name too long: {0}'.encode('utf-8').format(name.encode('utf-8')),
+                                              context=locals())
+            visitor_list.append({'name': m['name4'], 'org': None})
+
+    return visitor_list
 
 def parse_visitors(visitors):
     visitor_orgs = []
@@ -294,6 +316,18 @@ def parse_visitors(visitors):
             name, org = regex.split(visitor)
             visitor_orgs.append({'name': name.strip(), 'org': org.strip(), })
             continue
+
+        # There's some preposterously bad formatting:
+        # http://www.cftc.gov/LawRegulation/DoddFrankAct/ExternalMeetings/dfmeeting_041012_1560
+        regex = re.compile(ur'[\xa0]')
+        m = regex.search(visitor)
+        if m:
+            name, org = regex.split(visitor)
+            name = name.strip()
+            org = org.strip()
+            if len(name) > 3 and len(org) > 3:
+                visitor_orgs.append({'name': name.strip(), 'org': org.strip(), })
+                continue
 
         regex = re.compile(ur'-')
         m = regex.search(visitor)

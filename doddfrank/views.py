@@ -2,6 +2,7 @@ from collections import defaultdict
 from itertools import groupby
 from operator import attrgetter, itemgetter
 from copy import copy
+from StringIO import StringIO
 import datetime
 import re
 
@@ -15,6 +16,7 @@ from django.db.models import Q, Count, Min, Max
 from django.db import connections
 
 from doddfrank.models import Agency, Meeting, Attendee, Organization
+from unicodecsv import UnicodeCsvWriter
 
 
 Months = [
@@ -218,7 +220,8 @@ def agency_topic_xtab(request, agency_slug, year):
 
 def agency_meeting_freq_table(request):
     timespan = Meeting.objects.aggregate(fro=Min('date'), to=Max('date'))
-    years = range(timespan['fro'].year, timespan['to'].year + 1)
+    years = range(max(2010, timespan['fro'].year),
+                  min(datetime.date.today().year + 1, timespan['to'].year + 1))
 
     meeting_count = Meeting.objects.count()
     agencies = Agency.objects.annotate(meeting_cnt=Count('meetings'))
@@ -228,7 +231,8 @@ def agency_meeting_freq_table(request):
             'year': 'YEAR(date)'
 #            'month': connections[Agency.objects.db].ops.date_trunc_sql('month', 'date'),
 #            'year': connections[Agency.objects.db].ops.date_trunc_sql('year', 'date')
-        }).values('id', 'name', 'slug', 'year', 'month').annotate(meeting_cnt=Count('meetings'))
+        },
+        where=['YEAR(date) <= NOW()']).values('id', 'name', 'slug', 'year', 'month').annotate(meeting_cnt=Count('meetings'))
 
     # meetings is a 3-tier dict: {agency => {year => {month => meeting}}}
     meetings = {}
@@ -240,6 +244,8 @@ def agency_meeting_freq_table(request):
                 meetings[agency.id][year][month] = 0
 
     for agency_agg in meetings_per_agency_per_month:
+        if agency_agg['year'] > datetime.date.today().year:
+            continue
         meetings[agency_agg['id']][agency_agg['year']][agency_agg['month']] = agency_agg['meeting_cnt']
 
     per_month = {}
@@ -311,7 +317,6 @@ def meeting_detail(request, agency_slug, id):
 
     organizations = meeting.organizations.all()
     attendees = meeting.attendees.order_by('org', 'name')
-    attendee_groups = groupby(attendees, attrgetter('org'))
 
     template = 'doddfrank/%s_meeting_detail.html' % agency_slug
     template = 'doddfrank/meeting_detail.html'
@@ -325,8 +330,47 @@ def meeting_detail(request, agency_slug, id):
     return render_to_response(template, scope)
 
 
-def search(request):
-    pass
+def search(request, restrict_to=None):
+    q = request.GET.get('q')
+    scope = {
+        'q': q
+    }
+   
+    if restrict_to is None or restrict_to == 'meetings':
+        do_meeting_search(q, scope,
+                          limit=None if restrict_to == 'meetings' else 7)
+
+    if restrict_to is None or restrict_to == 'attendees':
+        do_attendee_search(q, scope,
+                          limit=None if restrict_to == 'attendees' else 7)
+
+    if restrict_to is None or restrict_to == 'orgs':
+        do_org_search(q, scope,
+                      limit=None if restrict_to == 'orgs' else 7)
+
+    return render_to_response('doddfrank/search.html', scope)
+
+
+def do_org_search(q, scope, limit=None):
+    orgs = Organization.objects.filter(name__icontains=q).order_by('-id')
+    scope['orgs_count'] = orgs.count()
+    if limit:
+        orgs = orgs[:limit]
+    scope['orgs'] = orgs
+
+
+def do_attendee_search(q, scope, limit=None):
+    attendees = Attendee.objects.filter(name__icontains=q).order_by('-id')
+    scope['attendees'] = attendees
+
+
+def do_meeting_search(q, scope, limit=None):
+    meetings = Meeting.objects.filter(Q(description__icontains=q)).order_by('-date')
+    scope['meetings_count'] = meetings.count()
+    if limit:
+        meetings = meetings[:limit]
+    scope['meetings'] = meetings
+
 
 def meetings_widget(request):
     cutoff = datetime.datetime.now() - datetime.timedelta(60)
@@ -363,6 +407,34 @@ def organization_cleanup_csv(request):
 
     return response
 
+
+def download_meetings(request):
+    buf = StringIO()
+    writer = UnicodeWriter(buf)
+
+    writer.writerow(['agency', 'date', 'type', 'topic',
+                     'attendees', 'organizations', 'source',
+                     'description'])
+
+    meetings = Meeting.objects.select_related()
+    for meeting in meetings:
+        writer.writerow([
+            meeting.agency.initials,
+            meeting.date.isoformat(),
+            meeting.communication_type,
+            meeting.topic or meeting.subcategory or meeting.category,
+            unicode(meeting.attendees.count()),
+            unicode(meeting.organizations.count()),
+            meeting.source_url,
+            meeting.description
+        ])
+    response = HttpResponse(buf.getvalue(), content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=doddfrank_meetings.csv'
+    return response
+
+
+def problems(request):
+    return ''
 
 # From http://docs.python.org/library/csv.html
 class UnicodeWriter:

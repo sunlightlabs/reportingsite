@@ -15,6 +15,11 @@ urlpatterns = patterns('',
                            {},
                            name='doddfrank_search'),
 
+                       url(r'^search/meetings/?$',
+                           search,
+                           {'restrict_to': 'meetings'},
+                           name='doddfrank_meeting_search'),
+
                        url(r'^organization\/?$',
                            organization_list,
                            {},
@@ -80,8 +85,15 @@ urlpatterns = patterns('',
                            {'template': 'doddfrank/widget.js',
                             'mimetype': 'text/javascript',
                            },
-                           name='doddfrank_meetings_widget_js')
+                           name='doddfrank_meetings_widget_js'),
 
+                       url(r'^problems/?$',
+                           problems,
+                           name='doddfrank-problems'),
+
+                       url(r'^download/meetings/?$',
+                           download_meetings,
+                           name='download-meetings'),
 
 )
 

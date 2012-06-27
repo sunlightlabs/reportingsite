@@ -28,11 +28,11 @@
 {% endif %}
 
 
-{% if attendees %}
+{% if attendees.count > 0 %}
     {% regroup attendees by org as org_attendees %}
     {% for group in org_attendees %}
         <div class="clear"></div>
-        <h4 style="float: left;"><a href="{% url doddfrank_organization_detail organization_slug=group.grouper.slug %}">{{ group.grouper.name }}</a></h4>
+        <h4 style="float: left;">{% if group.grouper.slug %}<a href="{% url doddfrank_organization_detail organization_slug=group.grouper.slug %}">{{ group.grouper.name }}</a>{% else %}Unaffiliated{% endif %}</h4>
         <ul style="float: right; width: 65%">
             {% for attendee in group.list %}
                 <li>{{ attendee.name }}</li>
