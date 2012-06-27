@@ -161,8 +161,14 @@ class OrganizationNameCorrection(models.Model):
                 meeting.save()
 
             for attendee in original_org.representatives.all():
-                attendee.org = replacement_org
-                attendee.save()
+                try:
+                    doppleganger = Attendee.objects.get(name=attendee.name, org=replacement_org)
+                    for meeting in attendee.meetings.all():
+                        doppleganger.meetings.add(meeting)
+                    attendee.delete()
+                except Attendee.DoesNotExist:
+                    attendee.org = replacement_org
+                    attendee.save()
 
             original_org.delete()
 

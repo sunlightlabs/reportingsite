@@ -2,7 +2,8 @@ import dateutil.parser
 
 from doddfrank.importlib import (slurp_data, agency_or_die,
                                  reconcile_database, import_meetings,
-                                 import_attendees, prune_attendees, prune_organizations)
+                                 import_attendees, prune_attendees, prune_organizations,
+                                 ObjectCounts)
 from doddfrank.models import Agency, Attendee, Organization, Meeting
 
 
@@ -11,14 +12,6 @@ SCRAPER_ATTENDEES_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?fo
 
 
 CFTC = agency_or_die('CFTC')
-
-
-def print_object_counts():
-    print 'Object counts:'
-    print '  Agency: {0}'.format(Agency.objects.count())
-    print '  Organization: {0}'.format(Organization.objects.count())
-    print '  Meeting: {0}'.format(Meeting.objects.count())
-    print '  Attendee: {0}'.format(Attendee.objects.count())
 
 
 def meeting_keyfunc(record, record_hash):
@@ -52,7 +45,8 @@ SharedKeys = ['meeting_time', 'description', 'topic', 'url']
 
 
 def main():
-    print_object_counts()
+    obj_counts = ObjectCounts(CFTC)
+    print unicode(obj_counts)
 
     print 'Importing meetings'
     meetings = slurp_data(SCRAPER_MEETINGS_URL)
@@ -72,9 +66,8 @@ def main():
     prune_attendees()
     prune_organizations()
 
+    print obj_counts.update().diffstat()
     print 'Done'
-
-    print_object_counts()
 
     
 if __name__ == "__main__":

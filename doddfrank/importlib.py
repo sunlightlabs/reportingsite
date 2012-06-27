@@ -4,6 +4,7 @@ import json
 import re
 
 from copy import deepcopy
+from StringIO import StringIO
 
 import requests
 import progressbar
@@ -165,7 +166,7 @@ def import_attendees(meetings, attendees, shared_keys,
         org_name = a.get(org_field)
         if org_name:
             org_name.strip()
-            org_name = correct_organization_name(org_name).strip()
+            org_name = correct_organization_name(org_name)
         if org_name:
             (org, created) = Organization.objects.get_or_create(name=org_name)
             if created:
@@ -175,7 +176,6 @@ def import_attendees(meetings, attendees, shared_keys,
             org = None
 
         a_keys = keyfunc(a, a_hash)
-        print u'Looking up Attendee object for (org={0}, {1})'.format(org, a_keys)
         (attendee, created) = Attendee.objects.get_or_create(org=org, **a_keys)
         if created or update_existing:
             copyfunc(a, attendee)
@@ -391,4 +391,56 @@ def import_scraping_errors(agency, errors):
         error.context = error['context']
         error.timestamp = error['timestamp']
         error.save()
-        
+
+
+class ObjectCounts(object):
+    def __init__(self, agency, *args, **kwargs):
+        self.agency = agency
+        self.values = {}
+        self.update()
+        self.previous_values = deepcopy(self.values)
+
+    def update(self):
+        self.previous_values = deepcopy(self.values)
+
+        self.values['meetings'] = Meeting.objects.count()
+        self.values['orgs'] = Organization.objects.count()
+        self.values['attendees'] = Attendee.objects.count()
+
+        self.values['ag_meetings'] = Meeting.objects.filter(agency=self.agency).count()
+        self.values['ag_orgs'] = Organization.objects.filter(meetings__agency=self.agency).count()
+        self.values['ag_attendees'] = Attendee.objects.filter(meetings__agency=self.agency).count()
+
+        return self
+
+    def diffstat(self):
+        buf = StringIO()
+        buf.write(u'{0!s: <10} {1!s: >6} {2!s: >6} {3!s: >9} {4!s: >6}\n'.format(u'Object', u'Count', u'(diff)', u'for Ag.', u'(diff)'))
+
+        for k in sorted(self.values.keys()):
+            if k.startswith('ag_') == False:
+                v = self.values[k]
+                ag_v = self.values['ag_' + k]
+
+                diff = unicode(v - self.previous_values.get(k, 0))
+                ag_diff = unicode(ag_v - self.previous_values.get('ag_' + k, 0))
+                
+                diff = u'+' + diff if not diff.startswith(u'-') else diff
+                ag_diff = u'+' + ag_diff if not ag_diff.startswith(u'-') else ag_diff
+
+                buf.write(u'{0!s: <10} {1!s: >6} {2!s: >6} {3!s: >9} {4!s: >6}\n'.format(k, v, diff, ag_v, ag_diff))
+
+        return buf.getvalue()
+
+    def __unicode__(self):
+        buf = StringIO()
+        buf.write(u'{0!s: <10} {1!s: >6} {2!s: >9}\n'.format(u'Object', u'Count', u'for Ag.'))
+
+        for k in sorted(self.values.keys()):
+            if k.startswith('ag_') == False:
+                v = self.values[k]
+                ag_v = self.values['ag_' + k]
+                buf.write(u'{0!s: <10} {1!s: >6} {2!s: >9}\n'.format(k, v, ag_v))
+
+        return buf.getvalue()
+

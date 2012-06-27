@@ -2,9 +2,10 @@ import sys
 import progressbar
 import dateutil.parser
 
-from doddfrank.importlib import (dict_hash, slurp_data, 
+from doddfrank.importlib import (dict_hash, slurp_data, agency_or_die,
                                  reconcile_database, import_meetings,
-                                 import_attendees, prune_attendees, prune_organizations)
+                                 import_attendees, prune_attendees, prune_organizations,
+                                 ObjectCounts)
 from doddfrank.models import Agency, Attendee, Organization, Meeting
 
 
@@ -12,19 +13,7 @@ SCRAPER_MEETINGS_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?for
 SCRAPER_ATTENDEES_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=doddfranktreasury&query=select%20*%20from%20%60attendees%60'
 
 
-try:
-    Treasury = Agency.objects.get(initials='Treasury')
-except Agency.DoesNotExist:
-    print >>sys.stderr, 'Treasury is not a registered agency.'
-    sys.exit(1)
-
-
-def print_object_counts():
-    print 'Object counts:'
-    print '  Agency: {0}'.format(Agency.objects.count())
-    print '  Organization: {0}'.format(Organization.objects.count())
-    print '  Meeting: {0}'.format(Meeting.objects.count())
-    print '  Attendee: {0}'.format(Attendee.objects.count())
+Treasury = agency_or_die('Treasury')
 
 
 def meeting_keyfunc(record, record_hash):
@@ -59,13 +48,8 @@ SharedKeys = ['Topics', 'MonthName', 'Year', 'Date', 'AttendeeHash']
 
 
 def main():
-    (treasury, created) = Agency.objects.get_or_create(initials='Treasury')
-    if created:
-        treasury.name = 'Treasury'
-        treasury.meeting_list_url = 'http://www.treasury.gov/initiatives/wsr/Pages/transparency.aspx'
-        treasury.save()
-
-    print_object_counts()
+    obj_counts = ObjectCounts(Treasury)
+    print unicode(obj_counts)
 
     print 'Importing meetings'
     meetings = slurp_data(SCRAPER_MEETINGS_URL)
@@ -78,17 +62,15 @@ def main():
                      meeting_keyfunc, meeting_copyfunc,
                      'Org')
 
-    meeting_objects = Meeting.objects.filter(agency=treasury)
+    meeting_objects = Meeting.objects.filter(agency=Treasury)
     reconcile_database(meeting_objects, meetings)
 
     prune_attendees()
     prune_organizations()
 
+    print obj_counts.update().diffstat()
     print 'Done'
 
-    print_object_counts()
-
-    
 if __name__ == "__main__":
     main()
 
