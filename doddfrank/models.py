@@ -56,6 +56,9 @@ class Attendee(models.Model):
         else:
             return u'{0.name}'.format(self)
 
+    class Meta:
+        unique_together = ('name', 'org')
+
 
 class Meeting(models.Model):
     import_hash = models.CharField(max_length=40,
