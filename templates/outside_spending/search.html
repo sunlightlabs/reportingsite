@@ -1,4 +1,4 @@
-{% extends "buckley/buckley_base.html" %}
+{% extends "outside_spending/buckley_base.html" %}
 
 {% load humanize %}
 
@@ -9,10 +9,13 @@
 {% endblock %}
 
 {% block content %}
+{% include "outside_spending/tabs.html" %}
+
+
 {% if terms %}
 <h2>Search Results for &#8220;{{ terms }}&#8221;</h2>
 {% else %}
-<h2>Search</h2>
+<h2>Search Results</h2>
 {% endif %}
 
 {% if terms %}
@@ -20,71 +23,88 @@
     {% ifequal num_results 0 %}
     <h3>No results found</h3>
     {% endifequal %}
-    {% if candidates %}
+
+    {% if has_candidates %}
     <h3>Candidates</h3>
-    <table id="expenditures" class="tablesorter">
+    <table>
         <thead>
             <tr>
                 <th class="sort">Candidate</th>
                 <th class="sort">Party</th>
                 <th class="sort">Race</th>
-                <th class="sort">Total outside spending</th>
+                <th class="sort">Independent Expenditures<br>(for or against)</th>
             </tr>
         </thead>
         <tbody>
-            {% for candidate in candidates %}
-            <tr class="{% cycle 'odd' 'even' %}">
-                <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.last_first }}</a></td>
+            {% for candidate in candidate_overlays %}
+            <tr class="{% cycle 'odd' 'even'  as candidate_cycle %}">
+                <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.fec_name }}</a></td>
                 <td>{{ candidate.party }}</td>
-                <td>{{ candidate.full_race_name }}</td>
-                <td>${{ candidate.sole_total|intcomma }}</td>
+                <td><a href="{{ candidate.get_race_url}}">{{ candidate.race }}</a></td>
+                <td>${{ candidate.total_expenditures|intcomma }}</td>
             </tr>
             {% endfor %}
+            {% for candidate in candidates %}
+            <tr class="{% cycle candidate_cycle %}">
+                <td>{{ candidate.fec_name }}</td>
+                <td>{{ candidate.party }}</td>
+                <td>{{ candidate.race }}</td>
+                <td></td>
+            </tr>
+            {% endfor %}
+
+
         </tbody>
     </table>
     {% endif %}
 
     <br><br>
 
-    {% if committees %}
-    <h3>Committees</h3>
-    <table id="expenditures" class="tablesorter">
+    
+    <h3>Committees </h3>
+<p>Only non-independent committees must disclose who they are supporting. Independent committees--which include all Super PACs--are not required to list a specific candidate (and may support multiple candidates).</p>
+	{% if has_committees %}    
+	<table>
         <thead>
             <tr>
-                <th>Committee</th>
-                {#<th>Total outside spending</th>#}
-                <th></th>
+                <th>Name</th>
+				<th>Type</th>
+                <th>Total independent expenditures</th>
             </tr>
         </thead>
         <tbody>
-            {% for committee in committees %}
-{#                {% if committee.total %}#}
-                    <tr class="{% cycle 'odd' 'even' %}">
-                        <td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
-                        {#<td>${{ committee.total|intcomma }}</td>#}
-                        <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</a></td>
+            {% for committee in committee_overlays %}
+                    <tr class="{% cycle 'odd' 'even' as rowcolors %}">
+                        <td><a href="{{ committee.get_absolute_url }}">{{ committee.name }}</a></td>
+						<td>{{ committee.display_type }}</td>
+						<td>${{ committee.total_indy_expenditures|intcomma }}</td>
+                        
                     </tr>
-{#                {% endif %}#}
             {% endfor %}
+		
+            {% for committee in committees %}
+                    <tr class="{% cycle rowcolors %}" >
+                        <td>{{ committee.name }} {% if committee.related_candidate %}( supports {{ committee.related_candidate.fec_name }}){% endif %}<br>See <a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">FEC records</a></td>
+						<td>{{ committee.display_type }}</td>
+						<td></td>
+                        
+                    </tr>
+            {% endfor %}
+
         </tbody>
     </table>
 
     {% endif %}
 
 <br><br>
-{% if ieonly %}
-<h3>Super PAC letters</h3>
-<table>
-{% for committee in ieonly %}
-<tr class="{% cycle 'odd' 'even' %}">
-<td><a href="{{ committee.get_absolute_url }}">{{ committee }}</a></td>
-</tr>
-{% endfor %}
-</table>
-{% endif %}
+
 
     {% else %}
-    <h3>Please enter a search term</h3>
+	{% if invalid_search %}
+	    <h3>Invalid search. Please enter at least 3 letters to search for. </h3>
+	{% else %}
+    <h3>No results found.</h3>
+    {% endif %}
     {% endif %}
 
 {% endblock %}

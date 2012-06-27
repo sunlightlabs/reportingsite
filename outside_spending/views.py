@@ -5,7 +5,7 @@ import datetime
 from django.views.decorators.cache import cache_page
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response, redirect
 # in 1.3 there's django.shortcuts.render . D'oh!
-from django.http import Http404, HttpResponse
+from django.http import *
 from django.db.models import Sum
 from django.db.models import Q
 from django.contrib.localflavor.us.us_states import STATE_CHOICES
@@ -746,6 +746,88 @@ def candidate_summary_json(request, candidate_id):
     return render_to_json('outside_spending/candidate_summary.json', {
                 'candidate':candidate, 
                 'superpacs':superpacs,
+                })
+
+
+def search(request):
+    query = request.GET.get('q')
+    
+    terms = None
+    invalid_search = False
+    num_results = 0
+    has_committees = False
+    has_candidates = False
+
+    if not query:
+        invalid_search = True
+    if len(query)<4:
+        invalid_search = True    
+        
+    else:
+        terms = query
+        search_terms = terms.split(" ")
+        
+        
+        committee_overlays = Committee_Overlay.objects.filter(  Q(total_indy_expenditures__gt=0)|Q(is_superpac=True) ).select_related()
+        for i in search_terms:
+            committee_overlays = committee_overlays.filter(name__icontains=i)
+        committee_overlays = committee_overlays.select_related()
+        
+        ids = committee_overlays.values('fec_id')
+        id_list = []
+        for this_id in ids:
+            id_list.append(this_id['fec_id'])
+
+        print id_list
+        
+        committees1 = Committee.objects.all()
+        committees2 = Committee.objects.all()
+        for i in search_terms:
+            committees1 = committees1.filter(name__icontains=i)
+            committees2 = committees2.filter(related_candidate__fec_name__icontains=i)
+            
+        committees = committees1 | committees2
+        
+        committees = committees.exclude(fec_id__in=id_list).select_related()
+        
+        if (len(committee_overlays) + len(committees) > 0):
+            has_committees=True
+            num_results = 1
+            
+        candidate_overlays = Candidate_Overlay.objects.filter(  Q(total_expenditures__gt=0) | Q(electioneering__gt=0))
+        for i in search_terms:
+            candidate_overlays = candidate_overlays.filter(fec_name__icontains=i)
+        candidate_overlays = candidate_overlays.select_related()
+        
+        # Q(fec_name__icontains=terms) &
+
+            
+        candidate_ids = candidate_overlays.values('fec_id')
+        candidate_id_list = []
+        for this_id in candidate_ids:
+            candidate_id_list.append(this_id['fec_id'])
+        print candidate_id_list
+        
+        candidates = Candidate.objects.all().exclude(fec_id__in=candidate_id_list)
+        for i in search_terms: 
+            candidates = candidates.filter(fec_name__icontains=i)
+        candidates = candidates.select_related()
+        
+        
+        if (len(candidate_overlays) + len(candidates) > 0):
+            has_candidates = True
+
+    
+    return render_to_response('outside_spending/search.html', {
+                'terms':terms,
+                'invalid_search':invalid_search, 
+                'num_results':num_results,
+                'committee_overlays':committee_overlays,
+                'committees':committees,
+                'has_committees':has_committees,
+                'candidate_overlays':candidate_overlays,
+                'has_candidates':has_candidates,
+                'candidates':candidates,
                 })
 
 

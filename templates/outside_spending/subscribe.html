@@ -257,6 +257,11 @@ function submit_goto_scout() {
 
 
 $(document).ready(function () {
+	$("#searchbox").focus(function () {
+        if ($(this)[0].value === 'Search for a candidate or committee') {
+            $(this).val('');
+        }
+	
 	$("#filing_types").hide();
 	
 	$("#all").attr("checked", "checked");
@@ -287,15 +292,10 @@ $(document).ready(function () {
 			});
 			
 			return false;
-			restore
 			
 		}
 	});
 
-	$("#searchbox").focus(function () {
-        if ($(this)[0].value === 'Committee or candidate') {
-            $(this).val('');
-        }
     });
 });
 

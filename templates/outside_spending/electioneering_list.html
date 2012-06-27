@@ -57,6 +57,15 @@
         {% with '[0,1]' as sortdir %}
         {% include "outside_spending/tablesorter_contribs.html" %}
         {% endwith %}
+		<script type="text/javascript">
+		    $(document).ready(function () {
+		        $("#searchbox").focus(function () {
+		            if ($(this)[0].value === 'Search for a candidate or committee') {
+		                $(this).val('');
+		            }
+		        });
+		    });
+		</script>
 
         {% endblock %}        
         
