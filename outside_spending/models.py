@@ -24,6 +24,21 @@ form_types = [['F3X','Monthly/quarterly report'],
 ['F8','Debt settlement plan'],
 ['F9','24-hour notice of disbursement/obligations for electioneering communications']]
 
+type_hash={'C':'Communication Cost',
+          'D':'Delegate',
+          'H':'House',
+          'I': 'Not a Committee',
+          'N': 'Non-Party, Non-Qualified',
+          'P': 'Presidential',
+          'Q': 'Qualified, Non-Party',
+          'S': 'Senate',
+          'X': 'Non-Qualified Party',
+          'Y': 'Qualified Party',
+          'Z': 'National Party Organization',
+          'E': 'Electioneering Communication',
+          'O': 'Super PAC'
+          }
+
 # whenever we run the scraper add it here. Periodically clear this out...
 class Scrape_Time(models.Model):
     run_time = models.DateTimeField(auto_now=True)
@@ -53,6 +68,16 @@ class Candidate(models.Model):
     # the state where the race is taking place (from the candidate id)
     state_race = models.CharField(max_length=2, blank=True, null=True) 
     campaign_com_fec_id = models.CharField(max_length=9, blank=True)
+    
+    def race(self):
+        
+        if self.office == 'P':
+            return 'President' 
+        elif self.office == 'S' or self.district.startswith('S'):
+            return '%s (Senate)' % self.fec_id[2:4]
+        else:
+            return '%s-%s (House)' % (self.fec_id[2:4], self.district.lstrip('0'))
+
 
 # Populated from fec's committee master            
 class Committee(models.Model):
@@ -92,7 +117,7 @@ class Committee(models.Model):
                                       ('Y', 'Qualified Party'),
                                       ('Z', 'National Party Organization'),
                                       ('E', 'Electioneering Communication'),
-                                      ('O', 'INDEPENDENT EXPENDITURE-ONLY COMMITTEE') ])
+                                      ('O', 'Super PAC') ])
 
     tax_status = models.CharField(max_length=10,
             choices=(('501(c)(4)', '501(c)(4)'),
@@ -147,6 +172,13 @@ class Committee(models.Model):
         except Candidate.DoesNotExist:
             #print "No match found"
             return
+            
+    def display_type(self):
+        key = self.ctype
+        try:
+            return type_hash[key]
+        except KeyError:
+            return ''
     
 # a local overlay.
 class Committee_Overlay(models.Model):
@@ -276,8 +308,12 @@ class Committee_Overlay(models.Model):
         if (self.filing_frequency.upper()=='A'):
             return "Administratively Terminated"            
                
-
-
+               
+    def display_type(self):
+        if self.is_superpac:
+            return "Super PAC"
+        else:
+            return self.committee_master_record.display_type()
 
 
 # a local overlay        
@@ -370,9 +406,9 @@ class Candidate_Overlay(models.Model):
             except KeyError:
                 return ''
 
-    def last_first(self):
-        prefix, first, last, suffix = name_tools.split(self.__unicode__())
-        return re.sub(r'\s+([^\w])', r'\1', '%s %s, %s' % (last, suffix, first))
+#    def last_first(self):
+#        prefix, first, last, suffix = name_tools.split(self.__unicode__())
+#        return re.sub(r'\s+([^\w])', r'\1', '%s %s, %s' % (last, suffix, first))
 
     def seat(self):
         try:
@@ -460,8 +496,8 @@ class Expenditure(models.Model):
                                       choices=(('S', 'Support'), ('O', 'Oppose'))
                                       )
     election_type = models.CharField(max_length=1,
-                                      choices=(('P', 'Primary'), ('G', 'General'), ('S', 'Special'))
-                                      )
+                                    choices=(('P', 'Primary'), ('G', 'General'), ('S', 'Special'), ('O', 'Other'), ('R', 'Runoff'), ('C', 'Convention'), ('E', 'Recount'))
+                                    )
     candidate_name=models.CharField(max_length=90, null=True, blank=True)                                  
     raw_candidate_id=models.CharField(max_length=9, null=True)
     candidate = models.ForeignKey(Candidate_Overlay, blank=True, null=True) # NULL for electioneering
