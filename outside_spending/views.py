@@ -762,6 +762,12 @@ def search(request):
         invalid_search = True
     if len(query)<4:
         invalid_search = True    
+        committee_overlays = None
+        committees = None
+        has_committees = False
+        candidate_overlays = None
+        has_candidates = False
+        candidates = None
         
     else:
         terms = query
