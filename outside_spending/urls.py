@@ -73,6 +73,7 @@ urlpatterns = patterns('',
     
     #url(r'^searchtest\/$', 'django.views.generic.simple.direct_to_template', {'template': 'mobile_test/searchtest.html'}),      
     url(r'^search\/$', 'outside_spending.views.search'),
+    url(r'^more-resources\/$', 'outside_spending.views.more_resources'),
     url(r'$', 'outside_spending.views.all_superpacs')
 
     

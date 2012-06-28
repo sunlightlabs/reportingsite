@@ -778,11 +778,14 @@ def search(request):
             if term.upper()=='MITT':
                 search_terms[index] = term + " "
         
+        # Get committees we know about
         committee_overlays = Committee_Overlay.objects.filter(  Q(total_indy_expenditures__gt=0)|Q(is_superpac=True) ).select_related()
         for i in search_terms:
             committee_overlays = committee_overlays.filter(name__icontains=i)
         committee_overlays = committee_overlays.select_related()
         
+        
+        # we don't want to list a committee twice, so come up with a list to exclude later
         ids = committee_overlays.values('fec_id')
         id_list = []
         for this_id in ids:
@@ -808,9 +811,6 @@ def search(request):
         for i in search_terms:
             candidate_overlays = candidate_overlays.filter(fec_name__icontains=i)
         candidate_overlays = candidate_overlays.select_related()
-        
-        # Q(fec_name__icontains=terms) &
-
             
         candidate_ids = candidate_overlays.values('fec_id')
         candidate_id_list = []
@@ -839,5 +839,9 @@ def search(request):
                 'has_candidates':has_candidates,
                 'candidates':candidates,
                 })
-
-
+def more_resources(request):
+    
+    
+    return render_to_response('outside_spending/more_resources.html', {
+    
+    })

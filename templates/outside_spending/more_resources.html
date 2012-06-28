@@ -1,0 +1,64 @@
+{% extends "outside_spending/buckley_base.html" %}
+
+{% load humanize %}
+
+{% block title %}More Resources{% endblock %}
+
+{% block body %}  fullWidth {% endblock %}
+
+{% block breadcrumb %}
+<li>More Resources</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    {% include "outside_spending/tabs.html" %}
+
+
+    <h2>
+        More resources
+    </h2>
+    <p class="readable">Follow the Unlimited Money uses electronic filings from the Federal Election Commission to track how much outside groups are spending on federal elections, and who's giving to super PACS, which can take money in unlimited amounts. Here are some of the things that you can use the site for.</p>
+<h3 style="margin-bottom:0px;"><a href="/outside-spending/noncommittees/">Spending by noncommittees</a></h3>
+&gt;&gt;&nbsp;<a href="/outside-spending/noncommittees/">Go to the page</a><br>
+<p class="readable">One of the biggest loopholes left by the collision of recent court decisions with past FEC rules allows corporations, labor unions and non-profits to <a href="/outside-spending/noncommittees/">spend money on elections (by making independent expenditures)</a> without saying who's footing the bill. Technically, these groups must report donors who give for the purpose of furthering a specific independent expenditure, but that's rare.</p>
+
+<h3 style="margin-bottom:0px;"><a href="/outside-spending/super-pacs/donating-organizations/">Corporate, labor and non-profit contributions to super PACs</a></h3>
+&gt;&gt;&nbsp;<a href="/outside-spending/super-pacs/donating-organizations/">Go to the page</a><br>
+<p class="readable">Citizens United opened the door for corporations and labor unions to give money to outside groups (it also widened the class of non-profits that could give money). The FEC doesn't require these groups to identify themselves, but it does break out organizations from individuals. We've aggregated organizational donors to super PACs on <a href="/outside-spending/super-pacs/donating-organizations/">this page</a>.</p>
+
+<h3 style="margin-bottom:0px;"><a href="/outside-spending/recent-FEC-filings/superpacs/">Recent filings</a></h3>
+&gt;&gt;&nbsp;<a href="/outside-spending/recent-FEC-filings/superpacs/">Go to the page</a><br>
+<p class="readable">Because tracking spending independent requires us to examine all electronic FEC filings, we maintain several streams of filings as web pages and as RSS feeds. Specifically see <a href="/outside-spending/recent-FEC-filings/superpacs/new-F3X/">new monthly / quarterly reports from super PACs</a>, <a href="/outside-spending/recent-FEC-filings/significant-committees/new-periodic/">monthly / quarterly electronic FEC filings from major presidential candidates and party committees</a>, <a href="">independent expenditure filings</a>, <a href="/outside-spending/recent-FEC-filings/superpacs/">super PAC filings</a> and <a href="/outside-spending/recent-FEC-filings/significant-committees/">significant committee filings</a>.</p> 
+
+
+<h3 style="margin-bottom:0px;"><a href="/outside-spending/subscribe-to-alerts/">Alerts</a></h3>
+&gt;&gt;&nbsp;<a href="/outside-spending/subscribe-to-alerts/">Go to the page</a><br>
+<p class="readable">Sign up to <a href="/outside-spending/subscribe-to-alerts/">receive notifications</a> any time a particular committee you're interested in files a new electronic report with the Federal Election Commission. Notifications are available for all committees that file with the FEC, not just super PACs. Senate candidates are not required to file electronically.</p>
+
+
+
+<h3 style="margin-bottom:0px;"><a href="/outside-spending/file-downloads/">File downloads</a></h3>
+&gt;&gt;&nbsp;<a href="/outside-spending/file-downloads/">Go to the page</a><br>
+<p class="readable">Data on independent expenditures and contributions to super PACs is available <a href="/outside-spending/file-downloads/">for download</a> en masse or broken down by state or committee.</p>
+
+
+
+
+{% block js %}
+{{ block.super }}
+
+<script type="text/javascript">
+$(document).ready(function () {
+  $("#searchbox").focus(function () {
+      if ($(this)[0].value === 'Search for a candidate or committee') {
+          $(this).val('');
+      }
+  });
+});
+</script>
+
+{% endblock %}        
+
+
+{% endblock content %}
