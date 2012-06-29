@@ -2,13 +2,14 @@ import dateutil.parser
 
 from doddfrank.importlib import (slurp_data, agency_or_die,
                                  reconcile_database, import_meetings,
-                                 import_attendees, prune_attendees, prune_organizations,
+                                 import_organizations, prune_organizations,
                                  ObjectCounts)
 from doddfrank.models import Agency, Attendee, Organization, Meeting
 
 
 SCRAPER_MEETINGS_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=doddfrankcftc&query=select%20*%20from%20%60meetings%60'
 SCRAPER_ATTENDEES_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=doddfrankcftc&query=select%20*%20from%20%60attendees%60'
+SCRAPER_ORGANIZATIONS_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=doddfrankcftc&query=select%20*%20from%20%60organizations%60'
 
 
 CFTC = agency_or_die('CFTC')
@@ -32,15 +33,6 @@ def meeting_copyfunc(record, meeting):
     meeting.source_url = record['url']
 
 
-def attendee_keyfunc(record, record_hash):
-    return {
-        'name': record['attendee_name'].strip()
-    }
-
-def attendee_copyfunc(record, attendee):
-    attendee.name = record['attendee_name'].strip()
-
-
 SharedKeys = ['meeting_time', 'description', 'topic', 'url']
 
 
@@ -52,18 +44,14 @@ def main():
     meetings = slurp_data(SCRAPER_MEETINGS_URL)
     import_meetings(meetings, meeting_keyfunc, meeting_copyfunc)
 
-    print 'Importing attendees'
-    attendees = slurp_data(SCRAPER_ATTENDEES_URL)
-    import_attendees(meetings, attendees, SharedKeys,
-                     attendee_keyfunc, attendee_copyfunc,
-                     meeting_keyfunc, meeting_copyfunc,
-                     'attendee_org')
+    print 'Importing organizations'
+    organizations = slurp_data(SCRAPER_ORGANIZATIONS_URL)
+    import_organizations(meetings, organizations, SharedKeys,
+                         'org', meeting_keyfunc)
 
     print 'Reconciling database'
     meeting_objects = Meeting.objects.filter(agency=CFTC)
     reconcile_database(meeting_objects, meetings)
-
-    prune_attendees()
     prune_organizations()
 
     print obj_counts.update().diffstat()

@@ -13,7 +13,9 @@ import dateutil.parser
 from django.db.models import Count
 
 from doddfrank.models import (Agency, Meeting, Attendee,
-                              Organization, OrganizationNameCorrection,
+                              Organization,
+                              OrganizationNameCorrection,
+                              OrganizationBlacklist,
                               ScrapingError)
 
 
@@ -164,9 +166,14 @@ def import_attendees(meetings, attendees, shared_keys,
         meeting = Meeting.objects.get(**m_keys)
 
         org_name = a.get(org_field)
+        if org_name and organization_is_blacklisted(org_name):
+            continue
         if org_name:
-            org_name.strip()
+            org_name = standardized_organization_name(org_name.strip())
+        if org_name:
             org_name = correct_organization_name(org_name)
+        if org_name and organization_is_blacklisted(org_name):
+            continue
         if org_name:
             (org, created) = Organization.objects.get_or_create(name=org_name)
             if created:
@@ -187,8 +194,7 @@ def import_attendees(meetings, attendees, shared_keys,
 
 
 def import_organizations(meetings, organizations, shared_keys,
-                         org_field,
-                         meeting_keyfunc, meeting_copyfunc):
+                         org_field, meeting_keyfunc):
     """
     This function mimics an inner join between the organizations records and the
     meetings records in order to create Organization objects and link them to the
@@ -201,7 +207,7 @@ def import_organizations(meetings, organizations, shared_keys,
     get_shared_keys = DictSlicer(*shared_keys)
     progress = progressbar.ProgressBar()
     for o in progress(organizations):
-        if o.get('name', '').strip():
+        if o.get(org_field, '').strip():
             m_index_key = dict_hash(get_shared_keys(o))
             m = meeting_index[m_index_key]
 
@@ -209,14 +215,28 @@ def import_organizations(meetings, organizations, shared_keys,
             m_keys = meeting_keyfunc(m, m_hash)
             meeting = Meeting.objects.get(**m_keys)
 
-            org_name = o.get(org_field)
+            org_name = o.get(org_field).strip()
+            if org_name and organization_is_blacklisted(org_name):
+                continue
+            if org_name:
+                org_name = standardized_organization_name(org_name.strip())
             if org_name:
                 org_name = correct_organization_name(org_name)
+            if org_name and organization_is_blacklisted(org_name):
+                continue
             if org_name:
                 (org, created) = Organization.objects.get_or_create(name=org_name)
                 if created:
                     org.save()
                 meeting.organizations.add(org)
+
+
+def organization_is_blacklisted(org_name):
+    try:
+        org = OrganizationBlacklist.objects.get(name=org_name)
+        return True
+    except OrganizationBlacklist.DoesNotExist:
+        return False
 
 
 def prune_attendees():

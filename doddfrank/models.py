@@ -183,10 +183,25 @@ class OrganizationNameCorrection(models.Model):
             original_org.save()
 
 
+class OrganizationBlacklist(models.Model):
+    name = models.CharField(max_length=255,
+                            blank=False, 
+                            null=False,
+                            unique=True)
+
+    def save(self, *args, **kwargs):
+        super(OrganizationBlacklist, self).save(*args, **kwargs)
+        Organization.objects.filter(name=self.name).delete()
+
+    def __unicode__(self):
+        return u'{0.name}'.format(self)
+
+
 class ScrapingError(models.Model):
     agency = models.ForeignKey(Agency, related_name='scraping_errors')
     url = models.TextField(null=False, blank=False)
     description = models.TextField(null=True)
     context = models.TextField(null=True)
     timestamp = models.DateTimeField(null=True)
+
 

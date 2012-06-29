@@ -57,8 +57,7 @@ def main():
     print 'Importing organizations'
     organizations = slurp_data(SCRAPER_ORGANIZATIONS_URL)
     import_organizations(meetings, organizations, SharedKeys,
-                         'org_name',
-                         meeting_keyfunc, meeting_copyfunc)
+                         'org_name', meeting_keyfunc)
 
     meeting_objects = Meeting.objects.filter(agency=SEC)
     reconcile_database(meeting_objects, meetings)
