@@ -11,6 +11,12 @@ from doddfrank.importlib import (prune_organizations, prune_attendees,
                                  standardized_organization_name)
 
 
+def export_current_corrections():
+    print >>sys.stderr, u'Exporting spreadsheet of existing corrections.'
+    sys.stderr.flush()
+    suggestion_writer = UnicodeCsvWriter(sys.stdout)
+    for correction in OrganizationNameCorrection.objects.all():
+        suggestion_writer.writerow([correction.original, correction.replacement])
 
 
 def export_standardized_suggestions():
@@ -85,7 +91,6 @@ def import_corrections():
     prune_organizations()
 
 
-
 class Command(BaseCommand):
     args = '<command>'
     help = 'Exports a list of suggested corrections to stdout or imports a list of corrections (same format) from stdin.'
@@ -108,6 +113,8 @@ class Command(BaseCommand):
                 export_standardized_suggestions()
             else:
                 raise CommandError("Unrecognized comparison option: {0}".format(options['method']))
+        elif command == "current":
+            export_current_corrections()
         else:
             raise CommandError("Unrecognized command: {0}".format(command))
 
