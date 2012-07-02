@@ -33,7 +33,7 @@
 <div class="space_above">
 
 {% if committee.cash_on_hand %}
-    <span class="amountLine">Cash on hand: </span>(as of {{ committee.cash_on_hand_date }}): </span><span class="amount">${{ committee.cash_on_hand|intcomma }}</span>
+    <span class="amountLine">Cash on hand: (as of {{ committee.cash_on_hand_date }}): </span><span class="amount">${{ committee.cash_on_hand|intcomma }}</span>
     <br><br>
 {% endif %}
 
