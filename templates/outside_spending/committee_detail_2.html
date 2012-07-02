@@ -18,23 +18,19 @@
         {{ committee.name }}
     </h2>
 
-
+{% if has_chart %}
 <div id="chart_container" class="chart_container" style="float: right; width: 507px; height: 330px;" ></div>
+{% endif %}
 
+<div class="left_of_chart" style="float: left; width: 380px;">
 
-
-<div class="right_of_chart" style="float: left; width: 380px;">
-	
-
-	<span class="amountLine">
+<span class="amountLine">
 	{% if committee.is_superpac %}<b>This group is a super PAC</b><br>{% endif %}
 	{% if committee.is_not_a_committee  %}<b>This group is not a political committee</b><br>{% endif %}
-	{%if committee.is_hybrid %}<b>This group is a hybrid super PAC</b><br>{% endif %}
+	{% if committee.is_hybrid %}<b>This group is a hybrid super PAC</b><br>{% endif %}
 	{% if committee.has_linkable_url %}Read <a href="{{committee.profile_url}}" name="PROFILE: {{ committee.name }}">a profile of this group{% endif %}{% if committee.has_linkable_url %}</a><br>{% endif %}Filing Frequency: {{committee.filing_frequency_text}} </span><br>See <a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">FEC Filings</a>
 	
 <div class="space_above">
-
-
 
 {% if committee.cash_on_hand %}
     <span class="amountLine">Cash on hand: </span>(as of {{ committee.cash_on_hand_date }}): </span><span class="amount">${{ committee.cash_on_hand|intcomma }}</span>
@@ -54,12 +50,13 @@
  
     {% if contributions %}
     <span class="amountLine">Contributions (as of {{ committee.cash_on_hand_date }}): </span><span class="amount">{% if committee.total_contributions %}${{ committee.total_contributions|intcomma }}{% endif %}</span><br>Jump to <a href="#contributors"> contributors</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackdonorscsv}}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('{{committee.superpachackdonorscsv}}');">.csv file of contributions</a>
-
     {% endif %}
+
+
 </div>    
 </div>
 
-<div class="clear"></div>
+<div class="clear" style="height:0px;"></div>
 
 {% if candidates %}
 
@@ -225,7 +222,7 @@
     });
 </script>
 
-{% if candidates %}
+{% if has_chart %}
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
  
 
@@ -306,7 +303,8 @@ $(document).ready(function() {
 				[Date.UTC({{ data.year }},  {{ data.month }}, 1), {{data.data }}   ]{% if forloop.last %}{% else %},{% endif %}
 	{% endfor %}
 
-				]},
+				]}
+			{% if committee.is_superpac %},
 				
 			{	name: 'MONTHLY CONTRIBUTIONS',
 				// Define the data points. All series have a dummy year
@@ -319,7 +317,7 @@ $(document).ready(function() {
 
 					]
 				
-		}
+		}{% endif %}
     ]
 	});
 });
