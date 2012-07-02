@@ -1,0 +1,273 @@
+{% extends "outside_spending/buckley_base.html" %}
+
+{% load humanize %}
+{% load buckley %}
+
+{% block title %}Subscribe to FEC filing alerts{% endblock %}
+
+{% block body %}  {{ block.super }} expendituresNotification {% endblock %}
+
+{% block css %}
+{{ block.super }}
+<style type="text/css">
+
+#form_filings .filing_check {
+	margin:0px;
+	padding:0px;
+	width: 50px;
+	}
+#form_filings .filing_label {
+	margin:0px;
+	padding:0px;
+	font-size: 14px;
+	width:270px;
+}
+
+#form_filings .filing_label_big {
+	margin:0px;
+	padding:0px;
+	width:300px;
+	font-size: 14px;
+	font-weight: bold;
+}
+
+#form_filings .filing_radio {
+	margin:0px;
+	padding:0px;
+	width: 50px;
+	}
+		
+#search_results .filing_label {
+	margin:0px;
+	padding:0px;
+	width:270px;
+}		
+	
+#form_filings .check_indent {
+	margin-left: 30px;
+}	
+
+
+#committee_search {
+	width: 200px;
+	color:#00f;
+	border:1px solid black;	
+}
+
+.subscribe_to_committee {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+.go_to_committee_feed {
+	font-size: 14px;
+	font-weight: bold;
+}
+
+</style>
+{% endblock %}
+
+{% block breadcrumb %}
+<li>Subscribe to alerts</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    {% include "outside_spending/tabs.html" %}
+
+
+    <h2>
+        Get notified about new campaign finance reports
+    </h2>
+    <div class="amountLine clear">
+    <p>Sign up to receive notifications any time a particular committee you're interested in files a new electronic report with the Federal Election Commission. Notifications are provided through <a href="http://scout.sunlightfoundation.com/">Scout</a>, the Sunlight Foundation's search and monitoring tool covering state and federal legislation, the Congressional Record, and federal regulations.</p>
+	You can sign up to receive notifications about all filings, or only certain types. </p>
+    <hr />
+	<div id="form_filings" class="formtwocols">
+
+	<p>
+	<b>Step 1. What kind of reports?</b>
+	</p>
+	<p>
+	<input type="radio" name="filing_types" id="all" class="filing_radio" />
+	<label for="all" class="filing_label_big">All filings</label>
+	
+	<br>
+	<input type="radio" name="filing_types" id="only_selected" class="filing_radio" />
+	<label for="only_selected" class="filing_label_big">Only the ones chosen below:</label>
+	
+	<fieldset class="check_indent">
+	<input type="checkbox" class="filing_check" id="monthly" /><label class="filing_label" for="check">Monthly/quarterly filings</label>
+	<br><input type="checkbox" class="filing_check" id="ie" /><label class="filing_label" for="check1">24/48-hour independent expenditure Notices</label>
+	<br><input type="checkbox" class="filing_check" id="ec" /><label class="filing_label" for="check2">Electioneering communication notices </label>
+	<br><input type="checkbox" class="filing_check" id="F6" /><label class="filing_label" for="check3">48-hour contribution reports</label>
+	</fieldset>
+	</p>
+
+
+
+
+	</div>
+	
+	</div>
+	
+	
+	
+	
+	<div class="amountLine">
+	<p><b>2. Which committee?</b></p>	
+	<div>
+		
+	<form id="searchform">
+	    <input type="text" id="searchbox" value="Committee or candidate" style="width: 200px;" >
+	    <button class="searchBtn" type="submit" id="search_committees">
+	      <span>Search</span>
+	    </button>
+	  </form>	
+
+	</div>
+	</div>
+
+	<div id="search_results">No committees chosen</div>
+
+
+
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript">
+
+function get_amendment_list(form, include_new, include_amended) {
+	var results = [];
+	var needshyphen = false;
+	if (include_new) {
+		results.push(form + "N");
+	}
+	if (include_amended) {
+		results.push(form)
+	}
+	return results;
+}
+
+function hyphenate(form_list, needs_hyphen) {
+	if (needs_hyphen) {
+		form_list += form_list + "-";
+	} 
+	return form_list;	
+}
+
+function get_feed_url(fecid) {
+	feedurl = "http://reporting.sunlightfoundation.com/outside-spending/recent-FEC-filings/feeds/committee/" + fecid + "/" 
+
+	if($("#only_selected").is(":checked")) {
+		form_list = "";
+		var needs_hyphen = false;
+		
+		if ($("#monthly").is(":checked")) {
+			form_list += "F3N-F3A-F3T-F3XN-F3XA-F3XT-F3PN-F3PA-F3PA";
+			needs_hyphen = true;
+		}
+		if ($("#ie").is(":checked")) {
+			form_list = hyphenate(form_list, needs_hyphen);
+			form_list += "F24N-F24A-F5N-F5A";
+			needs_hyphen = true;
+		}
+		if ($("#ec").is(":checked")) {
+			form_list = hyphenate(form_list, needs_hyphen);
+			form_list += "F9N-F9A";
+			needs_hyphen = true;
+		}
+		if ($("#F6").is(":checked")) {
+			form_list = hyphenate(form_list, needs_hyphen);
+			form_list += "F6N-F6A";
+			needs_hyphen = true;
+		} 
+		
+		if (needs_hyphen==false) {
+			alert("You haven't picked any forms. Please pick some forms and then submit.");
+			return false;
+		}
+		feedurl += "forms/" + form_list + "/";
+		
+	}
+	
+	return feedurl;
+	
+	
+}
+
+
+function submit_subscribe(fecid, name) {
+	
+	feedurl = get_feed_url(fecid);
+	scouturl = "http://scout.sunlightfoundation.com/import/feed?url=" + encodeURIComponent(feedurl);
+	
+	var gotoscout = confirm("You're being sent to Scout to subscribe to feeds for " + name + ". If you don't have an account with Scout you'll be prompted to create one.");
+	if (gotoscout) {
+		window.location = scouturl;
+		return false;
+	}
+	
+	return false;
+}
+
+function submit_goto_feed(fecid) {
+	window.location = get_feed_url(fecid);
+	return false;
+}
+	
+
+
+$(document).ready(function () {
+	$(".filing_check").attr("disabled", "disabled");
+	
+	$("#all").attr("checked", "checked");
+	$(".filing_check").attr("checked", "");
+	
+	$('.filing_radio').change(function(){
+		if($("#only_selected").is(":checked") ) {	
+			$(".filing_check").attr("disabled", "");
+		} else {
+			$(".filing_check").attr("disabled", "disabled");
+			$(".filing_check").attr("checked", "");	
+		}	
+	});	
+	$("#search_committees").bind('click', function() {
+		var searchterm = $("#searchbox")[0].value;
+		if ( (searchterm.length < 4) || ( searchterm == 'Committee or candidate' )) {
+			alert('Please enter at least 3 characters to search for!');	
+			return false;
+		} else {
+			var searchurl = "/outside-spending/committee-search-html/?name=" + encodeURI(searchterm)
+			//alert('Search url: ' + searchurl);
+			
+			$('#search_results').load(searchurl, function(thisdata) {
+			  //alert('Got data!');
+				$('.subscribe_to_committee').click(function() {
+				        submit_subscribe($(this).data('fecid'), $(this).attr('name'));
+				        return false;
+				    });
+				$('.go_to_committee_feed').click(function() {
+				        submit_goto_feed($(this).data('fecid'));
+				        return false;
+				    });			
+			
+			});
+			
+			return false;
+			restore
+			
+		}
+	});
+
+	$("#searchbox").focus(function () {
+        if ($(this)[0].value === 'Committee or candidate') {
+            $(this).val('');
+        }
+    });
+});
+
+</script>
+{% endblock %}
+

@@ -18,26 +18,16 @@
         {{ committee.name }}
     </h2>
 
-{% if has_chart %}
-<div id="chart_container" class="chart_container" style="float: right; width: 507px; height: 330px;" ></div>
-{% endif %}
+<div><span class="amountLine">{% if committee.supporting %}Supporting: {{committee.supporting}}<br>{% endif %}
+{% if committee.is_superpac %}<b>This group is a super PAC</b><br>{% endif %}
+{% if committee.is_not_a_committee  %}<b>This group is not a political committee</b><br>{% endif %}
+{%if committee.is_hybrid %}<b>This group is a hybrid super PAC</b><br>{% endif %}
+{% if committee.has_linkable_url %}Read <a href="{{committee.profile_url}}" name="PROFILE: {{ committee.name }}">a profile of this group{% endif %}{% if committee.has_linkable_url %}</a><br>{% endif %}Filing Frequency: {{committee.filing_frequency_text}}</span>
+<br>See <a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">FEC filings</a>
+</div>
 
-<div class="left_of_chart" style="float: left; width: 380px;">
 
-<span class="amountLine">
-	{% if committee.is_superpac %}<b>This group is a super PAC</b><br>{% endif %}
-	{% if committee.is_not_a_committee  %}<b>This group is not a political committee</b><br>{% endif %}
-	{% if committee.is_hybrid %}<b>This group is a hybrid super PAC</b><br>{% endif %}
-	{% if committee.has_linkable_url %}Read <a href="{{committee.profile_url}}" name="PROFILE: {{ committee.name }}">a profile of this group{% endif %}{% if committee.has_linkable_url %}</a><br>{% endif %}Filing Frequency: {{committee.filing_frequency_text}} </span><br>See <a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">FEC Filings</a>
-	
 <div class="space_above">
-
-{% if committee.cash_on_hand %}
-    <span class="amountLine">Cash on hand: </span>(as of {{ committee.cash_on_hand_date }}): </span><span class="amount">${{ committee.cash_on_hand|intcomma }}</span>
-    <br><br>
-{% endif %}
-
-
 {% if committee.total_indy_expenditures%}
     <span class="amountLine">Independent Expenditures: </span><span class="amount">{% if committee.total_indy_expenditures%}${{ committee.total_indy_expenditures|intcomma }}{% endif %}</span><br>Jump to <a href="#spending">expenditures</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackcsv}}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('{{committee.superpachackcsv}}');">.csv file of all independent expenditures</a>
     <br><br>
@@ -50,15 +40,17 @@
  
     {% if contributions %}
     <span class="amountLine">Contributions (as of {{ committee.cash_on_hand_date }}): </span><span class="amount">{% if committee.total_contributions %}${{ committee.total_contributions|intcomma }}{% endif %}</span><br>Jump to <a href="#contributors"> contributors</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackdonorscsv}}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('{{committee.superpachackdonorscsv}}');">.csv file of contributions</a>
+
     {% endif %}
-
-
 </div>    
-</div>
 
-<div class="clear" style="height:0px;"></div>
+<div class="clear"></div>
 
 {% if candidates %}
+
+<div class="space_above">
+<div id="chart_container" class="chart_container" style="width: 507px; height: 330px;">
+</div>
 
 <div class="space_above"><h3>Independent Expenditure Summary</h3>
 
@@ -212,6 +204,7 @@
 {% with '[1,1]' as sortdir %}
 {% include "outside_spending/tablesorter_contribs.html" %}
 {% endwith %}
+{% comment %}
 <script type="text/javascript">
     $(document).ready(function () {
         $("#searchbox").focus(function () {
@@ -221,8 +214,8 @@
         });
     });
 </script>
-
-{% if has_chart %}
+{% endcomment %} 
+{% if candidates %}
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
  
 
@@ -248,7 +241,7 @@ $(document).ready(function() {
             backgroundColor: '#f1f1ef',
             animation: false	
 		},
-		legend: { enabled: true },
+		legend: { enabled: false },
         credits: { enabled: false },
         title: { 
             text: '',
@@ -256,7 +249,7 @@ $(document).ready(function() {
                 display: 'none',
                 position: 'absolute',
                 left: '0',
-                top: '0'
+                top: '0',
             }
         },
 		xAxis: {
@@ -269,7 +262,7 @@ $(document).ready(function() {
 		},
         yAxis: {
              min: 0,
-                  title: { text: 'Dollars (millions)',
+                  title: { text: 'Dollars spent, weekly (million $)',
                            style: { color: '#414042' }
                   }
          },
@@ -277,8 +270,8 @@ $(document).ready(function() {
 		    borderRadius: 0,
             borderWidth: 0,
 			formatter: function() {
-					return '<b>'+ this.series.name +'</b><br/>'+
-					Highcharts.dateFormat('%B, %Y', this.x) +': $'+ addCommas(Math.round(1000000*this.y)) +'';
+					return '<b>'+ this.series.name +'</b><br/> Week ending '+
+					Highcharts.dateFormat('%b %e', this.x) +': $'+ addCommas(1000000*this.y) +'';
 			}
 		},
 		plotOptions: {
@@ -288,40 +281,40 @@ $(document).ready(function() {
                     radius: 3
                 },
                 lineWidth: 2,
-                //color: '#eac80e',
+                color: '#eac80e',
                 shadow: false,
                 animation: false
             }
         },
 		series: [{
-			name: 'MONTHLY INDEPENDENT EXPENDITURES',
+			name: 'Superpac X spending',
 			// Define the data points. All series have a dummy year
 			// of 1970/71 in order to be compared on the same x axis. Note
 			// that in JavaScript, months start at 0 for January, 1 for February etc.
 			data: [
-			{% for data in monthly_ie_summary %}
-				[Date.UTC({{ data.year }},  {{ data.month }}, 1), {{data.data }}   ]{% if forloop.last %}{% else %},{% endif %}
-	{% endfor %}
+				[Date.UTC(2011,  11, 10), 0.826718   ],
+				[Date.UTC(2011, 11, 17), 1.582545 ],
+				[Date.UTC(2011, 11, 24), 0.229128 ],
+				[Date.UTC(2011, 11,  31), 1.477982 ],
+				[Date.UTC(2012, 0,  8), 0.546161 ],
+				[Date.UTC(2012,  0, 15), 3.530705 ],
+				[Date.UTC(2012,  0, 22), 3.211046 ],
+				[Date.UTC(2012, 0, 29), 6.164195 ],
+				[Date.UTC(2012,  1, 5), 0.564074 ],
+				[Date.UTC(2012,  1, 12), 0.222306 ],
+				[Date.UTC(2012,  1, 19), 2.198436 ],
+//				[Date.UTC(2012,  1, 26), 5.144388 ],
+//				[Date.UTC(2012,  2, 4), 5.259538 ],
+//				[Date.UTC(2012,  2, 11), 3.078363 ],			
+				[Date.UTC(2012,  2, 18), 1.507539 ]
 
-				]}
-			{% if committee.is_superpac %},
-				
-			{	name: 'MONTHLY CONTRIBUTIONS',
-				// Define the data points. All series have a dummy year
-				// of 1970/71 in order to be compared on the same x axis. Note
-				// that in JavaScript, months start at 0 for January, 1 for February etc.
-				data: [
-				{% for data in monthly_contrib_summary %}
-					[Date.UTC({{ data.year }},  {{ data.month }}, 1), {{data.data }}   ]{% if forloop.last %}{% else %},{% endif %}
-		{% endfor %}
-
-					]
-				
-		}{% endif %}
+				]
+		}
     ]
 	});
 });
 </script>
 {% endif %}
+
 
 {% endblock %}
