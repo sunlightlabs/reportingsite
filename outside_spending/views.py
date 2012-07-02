@@ -203,7 +203,7 @@ def complete_superpac_list(request):
                             'explanatory_text':explanatory_text,
                             })  
                             
-def summarize_monthly(summed_queryset, end_date):
+def summarize_monthly(summed_queryset, end_date, include_end_month=False):
     #print monthly_data
     month_hash = {}
     monthly_list = []
@@ -225,8 +225,11 @@ def summarize_monthly(summed_queryset, end_date):
     # Again, using utc month numbering runs from 0 to 11    
     final_month = int(end_date.strftime("%m")) 
     final_year = int(end_date.strftime("%Y"))
+    if include_end_month:
+        final_month += 1
+    
     keylist = []
-    while (this_year*12+this_month < final_year*12+final_month):
+    while (this_year*12+this_month < final_year*12+final_month-1):
         this_key = "%s-%s" % (this_year, this_month)
         keylist.append(this_key)
         this_month += 1
@@ -317,7 +320,7 @@ def committee_detail_2(request,committee_id):
     monthly_contrib_summary = None
     if (committee.is_superpac):
         monthly_contrib_data = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
-        monthly_contrib_summary = summarize_monthly(monthly_contrib_data, committee.cash_on_hand_date)
+        monthly_contrib_summary = summarize_monthly(monthly_contrib_data, committee.cash_on_hand_date, True)
 
     return render_to_response('outside_spending/committee_detail_2.html',
                             {'committee':committee, 
