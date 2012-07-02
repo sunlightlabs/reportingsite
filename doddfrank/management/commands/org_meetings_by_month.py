@@ -67,12 +67,16 @@ class Command(BaseCommand):
 
         header_row = [u'Organization']
         header_row.extend(yearmonths)
+        header_row.append(u'Total')
         writer.writerow(header_row)
 
         for rk in orgs:
             row = [rk]
+            row_total = 0
             for ck in yearmonths:
                 row.append(unicode(table[rk][ck]))
+                row_total += table[rk][ck] or 0
+            row.append(unicode(row_total))
             writer.writerow(row)
             if rk in orgs_of_interest:
                 orgs_of_interest.remove(rk)
