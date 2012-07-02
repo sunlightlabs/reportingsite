@@ -1,0 +1,329 @@
+{% extends "outside_spending/buckley_base.html" %}
+
+{% load buckley %}
+{% load humanize %}
+
+{% block title %}{{ committee.name }} - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} {% endblock %}
+
+{% block breadcrumb %}{{ block.super }}
+<li>{{ committee.name }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "outside_spending/tabs.html" %}
+
+    <h2>
+        {{ committee.name }}
+    </h2>
+
+
+<div id="chart_container" class="chart_container" style="float: right; width: 507px; height: 330px;" ></div>
+
+
+
+<div class="right_of_chart" style="float: left; width: 380px;">
+	
+
+	<span class="amountLine">
+	{% if committee.is_superpac %}<b>This group is a super PAC</b><br>{% endif %}
+	{% if committee.is_not_a_committee  %}<b>This group is not a political committee</b><br>{% endif %}
+	{%if committee.is_hybrid %}<b>This group is a hybrid super PAC</b><br>{% endif %}
+	{% if committee.has_linkable_url %}Read <a href="{{committee.profile_url}}" name="PROFILE: {{ committee.name }}">a profile of this group{% endif %}{% if committee.has_linkable_url %}</a><br>{% endif %}Filing Frequency: {{committee.filing_frequency_text}} </span><br>See <a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">FEC Filings</a>
+	
+<div class="space_above">
+
+
+
+{% if committee.cash_on_hand %}
+    <span class="amountLine">Cash on hand: </span>(as of {{ committee.cash_on_hand_date }}): </span><span class="amount">${{ committee.cash_on_hand|intcomma }}</span>
+    <br><br>
+{% endif %}
+
+
+{% if committee.total_indy_expenditures%}
+    <span class="amountLine">Independent Expenditures: </span><span class="amount">{% if committee.total_indy_expenditures%}${{ committee.total_indy_expenditures|intcomma }}{% endif %}</span><br>Jump to <a href="#spending">expenditures</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackcsv}}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('{{committee.superpachackcsv}}');">.csv file of all independent expenditures</a>
+    <br><br>
+{% endif %}   
+
+{% if ec_total%}
+    <span class="amountLine">Electioneering Communications: </span><span class="amount">${{ ec_total|intcomma }}</span><br>Jump to <a href="#ec">electioneering communications</a>
+    <br><br>    
+{% endif %}
+ 
+    {% if contributions %}
+    <span class="amountLine">Contributions (as of {{ committee.cash_on_hand_date }}): </span><span class="amount">{% if committee.total_contributions %}${{ committee.total_contributions|intcomma }}{% endif %}</span><br>Jump to <a href="#contributors"> contributors</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackdonorscsv}}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('{{committee.superpachackdonorscsv}}');">.csv file of contributions</a>
+
+    {% endif %}
+</div>    
+</div>
+
+<div class="clear"></div>
+
+{% if candidates %}
+
+<div class="space_above"><h3>Independent Expenditure Summary</h3>
+
+<span class="amountLine"><b>Negative: {{ committee.neg_percent|floatformat:0}}%</b> </span>&nbsp;&nbsp;<span class="amountLine">Opposes Democrats: </span><span class="amount">${{ committee.ie_oppose_dems|intcomma }}</span> &nbsp; <span class="amountLine">Opposes Republicans: </span><span class="amount">${{ committee.ie_oppose_reps|intcomma }}</span>
+<br>
+<span class="amountLine"><b>Positive: {{ committee.pos_percent|floatformat:0}}%</b> </span>&nbsp;&nbsp;<span class="amountLine">Supports Democrats: </span><span class="amount">${{ committee.ie_support_dems|intcomma }}</span> &nbsp; <span class="amountLine">Supports Republicans: </span><span class="amount">${{ committee.ie_support_reps|intcomma }}</span>
+</div>
+<div class="space_above">
+<p>{{ explanatory_text|safe }}</p>
+</div>
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Race</th>
+            <th class="sort">Candidate</th>
+            <th class="sort">Support/oppose</th>
+            <th class="sort">Amount</th>
+
+        </tr>
+    </thead>
+    <tbody>
+    {% for candidate_pac in candidates %}
+    <tr>
+    <td><a href="{{candidate_pac.candidate.get_race_url}}">{{ candidate_pac.candidate.race }}</a></td>
+    <td><a href="{{candidate_pac.candidate.get_absolute_url}}">{{ candidate_pac.candidate.fec_name }} {{ candidate_pac.candidate.display_party }} </a></td>
+    <td>{{ candidate_pac.support_or_oppose }}</td>
+    <td>{% if candidate_pac.total_ind_exp %}${{ candidate_pac.total_ind_exp|intcomma }}{% endif %}</td>   
+    </tr>                
+    {% endfor %}    
+    </tbody>
+</table>
+
+{% else %}
+<br/><br/>No candidates have been supported by independent expenditures this cycle.
+{% endif %}
+
+<a name="spending"></a>
+{% if expenditures %}
+<div class="space_above"><h3>Independent Expenditures </h3></div>
+<p>{{ explanatory_text_details|safe }}</p>
+<table id="expenditure_details" class="tablesorter">
+       <thead>
+           <tr>
+               <th class="sort">Date</th>
+               <th class="sort">Committee</th>
+               <th class="sort">Candidate</th>
+               <th class="sort">Support/Oppose</th>
+               <th class="sort">Amount</th>
+               <th class="sort">State</th>                   
+               <th class="sort">Purpose</th>
+           </tr>
+       </thead>
+       <tbody>
+       {% for ie in expenditures %}    
+           <tr class="{% cycle 'odd' 'even' %}">
+               <td>{{ ie.expenditure_date }}</td>
+               <td><a href="{{ie.committee.get_absolute_url}}">{{ ie.committee.name }}</a></td>
+               <td><a href="{{ie.candidate.get_absolute_url}}">{{ ie.candidate.fec_name }}</a> {{ ie.candidate.display_party}}</td>                
+               <td>{{ ie.support_or_oppose }}</td>
+               <td>${{ ie.expenditure_amount|intcomma }}</td>   
+               <td>{% if ie.state %}{{ ie.state }}{% endif %}</td>                                               
+               <td>{{ ie.expenditure_purpose }}</td>
+           </tr>
+       {% endfor %}
+       </tbody>
+       </table>
+       {% endif %}
+
+
+
+
+
+
+       <a name="contributors"></a>
+       {% if contributions %}
+       <div class="space_above"><h3>Super PAC Contributions </h3></div>
+       <p>{{ explanatory_text_contribs|safe }}</p>
+       <table id="contrib_details" class="tablesorter">
+              <thead>
+                  <tr>
+                      <th class="sort">Date</th>
+                      <th class="sort">Amount</th>
+                      <th class="sort">Donor</th>
+                      <th class="sort">Donor employer</th>
+                      <th class="sort">City</th>                   
+                      <th class="sort">State</th>
+                  </tr>
+              </thead>
+              <tbody>
+              {% for contrib in contributions %}    
+                  <tr class="{% cycle 'odd' 'even' %}">
+                      <td>{{ contrib.contrib_date }}</td>
+                      <td>{% if contrib.contrib_amt %}${{ contrib.contrib_amt|intcomma }}{% endif %}</a></td> 
+                      <td>{{ contrib.donor_display }}</td>
+                      <td>{{ contrib.contrib_employer }}</td>   
+                      <td>{{ contrib.contrib_city }}</td>                                               
+                      <td>{{ contrib.contrib_state }}</td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+              </table>
+              {% endif %}
+
+
+
+{% if ecs %}
+<a name="ec"></a>
+<div class="space_above"><h3>Electioneering Communications</h3></div>
+{{ec_explanation|safe}}
+<p class="tip">Click on a race, committee or candidate name for more details</p>
+
+
+<table id="contrib_details" class="tablesorter">
+  <thead>
+      <tr>
+          <th class="sort">Date</th>
+          <th class="sort" >Committee</th>
+          <th class="sort">Amount</th>
+          <th class="sort">Purpose</th>
+          <th class="sort">Payee</th>
+          <th class="sort">Candidate(s) mentioned, state targeted</th>
+      </tr>
+  </thead>
+  <tbody>
+  {% for ec in ecs %}    
+      <tr class="{% cycle 'odd' 'even' %}">
+          <td>{{ ec.exp_date }}</td>
+          <td><a href="{{ec.committee.get_absolute_url}}">{{ ec.committee.name }}</a></td> 
+          <td>${{ ec.exp_amo|intcomma }}</td>                               
+          <td>{{ ec.purpose }} </td>
+          <td>{{ ec.payee }} </td>
+          <td>{% for t in ec.target.all %}{% if t.candidate %}<a href="{{t.candidate.get_absolute_url}}">{% endif %}{{t.can_name}}{% if t.candidate %}</a>{% endif %} ({{t.can_state}}){% if forloop.last %}{% else %}; {% endif %}{% endfor %}</td>
+      </tr>
+  {% endfor %}
+  </tbody>
+  </table>    
+  {% endif %}
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[3,1]' as sortdir %}
+{% include "outside_spending/tablesorter.html" %}
+{% endwith %}
+{% with '[0,1]' as sortdir %}
+{% include "outside_spending/tablesorter_expenditure_details.html" %}
+{% endwith %}
+{% with '[1,1]' as sortdir %}
+{% include "outside_spending/tablesorter_contribs.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% if candidates %}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
+ 
+
+<script type="text/javascript">
+
+function addCommas(nStr)
+{
+    nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+}
+
+$(document).ready(function() {
+	var chart = new Highcharts.Chart({
+		chart: {
+			renderTo: 'chart_container',
+            backgroundColor: '#f1f1ef',
+            animation: false	
+		},
+		legend: { enabled: true },
+        credits: { enabled: false },
+        title: { 
+            text: '',
+            style: {
+                display: 'none',
+                position: 'absolute',
+                left: '0',
+                top: '0',
+            }
+        },
+		xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: {
+                  day: '%b %e',
+                  week: '%b %e',
+                  month: '%b'             
+              }
+		},
+        yAxis: {
+             min: 0,
+                  title: { text: 'Dollars (millions)',
+                           style: { color: '#414042' }
+                  }
+         },
+		tooltip: {
+		    borderRadius: 0,
+            borderWidth: 0,
+			formatter: function() {
+					return '<b>'+ this.series.name +'</b><br/>'+
+					Highcharts.dateFormat('%B, %Y', this.x) +': $'+ addCommas(Math.round(1000000*this.y)) +'';
+			}
+		},
+		plotOptions: {
+            series: {
+                cursor: 'pointer',
+                marker: { 
+                    radius: 3
+                },
+                lineWidth: 2,
+                //color: '#eac80e',
+                shadow: false,
+                animation: false
+            }
+        },
+		series: [{
+			name: 'MONTHLY INDEPENDENT EXPENDITURES',
+			// Define the data points. All series have a dummy year
+			// of 1970/71 in order to be compared on the same x axis. Note
+			// that in JavaScript, months start at 0 for January, 1 for February etc.
+			data: [
+			{% for data in monthly_ie_summary %}
+				[Date.UTC({{ data.year }},  {{ data.month }}, 1), {{data.data }}   ]{% if forloop.last %}{% else %},{% endif %}
+	{% endfor %}
+
+				]},
+				
+			{	name: 'MONTHLY CONTRIBUTIONS',
+				// Define the data points. All series have a dummy year
+				// of 1970/71 in order to be compared on the same x axis. Note
+				// that in JavaScript, months start at 0 for January, 1 for February etc.
+				data: [
+				{% for data in monthly_contrib_summary %}
+					[Date.UTC({{ data.year }},  {{ data.month }}, 1), {{data.data }}   ]{% if forloop.last %}{% else %},{% endif %}
+		{% endfor %}
+
+					]
+				
+		}
+    ]
+	});
+});
+</script>
+{% endif %}
+
+{% endblock %}

@@ -1,6 +1,7 @@
 # Create your views here.
 import csv
 import datetime
+import time
 
 from django.views.decorators.cache import cache_page
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response, redirect
@@ -201,6 +202,52 @@ def complete_superpac_list(request):
                             {'superpacs':superpacs,
                             'explanatory_text':explanatory_text,
                             })  
+                            
+def summarize_monthly(summed_queryset, end_date):
+    #print monthly_data
+    month_hash = {}
+    monthly_list = []
+    # crazy utc month numbering runs from 0 to 11
+    for month in summed_queryset:
+        this_month = {
+        'month':int(month[1])-1,
+        'year':month[0],
+        'data':month[2]/1000000
+        }
+        key = "%s-%s" % (month[0], int(month[1]-1))
+        #print key
+        month_hash[key]=this_month
+    
+    # make key list
+    this_month = 0
+    this_year = 2011
+    
+    # Again, using utc month numbering runs from 0 to 11    
+    final_month = int(end_date.strftime("%m")) 
+    final_year = int(end_date.strftime("%Y"))
+    keylist = []
+    while (this_year*12+this_month < final_year*12+final_month):
+        this_key = "%s-%s" % (this_year, this_month)
+        keylist.append(this_key)
+        this_month += 1
+        if (this_month==12):
+            this_year += 1
+            this_month = 0
+    print "keylist is: %s from end date: %s " % (keylist, end_date)
+
+    for key in (keylist):
+        try:
+            monthly_list.append(month_hash[key])
+            #print "trying key %s" % key
+        except KeyError:
+            date_string = key.split("-")
+            monthly_list.append({
+                'month':int(date_string[1]),
+                'year':date_string[0],
+                'data':0
+            })
+    return monthly_list
+    
 def committee_detail(request,committee_id):
     committee = get_object_or_404(Committee_Overlay, fec_id=committee_id)
     expenditures = Expenditure.objects.filter(committee=committee).filter(superceded_by_amendment=False).select_related('committee', 'candidate')
@@ -214,7 +261,21 @@ def committee_detail(request,committee_id):
     ec_total_dict = ecs.aggregate(total=Sum('exp_amo'))
     ec_total = ec_total_dict['total']
     
+    """
+    # ie monthly summary
     
+    monthly_ie_data = Expenditure.objects.filter(committee=committee).filter(superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    
+    today = datetime.datetime.today()
+    
+    monthly_ie_summary = summarize_monthly(monthly_ie_data, today)
+    print monthly_ie_summary
+    
+    monthly_contrib_summary = None
+    if (committee.is_superpac):
+        monthly_contrib_data = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
+        monthly_contrib_summary = summarize_monthly(monthly_contrib_data, committee.cash_on_hand_date)
+    """
     return render_to_response('outside_spending/committee_detail.html',
                             {'committee':committee, 
                             'expenditures':expenditures,
@@ -225,9 +286,53 @@ def committee_detail(request,committee_id):
                             'explanatory_text_contribs':explanatory_text_contribs,
                             'ecs':ecs,
                             'ec_explanation':electioneering_details,
-                            'ec_total':ec_total
-                            })   
+                            'ec_total':ec_total, 
+                            #'monthly_ie_summary':monthly_ie_summary,
+                            #'monthly_contrib_summary':monthly_contrib_summary
+                            })
                             
+# for testing this:                                
+def committee_detail_2(request,committee_id):
+    committee = get_object_or_404(Committee_Overlay, fec_id=committee_id)
+    expenditures = Expenditure.objects.filter(committee=committee).filter(superceded_by_amendment=False).select_related('committee', 'candidate')
+    contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False)
+    candidates_supported = Pac_Candidate.objects.filter(committee=committee)
+    explanatory_text = 'This table shows the overall total amount spent by this group supporting or opposing federal candidates in independent expenditures in the 2012 election cycle.'
+    explanatory_text_details = 'This table shows the total independent expenditure by this group supporting or opposing federal candidates in the 2012 election cycle. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.superpachackcsv())
+    explanatory_text_contribs = 'This table shows all contributions made to this group during the 2012 campaign cycle, as of %s. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.cash_on_hand_date,committee.superpachackdonorscsv())
+
+    ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False, fec_id=committee_id).order_by('-exp_date')
+    ec_total_dict = ecs.aggregate(total=Sum('exp_amo'))
+    ec_total = ec_total_dict['total']
+
+    # ie monthly summary
+
+    monthly_ie_data = Expenditure.objects.filter(committee=committee).filter(superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    today = datetime.datetime.today()
+
+    monthly_ie_summary = summarize_monthly(monthly_ie_data, today)
+    print monthly_ie_summary
+
+    monthly_contrib_summary = None
+    if (committee.is_superpac):
+        monthly_contrib_data = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
+        monthly_contrib_summary = summarize_monthly(monthly_contrib_data, committee.cash_on_hand_date)
+
+    return render_to_response('outside_spending/committee_detail_2.html',
+                            {'committee':committee, 
+                            'expenditures':expenditures,
+                            'contributions':contributions, 
+                            'candidates':candidates_supported,
+                            'explanatory_text':explanatory_text,
+                            'explanatory_text_details':explanatory_text_details,
+                            'explanatory_text_contribs':explanatory_text_contribs,
+                            'ecs':ecs,
+                            'ec_explanation':electioneering_details,
+                            'ec_total':ec_total, 
+                            'monthly_ie_summary':monthly_ie_summary,
+                            'monthly_contrib_summary':monthly_contrib_summary
+                            })                            
 
 def presidential_superpacs(request):
     explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have spent more than $1,000 in independent expenditures in support of a presidential candidate during the 2012 primrary election cycle. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
