@@ -315,12 +315,17 @@ def committee_detail_2(request,committee_id):
     today = datetime.datetime.today()
 
     monthly_ie_summary = summarize_monthly(monthly_ie_data, today)
-    print monthly_ie_summary
+
 
     monthly_contrib_summary = None
     if (committee.is_superpac):
         monthly_contrib_data = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
         monthly_contrib_summary = summarize_monthly(monthly_contrib_data, committee.cash_on_hand_date, True)
+        
+    has_chart = False 
+    print "lenght is %s" % (len(monthly_ie_data))    
+    if (committee.is_superpac or len(monthly_ie_data) > 0):
+        has_chart = True
 
     return render_to_response('outside_spending/committee_detail_2.html',
                             {'committee':committee, 
@@ -334,7 +339,8 @@ def committee_detail_2(request,committee_id):
                             'ec_explanation':electioneering_details,
                             'ec_total':ec_total, 
                             'monthly_ie_summary':monthly_ie_summary,
-                            'monthly_contrib_summary':monthly_contrib_summary
+                            'monthly_contrib_summary':monthly_contrib_summary,
+                            'has_chart':has_chart
                             })                            
 
 def presidential_superpacs(request):
