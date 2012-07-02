@@ -33,7 +33,7 @@ def meeting_copyfunc(record, meeting):
     meeting.source_url = record['url']
 
 
-SharedKeys = ['meeting_time', 'description', 'topic', 'url']
+SharedKeys = ['url']
 
 
 def main():

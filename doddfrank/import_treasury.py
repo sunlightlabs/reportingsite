@@ -1,5 +1,6 @@
 import sys
 import progressbar
+from argparse import ArgumentParser
 import dateutil.parser
 
 from doddfrank.importlib import (dict_hash, slurp_data, agency_or_die,
@@ -8,6 +9,9 @@ from doddfrank.importlib import (dict_hash, slurp_data, agency_or_die,
                                  ObjectCounts)
 from doddfrank.models import Agency, Attendee, Organization, Meeting
 
+parser = ArgumentParser()
+parser.add_argument('--update-existing', '-u', default=False, action='store_true', help='Updates database objects even if the key fields have not changed.')
+args = parser.parse_args()
 
 SCRAPER_MEETINGS_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=doddfranktreasury&query=select%20*%20from%20%60meetings%60'
 SCRAPER_ATTENDEES_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=doddfranktreasury&query=select%20*%20from%20%60attendees%60'
@@ -53,14 +57,15 @@ def main():
 
     print 'Importing meetings'
     meetings = slurp_data(SCRAPER_MEETINGS_URL)
-    import_meetings(meetings, meeting_keyfunc, meeting_copyfunc)
+    import_meetings(meetings, meeting_keyfunc, meeting_copyfunc,
+                    update_existing=args.update_existing)
 
     print 'Importing attendees'
     attendees = slurp_data(SCRAPER_ATTENDEES_URL)
     import_attendees(meetings, attendees, SharedKeys,
                      attendee_keyfunc, attendee_copyfunc,
                      meeting_keyfunc, meeting_copyfunc,
-                     'Org')
+                     'Org', update_existing=args.update_existing)
 
     meeting_objects = Meeting.objects.filter(agency=Treasury)
     reconcile_database(meeting_objects, meetings)

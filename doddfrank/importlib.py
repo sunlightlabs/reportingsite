@@ -207,7 +207,8 @@ def import_organizations(meetings, organizations, shared_keys,
     get_shared_keys = DictSlicer(*shared_keys)
     progress = progressbar.ProgressBar()
     for o in progress(organizations):
-        if o.get(org_field, '').strip():
+        org_name = o.get(org_field, '')
+        if org_name:
             m_index_key = dict_hash(get_shared_keys(o))
             m = meeting_index[m_index_key]
 
@@ -215,7 +216,6 @@ def import_organizations(meetings, organizations, shared_keys,
             m_keys = meeting_keyfunc(m, m_hash)
             meeting = Meeting.objects.get(**m_keys)
 
-            org_name = o.get(org_field).strip()
             if org_name and organization_is_blacklisted(org_name):
                 continue
             if org_name:

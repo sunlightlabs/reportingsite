@@ -17,12 +17,7 @@ SCRAPER_ORGANIZATIONS_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlit
 SEC = agency_or_die('SEC')
 
 SharedKeys = [
-    'category',
-    'meeting_time',
-    'from',
-    'url',
-    'pdf_url',
-    'type'
+    'pdf_url'
 ]
 
 

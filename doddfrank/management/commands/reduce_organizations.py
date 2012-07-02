@@ -1,5 +1,8 @@
 import sys
 
+from itertools import chain
+from pprint import pprint
+
 from django.core.management.base import BaseCommand, CommandError
 from optparse import make_option
 from progressbar import ProgressBar, Counter, Timer, ETA
@@ -51,16 +54,45 @@ def export_standardized_suggestions():
 
 
 def export_jarowinkler_suggestions():
+    org_names = [o.name for o in Organization.objects.all()]
     matches = [
         (a, b, score)
-        for (a, b, score) in ((a, b, jaro_winkler(a, b))
-                              for a in org_names
-                              for b in org_names
-                              if a != b
+        for (a, b, score) in ((a, b, jaro_winkler(a.encode('utf-8'), b.encode('utf-8')))
+                              for (i, a) in enumerate(org_names)
+                              for (j, b) in enumerate(org_names)
+                              if j > i
+                              and a != b
                               and len(a) > 3
                               and len(b) > 3)
         if score > 0.95]
-     
+
+    print >>sys.stderr, "Found {0} matches.".format(len(matches))
+    if len(matches) == 0:
+        return
+
+    #matched_names = list(chain((a for (a, b, score) in matches),
+    #                           (b for (a, b, score) in matches)))
+
+    #name_freq = freq(matched_names)
+    #pprint(name_freq, stream=sys.stderr)
+
+    sys.stderr.flush()
+    suggestion_writer = UnicodeCsvWriter(sys.stdout)
+    for (a, b, score) in matches:
+        a_chars = set(a)
+        b_chars = set(b)
+        original = a if len(a_chars) > len(b_chars) else b
+        replacement = b if len(a_chars) > len(b_chars) else a
+        suggestion_writer.writerow([original, replacement])
+
+
+def freq(l):
+    d = {}
+    for x in l:
+        n = d.get(x, 0)
+        d[x] = n + 1
+    return d
+
 
 def import_corrections():
     correction_records = UnicodeCsvReader(sys.stdin)

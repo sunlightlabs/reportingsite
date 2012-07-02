@@ -4,6 +4,7 @@ import sys
 from pprint import pprint
 
 from django.core.management.base import BaseCommand
+from optparse import make_option
 
 from unicodecsv import UnicodeCsvWriter
 from doddfrank.models import Meeting
@@ -13,6 +14,10 @@ from doddfrank.views import pivot_table
 class Command(BaseCommand):
     args = ''
     help = 'Exports a CSV to stdout listing the number of meetings each agency held in each month.'
+    option_list = BaseCommand.option_list + (
+        make_option('--agency', action='store', dest='agency', metavar='AGENCY',
+                    default=None, help='Limit the queries to this agency.'),
+    )
 
     def handle(self, *args, **options):
         timespan = {
