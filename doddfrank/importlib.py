@@ -364,7 +364,7 @@ def strip_whitespace(s, also=u''):
     return s.strip(u' \t\u00a0' + also)
 
 
-CompanySuffixPattern1 = re.compile(r'[,]? (LLC|LLP|MLP|Corp(?:oration)?|Inc|N[.]?A[.]?)[.]?', re.IGNORECASE)
+CompanySuffixPattern1 = re.compile(r'[,]? (LLC|LLP|MLP|Corp(?:oration)?|Inc(?:orporated)?|\bN\.?A\.?\b)[.]?', re.IGNORECASE)
 CompanySuffixPattern2 = re.compile(r'& Co(?:mpany|\.)?\b', re.IGNORECASE)
 CompanySuffixPattern3 = re.compile(r'(^The |\bGroup\b)', re.IGNORECASE)
 ConsequtiveSpacesPattern = re.compile(r'\s{2,}', re.UNICODE)
@@ -396,7 +396,11 @@ def standardized_organization_name(name):
     OrgNameCharacterSubs[u'\u201f'] = '\'' # A name should never have double quotes
     
     normalized = substitute_characters(name, OrgNameCharacterSubs)
-    return fix_company_suffixes(normalized)
+    fixed = fix_company_suffixes(normalized)
+    paren_match = re.match(ur'^\((.*)\)$', fixed)
+    if paren_match is not None:
+        fixed = paren_match.group(1)
+    return fixed
 
 
 def import_scraping_errors(agency, errors):

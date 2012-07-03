@@ -1,10 +1,15 @@
 import dateutil.parser
+from argparse import ArgumentParser
 
 from doddfrank.importlib import (slurp_data, agency_or_die,
                                  reconcile_database, import_meetings,
                                  import_organizations, prune_organizations,
                                  ObjectCounts)
 from doddfrank.models import Agency, Attendee, Organization, Meeting
+
+parser = ArgumentParser()
+parser.add_argument('--update-existing', '-u', default=False, action='store_true', help='Updates database objects even if the key fields have not changed.')
+args = parser.parse_args()
 
 
 SCRAPER_MEETINGS_URL = 'https://api.scraperwiki.com/api/1.0/datastore/sqlite?format=jsondict&name=doddfrankcftc&query=select%20*%20from%20%60meetings%60'
@@ -42,7 +47,8 @@ def main():
 
     print 'Importing meetings'
     meetings = slurp_data(SCRAPER_MEETINGS_URL)
-    import_meetings(meetings, meeting_keyfunc, meeting_copyfunc)
+    import_meetings(meetings, meeting_keyfunc, meeting_copyfunc,
+                    update_existing=args.update_existing)
 
     print 'Importing organizations'
     organizations = slurp_data(SCRAPER_ORGANIZATIONS_URL)

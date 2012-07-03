@@ -4,6 +4,7 @@ from itertools import chain
 from pprint import pprint
 
 from django.core.management.base import BaseCommand, CommandError
+from django.db.models import Q
 from optparse import make_option
 from progressbar import ProgressBar, Counter, Timer, ETA
 
@@ -104,8 +105,8 @@ def import_corrections():
                 # If there is a correction X=>Y then we do not want to 
                 # create a correction Y=>Z because that should be a correction
                 # X=>Z but that may be dangerous.
-                existing = OrganizationNameCorrection.objects.filter(original=record[1])
-                if existing:
+                existing = OrganizationNameCorrection.objects.filter(original__in=record)
+                if len(existing) > 0:
                     continue
 
                 (correction, created) = OrganizationNameCorrection.objects.get_or_create(
