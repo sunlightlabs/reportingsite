@@ -74,13 +74,14 @@ urlpatterns = patterns('',
     #url(r'^searchtest\/$', 'django.views.generic.simple.direct_to_template', {'template': 'mobile_test/searchtest.html'}),      
     url(r'^search\/$', 'outside_spending.views.search'),
     url(r'^more-resources\/$', 'outside_spending.views.more_resources'),
+    url(r'^charttest\/',direct_to_template, {'template': 'outside_spending/chart_test.html'}),
     url(r'$', 'outside_spending.views.all_superpacs')
-
+    
     
 
     # all that are noteworthy
     #url(r'^csv/state_csv/','outside_spending.views.states_csv'),
-    #url(r'^map/',direct_to_template, {'template': 'rebuckley/map.html'}),  
+    #  
 
 )
 
