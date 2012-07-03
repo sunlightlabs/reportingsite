@@ -1,0 +1,36 @@
+{% extends "outside_spending/buckley_base.html" %}
+
+{% load buckley %}
+{% load humanize %}
+{% load charts %}
+
+{% block title %}{{ committee.name }} - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} {% endblock %}
+
+{% block breadcrumb %}{{ block.super }}
+<li>{{ committee.name }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "outside_spending/tabs.html" %}
+
+
+<h2>Chart test</h2>
+<p>text above</p>
+<div id="superpac_chart" class="chart_container" style="width: 507px; height: 330px;" ></div>
+<p>text below</p>
+
+{% endblock %}
+
+{% block js %}
+{{ block.super }}
+
+
+
+{% load cache %}
+{% cache 3600 superpac_chart "all_superpacs" %}
+{% superpac_chart %}
+{% endcache %}
+
+{% endblock %}
