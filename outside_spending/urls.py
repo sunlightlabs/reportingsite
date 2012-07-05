@@ -18,6 +18,7 @@ urlpatterns = patterns('',
     url(r'^csv/state/(\w\w)\/?$', 'outside_spending.views.state_contribs_csv'),
     url(r'^csv/state/expenditures/(\w\w)\/?$', 'outside_spending.views.expenditure_csv_state'),
     url(r'^csv/race/expenditures/(?P<office>\w)\/(?P<state>[\w0]+)\/(?P<district>\d\d)\/?$', 'outside_spending.views.expenditure_csv_race'),
+    url(r'^csv/committees\/$', 'outside_spending.views.committee_summary_public'),
     # this url used to be /super-pacs/all/ => outside-spending/super-pacs/
     url(r'^super-pacs/?$', 'outside_spending.views.all_superpacs'),
     # super-pacs/complete/  => outside-spending/super-pacs/complete-list/
@@ -74,7 +75,7 @@ urlpatterns = patterns('',
     #url(r'^searchtest\/$', 'django.views.generic.simple.direct_to_template', {'template': 'mobile_test/searchtest.html'}),      
     url(r'^search\/$', 'outside_spending.views.search'),
     url(r'^more-resources\/$', 'outside_spending.views.more_resources'),
-    url(r'^charttest\/',direct_to_template, {'template': 'outside_spending/chart_test.html'}),
+    url(r'^charttest\/',direct_to_template, {'template': 'outside_spending/chart_test.html', 'extra_context': {'div_name':'superpac_chart'}}, ),
     url(r'$', 'outside_spending.views.all_superpacs')
     
     

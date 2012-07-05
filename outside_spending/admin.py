@@ -15,7 +15,7 @@ class CommitteeAdmin(admin.ModelAdmin):
                    
         }),
         ("Human-verified data", {
-            'fields': ('is_c4','political_orientation'),
+            'fields': ('org_status','political_orientation'),
             
         }),
 

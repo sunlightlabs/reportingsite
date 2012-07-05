@@ -89,7 +89,7 @@ class Committee(models.Model):
     treasurer = models.CharField(max_length=38, blank=True, null=True)
     street_1 = models.CharField(max_length=34, blank=True, null=True)
     street_2 = models.CharField(max_length=34, blank=True, null=True)
-    city =models.CharField(max_length=18, blank=True, null=True)
+    city = models.CharField(max_length=18, blank=True, null=True)
     zip_code = models.CharField(max_length=9, blank=True, null=True)
     state_race = models.CharField(max_length=2, blank=True, null=True)
     designation = models.CharField(max_length=1,
@@ -217,6 +217,9 @@ class Committee_Overlay(models.Model):
     # total receipts
     total_contributions = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     
+    # total unitemized receipts
+    total_unitemized = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+        
     # Only include independent expenditures in this total
     has_electioneering = models.NullBooleanField(null=True, default=False)
     has_independent_expenditures = models.NullBooleanField(null=True, default=False)
@@ -238,8 +241,25 @@ class Committee_Overlay(models.Model):
 
     # what kinda pac is it? 
     is_superpac = models.NullBooleanField(null=True, default=False)    
+    # not used
     is_hybrid = models.NullBooleanField(null=True, default=False)  
+    # not used
     is_c4 = models.NullBooleanField(null=True, default=False)
+    # only for non committees
+    is_noncommittee = models.NullBooleanField(null=True, default=False)
+    is_labor_related = models.NullBooleanField(null=True, default=False)
+    is_business = models.NullBooleanField(null=True, default=False)
+    
+    org_status = models.CharField(max_length=31,
+            choices=(('501(c)(4)', '501(c)(4)'),
+                     ('501(c)(5)', '501(c)(5)'),
+                     ('501(c)(6)', '501(c)(6)'),
+                     ('527', '527'),
+                     ('Private business', 'Private business'),
+                     ('Public business', 'Public business'),
+                     ('Individual', 'individual'),
+            ),
+            blank=True, null=True, help_text="We're only tracking these for non-committees")
     
     # what's their orientation
     political_orientation = models.CharField(max_length=1,null=True, choices=[
@@ -406,10 +426,6 @@ class Candidate_Overlay(models.Model):
             except KeyError:
                 return ''
 
-#    def last_first(self):
-#        prefix, first, last, suffix = name_tools.split(self.__unicode__())
-#        return re.sub(r'\s+([^\w])', r'\1', '%s %s, %s' % (last, suffix, first))
-
     def seat(self):
         try:
             if self.fec_id:
@@ -476,12 +492,6 @@ class Filing_Rows(models.Model):
         unique_together = ("filing_number", "transaction_id")
         
         
-# Add this so we don't have to join to committee overlay:
-        
-# old style expenditure -- load from bulk file. 
-
-
-# This needs a 'final' -- i.e. unamended -- manager, but unclear if it should be on this model or a distillation
 class Expenditure(models.Model):
     cycle = models.CharField(max_length=4, null=True)
     image_number = models.BigIntegerField()
@@ -529,28 +539,11 @@ class Expenditure(models.Model):
     # populated from the unprocessed_filing table.   
     process_time = models.DateTimeField(null=True) 
 
-
-    #objects = ExpenditureManager()
-    
-    # alter table outside_spending_expenditure add column `amends_filing` integer,
-    # alter table outside_spending_expenditure add column `process_time` datetime,
-    # alter table outside_spending_expenditure drop key image_number;
-    # alter table outside_spending_expenditure add unique key filing_tran (filing_number, transaction_id);
-    
-    # where did this file come from? F24, IEFILE, F5, F3X, etc;
-    # alter table outside_spending_expenditure add column 'filing_source' char(7)
-    
     
     filing_source = models.CharField(max_length=7, null=True, blank=True)
     # special flag to note that it's been amended by an F3X
-    # alter table outside_spending_expenditure add column `superceded_by_f3x` bool;
     superceded_by_f3x=models.NullBooleanField(default=False)
-    # alter table outside_spending_expenditure add column superceding_f3x int;
     superceding_f3x=models.IntegerField(null=True)
-    
-    # ALTER TABLE outside_spending_expenditure MODIFY receipt_date date;
-    # alter table outside_spending_expenditure add column memo_code varchar(100);
-    # alter table outside_spending_expenditure add column memo_text_description varchar(100);
     
     memo_code = models.CharField(max_length=100, blank=True)
     memo_text_description =  models.CharField(max_length=100, blank=True)
