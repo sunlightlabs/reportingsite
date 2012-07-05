@@ -21,16 +21,19 @@ class Command(BaseCommand):
                 f3s = F3X_Summary.objects.filter(fec_id=sp.fec_id).filter(superceded_by_amendment=False).order_by('-coverage_to_date')
                 f3 = f3s[0]
                 
-                total_contributions = f3s.aggregate(receipts=Sum('total_receipts'))
+                total_contributions = f3s.aggregate(receipts=Sum('total_receipts'), tot_unitemized=Sum('unitemized'))
+
                 
                 
                 
                 total = total_contributions['receipts']
-
-                print "%s total receipts = %s" % (sp.name, total_contributions['receipts'])
+                total_unitemized = total_contributions['tot_unitemized']
+                
+                print "%s total receipts = %s, unitemized=%s" % (sp.name, total_contributions['receipts'], total_unitemized)
                 
                 
                 sp.total_contributions = total
+                sp.total_unitemized = total_unitemized
                 sp.cash_on_hand=f3.coh_close
                 sp.cash_on_hand_date = f3.coverage_to_date
                 
