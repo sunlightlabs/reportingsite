@@ -3,6 +3,8 @@
 from outside_spending.models import Committee, Committee_Overlay, Candidate, Candidate_Overlay
 from django.template.defaultfilters import slugify
 
+
+
 def get_or_create_committee_overlay(fec_id, cycle):
     """ We can force it to overwrite if we want it updated"""
     
@@ -43,10 +45,12 @@ def get_or_create_committee_overlay(fec_id, cycle):
             street_2 = cmte.street_2,
             city =cmte.city,
             zip_code = cmte.zip_code,
-            state_race = cmte.state_race,
+            state = cmte.state_race,
             connected_org_name=cmte.connected_org_name,
             filing_frequency = cmte.filing_frequency,
             committee_master_record = cmte,
+            ctype = cmte.ctype,
+            designation = cmte.designation,
             
             # this is populated from the FEC, but augmented when we know more
             candidate_id = cmte.candidate_id, 
@@ -55,6 +59,43 @@ def get_or_create_committee_overlay(fec_id, cycle):
         return cmte_ovrly
         
     return None
+    
+def overwrite_committee_overlay(fec_id, cycle):
+    
+    cmte_overlay = None
+    
+    try:
+        cmte_overlay = Committee_Overlay.objects.get(fec_id=fec_id, cycle=cycle)
+    except Committee.DoesNotExist:
+        get_or_create_committee_overlay(fec_id, cycle)
+        return None
+    
+    # see if we can find a master record, and if we can, overwrite all the data
+    
+    try: 
+        master_committee = Committee.objects.get(fec_id=fec_id)
+        
+        cmte_overlay.name=master_committee.name
+        cmte_overlay.party=master_committee.party
+        cmte_overlay.treasurer=master_committee.treasurer
+        cmte_overlay.street_1=master_committee.street_1
+        cmte_overlay.street_2=master_committee.street_2
+        cmte_overlay.city=master_committee.city
+        cmte_overlay.zip_code=master_committee.zip_code
+        cmte_overlay.state=master_committee.state_race
+        cmte_overlay.connected_org_name=master_committee.connected_org_name
+        cmte_overlay.filing_frequency=master_committee.filing_frequency
+        cmte_overlay.candidate_id=master_committee.candidate_id
+        cmte_overlay.candidate_office=master_committee.candidate_office
+        cmte_overlay.ctype=master_committee.ctype
+        cmte_overlay.designation=master_committee.designation
+        
+        cmte_overlay.save()
+
+    except Committee.DoesNotExist:
+        # we can't do anything
+        return None
+
         
 def get_or_create_candidate_overlay(fec_id, cycle, force_overwrite=False):
     # We're only handling these, so far

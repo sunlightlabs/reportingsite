@@ -200,7 +200,7 @@ class Committee_Overlay(models.Model):
     street_2 = models.CharField(max_length=34, blank=True, null=True)
     city =models.CharField(max_length=18, blank=True, null=True)
     zip_code = models.CharField(max_length=9, blank=True, null=True)
-    state_race = models.CharField(max_length=2, blank=True, null=True)
+    state = models.CharField(max_length=2, blank=True, null=True, help_text='the state where the pac mailing address is')
     connected_org_name=models.CharField(max_length=65, blank=True)
     filing_frequency = models.CharField(max_length=1, blank=True)
 
@@ -269,6 +269,34 @@ class Committee_Overlay(models.Model):
                             ('C', 'opposes incumbents--supports Tea Party'),
                           ])
     political_orientation_verified = models.BooleanField(default=False, help_text="Check this box if the political orientation is correct")
+    
+    designation = models.CharField(max_length=1,
+                                      blank=False,
+                                      null=True,
+                                      choices=[('A', 'Authorized by Candidate'),
+                                               ('J', 'Joint Fund Raiser'),
+                                               ('P', 'Principal Committee of Candidate'),
+                                               ('U', 'Unauthorized'),
+                                               ('B', 'Lobbyist/Registrant PAC'),
+                                               ('D', 'Leadership PAC')]
+    )
+
+    ctype = models.CharField(max_length=1,
+                            blank=False,
+                            null=True,
+                            choices=[('C', 'Communication Cost'),
+                                     ('D', 'Delegate'),
+                                     ('H', 'House'),
+                                     ('I', 'Independent Expenditure (Not a Committee'),
+                                     ('N', 'Non-Party, Non-Qualified'),
+                                     ('P', 'Presidential'),
+                                     ('Q', 'Qualified, Non-Party'),
+                                     ('S', 'Senate'),
+                                     ('X', 'Non-Qualified Party'),
+                                     ('Y', 'Qualified Party'),
+                                     ('Z', 'National Party Organization'),
+                                     ('E', 'Electioneering Communication'),
+                                     ('O', 'Super PAC') ])    
 
 
     class Meta:
