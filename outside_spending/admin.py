@@ -22,7 +22,7 @@ class CommitteeAdmin(admin.ModelAdmin):
         
     )
     
-    list_display = (['name', 'cash_on_hand', 'is_superpac', 'political_orientation', 'political_orientation_verified'])
+    list_display = (['name', 'display_type', 'political_orientation', 'political_orientation_verified'])
     
 admin.site.register(Committee_Overlay, CommitteeAdmin) 
 
