@@ -263,6 +263,9 @@ def summarize_monthly(summed_queryset, end_date, include_end_month=False):
     this_month = 0
     this_year = 2011
     
+    if not end_date:
+        end_date = datetime.datetime.today()
+    
     # Again, using utc month numbering runs from 0 to 11    
     final_month = int(end_date.strftime("%m")) 
     final_year = int(end_date.strftime("%Y"))
@@ -957,6 +960,8 @@ def search(request):
                 'has_candidates':has_candidates,
                 'candidates':candidates,
                 })
+                
+                
 def more_resources(request):
     
     
