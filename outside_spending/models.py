@@ -268,6 +268,7 @@ class Committee_Overlay(models.Model):
                             ('U', 'unknown'),
                             ('C', 'opposes incumbents--supports Tea Party'),
                           ])
+    political_orientation_verified = models.BooleanField(default=False, help_text="Check this box if the political orientation is correct")
 
 
     class Meta:

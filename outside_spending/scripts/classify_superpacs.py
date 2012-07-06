@@ -16,7 +16,7 @@ from dateutil.parser import parse as dateparse
 
 
 
-superpacs = Committee_Overlay.objects.filter(is_superpac=True, total_indy_expenditures__gt=0).order_by('-total_contributions')
+superpacs = Committee_Overlay.objects.filter(is_superpac=True, total_indy_expenditures__gt=0, political_orientation_verified=False).order_by('-total_contributions')
 total_dem_contribs = 0
 total_rep_contribs = 0
 for sp in superpacs:
@@ -27,7 +27,7 @@ for sp in superpacs:
     total_contributions = 0
     if (sp.total_contributions):
         total_contributions = sp.total_contributions
-    #print "total contribs is %s" % (total_contributions)
+    print "-- %s total contribs is %s" % (sp.name, total_contributions)
     if (ie_support_dems > 0 and ie_support_reps == 0):
         print "%s supports dems ; pro_dem: %s anti_dem: %s pro_rep: %s anti_rep: %s" % (sp.name, ie_support_dems, ie_oppose_dems, ie_support_reps, ie_oppose_reps)
         sp.political_orientation = 'D'

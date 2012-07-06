@@ -1,8 +1,8 @@
 import sys
 
 from django.core.management import setup_environ
-sys.path.append('/Users/jfenton/reporting/reportingsitenew/reportingsite')
-#sys.path.append('/projects/reporting/src/reportingsite')
+#sys.path.append('/Users/jfenton/reporting/reportingsitenew/reportingsite')
+sys.path.append('/projects/reporting/src/reportingsite')
 
 import settings
 setup_environ(settings)
@@ -16,7 +16,7 @@ from dateutil.parser import parse as dateparse
 
 
 
-superpacs = Committee_Overlay.objects.filter(total_indy_expenditures__gt=0).order_by('-total_contributions')
+superpacs = Committee_Overlay.objects.filter(total_indy_expenditures__gt=0, political_orientation_verified=False).order_by('-total_contributions')
 total_dem_contribs = 0
 total_rep_contribs = 0
 for sp in superpacs:
