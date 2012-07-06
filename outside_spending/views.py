@@ -194,7 +194,7 @@ def committee_summary_public(request):
 def committee_summary_private(request):
     committees = Committee_Overlay.objects.filter( Q(is_superpac=True)|Q(total_indy_expenditures__gt=0)|Q(total_electioneering__gt=0) ).select_related('committee_master_record')
 
-    fields = ['Name', 'Committee ID', 'Is super pac', 'Party', 'Treasurer', 'Street_1', 'Street_2', 'City', 'ZIP code', 'state', 'connected_org_name', 'interest group category', 'committee type', 'designation', 'Filing frequency', 'Total contributions', 'Total unitemized contributions', 'cash on hand', 'last report date', 'total IEs', 'IEs support dems', 'IEs oppose dems', 'IEs support reps', 'IEs oppose reps', 'tax status', 'political_orientation']
+    fields = ['Name', 'Committee ID', 'Is super pac', 'Party', 'Treasurer', 'Street_1', 'Street_2', 'City', 'ZIP code', 'state', 'connected_org_name', 'interest group category', 'committee type', 'designation', 'Filing frequency', 'Total contributions', 'Total unitemized contributions', 'cash on hand', 'last report date', 'total IEs', 'IEs support dems', 'IEs oppose dems', 'IEs support reps', 'IEs oppose reps', 'tax status', 'political_orientation', 'political orientation verified']
 
     rows = []
     file_name = 'committee_summary_details.csv'
@@ -209,7 +209,7 @@ def committee_summary_private(request):
             designation = c.committee_master_record.designation
             state = c.committee_master_record.state_race
 
-        rows.append([c.name, c.fec_id, c.superpac_status(), c.party, c.treasurer, c.street_1, c.street_2, c.city, c.zip_code, state, c.connected_org_name, interest_group_cat, ctype, designation, c.filing_frequency_text(), c.total_contributions, c.total_unitemized, c.cash_on_hand, c.cash_on_hand_date, c.total_indy_expenditures, c.ie_support_dems, c.ie_oppose_dems, c.ie_support_reps, c.ie_oppose_reps, c.org_status, c.political_orientation])
+        rows.append([c.name, c.fec_id, c.superpac_status(), c.party, c.treasurer, c.street_1, c.street_2, c.city, c.zip_code, state, c.connected_org_name, interest_group_cat, ctype, designation, c.filing_frequency_text(), c.total_contributions, c.total_unitemized, c.cash_on_hand, c.cash_on_hand_date, c.total_indy_expenditures, c.ie_support_dems, c.ie_oppose_dems, c.ie_support_reps, c.ie_oppose_reps, c.org_status, c.political_orientation, c.political_orientation_verified])
     return generic_csv(file_name, fields, rows)    
 
 def all_superpacs(request):
