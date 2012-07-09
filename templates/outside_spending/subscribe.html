@@ -6,7 +6,7 @@
 {% block title %}Subscribe to FEC filing alerts{% endblock %}
 
 {% block body %}  {{ block.super }} expendituresNotification {% endblock %}
-
+{% block mainsearchbox %}{% endblock %}
 {% block css %}
 {{ block.super }}
 <style type="text/css">
@@ -257,8 +257,10 @@ function submit_goto_scout() {
 
 
 $(document).ready(function () {
+
 	$("#searchbox").focus(function () {
-        if ($(this)[0].value === 'Search for a candidate or committee') {
+
+        if ($(this)[0].value === 'Committee or candidate') {
             $(this).val('');
         }
 	
