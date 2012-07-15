@@ -528,6 +528,35 @@ def process_F3X_contribs(filingnum, fp):
 
     return len(schedule_a_lines)
 
+""" Treat a monthly F5 as if it's a 24hour notice F5 -- just pull the contribs. Needed for American Future Fund, which to date has filed monthly forms but not 24-hour notices. """
+
+def process_monthly_F5_contribs(filingnum, fp):
+    f1 = filing(filingnum, True, True)
+    f1.download()
+    form = f1.get_form_type()
+    version = f1.get_version()
+    headers = f1.get_headers()
+    is_amendment = headers['is_amendment']
+    original=None
+    filer_id = headers['fec_id']
+    if (is_amendment):
+        original=headers['filing_amended']
+    
+    if (re.match('^F5', form)):
+        parsed_line = fp.parse_form_line(f1.get_first_row(), version)
+        print "\n***%s:  %s - %s\n %s - %s" % (filingnum, parsed_line['report_code'], parsed_line['report_type'],  parsed_line['coverage_from_date'],  parsed_line['coverage_through_date'])
+        if (parsed_line['report_type']=='24' or parsed_line['report_type']=='48'):
+            # ignore reports that aren't 24 or 48
+            print "This is a 24- or 48- hour notice form. Ignoring. "
+            return
+        else:
+            process_F24(filingnum, fp)   
+             
+    else:
+        print "Not an F5-- doing nothing."
+
+
+
 """ Handle basic ie process files -- F3X, F5, F24"""    
 def process_file(filingnum, fp):
     f1 = filing(filingnum, True, True)
