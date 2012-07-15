@@ -1,5 +1,11 @@
+{% comment %}
+
+Assumes that you've loaded high charts *outside* of the template tag. This way you can put multiple charts on one page without importing highcharts many times. 
 
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
+
+{% endcomment %}
+
  
 
 <script type="text/javascript">
@@ -20,7 +26,7 @@ function addCommas(nStr)
 $(document).ready(function() {
 	var chart = new Highcharts.Chart({
 		chart: {
-			renderTo: 'superpac_chart',
+			renderTo: '{{ return_div }}',
             backgroundColor: '#f1f1ef',
             animation: false	
 		},
@@ -69,30 +75,37 @@ $(document).ready(function() {
                 animation: false
             }
         },
-		series: [{
-			name: 'MONTHLY INDEPENDENT EXPENDITURES',
+
+		series: [
+		{% if has_series1 %}
+		{
+			name: '{{ series1_title }}',
 			// Define the data points. All series have a dummy year
 			// of 1970/71 in order to be compared on the same x axis. Note
 			// that in JavaScript, months start at 0 for January, 1 for February etc.
 			data: [
-			{% for data in monthly_ie_summary %}
+			{% for data in series1_data %}
 				[Date.UTC({{ data.year }},  {{ data.month }}, 1), {{data.data }}   ]{% if forloop.last %}{% else %},{% endif %}
 	{% endfor %}
 
-				]},
+				]}
+			{% endif %}	
 				
-			{	name: 'MONTHLY CONTRIBUTIONS',
+			{% if has_series2 %},	
+			{	name: '{{ series2_title }}',
 				// Define the data points. All series have a dummy year
 				// of 1970/71 in order to be compared on the same x axis. Note
 				// that in JavaScript, months start at 0 for January, 1 for February etc.
 				data: [
-				{% for data in monthly_contrib_summary %}
+				{% for data in series2_data %}
 					[Date.UTC({{ data.year }},  {{ data.month }}, 1), {{data.data }}   ]{% if forloop.last %}{% else %},{% endif %}
 		{% endfor %}
+		
 
 					]
 				
 		}
+		{% endif %}
     ]
 	});
 });
