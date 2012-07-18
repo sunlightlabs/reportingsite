@@ -1,0 +1,20 @@
+{  "committees":[
+    {% for committee in committees %}
+        {
+            "href":"{{committee.get_absolute_url}}",
+            "fec_id":"{{committee.fec_id}}",
+            "name":"{{committee.name }}",
+            "total_contributions":{% if committee.total_contributions %}{{ committee.total_contributions }}{% else %}0{% endif %},
+            "cash_on_hand":{% if committee.cash_on_hand %}{{ committee.cash_on_hand}}{% else %}0{% endif %},
+            "cash_on_hand_date":"{% if committee.cash_on_hand_date %}{{ committee.cash_on_hand_date }}{% endif %}",
+            "total_independent_expenditures":{{ committee.total_indy_expenditures}},
+            "ie_negative_percent":{{ committee.neg_percent|floatformat:0}},
+            "ie_opposes_dems":{{ committee.ie_oppose_dems }},
+            "ie_opposes_reps":{{ committee.ie_oppose_reps }},
+            "ie_positive_percent":{{ committee.pos_percent|floatformat:0}},
+            "ie_supports_dems":{{ committee.ie_support_dems }},
+            "ie_supports_reps": {{ committee.ie_support_reps }}
+        }{% if forloop.last %}{% else %},{% endif %}
+    {% endfor %}
+    ]
+}
