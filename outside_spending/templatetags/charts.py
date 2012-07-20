@@ -21,7 +21,7 @@ def superpac_chart(div_to_return):
     monthly_contrib_data = Contribution.objects.filter(committee__is_superpac=True, superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
     
     # hack to only show contribs after the 20th of the month--which misses quarterly contribs, but... 
-    m = datetime.timedelta(days=20)
+    m = datetime.timedelta(days=17)
     monthly_contrib_summary = summarize_monthly(monthly_contrib_data, today-m)
     print monthly_contrib_summary
     
