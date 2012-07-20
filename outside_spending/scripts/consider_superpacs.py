@@ -36,10 +36,10 @@ for sp in superpacs:
     elif (ie_support_reps > 0 and ie_support_dems == 0):
         if sp.political_orientation != 'R':
             
-            print "ERROR!! %s supports reps ; pro_dem: %s anti_dem: %s pro_rep: %s anti_rep: %s" % (sp.name, ie_support_dems, ie_oppose_dems, ie_support_reps, ie_oppose_reps)
+            print "ERROR!! %s supports reps ; pro_dem: %s anti_dem: %s pro_rep: %s anti_rep: %s\n" % (sp.name, ie_support_dems, ie_oppose_dems, ie_support_reps, ie_oppose_reps)
 
     elif (ie_support_reps > 0 and ie_support_dems > 0):
-        print "*** %s is_ambiguous reps ; pro_dem: %s anti_dem: %s pro_rep: %s anti_rep: %s" % (sp.name, ie_support_dems, ie_oppose_dems, ie_support_reps, ie_oppose_reps)
+        print "*** %s is_ambiguous reps ; pro_dem: %s anti_dem: %s pro_rep: %s anti_rep: %s\n" % (sp.name, ie_support_dems, ie_oppose_dems, ie_support_reps, ie_oppose_reps)
        
         
         
@@ -56,7 +56,7 @@ for sp in superpacs:
         #print "***Pure negative: %s" % sp.name
         ies = Expenditure.objects.filter(committee=sp, superceded_by_amendment=False)
         
-        election_data = ""
+        election_data = "%s on record as: %s\n" % (sp.name, sp.political_orientation)
         for election_type in ('P', 'G'):
             
             all_ies = ies.filter(election_type=election_type)
@@ -88,22 +88,22 @@ for sp in superpacs:
             
         if (only_played_in_rep_primary and not opposed_reps_in_general):
             if sp.political_orientation != 'R':
-                print "WARNING: %s Presumed Republican - only played in republican primary and didn't play in general" % (sp.name)
+                print "WARNING: %s Presumed Republican - only played in republican primary and didn't play in general\n" % (sp.name)
                 print election_data
 
             
         if (only_played_in_dem_primary and not opposed_dems_in_general):
             if sp.political_orientation != 'D':
-                print "WARNING: %s Presumed Democrat - only played in democratic primary and didn't play in general " % (sp.name)
+                print "WARNING: %s Presumed Democrat - only played in democratic primary and didn't play in general \n" % (sp.name)
                 print election_data
-        if (opposed_dems_in_general and not only_played_in_rep_primary):
-            if sp.political_orientation != 'R':
-                print "WARNING: %s Presumed Republican - didn't only play in republican primary but opposed dems in general" % (sp.name)
+        if (opposed_reps_in_general and not only_played_in_rep_primary):
+            if sp.political_orientation != 'D':
+                print "WARNING: %s Presumed Democrat - didn't only play in republican primary but opposed reps in general\n" % (sp.name)
                 print election_data
 
-        if (opposed_reps_in_general and not only_played_in_dem_primary):
+        if (opposed_dems_in_general and not only_played_in_dem_primary):
             if sp.political_orientation != 'R':
-                print "WARNING: %s Presumed Republican - didn't only play in democatic primary but opposed reps in general" % (sp.name)  
+                print "WARNING: %s Presumed Republican - didn't only play in democatic primary but opposed dems in general\n" % (sp.name)  
                 print election_data 
         
         
