@@ -357,12 +357,23 @@ class Committee_Overlay(models.Model):
         if (self.filing_frequency.upper()=='A'):
             return "Administratively Terminated"            
                
-               
+
+            
     def display_type(self):
-        if self.is_superpac:
-            return "Super PAC"
+        key = self.ctype
+        try:
+            return type_hash[key]
+        except KeyError:
+            return ''
+            
+    def display_political_orientation(self):
+        p = self.political_orientation
+        if p=='D':
+            return "Backs Democrats"
+        if p=='R':
+            return "Backs Republicans"
         else:
-            return self.committee_master_record.display_type()
+            return "Unassigned"
 
 
 # a local overlay        
