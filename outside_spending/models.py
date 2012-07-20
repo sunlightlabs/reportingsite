@@ -366,6 +366,7 @@ class Committee_Overlay(models.Model):
         except KeyError:
             return ''
             
+            
     def display_political_orientation(self):
         p = self.political_orientation
         if p=='D':
