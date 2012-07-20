@@ -21,6 +21,7 @@ urlpatterns = patterns('',
     url(r'^csv/race/expenditures/(?P<office>\w)\/(?P<state>[\w0]+)\/(?P<district>\d\d)\/?$', 'outside_spending.views.expenditure_csv_race'),
     url(r'^csv/committees\/$', 'outside_spending.views.committee_summary_public'),
     url(r'^csv/committees-all-details\/$', 'outside_spending.views.committee_summary_private'),
+    url(r'^csv/superpac-political-orientation\/$', 'outside_spending.views.superpac_political_orientation'),
     # this url used to be /super-pacs/all/ => outside-spending/super-pacs/
     url(r'^super-pacs/?$', 'outside_spending.views.all_superpacs'),
     # super-pacs/complete/  => outside-spending/super-pacs/complete-list/
@@ -79,6 +80,7 @@ urlpatterns = patterns('',
     url(r'^search\/$', 'outside_spending.views.search'),
     url(r'^more-resources\/$', 'outside_spending.views.more_resources'),
     url(r'^charttest\/',direct_to_template, {'template': 'outside_spending/chart_test.html', 'extra_context': {'div_name':'superpac_chart', 'div_name_2':'noncommittees', 'div_name_3':'nonparty', 'div_name_4':'party', 'div_name_5':'superpac_by_party', 'div_name_6':'contribs_by_party', 'div_name_7':'partisan_primary', 'div_name_8':'partisan_general'}}, ),
+#    url(r'^superpac-by-party\/', 'outside_spending.views.superpac_by_party')
 
     url(r'$', 'outside_spending.views.all_superpacs')
     
