@@ -90,4 +90,96 @@ def party_spending(div_to_return):
     'series1_title':'PARTY COMMITTEE INDEPENDENT EXPENDITURES',
     'has_series2':False,
     'return_div':div_to_return,
-    }    
+    } 
+    
+@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+def superpac_partisan(div_to_return):
+
+    r_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='R').extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    
+    d_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='D').extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    today = datetime.datetime.today()
+
+    monthly_ie_r_summary = summarize_monthly(r_ies, today)
+    monthly_ie_d_summary = summarize_monthly(d_ies, today)
+
+    return {
+    'has_series1':True,
+    'series2_data':monthly_ie_r_summary,
+    'series2_title':'REPUBLICAN SUPERPAC SPENDING',
+    'has_series2':True,
+    'series1_data':monthly_ie_d_summary,
+    'series1_title':'DEMOCRATIC SUPERPAC SPENDING',
+    'return_div':div_to_return,
+    }
+    
+@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+def superpac_partisan_primary(div_to_return):
+
+    r_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='R', election_type="P").extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    d_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='D', election_type="P").extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    today = datetime.datetime.today()
+
+    monthly_ie_r_summary = summarize_monthly(r_ies, today)
+    monthly_ie_d_summary = summarize_monthly(d_ies, today)
+
+    return {
+    'has_series1':True,
+    'series2_data':monthly_ie_r_summary,
+    'series2_title':'PRIMARY ELECTION REPUBLICAN SUPERPAC SPENDING',
+    'has_series2':True,
+    'series1_data':monthly_ie_d_summary,
+    'series1_title':'PRIMARY ELECTION DEMOCRATIC SUPERPAC SPENDING',
+    'return_div':div_to_return,
+    }
+
+@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+def superpac_partisan_general(div_to_return):
+
+    r_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='R', election_type="G").extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    d_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='D', election_type="G").extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    today = datetime.datetime.today()
+
+    monthly_ie_r_summary = summarize_monthly(r_ies, today)
+    monthly_ie_d_summary = summarize_monthly(d_ies, today)
+
+    return {
+    'has_series1':True,
+    'series2_data':monthly_ie_r_summary,
+    'series2_title':'GENERAL ELECTION REPUBLICAN SUPERPAC SPENDING',
+    'has_series2':True,
+    'series1_data':monthly_ie_d_summary,
+    'series1_title':'GENERAL ELECTION DEMOCRATIC SUPERPAC SPENDING',
+    'return_div':div_to_return,
+    }
+    
+@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+def superpac_partisan_contribs(div_to_return):
+    
+    today = datetime.datetime.today()
+    m = datetime.timedelta(days=20)
+    
+    monthly_r_contribs = Contribution.objects.filter(committee__is_superpac=True, superceded_by_amendment=False, committee__political_orientation='R').extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
+    
+    # hack to only show contribs after the 20th of the month--which misses quarterly contribs, but... 
+    monthly_r_contrib_summary = summarize_monthly(monthly_r_contribs, today-m)
+    
+    monthly_d_contribs = Contribution.objects.filter(committee__is_superpac=True, superceded_by_amendment=False, committee__political_orientation='D').extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
+
+    monthly_d_contrib_summary = summarize_monthly(monthly_d_contribs, today-m)
+    
+        
+    return {
+    'has_series1':True,
+    'series1_data':monthly_d_contrib_summary,
+    'series1_title':'MONTHLY CONTRIBUTIONS - DEMOCRATIC SUPERPACS',
+    'has_series2':True,
+    'series2_title':'MONTHLY CONTRIBUTIONS - REPUBLICAN SUPERPACS',
+    'series2_data':monthly_r_contrib_summary,
+    'return_div':div_to_return,
+    }        
