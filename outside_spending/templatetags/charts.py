@@ -44,7 +44,7 @@ def noncommittee_spending(div_to_return):
 
     today = datetime.datetime.today()
 
-    monthly_ie_summary = summarize_monthly(noncommittee_ies, today)
+    monthly_ie_summary = summarize_monthly(noncommittee_ies, today, True)
 
     
     return {
@@ -62,7 +62,7 @@ def nonparty_spending(div_to_return):
 
     today = datetime.datetime.today()
 
-    monthly_ie_summary = summarize_monthly(nonparty_ies, today)
+    monthly_ie_summary = summarize_monthly(nonparty_ies, today, True)
 
 
     return {
@@ -81,7 +81,7 @@ def party_spending(div_to_return):
 
     today = datetime.datetime.today()
 
-    monthly_ie_summary = summarize_monthly(party_ies, today)
+    monthly_ie_summary = summarize_monthly(party_ies, today, True)
 
 
     return {
@@ -101,8 +101,8 @@ def superpac_partisan(div_to_return):
 
     today = datetime.datetime.today()
 
-    monthly_ie_r_summary = summarize_monthly(r_ies, today)
-    monthly_ie_d_summary = summarize_monthly(d_ies, today)
+    monthly_ie_r_summary = summarize_monthly(r_ies, today, True)
+    monthly_ie_d_summary = summarize_monthly(d_ies, today, True)
 
     return {
     'has_series1':True,
@@ -123,8 +123,8 @@ def superpac_partisan_primary(div_to_return):
 
     today = datetime.datetime.today()
 
-    monthly_ie_r_summary = summarize_monthly(r_ies, today)
-    monthly_ie_d_summary = summarize_monthly(d_ies, today)
+    monthly_ie_r_summary = summarize_monthly(r_ies, today, True)
+    monthly_ie_d_summary = summarize_monthly(d_ies, today, True)
 
     return {
     'has_series1':True,
@@ -145,8 +145,8 @@ def superpac_partisan_general(div_to_return):
 
     today = datetime.datetime.today()
 
-    monthly_ie_r_summary = summarize_monthly(r_ies, today)
-    monthly_ie_d_summary = summarize_monthly(d_ies, today)
+    monthly_ie_r_summary = summarize_monthly(r_ies, today, True)
+    monthly_ie_d_summary = summarize_monthly(d_ies, today, True)
 
     return {
     'has_series1':True,
