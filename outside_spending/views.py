@@ -593,6 +593,10 @@ def overview(request):
     supporting_ies = list_all_ies.filter(support_oppose='S').aggregate(total=Sum('expenditure_amount'))['total']
     opposing_ies = list_all_ies.filter(support_oppose='O').aggregate(total=Sum('expenditure_amount'))['total']
     
+    noncommittee_ies = list_all_ies.filter(committee__ctype='I').aggregate(total=Sum('expenditure_amount'))['total']
+    nonparty_ies = list_all_ies.filter(committee__ctype__in=('N', 'Q')).aggregate(total=Sum('expenditure_amount'))['total']
+    party_ies = list_all_ies.filter(committee__ctype__in=('Y', 'Z')).aggregate(total=Sum('expenditure_amount'))['total']
+    
     # for chart
     #superpac_ies = list_all_ies.filter(committee__is_superpac=True)
     
@@ -616,7 +620,16 @@ def overview(request):
         'house_ies':house_ies,
         'supporting_ies':supporting_ies,
         'opposing_ies':opposing_ies,
-        'total_organizational':total_organizational})
+        'total_organizational':total_organizational, 
+        'noncommittee_ies': noncommittee_ies,
+        'nonparty_ies':nonparty_ies,
+        'party_ies':party_ies,
+        'div_name_1':'superpac_chart',
+        'div_name_2':'noncommittees', 
+        'div_name_3':'nonparty', 
+        'div_name_4':'party', 
+        'div_name_0':'all_ies'
+        })
         
 def recent_fec_filings(request):
     

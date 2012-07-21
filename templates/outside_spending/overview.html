@@ -2,6 +2,7 @@
 
 
 {% load humanize %}
+{% load charts %}
 
 {% block title %}Overview - {{ block.super }}{% endblock %}
 
@@ -25,19 +26,14 @@
 </div>
 <div class="space_above">
     
-<h3>Super PACs</h3>
-<span class="amountLine">
-    Number of super PACs: </span><span class="amount">{{total_sps}}</span><span class="amountLine"><br><br>
-            Total independent expenditures made by super PACs 2012 cycle: </span><span class="amount">${{total_sp_ies|intword}}</span>
-            
-        <br><br><span class="amountLine">Total amount raised by super PACs, 2012 cycle:</span> <span class="amount">{% if total_contribs %}${{total_contribs|intword}}{% endif %}</span>
-        <br><span class="amountLine">Total contributions to super PACs from organizations (not individuals):</span><span class="amount"> {% if total_organizational %}${{total_organizational|intword}}{% endif %}</span>
-        
-        </span>
+
         
 </div>
 <div class="space_above">
 <h3>All Independent Expenditures</h3>
+<p><b>ALL independent expenditures</b></p>
+<div id="{{div_name_0}}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+
 
 <span class="amountLine">
             Total spent on Presidential candidates: </span><span class="amount"> ${{pres_ies|intword}}</span><span class="amountLine">
@@ -46,8 +42,74 @@
         <br><br>
         Total supporting a candidate: </span><span class="amount"> ${{supporting_ies|intword}}</span><span class="amountLine">
     <br>Total opposing a candidate: </span><span class="amount"> ${{opposing_ies|intword}}</span>
+
+	<h3>Super PACs</h3>
+	<p><b>super PAC (O)</b></p>
+	<div id="{{div_name_1}}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+	
+	
+	<span class="amountLine">
+	    Number of super PACs: </span><span class="amount">{{total_sps}}</span><span class="amountLine"><br><br>
+	            Total independent expenditures made by super PACs 2012 cycle: </span><span class="amount">${{total_sp_ies|intword}}</span>
+
+	        <br><br><span class="amountLine">Total amount raised by super PACs, 2012 cycle:</span> <span class="amount">{% if total_contribs %}${{total_contribs|intword}}{% endif %}</span>
+	        <br><span class="amountLine">Total contributions to super PACs from organizations (not individuals):</span><span class="amount"> {% if total_organizational %}${{total_organizational|intword}}{% endif %}</span>
+
+	        </span>
+
+    <br>Noncommittee: </span><span class="amount"> ${{noncommittee_ies|intword}}</span>
+	<p><b>Non-Committees (I)</b></p>
+	<div id="{{div_name_2 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+
+    <br>Party: </span><span class="amount"> ${{nonparty_ies|intword}}</span>
+	<p><b>Non-Party (N, Q)</b></p>
+	<div id="{{div_name_3 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+	
+    <br>Nonparty: </span><span class="amount"> ${{party_ies|intword}}</span>
+	<p><b>Party (Y,Z)</b></p>
+	<div id="{{div_name_4 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+
             
 </div>
 
 
 {% endblock content %}
+
+{% block js %}
+{{ block.super }}
+
+
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
+
+
+{% load cache %}
+{% cache 30 'all_ie_chart'  %}
+{% all_ies_chart div_name_0 %}
+{% endcache %}
+
+{% load cache %}
+{% cache 30 'superpac_chart'  %}
+{% superpac_chart div_name_1 %}
+{% endcache %}
+
+
+{% load cache %}
+{% cache 10 'noncommittee_spending'  %}
+{% noncommittee_spending div_name_2 %}
+{% endcache %}
+
+
+
+{% load cache %}
+{% cache 10 'nonparty_chart'  %}
+{% nonparty_spending div_name_3 %}
+{% endcache %}
+
+{% load cache %}
+{% cache 10 'party_chart'  %}
+{% party_spending div_name_4 %}
+{% endcache %}
+
+
+
+{% endblock %}

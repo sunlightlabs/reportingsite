@@ -35,7 +35,23 @@ def superpac_chart(div_to_return):
     'return_div':div_to_return,
     }
 
+@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+def all_ies_chart(div_to_return):
 
+    all_ies = Expenditure.objects.filter(superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    today = datetime.datetime.today()
+
+    monthly_ie_summary = summarize_monthly(all_ies, today, True)
+
+
+    return {
+    'has_series1':True,
+    'series1_data':monthly_ie_summary,
+    'series1_title':'ALL INDEPENDENT EXPENDITURES',
+    'has_series2':False,
+    'return_div':div_to_return,
+    }
 
 @register.inclusion_tag('outside_spending/chart_templatetag.html')  
 def noncommittee_spending(div_to_return):

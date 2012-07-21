@@ -17,6 +17,9 @@
 
 
 <H2>INDEPENDENT EXPENDITURES</H2>
+<p><b>ALL independent expenditures</b></p>
+<div id="{{div_name_9}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
+
 <p><b>super PAC (O)</b></p>
 <div id="{{div_name}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 
@@ -51,6 +54,11 @@
 
 
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
+
+{% load cache %}
+{% cache 30 'all_ie_chart'  %}
+{% all_ies_chart div_name_9 %}
+{% endcache %}
 
 {% load cache %}
 {% cache 30 'superpac_chart'  %}
