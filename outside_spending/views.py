@@ -558,10 +558,7 @@ def file_downloads(request):
                             'states':states,
                             'races':races,
                             })  
-# Not built yet! redirect for the time being
-# I think the projecst page points at this, so don't want url to break                        
-def overview(request):
-    return redirect("/outside-spending/super-pacs/")
+
 
 
 @cache_page(60 * 15)                              
@@ -1010,8 +1007,6 @@ def search(request):
                 
                 
 def more_resources(request):
-    
-    
     return render_to_response('outside_spending/more_resources.html', {
     
     })
@@ -1024,3 +1019,13 @@ def committee_summary_json(request):
     return render_to_json('outside_spending/committee_summary.json', {
                 'committees':committees
                 })
+                
+def superpac_party_breakdown(request):
+    
+    return render_to_response('outside_spending/superpac_party_breakdown.html', 
+    {
+    'div_name_5':'superpac_by_party', 
+    'div_name_6':'contribs_by_party', 
+    'div_name_7':'partisan_primary', 
+    'div_name_8':'partisan_general'
+    })

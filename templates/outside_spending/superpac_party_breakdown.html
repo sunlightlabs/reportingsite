@@ -1,0 +1,97 @@
+{% extends "outside_spending/buckley_base.html" %}
+
+
+{% load humanize %}
+{% load charts %}
+
+{% block title %}Super PAC Party Breakdown - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }}  {% endblock %}
+
+{% block breadcrumb %}{{ block.super }}
+<li>{{ committee.name }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "outside_spending/tabs.html" %}
+
+    <h2>
+        Super PAC spending and fundraising by political orientation, 2011-12
+    </h2>
+<p class="tip">Totals on this page only reflect money raised and spent by Super PACs, which only reflect a part of the outside spending picture. For a more complete picture see the <a href="/outside-spending/overview/">outside spending overview page</a>.</p>
+<p><b>Political orientation as used on this page is determined by researchers at The Sunlight Foundation based on a review of spending patterns and public communications--it does not reflect any official designation. In general, a conservative approach was used; if a PAC didn't fit neatly into party labels a label has not been applied. For more information see <a href="">the methodology</a>. The categorization currently used is available in the 'political orientation' column of <a href="/outside-spending/csv/superpac-political-orientation/">a downloadable csv file summarizing Super PACs.</a></b></p>
+<div>
+<span class="amountLine">Cash on hand, Democrat-aligned Super PACs: </span><span class="amount">$XXX,XXX</span>
+<br><span class="amountLine">Cash on hand, Republican-aligned Super PACs: </span><span class="amount">$XXX,XXX</span>
+<br><span class="amountLine">Cash on hand, all other Super PACs: </span><span class="amount">$XXX,XXX</span>
+<p>Cash on hand is as of each Super PAC's most recent filing. Monthly filers usually file on the 20th of each month; quarterly filings are due on the 15th of the month following the close of the quarter. Note that quarterly filers also have to file pre- and post- election reports aligned to the primary and general election calendar they are trying to influence.</p>
+</div>
+
+<a name="all_ies"></a>
+<h3>Total independent expenditures by Super PAC party orientation</h3>
+<span class="amountLine">Total independent expenditures, Democrat-aligned Super PACs: </span><span class="amount">$XXX,XXX</span>
+<br><span class="amountLine">Total independent expenditures, Republican-aligned Super PACs: </span><span class="amount">$XXX,XXX</span>
+<br><span class="amountLine">Total independent expenditures, all other Super PACs: </span><span class="amount">$XXX,XXX</span>
+<div id="{{div_name_5 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
+<p class="tip">Independent expenditures do not include a Super PAC's "operating expenses", which include salaries, and contributions to other PACs. Totals are from Jan. 1, 2011 through the present.</p>
+
+<a name="contribs"></a>
+<h3>Overall contributions by Super PAC party orientation</h3>
+<span class="amountLine">Total itemized contributions, Democrat-aligned Super PACs: </span><span class="amount">$XXX,XXX</span>
+<br><span class="amountLine">Total itemized contributions, Republican-aligned Super PACs: </span><span class="amount">$XXX,XXX</span>
+<br><span class="amountLine">Total itemized contributions, all other Super PACs: </span><span class="amount">$XXX,XXX</span>
+<div id="{{div_name_6 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
+<p class="tip">Chart and totals do not include unitemized contributions of $200 or less. Totals are from Jan. 1, 2011 through the present.</p>
+
+<a name="primary_ies"></a>
+<h3>Primary election spending by Super PAC orientation</h3>
+<span class="amountLine">Total primary election independent expenditures, Democrat-aligned Super PACs: </span><span class="amount">$XXX,XXX</span>
+<br><span class="amountLine">Total primary election independent expenditures, Republican-aligned Super PACs: </span><span class="amount">$XXX,XXX</span>
+<br><span class="amountLine">Total primary election independent expenditures, all other Super PACs: </span><span class="amount">$XXX,XXX</span>
+<div id="{{div_name_7 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
+<p class="tip">Independent expenditures do not include a Super PAC's "operating expenses", which include salaries, and contributions to other PACs. Totals are from Jan. 1, 2011 through the present. Note that primary and general election spending will not sum to total election spending because of other election codes: special elections, nominating conventions, etc. </p>
+
+<a name="general_ies"></a>
+<h3>General election spending by Super PAC orientation</h3>
+<span class="amountLine">Total general election independent expenditures, Democrat-aligned Super PACs: </span><span class="amount">$XXX,XXX</span>
+<br><span class="amountLine">Total general election independent expenditures, Republican-aligned Super PACs: </span><span class="amount">$XXX,XXX</span>
+<br><span class="amountLine">Total general election independent expenditures, all other Super PACs: </span><span class="amount">$XXX,XXX</span>
+<div id="{{div_name_8 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
+<p class="tip">Independent expenditures do not include a Super PAC's "operating expenses", which include salaries, and contributions to other PACs. Totals are from Jan. 1, 2011 through the present. Note that primary and general election spending will not sum to total election spending because of other election codes: special elections, nominating conventions, etc. </p>
+
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+
+
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
+
+
+
+{% load cache %}
+{% cache 10 'superpac_by_parties'  %}
+{% superpac_partisan div_name_5 %}
+{% endcache %}
+
+{% load cache %}
+{% cache 10 'superpac_contribs'  %}
+{% superpac_partisan_contribs div_name_6 %}
+{% endcache %}
+
+
+{% load cache %}
+{% cache 10 'superpac_primary'  %}
+{% superpac_partisan_primary div_name_7 %}
+{% endcache %}
+
+
+{% load cache %}
+{% cache 10 'superpac_general'  %}
+{% superpac_partisan_general div_name_8 %}
+{% endcache %}
+
+
+
+{% endblock %}
