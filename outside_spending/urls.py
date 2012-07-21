@@ -79,7 +79,7 @@ urlpatterns = patterns('',
     #url(r'^searchtest\/$', 'django.views.generic.simple.direct_to_template', {'template': 'mobile_test/searchtest.html'}),      
     url(r'^search\/$', 'outside_spending.views.search'),
     url(r'^more-resources\/$', 'outside_spending.views.more_resources'),
-    url(r'^charttest\/',direct_to_template, {'template': 'outside_spending/chart_test.html', 'extra_context': {'div_name':'superpac_chart', 'div_name_2':'noncommittees', 'div_name_3':'nonparty', 'div_name_4':'party', 'div_name_5':'superpac_by_party', 'div_name_6':'contribs_by_party', 'div_name_7':'partisan_primary', 'div_name_8':'partisan_general'}}, ),
+    url(r'^charttest\/',direct_to_template, {'template': 'outside_spending/chart_test.html', 'extra_context': {'div_name':'superpac_chart', 'div_name_2':'noncommittees', 'div_name_3':'nonparty', 'div_name_4':'party', 'div_name_5':'superpac_by_party', 'div_name_6':'contribs_by_party', 'div_name_7':'partisan_primary', 'div_name_8':'partisan_general', 'div_name_9':'all_ies'}}, ),
 #    url(r'^superpac-by-party\/', 'outside_spending.views.superpac_by_party')
 
     url(r'$', 'outside_spending.views.all_superpacs')
