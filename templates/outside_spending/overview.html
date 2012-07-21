@@ -6,7 +6,7 @@
 
 {% block title %}Overview - {{ block.super }}{% endblock %}
 
-{% block body %}{{ block.super }} {% endblock %}
+{% block body %}{{ block.super }} expendituresOverview {% endblock %}
 
 {% block breadcrumb %}{{ block.super }}
 <li>{{ committee.name }}</li>
@@ -33,17 +33,17 @@
 
 	
 <div id="{{div_name_0}}" class="chart_container" style="width: 100%; height: 330px;" ></div>
-<p>This includes independent expenditures by super PAC's, party committees, non-party committees, and non-profit groups that haven't registered as political groups with the Federal Election Commission but file reports on their spending.</p>
+<p>This includes independent expenditures by Super PAC's, party committees, non-party committees, and non-profit groups that haven't registered as political groups with the Federal Election Commission but file reports on their spending.</p>
 
 	<h2>Super PACs</h2>
 	<span class="amountLine">
-	    Number of super PACs: </span><span class="amount">{{total_sps}}</span>
-	<br><span class="amountLine">Total independent expenditures made by super PACs 2012 cycle: </span><span class="amount">${{total_sp_ies|intword}}</span>
-	<br><span class="amountLine">Total amount raised by super PACs, 2012 cycle:</span> <span class="amount">{% if total_contribs %}${{total_contribs|intword}}{% endif %}</span>
-	<br><span class="amountLine">Total contributions to super PACs from organizations (not individuals):</span><span class="amount"> {% if total_organizational %}${{total_organizational|intword}}{% endif %}</span>
+	    Number of Super PACs: </span><span class="amount">{{total_sps}}</span>
+	<br><span class="amountLine">Total independent expenditures made by Super PACs 2012 cycle: </span><span class="amount">${{total_sp_ies|intword}}</span>
+	<br><span class="amountLine">Total itemized contributions to Super PACs, 2012 cycle:</span> <span class="amount">{% if total_contribs %}${{total_contribs|intword}}{% endif %}</span>
+	<br><span class="amountLine">Total contributions to Super PACs from organizations (not individuals):</span><span class="amount"> {% if total_organizational %}${{total_organizational|intword}}{% endif %}</span>
 
 	<div id="{{div_name_1}}" class="chart_container" style="width: 100%; height: 330px;" ></div>
-	<p>For more details, see the <a href="/outside-spending/superpacs/">super PAC</a> page, or the <a href="/outside-spending/super-pacs/donating-organizations/">organizational donors to super PAC page</a></p>
+	<p>For more details, see the <a href="/outside-spending/superpacs/">Super PAC</a> page, or the <a href="/outside-spending/super-pacs/donating-organizations/">organizational donors to Super PAC page</a>. Contribution totals do not include unitemized contributions to Super PACs</p>
 	
 	
 	<h2>Noncommittees</h2>
@@ -55,7 +55,7 @@
     <h2>Party Committees</h2>
 	<span class="amountLine">Independent expenditures by party committees:</span><span class="amount"> ${{party_ies|intword}}</span>
 	<div id="{{div_name_4 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
-	<p>Under FEC rules party committees can make independent expenditures, though rules require that in doing so they don't coordinate with the candidates supported or opposed. These committees, however, are subject to contribution caps--unlike super PACs they cannot take million dollar contributions from individuals. Party committees largely stay out of the fray during the primary elections, but get involved in the general election</p>
+	<p>Under FEC rules party committees can make independent expenditures, though rules require that in doing so they don't coordinate with the candidates supported or opposed. These committees, however, are subject to contribution caps--unlike Super PACs they cannot take million dollar contributions from individuals. Party committees largely stay out of the fray during the primary elections, but get involved in the general election.</p>
 	
 	
 	<h2>Nonparty Committees</h2>
