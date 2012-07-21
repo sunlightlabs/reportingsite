@@ -28,9 +28,9 @@ def superpac_chart(div_to_return):
     return {
     'has_series1':True,
     'series1_data':monthly_ie_summary,
-    'series1_title':'MONTHLY INDEPENDENT EXPENDITURES',
+    'series1_title':'MONTHLY SUPER PAC INDEPENDENT EXPENDITURES',
     'has_series2':True,
-    'series2_title':'MONTHLY CONTRIBUTIONS',
+    'series2_title':'MONTHLY SUPER PAC CONTRIBUTIONS',
     'series2_data':monthly_contrib_summary,
     'return_div':div_to_return,
     }

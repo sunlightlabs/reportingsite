@@ -21,53 +21,47 @@
 
 <div>
     <span class="amountLine">
-        Total independent expenditures made, 2012 cycle: </span><span class="amount">${{total_ies|intword}}</span>
-    <br><span class="amountLine">Total electioneering communications made, 2012 cycle: </span><span class="amount">${{total_ecs|intword}}</span>
+        Total independent expenditures made, 2012 cycle: </span><span class="amount">${{total_ies|intword}}</span><br>
+		<span class="amountLine">Total electioneering communications made, 2012 cycle: </span><span class="amount">${{total_ecs|intword}}</span>
 </div>
+
 <div class="space_above">
-    
-
-        
-</div>
-<div class="space_above">
-<h3>All Independent Expenditures</h3>
-<p><b>ALL independent expenditures</b></p>
-<div id="{{div_name_0}}" class="chart_container" style="width: 100%; height: 330px;" ></div>
-
-
-<span class="amountLine">
-            Total spent on Presidential candidates: </span><span class="amount"> ${{pres_ies|intword}}</span><span class="amountLine">
-        <br>Total spent on Senate candidates: </span><span class="amount"> ${{senate_ies|intword}}</span><span class="amountLine">
-        <br>Total spent on House candidates: </span><span class="amount"> ${{house_ies|intword}}</span><span class="amountLine">
-        <br><br>
+<h2>All Independent Expenditures</h2>
+<span class="amountLine" style="margin-top:0px; padding-top:0px;">
         Total supporting a candidate: </span><span class="amount"> ${{supporting_ies|intword}}</span><span class="amountLine">
     <br>Total opposing a candidate: </span><span class="amount"> ${{opposing_ies|intword}}</span>
 
-	<h3>Super PACs</h3>
-	<p><b>super PAC (O)</b></p>
-	<div id="{{div_name_1}}" class="chart_container" style="width: 100%; height: 330px;" ></div>
 	
-	
+<div id="{{div_name_0}}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+<p>This includes independent expenditures by super PAC's, party committees, non-party committees, and non-profit groups that haven't registered as political groups with the Federal Election Commission but file reports on their spending.</p>
+
+	<h2>Super PACs</h2>
 	<span class="amountLine">
-	    Number of super PACs: </span><span class="amount">{{total_sps}}</span><span class="amountLine"><br><br>
-	            Total independent expenditures made by super PACs 2012 cycle: </span><span class="amount">${{total_sp_ies|intword}}</span>
+	    Number of super PACs: </span><span class="amount">{{total_sps}}</span>
+	<br><span class="amountLine">Total independent expenditures made by super PACs 2012 cycle: </span><span class="amount">${{total_sp_ies|intword}}</span>
+	<br><span class="amountLine">Total amount raised by super PACs, 2012 cycle:</span> <span class="amount">{% if total_contribs %}${{total_contribs|intword}}{% endif %}</span>
+	<br><span class="amountLine">Total contributions to super PACs from organizations (not individuals):</span><span class="amount"> {% if total_organizational %}${{total_organizational|intword}}{% endif %}</span>
 
-	        <br><br><span class="amountLine">Total amount raised by super PACs, 2012 cycle:</span> <span class="amount">{% if total_contribs %}${{total_contribs|intword}}{% endif %}</span>
-	        <br><span class="amountLine">Total contributions to super PACs from organizations (not individuals):</span><span class="amount"> {% if total_organizational %}${{total_organizational|intword}}{% endif %}</span>
-
-	        </span>
-
-    <br>Noncommittee: </span><span class="amount"> ${{noncommittee_ies|intword}}</span>
-	<p><b>Non-Committees (I)</b></p>
-	<div id="{{div_name_2 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
-
-    <br>Party: </span><span class="amount"> ${{nonparty_ies|intword}}</span>
-	<p><b>Non-Party (N, Q)</b></p>
-	<div id="{{div_name_3 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+	<div id="{{div_name_1}}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+	<p>For more details, see the <a href="/outside-spending/superpacs/">super PAC</a> page, or the <a href="/outside-spending/super-pacs/donating-organizations/">organizational donors to super PAC page</a></p>
 	
-    <br>Nonparty: </span><span class="amount"> ${{party_ies|intword}}</span>
-	<p><b>Party (Y,Z)</b></p>
+	
+	<h2>Noncommittees</h2>
+    <span class="amountLine">Total independent expenditures:</span><span class="amount"> ${{noncommittee_ies|intword}}</span>
+	
+	<div id="{{div_name_2 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+<p>Noncommittees are groups--typically 501(c)4's--that haven't registered as political groups with the FEC, but do report their independent expenditures. Typically they do not report donors. For more details, see the <a href="/outside-spending/noncommittees/">noncommittees</a> page.</p>
+
+    <h2>Party Committees</h2>
+	<span class="amountLine">Independent expenditures by party committees:</span><span class="amount"> ${{party_ies|intword}}</span>
 	<div id="{{div_name_4 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+	<p>Under FEC rules party committees can make independent expenditures, though rules require that in doing so they don't coordinate with the candidates supported or opposed. These committees, however, are subject to contribution caps--unlike super PACs they cannot take million dollar contributions from individuals. Party committees largely stay out of the fray during the primary elections, but get involved in the general election</p>
+	
+	
+	<h2>Nonparty Committees</h2>
+	<span class="amountLine">Independent expenditures by nonparty committees: </span><span class="amount"> ${{nonparty_ies|intword}}</span>
+	<div id="{{div_name_3 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+	<p>Nonparty committees are subject to traditional contribution limits and are neither official party committees or candidate committees.</p>
 
             
 </div>
