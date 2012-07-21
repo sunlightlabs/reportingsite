@@ -14,7 +14,7 @@ def superpac_chart(div_to_return):
     
     today = datetime.datetime.today()
     
-    monthly_ie_summary = summarize_monthly(superpac_ies, today)
+    monthly_ie_summary = summarize_monthly(superpac_ies, today, True)
     
     superpac_contribs = Expenditure.objects.filter(superceded_by_amendment=False, committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
     
