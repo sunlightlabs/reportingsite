@@ -81,29 +81,29 @@
 
 
 {% load cache %}
-{% cache 10 'superpac_by_parties'  %}
+{% cache 7200 'superpac_by_parties'  %}
 {% superpac_partisan div_name_5 %}
 {% endcache %}
 
 {% load cache %}
-{% cache 10 'superpac_contribs'  %}
+{% cache 7200 'superpac_contribs'  %}
 {% superpac_partisan_contribs div_name_6 %}
 {% endcache %}
 
 
 {% load cache %}
-{% cache 10 'superpac_primary'  %}
+{% cache 7200 'superpac_primary'  %}
 {% superpac_partisan_primary div_name_7 %}
 {% endcache %}
 
 
 {% load cache %}
-{% cache 10 'superpac_general'  %}
+{% cache 7200 'superpac_general'  %}
 {% superpac_partisan_general div_name_8 %}
 {% endcache %}
 
 {% load cache %}
-{% cache 10 'superpac_general_presidential'  %}
+{% cache 7200 'superpac_general_presidential'  %}
 {% superpac_partisan_general_presidential div_name_9 %}
 {% endcache %}
 {% endblock %}

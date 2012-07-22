@@ -77,30 +77,30 @@
 
 
 {% load cache %}
-{% cache 30 'all_ie_chart'  %}
+{% cache 7200 'all_ie_chart'  %}
 {% all_ies_chart div_name_0 %}
 {% endcache %}
 
 {% load cache %}
-{% cache 30 'superpac_chart'  %}
+{% cache 7200 'superpac_chart'  %}
 {% superpac_chart div_name_1 %}
 {% endcache %}
 
 
 {% load cache %}
-{% cache 10 'noncommittee_spending'  %}
+{% cache 7200 'noncommittee_spending'  %}
 {% noncommittee_spending div_name_2 %}
 {% endcache %}
 
 
 
 {% load cache %}
-{% cache 10 'nonparty_chart'  %}
+{% cache 7200 'nonparty_chart'  %}
 {% nonparty_spending div_name_3 %}
 {% endcache %}
 
 {% load cache %}
-{% cache 10 'party_chart'  %}
+{% cache 7200 'party_chart'  %}
 {% party_spending div_name_4 %}
 {% endcache %}
 

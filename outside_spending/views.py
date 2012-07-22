@@ -561,7 +561,7 @@ def file_downloads(request):
 
 
 
-@cache_page(60 * 15)                              
+@cache_page(60 * 30)                              
 def overview(request):
     ## should put these aggregates in a table, but... 
     
@@ -1020,7 +1020,7 @@ def committee_summary_json(request):
                 'committees':committees
                 })
                 
-@cache_page(60 * 15)
+@cache_page(60 * 30)
 def superpac_party_breakdown(request):
     # for cash on hand:
     sps = Committee_Overlay.objects.filter(is_superpac=True)
