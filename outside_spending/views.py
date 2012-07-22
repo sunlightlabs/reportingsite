@@ -1048,6 +1048,11 @@ def superpac_party_breakdown(request):
     rep_general_ies = general_ies.filter(committee__political_orientation='R').aggregate(total=Sum('expenditure_amount'))['total']
     oth_general_ies =  general_ies.exclude(committee__political_orientation__in=('D', 'R')).aggregate(total=Sum('expenditure_amount'))['total']
     
+    general_ies = general_ies.filter(candidate__office='P')
+    dem_pres_ies = general_ies.filter(committee__political_orientation='D').aggregate(total=Sum('expenditure_amount'))['total']
+    rep_pres_ies = general_ies.filter(committee__political_orientation='R').aggregate(total=Sum('expenditure_amount'))['total']
+    oth_pres_ies =  general_ies.exclude(committee__political_orientation__in=('D', 'R')).aggregate(total=Sum('expenditure_amount'))['total']
+    
     
     return render_to_response('outside_spending/superpac_party_breakdown.html', 
     {
@@ -1066,8 +1071,12 @@ def superpac_party_breakdown(request):
     'dem_general_ies':dem_general_ies,
     'rep_general_ies':rep_general_ies,
     'oth_general_ies':oth_general_ies,
+    'dem_pres_ies':dem_pres_ies,
+    'rep_pres_ies':rep_pres_ies,
+    'oth_pres_ies':oth_pres_ies,
     'div_name_5':'superpac_by_party', 
     'div_name_6':'contribs_by_party', 
     'div_name_7':'partisan_primary', 
-    'div_name_8':'partisan_general'
+    'div_name_8':'partisan_general',
+    'div_name_9':'presidential_general'
     })

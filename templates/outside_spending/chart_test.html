@@ -46,6 +46,8 @@
 <p><b>General election spending by superpac orientation</b></p>
 <div id="{{div_name_8 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 
+<p><b>Presidential general election spending by superpac orientation</b></p>
+<div id="{{div_name_10 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 
 {% endblock %}
 
@@ -103,6 +105,11 @@
 {% load cache %}
 {% cache 10 'superpac_general'  %}
 {% superpac_partisan_general div_name_8 %}
+{% endcache %}
+
+{% load cache %}
+{% cache 10 'superpac_general_presidential'  %}
+{% superpac_partisan_general_presidential div_name_10 %}
 {% endcache %}
 
 

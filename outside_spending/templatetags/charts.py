@@ -175,6 +175,30 @@ def superpac_partisan_general(div_to_return):
     }
     
 @register.inclusion_tag('outside_spending/chart_templatetag.html')  
+def superpac_partisan_general_presidential(div_to_return):
+
+    all_pres_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='P', election_type="G").select_related('committee')
+    
+    r_ies = all_pres_general_ies.filter(committee__political_orientation='R').extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    d_ies = all_pres_general_ies.filter(committee__political_orientation='D').extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    today = datetime.datetime.today()
+
+    monthly_ie_r_summary = summarize_monthly(r_ies, today, True)
+    monthly_ie_d_summary = summarize_monthly(d_ies, today, True)
+
+    return {
+    'has_series1':True,
+    'series2_data':monthly_ie_r_summary,
+    'series2_title':'PRESIDENTIAL GENERAL ELECTION REPUBLICAN SUPERPAC SPENDING',
+    'has_series2':True,
+    'series1_data':monthly_ie_d_summary,
+    'series1_title':'PRESIDENTIAL GENERAL ELECTION DEMOCRATIC SUPERPAC SPENDING',
+    'return_div':div_to_return,
+    }    
+    
+@register.inclusion_tag('outside_spending/chart_templatetag.html')  
 def superpac_partisan_contribs(div_to_return):
     
     today = datetime.datetime.today()
