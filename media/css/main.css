@@ -191,7 +191,7 @@ a#legistorm:hover { background: url(../img/logo_legistorm_color.png) left 3px no
 a#openSecrets { background: url(../img/logo_opensecrets_grey.png) top left no-repeat; width: 138px; height: 52px;}
 a#openSecrets:hover { background: url(../img/logo_opensecrets_color.png) top left no-repeat; width: 138px; height: 52px;}
 
-a#sunlightFoundation { background: url(../img/logo_sunlightFoundation.png) top left no-repeat; width: 119px; height: 55px; float: left; text-indent: -9999em;}
+a#sunlightFoundation { background: url(../img/logo_sunlightFoundation.png) top left no-repeat; width: 121px; height: 36px; float: left; text-indent: -9999em; margin-top: 10px; }
 div#copyright p { margin-left: 150px; font-size: 80%; line-height: 18px; color: #fff; margin-bottom: 0px;}
 div#copyright { background: url(../img/copyright_bg.png) left top no-repeat; height: 161px; margin: -80px auto 0; width: 960px;}
 div#copyrightContent { padding-top: 95px;}
