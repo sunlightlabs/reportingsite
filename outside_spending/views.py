@@ -1080,3 +1080,8 @@ def superpac_party_breakdown(request):
     'div_name_8':'partisan_general',
     'div_name_9':'presidential_general'
     })
+
+@cache_page(60 * 10)
+def chart_embed(request):
+    return render_to_response('outside_spending/chart_embedder.html', 
+    {'div_name':'this_is_the_chart_div'})
