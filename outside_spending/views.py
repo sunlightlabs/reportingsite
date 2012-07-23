@@ -207,7 +207,7 @@ def committee_summary_public(request):
 def superpac_political_orientation(request):
     committees = Committee_Overlay.objects.filter( Q(is_superpac=True)).select_related('committee_master_record')
 
-    fields = ['Name', 'Committee ID', 'Treasurer', 'Street_1', 'Street_2', 'City', 'ZIP code', 'state', 'Connected Org Name', 'Political Orientation', 'Filing frequency', 'Total contributions', 'Total unitemized contributions', 'cash on hand', 'last report date', 'total IEs', 'IEs support dems', 'IEs oppose dems', 'IEs support reps', 'IEs oppose reps']
+    fields = ['Name', 'Committee ID', 'Treasurer', 'Street_1', 'Street_2', 'City', 'ZIP code', 'state', 'Connected Org Name', 'Political Orientation', 'Filing frequency', 'Total receipts (includes both itemized and unitemized contributions)', 'Total unitemized contributions', 'cash on hand', 'last report date', 'total IEs', 'IEs support dems', 'IEs oppose dems', 'IEs support reps', 'IEs oppose reps']
 
     rows = []
     file_name = 'committee_summary.csv'
