@@ -142,12 +142,12 @@ def contribs_csv(request, committee_id):
 def organizational_contribs_csv(request):
 
     contributions = Contribution.objects.select_related("committee", "candidate").filter(committee__isnull=False, superceded_by_amendment=False).exclude(contrib_org='').filter(line_type__in=['SA11AI', 'SA15'])
-    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization', 'Donor street 1',  'Donor street 2', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC','Transaction ID', 'Filing Number', 'memo', 'memo text description']
+    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'PAC political orientation','Donating organization', 'Donor street 1',  'Donor street 2', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC','Transaction ID', 'Filing Number', 'memo', 'memo text description']
     rows = []
     file_name = "organizational_donors.csv"
 
     for c in contributions:
-        rows.append([c.contrib_source(), c.committee.name, c.committee.fec_id, c.contrib_org, c.contrib_street_1, c.contrib_street_2, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.contrib_agg, c.transaction_id, c.filing_number, c.memo_agg_item, c.memo_text_descript])
+        rows.append([c.contrib_source(), c.committee.name, c.committee.fec_id, c.committee.political_orientation, c.contrib_org, c.contrib_street_1, c.contrib_street_2, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.contrib_agg, c.transaction_id, c.filing_number, c.memo_agg_item, c.memo_text_descript])
     return generic_csv(file_name, fields, rows)
     
     
