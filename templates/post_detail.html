@@ -27,15 +27,7 @@
 
 
     <!-- AddThis Button BEGIN -->
-    <div class="addthis_toolbox addthis_default_style">
-    <a href="http://addthis.com/bookmark.php?v=250&amp;username=xa-4b882c151409ed59" class="addthis_button_compact">Share</a>
-    <span class="addthis_separator">|</span>
-    <a class="addthis_button_twitter"></a>
-    <a class="addthis_button_reddit"></a>
-    <a class="addthis_button_facebook"></a>
-    <a class="addthis_button_google"></a>
-    </div>
-    <script type="text/javascript" src="http://s7.addthis.com/js/250/addthis_widget.js#username=xa-4b882c151409ed59"></script>
+<div id="share-buttons"></div>
     <!-- AddThis Button END -->
 
     </div>
@@ -98,3 +90,50 @@
 {%block sidebar%}
 {% include "feedbar.html" %}
 {%endblock%}
+{% block js %}
+{{ block.super }}
+
+<script src="http://cdn.gigya.com/js/socialize.js?apiKey=3_BLRB_2LlQJZDUW1wb9_ZOps-sOnnzA_e6xxNSwJBBGoB-SavmPAKHkaVVZPE5Kx8"></script>
+<script>
+    $(document).ready(function() {
+        var ua = new gigya.socialize.UserAction();
+        /*ua.setLinkBack("http://sunlightfoundation.com/blog/2012/07/09/2day-in-opengov-792012/");
+        ua.setTitle("2Day in #OpenGov 7/9/2012");
+        ua.setDescription("NEWS ROUNDUP: Outside Spending: Forget super PACs: Anonymity now preferred by corporations: Corporations are increasingly donating money to &quot;social advocacy&quot; groups, as the anonymity offered by these organizations allows them to pursue a political goal without revealing so to their customers. (New York Times) Independent expenditures now preferred over issue ...");
+        ua.addMediaItem({
+            type: 'image',
+            href: 'http://sunlightfoundation.com/blog/2012/07/09/2day-in-opengov-792012/',
+            src: 'http://s3.amazonaws.com/sunlight-assets/site/4.0/images/opengraph-superhero.jpg'
+        });
+        */
+
+
+        /*
+         * parameter docs at:
+         * http://developers.gigya.com/020_Client_API/020_Methods/socialize.showShareBarUI
+         */
+        var params = {
+            containerID: 'share-buttons',
+            layout: 'horizontal',
+            shareButtons: [
+                {
+                    provider: 'facebook-like',
+                },
+                {
+                    provider: 'google-plusone'
+                },
+                {
+                    provider: 'twitter-tweet',
+                    related: 'sunfoundation',
+                    via: 'sunfoundation'
+                },
+                {
+                    provider: 'email'
+                }
+            ],
+            userAction: ua
+        };
+        gigya.socialize.showShareBarUI(params);
+    });
+</script>
+{% endblock %}
