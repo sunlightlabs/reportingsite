@@ -1,0 +1,39 @@
+storages.backends.s3boto.S3BotoStorage
+
+from django.core.files.storage import default_storage
+
+
+===
+
+pip install boto
+
+
+'***REMOVED***'
+
+AWS_ACCESS_KEY_ID  = MEDIASYNC_AWS_KEY 
+AWS_SECRET_ACCESS_KEY = MEDIASYNC_AWS_SECRET
+BACKUP_BUCKET = 'assets.sunlightfoundation.com
+BACKUP_BUCKET_SUBDIR = 'reporting/dbbackups'
+
+# http://docs.pythonboto.org/en/latest/s3_tut.html
+from settings import AWS_ACCESS_KEY_ID 
+from settings import AWS_SECRET_ACCESS_KEY 
+
+from boto.s3.connection import S3Connection
+conn = S3Connection(AWS_ACCESS_KEY_ID, AWS_SECRET_ACCESS_KEY)
+
+from boto.s3.key import Key
+
+b = conn.get_bucket('assets.sunlightfoundation.com/reporting')
+k = Key(b)
+k.key = 'dabucket'
+
+===
+
+k.key = 'reporting/dbbackups/dabucket'
+>>> k.set_contents_from_string('This is a test of S3')
+
+==
+
+
+
