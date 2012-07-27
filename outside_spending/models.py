@@ -492,7 +492,7 @@ class Candidate_Overlay(models.Model):
         return 'http://influenceexplorer.com/politician/%s/%s' % (self.slug,
                                                                   self.transparencydata_id)        
         
-
+"""
 class Filing_Header(models.Model):
     raw_filer_id=models.CharField(max_length=9, blank=True)
     filer = models.ForeignKey(Committee_Overlay, null=True)
@@ -532,7 +532,8 @@ class Filing_Rows(models.Model):
     class Meta:
         unique_together = ("filing_number", "transaction_id")
         
-        
+"""
+
 class Expenditure(models.Model):
     cycle = models.CharField(max_length=4, null=True)
     image_number = models.BigIntegerField()
