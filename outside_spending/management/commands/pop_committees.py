@@ -33,7 +33,7 @@ def parse_file(filename):
             row['slug'] = slugify(row['committee_name'][:50])
             records.append(row)
 
-            print row
+            #print row
 
         print "%d records to process..." % len(records)
 
