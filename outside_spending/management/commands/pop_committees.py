@@ -1,3 +1,5 @@
+# Note that FEC changed this file 7/27/12 ; older versions of this importer are based on a fixed-width file. 
+
 from django.core.management.base import BaseCommand, CommandError
 from django.template.defaultfilters import slugify
 
@@ -5,36 +7,38 @@ from outside_spending.models import Committee
 from outside_spending.read_FEC_settings import DATA_DIR
 
 def parse_file(filename):
-    fields = [('committee_id', (1,9)),
-              ('committee_name', (10, 99)),
-              ('treasurer', (100, 137)),
-              ('street1', (138, 171)),
-              ('street2', (172, 205)),
-              ('city', (206, 223)),
-              ('state', (224, 225)),
-              ('zipcode', (226, 230)),
-              ('designation', (231, 231)),
-              ('type', (232, 232)),
-              ('party', (233, 235)),
-              ('filing_frequency', (236, 236)),
-              ('interest_group_category', (237, 237)),
-              ('connected_org_name', (238, 275)),
-              ('candidate_id', (276, 284))]
     records = []
     with file(filename, 'rU') as masterfile:
         for (line_num, line) in enumerate(masterfile, start=1):
+            line = line.replace("\n","")
+            columns = line.split("|")
             row = {}
-            row['line_num'] = line_num
-            for fieldname, (start, end) in fields:
-                row[fieldname] = line[start-1:end].strip()
-                
+            row['committee_id'] = columns[0]
+            row['committee_name'] = columns[1]
+            row['treasurer'] = columns[2]
+            row['street1'] = columns[3]
+            row['street2'] = columns[4]
+            row['city'] = columns[5]
+            row['state'] = columns[6]
+            row['zipcode'] = columns[7]
+            row['designation'] = columns[8]
+            row['type'] = columns[9]
+            row['party'] = columns[10]
+            row['filing_frequency'] = columns[11]
+            row['interest_group_category'] = columns[12]                                                                                                                                    
+            row['connected_org_name'] =  columns[13]  
+            row['candidate_id'] =  columns[14]
+            
+            row['line_num'] = line_num                
             row['slug'] = slugify(row['committee_name'][:50])
             records.append(row)
+
+            print row
 
         print "%d records to process..." % len(records)
 
     return records
-    
+
 def get_or_create_committee(record):
     try:
         cmte = Committee.objects.get(fec_id=record['committee_id'])
@@ -50,12 +54,14 @@ def get_or_create_committee(record):
             street_1=record['street1'],
             street_2=record['street2'],
             city=record['city'],
+            state_race=record['state'],
             zip_code=record['zipcode'],
             designation=record['designation'],
             ctype=record['type'],
             filing_frequency=record['filing_frequency'], 
             connected_org_name=record['connected_org_name'],
-            candidate_id=record['candidate_id']
+            candidate_id=record['candidate_id'],
+            interest_group_cat = record['interest_group_category']
             )
             
 
@@ -70,7 +76,7 @@ class Command(BaseCommand):
         cycle = args[0]
         cycle_year = 2000 + int(cycle)
         assert cycle, "You must enter a two-digit cycle"
-        data_filename = "%s/%s/foiacm.dta" % (DATA_DIR, cycle)
+        data_filename = "%s/%s/cm.txt" % (DATA_DIR, cycle)
 
         records = parse_file(data_filename)
         for record in records:

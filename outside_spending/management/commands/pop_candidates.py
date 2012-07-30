@@ -28,13 +28,27 @@ class Command(BaseCommand):
                   ('election_year', (162, 163)),
                   ('current_district', (164, 165)), ]
 
-        data_filename = "%s/%s/foiacn.dta" % (DATA_DIR, cycle)
+        data_filename = "%s/%s/cn.txt" % (DATA_DIR, cycle)
         data_file = open(data_filename, "r")
         for line in data_file:
+            line = line.replace("\n","")
+            columns = line.split("|")
             data_dict = {}
-            for fieldname, (start, end) in fields:
-                data_dict[fieldname] = line[start-1:end].strip()
-                #print ("%s : %s" % (fieldname, data_dict[fieldname]))
+            
+
+            data_dict['fec_id'] = columns[0].strip()
+            data_dict['fec_name'] = columns[1].strip()            
+            data_dict['party'] = columns[2].strip()
+            data_dict['election_year'] = columns[3].strip()
+            data_dict['state_race'] = columns[4].strip()
+            data_dict['office'] = columns[5].strip()
+            data_dict['district'] = columns[6].strip()                                                            
+            data_dict['seat_status'] = columns[7].strip() 
+            data_dict['candidate_status'] = columns[8].strip()
+            data_dict['campaign_com_fec_id'] = columns[9].strip()
+            data_dict['zipcode'] = columns[14].strip()
+
+            #print data_dict
                 
             try:
                 existing_candidate = Candidate.objects.get(fec_id=data_dict['fec_id'], cycle=cycle_year)
@@ -44,7 +58,6 @@ class Command(BaseCommand):
                 # office is the first digit of the fec_id (?)
                 office = data_dict['fec_id'][0]
                 # state race is the next two digits
-                state_race = data_dict['fec_id'][2:4]
 
                 
                 print "Adding candidate with name: %s id: %s" % (data_dict['fec_name'], data_dict['fec_id'])
@@ -55,11 +68,10 @@ class Command(BaseCommand):
                             party=data_dict['party'],
                             office=office,
                             seat_status=data_dict['seat_status'],
-                            state_race=data_dict['fec_id'][2:4],
                             candidate_status=data_dict['candidate_status'],
-                            state_address=data_dict['state_address'],
-                            district=data_dict['current_district'],
-                            campaign_com_fec_id=data_dict['campaign_comm']
+                            state_race=data_dict['state_race'],
+                            district=data_dict['district'],
+                            campaign_com_fec_id=data_dict['campaign_com_fec_id']
                             
                                         )
                 
