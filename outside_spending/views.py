@@ -29,12 +29,19 @@ reports do not state whether the communication was in support of or in
 opposition to the candidate, and they sometimes refer to multiple
 candidates."""
 
-def generic_csv(filename, fields, rows):
+expenditure_file_description = """ This file contains all schedule E transactions reported electronically. Filers are generally required to report these transactions twice: within 24-hours, and then again in a monthly/quarterly report. The numbers reported on 24-hour reports are only used when monthly reports covering that time period are not available."""
+
+contribution_file_description = """ This file contains a wider range of receipt types than those listed on the web pages. Specifically, contributions (11AI, 11B, and 11C) ; Transfers through affiliates (SA12), Loan repayments received (SA14); Offsets to operating expenses (SA15); Refunds of contributions made to Federal Candidates and Other Political Committees and (SA17) other Federal Receipts."""
+
+organizational_file_description = """ This file contains contributions (11AI, 11B, and 11C) and offsets to operating expenses (SA15)."""
+
+def generic_csv(file_description, filename, fields, rows):
     response = HttpResponse(mimetype='text/csv')
     response['Content-Disposition'] = 'attachment; filename=%s' % filename
 
     writer = csv.writer(response)
     writer.writerow([data_disclaimer])
+    writer.writerow([file_description])
     writer.writerow(fields)
     for row in rows:
         writer.writerow(row)
@@ -98,7 +105,7 @@ def expenditure_csv(request, committee_id):
     fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Election Type', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
     rows = make_expenditure_list(expenditures)
     file_name = committee.slug + "_expenditures.csv"
-    return generic_csv(file_name, fields, rows) 
+    return generic_csv(expenditure_file_description, file_name, fields, rows) 
 
 def all_expenditures_csv(request):
     expenditures = Expenditure.objects.select_related("committee", "candidate").filter(superceded_by_amendment=False)
@@ -106,14 +113,14 @@ def all_expenditures_csv(request):
     rows = make_expenditure_list(expenditures)
     file_name =  "all_expenditures.csv"
             
-    return generic_csv(file_name, fields, rows)     
+    return generic_csv(expenditure_file_description, file_name, fields, rows)     
 
 def expenditure_csv_state(request, state):
     expenditures = Expenditure.objects.select_related("committee", "candidate").filter(state=state).filter(superceded_by_amendment=False)
     fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Election Type', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
     rows = make_expenditure_list(expenditures)
     file_name = state + "_expenditures.csv"
-    return generic_csv(file_name, fields, rows)    
+    return generic_csv(expenditure_file_description, file_name, fields, rows)    
 
 
 def expenditure_csv_race(request, office, state, district):
@@ -126,35 +133,35 @@ def expenditure_csv_race(request, office, state, district):
     fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Election Type', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
     rows = make_expenditure_list(expenditures)
     file_name = office + "_" + state + "_" + district + "_expenditures.csv"
-    return generic_csv(file_name, fields, rows)
+    return generic_csv(expenditure_file_description, file_name, fields, rows)
 
 def contribs_csv(request, committee_id):                            
     committee = get_object_or_404(Committee_Overlay, fec_id=committee_id)
-    contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False)
-    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC','Transaction ID', 'Filing Number']
+    contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False, line_type__in=['SA11A1', 'SA11B', 'SA11C', 'SA12', 'SA14', 'SA15', 'SA16', 'SA17'])
+    fields = ['Receipt Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC','Transaction ID', 'Filing Number']
     rows = []
     file_name = committee.slug + "_donors.csv"
 
     for c in contributions:
         rows.append([c.contrib_source(), committee.name, committee_id, c.contrib_org, c.contrib_last, c.contrib_first, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.contrib_agg, c.transaction_id, c.filing_number])
-    return generic_csv(file_name, fields, rows)
+    return generic_csv(contribution_file_description, file_name, fields, rows)
 
 def organizational_contribs_csv(request):
 
     contributions = Contribution.objects.select_related("committee", "candidate").filter(committee__isnull=False, superceded_by_amendment=False).exclude(contrib_org='').filter(line_type__in=['SA11AI', 'SA15'])
-    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'PAC political orientation','Donating organization', 'Donor street 1',  'Donor street 2', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC','Transaction ID', 'Filing Number', 'memo', 'memo text description']
+    fields = ['Receipt Type','Receiving Super PAC', 'Super PAC ID', 'PAC political orientation','Donating organization', 'Donor street 1',  'Donor street 2', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC','Transaction ID', 'Filing Number', 'memo', 'memo text description']
     rows = []
     file_name = "organizational_donors.csv"
 
     for c in contributions:
         rows.append([c.contrib_source(), c.committee.name, c.committee.fec_id, c.committee.political_orientation, c.contrib_org, c.contrib_street_1, c.contrib_street_2, c.contrib_city, c.contrib_state, c.contrib_occupation, c.contrib_employer, c.contrib_amt, c.contrib_date, c.contrib_agg, c.transaction_id, c.filing_number, c.memo_agg_item, c.memo_text_descript])
-    return generic_csv(file_name, fields, rows)
+    return generic_csv(organizational_file_description, file_name, fields, rows)
     
     
 
 def state_contribs_csv(request, state):                            
-    contributions = Contribution.objects.filter(contrib_state=state.upper(), superceded_by_amendment=False)
-    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC', 'Transaction ID', 'Filing Number']
+    contributions = Contribution.objects.filter(contrib_state=state.upper(), superceded_by_amendment=False, line_type__in=['SA11A1', 'SA11B', 'SA11C', 'SA12', 'SA14', 'SA15', 'SA16', 'SA17'])
+    fields = ['Receipt Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC', 'Transaction ID', 'Filing Number']
     rows = []
     file_name = state + "_donors.csv"
 
@@ -165,12 +172,12 @@ def state_contribs_csv(request, state):
             name = c.committee.name
             
         rows.append([ c.contrib_source(), name, c.fec_committeeid, c.contrib_org.replace('"',''), c.contrib_last.replace('"',''), c.contrib_first.replace('"',''), c.contrib_city.replace('"',''), c.contrib_state.replace('"',''), c.contrib_occupation.replace('"',''), c.contrib_employer.replace('"',''), c.contrib_amt, c.contrib_date, c.contrib_agg, c.transaction_id, c.filing_number])
-    return generic_csv(file_name, fields, rows)        
+    return generic_csv(contribution_file_description, file_name, fields, rows)        
 
 
 def all_contribs_csv(request):                            
-    contributions = Contribution.objects.filter(superceded_by_amendment=False)
-    fields = ['Donor Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC', 'Transaction ID', 'Filing Number']
+    contributions = Contribution.objects.filter(superceded_by_amendment=False, line_type__in=['SA11A1', 'SA11B', 'SA11C', 'SA12', 'SA14', 'SA15', 'SA16', 'SA17'])
+    fields = ['Receipt Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC', 'Transaction ID', 'Filing Number']
     rows = []
     file_name = "all_donors.csv"
 
@@ -180,7 +187,7 @@ def all_contribs_csv(request):
             name = c.committee.name
 
         rows.append([ c.contrib_source(), name, c.fec_committeeid, c.contrib_org.replace('"',''), c.contrib_last.replace('"',''), c.contrib_first.replace('"',''), c.contrib_city.replace('"',''), c.contrib_state.replace('"',''), c.contrib_occupation.replace('"',''), c.contrib_employer.replace('"',''), c.contrib_amt, c.contrib_date, c.contrib_agg, c.transaction_id, c.filing_number])
-    return generic_csv(file_name, fields, rows)
+    return generic_csv(contribution_file_description, file_name, fields, rows)
 
 
 def committee_summary_public(request):
@@ -202,7 +209,7 @@ def committee_summary_public(request):
             state = c.committee_master_record.state_race
 
         rows.append([c.name, c.fec_id, c.superpac_status(), c.party, c.treasurer, c.street_1, c.street_2, c.city, c.zip_code, state, c.connected_org_name, interest_group_cat, ctype, designation, c.filing_frequency_text(), c.total_contributions, c.total_unitemized, c.cash_on_hand, c.cash_on_hand_date, c.total_indy_expenditures, c.ie_support_dems, c.ie_oppose_dems, c.ie_support_reps, c.ie_oppose_reps, c.org_status])
-    return generic_csv(file_name, fields, rows)
+    return generic_csv("This is a summary of all groups that have made independent expenditures, are super PACs, or have made electioneering communications. Note that some groups may appear twice because they have multiple FEC identification numbers", file_name, fields, rows)
     
 def superpac_political_orientation(request):
     committees = Committee_Overlay.objects.filter( Q(is_superpac=True)).select_related('committee_master_record')
@@ -223,7 +230,7 @@ def superpac_political_orientation(request):
             state = c.committee_master_record.state_race
 
         rows.append([c.name, c.fec_id, c.treasurer, c.street_1, c.street_2, c.city, c.zip_code, state, c.connected_org_name, c.display_political_orientation(), c.filing_frequency_text(), c.total_contributions, c.total_unitemized, c.cash_on_hand, c.cash_on_hand_date, c.total_indy_expenditures, c.ie_support_dems, c.ie_oppose_dems, c.ie_support_reps, c.ie_oppose_reps])
-    return generic_csv(file_name, fields, rows)    
+    return generic_csv("This file contains a listing of all super PACs and the political affiliation Sunlight has assigned to them", file_name, fields, rows)    
 
 def committee_summary_private(request):
     committees = Committee_Overlay.objects.filter( Q(is_superpac=True)|Q(total_indy_expenditures__gt=0)|Q(total_electioneering__gt=0) ).select_related('committee_master_record')
@@ -244,7 +251,7 @@ def committee_summary_private(request):
             state = c.committee_master_record.state_race
 
         rows.append([c.name, c.fec_id, c.superpac_status(), c.party, c.treasurer, c.street_1, c.street_2, c.city, c.zip_code, state, c.connected_org_name, interest_group_cat, ctype, designation, c.filing_frequency_text(), c.total_contributions, c.total_unitemized, c.cash_on_hand, c.cash_on_hand_date, c.total_indy_expenditures, c.ie_support_dems, c.ie_oppose_dems, c.ie_support_reps, c.ie_oppose_reps, c.org_status, c.political_orientation, c.political_orientation_verified])
-    return generic_csv(file_name, fields, rows)    
+    return generic_csv("Summary of all groups that have made IE's or are a super PAC", file_name, fields, rows)    
 
 def all_superpacs(request):
     explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have raised at least $10,000 since the beginning of 2011. The totals, listed above, are for all super PACs. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. For the much longer list of <a href='/outside-spending/super-pacs/complete-list/'>all superpacs</a> click <a href='/outside-spending/super-pacs/complete-list/'>here</a>."
@@ -333,11 +340,11 @@ def summarize_monthly(summed_queryset, end_date, include_end_month=False):
 def committee_detail(request,committee_id):
     committee = get_object_or_404(Committee_Overlay, fec_id=committee_id)
     expenditures = Expenditure.objects.filter(committee=committee).filter(superceded_by_amendment=False).select_related('committee', 'candidate')
-    contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False)
+    contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False, line_type__in=['SA11A1', 'SA11B', 'SA11C', 'SA12', 'SA15'])
     candidates_supported = Pac_Candidate.objects.filter(committee=committee)
     explanatory_text = 'This table shows the overall total amount spent by this group supporting or opposing federal candidates in independent expenditures in the 2012 election cycle.'
     explanatory_text_details = 'This table shows the total independent expenditure by this group supporting or opposing federal candidates in the 2012 election cycle. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.superpachackcsv())
-    explanatory_text_contribs = 'This table shows all contributions made to this group during the 2012 campaign cycle, as of %s. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.cash_on_hand_date,committee.superpachackdonorscsv())
+    explanatory_text_contribs = 'This table shows all contributions, related PAC transfers and operating expense offsets made to this group during the 2012 campaign cycle, as of %s. Operating expense offsets are marked with an asterisk (*). To view a more detailed file of this spending, which includes all receipt types, <a href=\"%s\">click here</a>.' % (committee.cash_on_hand_date,committee.superpachackdonorscsv())
 
     ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False, fec_id=committee_id).order_by('-exp_date')
     ec_total_dict = ecs.aggregate(total=Sum('exp_amo'))
@@ -357,11 +364,11 @@ def committee_detail(request,committee_id):
 
     monthly_contrib_summary = None
     if (committee.is_superpac):
-        monthly_contrib_data = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
+        monthly_contrib_data = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False, line_type__in=['SA11A1', 'SA11B', 'SA11C', 'SA15']).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
         monthly_contrib_summary = summarize_monthly(monthly_contrib_data, committee.cash_on_hand_date, True)
         
     has_chart = False 
-    print "lenght is %s" % (len(monthly_ie_data))    
+    print "length is %s" % (len(monthly_ie_data))    
     if (committee.is_superpac or len(monthly_ie_data) > 0):
         has_chart = True
 

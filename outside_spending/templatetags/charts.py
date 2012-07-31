@@ -18,7 +18,7 @@ def superpac_chart(div_to_return):
     
     superpac_contribs = Expenditure.objects.filter(superceded_by_amendment=False, committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
     
-    monthly_contrib_data = Contribution.objects.filter(committee__is_superpac=True, superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
+    monthly_contrib_data = Contribution.objects.filter(committee__is_superpac=True, superceded_by_amendment=False, line_type__in=['SA11A1', 'SA11B', 'SA11C', 'SA12', 'SA15']).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
     
     # hack to only show contribs after the 20th of the month--which misses quarterly contribs, but... 
     m = datetime.timedelta(days=17)
@@ -204,12 +204,12 @@ def superpac_partisan_contribs(div_to_return):
     today = datetime.datetime.today()
     m = datetime.timedelta(days=20)
     
-    monthly_r_contribs = Contribution.objects.filter(committee__is_superpac=True, superceded_by_amendment=False, committee__political_orientation='R').extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
+    monthly_r_contribs = Contribution.objects.filter(committee__is_superpac=True, superceded_by_amendment=False, committee__political_orientation='R', line_type__in=['SA11A1', 'SA11B', 'SA11C', 'SA12', 'SA15']).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
     
     # hack to only show contribs after the 20th of the month--which misses quarterly contribs, but... 
     monthly_r_contrib_summary = summarize_monthly(monthly_r_contribs, today-m)
     
-    monthly_d_contribs = Contribution.objects.filter(committee__is_superpac=True, superceded_by_amendment=False, committee__political_orientation='D').extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
+    monthly_d_contribs = Contribution.objects.filter(committee__is_superpac=True, superceded_by_amendment=False, committee__political_orientation='D', line_type__in=['SA11A1', 'SA11B', 'SA11C', 'SA12', 'SA15']).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
 
     monthly_d_contrib_summary = summarize_monthly(monthly_d_contribs, today-m)
     

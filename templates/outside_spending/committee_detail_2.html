@@ -154,7 +154,7 @@
               {% for contrib in contributions %}    
                   <tr class="{% cycle 'odd' 'even' %}">
                       <td>{{ contrib.contrib_date }}</td>
-                      <td>{% if contrib.contrib_amt %}${{ contrib.contrib_amt|intcomma }}{% endif %}</a></td> 
+                      <td>{% if contrib.contrib_amt %}${{ contrib.contrib_amt|intcomma }}<a href="#offset">{{contrib.contrib_asterisk}}</a>{% endif %}</a></td> 
                       <td>{{ contrib.donor_display }}</td>
                       <td>{{ contrib.contrib_employer }}</td>   
                       <td>{{ contrib.contrib_city }}</td>                                               
@@ -163,6 +163,9 @@
               {% endfor %}
               </tbody>
               </table>
+			  <a name="offset"><a>
+              <p>* Contributions with an asterisk next to them were reported as "Offsets to Operating Expenditures."</p>
+
               {% endif %}
 
 
