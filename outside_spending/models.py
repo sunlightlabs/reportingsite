@@ -801,14 +801,26 @@ class Contribution(models.Model):
     
     def contrib_source(self):
         if (self.line_type=='SA11AI'):
-            return "Individual/Corporation"
-        elif (self.line_type=='SA11B'):
-            return "Political Party Committee"
+            return "SA11AI Individual/Corporation"
         elif (self.line_type=='SA11C'):
-            return "Political Action Committee"
+            return "SA11C Political Action Committee"
         elif (self.line_type=='SA15'):
-            return "Offsets To Operating Expenditure (line 15)"
-                                             
+            return "SA15 Offsets To Operating Expenditure (line 15)"
+        elif (self.line_type=='SA17'):
+            return "SA17 Other Federal Receipts (Dividends, Interest, etc.)"
+        elif (self.line_type=='SA13'):
+            return "SA13 All Loans Received"
+        elif (self.line_type=='SA12'):
+            return "SA12 Transfers From Affiliated/Other Party Committees"            
+        elif (self.line_type=='SA11B'):
+            return "SA11B Political Party Committee"
+        elif (self.line_type=='SA16'):
+            return "SA16 Refunds of Contributions Made to Federal Candidates and Other Political Committees"
+        elif (self.line_type=='SA14'):
+            return "SA14 Loan Repayments Received"
+        else:
+            return None
+            
     def contrib_asterisk(self):
         if (self.line_type=='SA15'):
             return "*" 
