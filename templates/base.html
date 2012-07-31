@@ -23,7 +23,7 @@
     {% endblock %}
     <!--[if IE 6]>{% css "css/buggy.css" %}<![endif]-->
     <!--[if IE 7]>{% css "css/buggy7.css" %}<![endif]-->
-
+	{% block headjs %}{% endblock %}
   </head>
   <body class="{% block body %}reporting{% endblock %}">
     <div id="pageMain">
@@ -166,6 +166,7 @@
         loadChartbeat : function() { oldonload(); loadChartbeat(); };
       })();
     </script>
+
   </body>
 </html>
 
