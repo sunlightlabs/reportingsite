@@ -340,7 +340,7 @@ def summarize_monthly(summed_queryset, end_date, include_end_month=False):
 def committee_detail(request,committee_id):
     committee = get_object_or_404(Committee_Overlay, fec_id=committee_id)
     expenditures = Expenditure.objects.filter(committee=committee).filter(superceded_by_amendment=False).select_related('committee', 'candidate')
-    contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False, line_type__in=['SA11A1', 'SA11B', 'SA11C', 'SA12', 'SA15'])
+    contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False, line_type__in=['SA11AI', 'SA11B', 'SA11C', 'SA12', 'SA15'])
     candidates_supported = Pac_Candidate.objects.filter(committee=committee)
     explanatory_text = 'This table shows the overall total amount spent by this group supporting or opposing federal candidates in independent expenditures in the 2012 election cycle.'
     explanatory_text_details = 'This table shows the total independent expenditure by this group supporting or opposing federal candidates in the 2012 election cycle. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.superpachackcsv())
