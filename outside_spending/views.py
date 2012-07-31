@@ -137,7 +137,7 @@ def expenditure_csv_race(request, office, state, district):
 
 def contribs_csv(request, committee_id):                            
     committee = get_object_or_404(Committee_Overlay, fec_id=committee_id)
-    contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False, line_type__in=['SA11A1', 'SA11B', 'SA11C', 'SA12', 'SA14', 'SA15', 'SA16', 'SA17'])
+    contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False, line_type__in=['SA11AI', 'SA11B', 'SA11C', 'SA12', 'SA14', 'SA15', 'SA16', 'SA17'])
     fields = ['Receipt Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC','Transaction ID', 'Filing Number']
     rows = []
     file_name = committee.slug + "_donors.csv"
@@ -160,7 +160,7 @@ def organizational_contribs_csv(request):
     
 
 def state_contribs_csv(request, state):                            
-    contributions = Contribution.objects.filter(contrib_state=state.upper(), superceded_by_amendment=False, line_type__in=['SA11A1', 'SA11B', 'SA11C', 'SA12', 'SA14', 'SA15', 'SA16', 'SA17'])
+    contributions = Contribution.objects.filter(contrib_state=state.upper(), superceded_by_amendment=False, line_type__in=['SA11AI', 'SA11B', 'SA11C', 'SA12', 'SA14', 'SA15', 'SA16', 'SA17'])
     fields = ['Receipt Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC', 'Transaction ID', 'Filing Number']
     rows = []
     file_name = state + "_donors.csv"
@@ -176,7 +176,7 @@ def state_contribs_csv(request, state):
 
 
 def all_contribs_csv(request):                            
-    contributions = Contribution.objects.filter(superceded_by_amendment=False, line_type__in=['SA11A1', 'SA11B', 'SA11C', 'SA12', 'SA14', 'SA15', 'SA16', 'SA17'])
+    contributions = Contribution.objects.filter(superceded_by_amendment=False, line_type__in=['SA11AI', 'SA11B', 'SA11C', 'SA12', 'SA14', 'SA15', 'SA16', 'SA17'])
     fields = ['Receipt Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC', 'Transaction ID', 'Filing Number']
     rows = []
     file_name = "all_donors.csv"
@@ -364,7 +364,7 @@ def committee_detail(request,committee_id):
 
     monthly_contrib_summary = None
     if (committee.is_superpac):
-        monthly_contrib_data = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False, line_type__in=['SA11A1', 'SA11B', 'SA11C', 'SA15']).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
+        monthly_contrib_data = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False, line_type__in=['SA11AI', 'SA11B', 'SA11C', 'SA15']).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
         monthly_contrib_summary = summarize_monthly(monthly_contrib_data, committee.cash_on_hand_date, True)
         
     has_chart = False 
