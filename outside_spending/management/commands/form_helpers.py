@@ -416,7 +416,10 @@ def process_contrib_line(values_dict, is_amendment, original, filing_number, com
 
 
 def process_summary_line(values_dict, is_amendment, original, filing_number):
-    #list_as_amendment = is_amendment
+    print "Processing summary %s" % (filing_number)
+    # sometimes quote marks get in here. 
+    values_dict['filer_committee_id_number'] = values_dict['filer_committee_id_number'].replace('"','')
+    
     obj, created = F3X_Summary.objects.get_or_create(filing_number=filing_number,
     defaults={
         "amended":is_amendment,
@@ -444,6 +447,7 @@ def process_summary_line(values_dict, is_amendment, original, filing_number):
         "amends_earlier_filing":is_amendment,
         "original":original
         })
+        
 
     # Now go through and mark earlier files as amendments, as appropriate                           
     if created:
@@ -490,7 +494,7 @@ def process_F3X_contribs(filingnum, fp):
     committee_id = firstrow['filer_committee_id_number']
     committee_name = firstrow['committee_name']
 
-    #print "id: %s committee: %s" % (committee_id, committee_name)
+    print "id: %s committee: %s" % (committee_id, committee_name)
 
 
     headers = f1.get_headers()
