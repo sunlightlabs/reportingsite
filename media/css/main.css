@@ -23,6 +23,23 @@ body{
 
 div#pageMain{ width: 960px; margin: 0 auto; }
 
+#sunlightHeader {
+    background: url(../img/sfapp_bg_header.jpg) center bottom repeat-x;
+    height: 53px;
+    border-bottom: 1px dashed #fff;
+}
+#sunHeaderInterior { width: 940px; margin: 0 auto; padding: 0 10px; }
+#sunlightHeader a {
+    background: url(../img/sfapp_logo.png) top right no-repeat;
+    display: block;
+    float: right;
+    height: 40px;
+    text-indent: -9999px;
+    width: 128px;
+    margin-top: 5px;
+}
+
+
 h1 a { width: 800px; height: 214px; display: block; background: url(../img/logo_rollover4.png) top center no-repeat; text-indent: -9999em;}
 h1 { width: 800px; height: 214px; margin: 0 auto;}
 
