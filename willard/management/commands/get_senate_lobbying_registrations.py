@@ -133,7 +133,9 @@ def save_filing(data):
             defaults=dict(
                 name=kill_ascii_unprintable(data['client']['ClientName']),
                 client_id=kill_ascii_unprintable(data['client']['ClientID']),
-                status=int(data['client']['ClientStatus']))
+                # This was removed as of 8/13/2012. 
+                # status=int(data['client']['ClientStatus']),
+                )
             )
 
     registration, created = Registration.all_objects.get_or_create(
