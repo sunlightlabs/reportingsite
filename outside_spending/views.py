@@ -19,6 +19,8 @@ most_recent_scrape=Scrape_Time.objects.all().order_by('-run_time')[0]
 from outside_spending.models import *
 from outside_spending.utils.json_helpers import render_to_json
 
+from settings import CSV_EXPORT_DIR
+
 data_disclaimer = """ These files are preliminary and current through %s but we cannot guarantee their accuracy. For more information, see: http://reporting.sunlightfoundation.com/super-pac/data/about/2012-june-update/ Please note that contributions in these files are as of the most recent filing deadline. Independent expenditures are not comparable to the itemized disbursements found in PAC's year-end reports. For more on independent expenditures see here: http://www.fec.gov/pages/brochures/indexp.shtml """ % (most_recent_scrape.run_time)
 
 hybrid_superpac_disclaimer ="\"Hybrid\" super PACs--committees that have separate accounts for \"hard\" and \"soft\" money, are not included. For a list of these committees, see <a href=\"http://www.fec.gov/press/press2011/2012PoliticalCommitteeswithNon-ContributionAccounts.shtml\">here</a>."
@@ -34,6 +36,15 @@ expenditure_file_description = """ This file contains all schedule E transaction
 contribution_file_description = """ This file contains a wider range of receipt types than those listed on the web pages. Specifically, contributions (11AI, 11B, and 11C) ; Transfers through affiliates (SA12), Loan repayments received (SA14); Offsets to operating expenses (SA15); Refunds of contributions made to Federal Candidates and Other Political Committees and (SA17) other Federal Receipts."""
 
 organizational_file_description = """ This file contains contributions (11AI, 11B, and 11C) and offsets to operating expenses (SA15)."""
+
+def write_csv_to_file(file_description, local_file, fields, rows):
+    local_response = open(local_file, 'w')
+    writer = csv.writer(local_response)
+    writer.writerow([data_disclaimer])
+    writer.writerow([file_description])
+    writer.writerow(fields)
+    for row in rows:
+        writer.writerow(row)
 
 def generic_csv(file_description, filename, fields, rows):
     response = HttpResponse(mimetype='text/csv')
@@ -113,7 +124,17 @@ def all_expenditures_csv(request):
     rows = make_expenditure_list(expenditures)
     file_name =  "all_expenditures.csv"
             
-    return generic_csv(expenditure_file_description, file_name, fields, rows)     
+    return generic_csv(expenditure_file_description, file_name, fields, rows)  
+    
+def all_expenditures_csv_to_file():
+    expenditures = Expenditure.objects.select_related("committee", "candidate").filter(superceded_by_amendment=False)
+    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Election Type', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
+    rows = make_expenditure_list(expenditures)
+    
+    file_name =  "%s/all_expenditures.csv" % (CSV_EXPORT_DIR)
+
+    write_csv_to_file(expenditure_file_description, file_name, fields, rows)
+   
 
 def expenditure_csv_state(request, state):
     expenditures = Expenditure.objects.select_related("committee", "candidate").filter(state=state).filter(superceded_by_amendment=False)
@@ -188,6 +209,23 @@ def all_contribs_csv(request):
 
         rows.append([ c.contrib_source(), name, c.fec_committeeid, c.contrib_org.replace('"',''), c.contrib_last.replace('"',''), c.contrib_first.replace('"',''), c.contrib_city.replace('"',''), c.contrib_state.replace('"',''), c.contrib_occupation.replace('"',''), c.contrib_employer.replace('"',''), c.contrib_amt, c.contrib_date, c.contrib_agg, c.transaction_id, c.filing_number])
     return generic_csv(contribution_file_description, file_name, fields, rows)
+    
+def all_contribs_csv_to_file():                            
+    contributions = Contribution.objects.filter(superceded_by_amendment=False, line_type__in=['SA11AI', 'SA11B', 'SA11C', 'SA12', 'SA14', 'SA15', 'SA16', 'SA17'])
+    fields = ['Receipt Type','Receiving Super PAC', 'Super PAC ID', 'Donating organization','Donor Last', 'Donor First', 'Donor City', 'Donor State', 'Donor Occupation', 'Employer', 'Amount', 'Date', 'Total amount given to this PAC', 'Transaction ID', 'Filing Number']
+    rows = []
+    file_name = "all_donors.csv"
+
+    for c in contributions:
+        name = ''
+        if (c.committee):
+            name = c.committee.name
+
+        rows.append([ c.contrib_source(), name, c.fec_committeeid, c.contrib_org.replace('"',''), c.contrib_last.replace('"',''), c.contrib_first.replace('"',''), c.contrib_city.replace('"',''), c.contrib_state.replace('"',''), c.contrib_occupation.replace('"',''), c.contrib_employer.replace('"',''), c.contrib_amt, c.contrib_date, c.contrib_agg, c.transaction_id, c.filing_number])
+    
+    file_name =  "%s/all_contribs.csv" % (CSV_EXPORT_DIR)
+
+    write_csv_to_file(contribution_file_description, file_name, fields, rows)
 
 
 def committee_summary_public(request):
@@ -588,7 +626,7 @@ def overview(request):
     total_ecs = ecs.aggregate(total=Sum('exp_amo'))['total']
 
     
-    contribs = Contribution.objects.filter(line_type__in=['SA11AI', 'SA15'], superceded_by_amendment=False)
+    contribs = Contribution.objects.filter(line_type__in=['SA11AI', 'SA11B', 'SA11C', 'SA12', 'SA15'], superceded_by_amendment=False)
     total_contribs_amt = contribs.aggregate(total=Sum('contrib_amt'))
     total_contribs = total_contribs_amt['total']
     
