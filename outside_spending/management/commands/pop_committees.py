@@ -26,7 +26,7 @@ def parse_file(filename):
             row['party'] = columns[10]
             row['filing_frequency'] = columns[11]
             row['interest_group_category'] = columns[12]                                                                                                                                    
-            row['connected_org_name'] =  columns[13]  
+            row['connected_org_name'] =  columns[13][:65]
             row['candidate_id'] =  columns[14]
             
             row['line_num'] = line_num                
