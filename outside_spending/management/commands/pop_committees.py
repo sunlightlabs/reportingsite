@@ -18,7 +18,7 @@ def parse_file(filename):
             row['treasurer'] = columns[2]
             row['street1'] = columns[3]
             row['street2'] = columns[4]
-            row['city'] = columns[5]
+            row['city'] = columns[5][:18]
             row['state'] = columns[6]
             row['zipcode'] = columns[7]
             row['designation'] = columns[8]
