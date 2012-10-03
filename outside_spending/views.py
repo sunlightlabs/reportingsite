@@ -314,6 +314,31 @@ def all_superpacs(request):
                             'neg_percent':neg_percent,
                             'pos_percent':positive_percent,
                             }) 
+                            
+def all_independent_expenditors(request):
+    explanatory_text = "This table shows all committees making independent expenditures that have spent at least $10,000 on independent expenditures since the beginning of 2011. The totals, listed above, are for all such groups, regardless of whether they are included below. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
+
+    all_groups = Committee_Overlay.objects.filter()
+
+    totals = all_groups.aggregate(support_dems=Sum('ie_support_dems'), oppose_dems=Sum('ie_oppose_dems'), oppose_reps=Sum('ie_oppose_reps'), support_reps=Sum('ie_support_reps'), total=Sum('total_indy_expenditures'), total_contribs=Sum('total_contributions'))
+    
+
+
+    total_amt = totals['total']
+    neg_percent = 100*(totals['oppose_dems']+totals['oppose_reps'])/totals['total']
+    positive_percent = 100*(totals['support_dems']+totals['support_reps'])/totals['total']
+
+    all_groups = all_groups.filter(total_indy_expenditures__gte=10000)
+
+
+    return render_to_response('outside_spending/all-outside-spenders.html',
+                            {'explanatory_text':explanatory_text, 
+                            'superpacs':all_groups, 
+                            'total_amt':total_amt, 
+                            'total_contribs':totals['total_contribs'],
+                            'neg_percent':neg_percent,
+                            'pos_percent':positive_percent,
+                            })
 
 def complete_superpac_list(request):
     superpacs = Committee_Overlay.objects.filter(is_superpac=True).order_by('total_indy_expenditures')
