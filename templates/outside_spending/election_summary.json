@@ -1,0 +1,18 @@
+{
+    "update_time": "{{update_time.run_time}}"
+    "total_outside_spending": "{{total_outside}}", 
+    "pres_ies": "{{pres_ies}}", 
+    "superpac_itemized_contributions":"{{superpac_contribs}}", 
+    "superpac_ies":"{{superpac_ies}}", 
+    "noncommittee_ies":"{{noncommittee_ies}}", 
+    "nonparty_ies":"{{nonparty_ies}}", 
+    "party_ies":"{{party_ies}}",
+    "top_outside_groups": [
+    {% for group in top_outside_groups %}
+        {
+            "name":"{{group.name}}",
+            "total_ies":"{{ group.total_indy_expenditures}}"
+        }{% if forloop.last %}{% else %},{% endif %}
+    {% endfor %}
+        ]
+}

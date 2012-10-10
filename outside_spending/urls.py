@@ -86,8 +86,8 @@ urlpatterns = patterns('',
     url(r'^analytics\/',direct_to_template, {'template': 'outside_spending/analytical_iframe_base.html', 'extra_context': {'content':'content'}}, ),
     url(r'^superpac-chart-embed\/$', 'outside_spending.views.chart_embed'),
     #direct_to_template, {'template': 'outside_spending/chart_embedder.html', 'extra_context': {'div_name':'this_is_the_chart_div'}}, ),
-    url(r'$', 'outside_spending.views.all_superpacs')
-    
+    url(r'^election_summary.json$', 'outside_spending.views.elex_json'),
+    url(r'$', 'outside_spending.views.all_superpacs'),
     
 
     # all that are noteworthy

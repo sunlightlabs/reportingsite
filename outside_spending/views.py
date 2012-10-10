@@ -1158,3 +1158,52 @@ def superpac_party_breakdown(request):
 def chart_embed(request):
     return render_to_response('outside_spending/chart_embedder.html', 
     {'div_name':'this_is_the_chart_div'})
+    
+
+@cache_page(60 * 30)
+def elex_json(request):
+    
+    all_ies = Committee_Overlay.objects.all()
+    #total_ie = all_ies.aggregate(total=Sum('total_indy_expenditures'))
+    #total_ies = total_ie['total']
+    
+    all_superpacs = all_ies.filter(is_superpac=True)
+    total_sp = all_superpacs.aggregate(total=Sum('total_indy_expenditures'))
+    total_sp_ies = total_sp['total']
+
+    
+    ecs = Electioneering_93.objects.filter(superceded_by_amendment=False)
+    total_ecs = ecs.aggregate(total=Sum('exp_amo'))['total']
+    
+    contribs = Contribution.objects.filter(line_type__in=['SA11AI', 'SA11B', 'SA11C', 'SA12', 'SA15'], superceded_by_amendment=False)
+    total_contribs_amt = contribs.aggregate(total=Sum('contrib_amt'))
+    total_contribs = total_contribs_amt['total']
+    
+    list_all_ies = Expenditure.objects.filter(superceded_by_amendment=False, committee__isnull=False).select_related("candidate")
+    total_ies = list_all_ies.aggregate(total=Sum('expenditure_amount'))['total']
+    pres_ies = list_all_ies.filter(candidate__office='P').aggregate(total=Sum('expenditure_amount'))['total']
+#    house_ies = list_all_ies.filter(candidate__office='H').aggregate(total=Sum('expenditure_amount'))['total']
+#    senate_ies = list_all_ies.filter(candidate__office='S').aggregate(total=Sum('expenditure_amount'))['total']
+#    supporting_ies = list_all_ies.filter(support_oppose='S').aggregate(total=Sum('expenditure_amount'))['total']
+#    opposing_ies = list_all_ies.filter(support_oppose='O').aggregate(total=Sum('expenditure_amount'))['total']
+    
+    noncommittee_ies = list_all_ies.filter(committee__ctype='I').aggregate(total=Sum('expenditure_amount'))['total']
+    nonparty_ies = list_all_ies.filter(committee__ctype__in=('N', 'Q')).aggregate(total=Sum('expenditure_amount'))['total']
+    party_ies = list_all_ies.filter(committee__ctype__in=('Y', 'Z')).aggregate(total=Sum('expenditure_amount'))['total']
+    
+    total_outside = total_ies + total_ecs
+    
+    top_groups = Committee_Overlay.objects.all().order_by('-total_indy_expenditures')[:5]
+    
+    return render_to_json('outside_spending/election_summary.json', {
+                'total_outside':total_outside,
+                'pres_ies':pres_ies,
+                'superpac_contribs':total_contribs,
+                'superpac_ies':total_sp_ies,
+                'noncommittee_ies':noncommittee_ies,
+                'nonparty_ies':nonparty_ies,
+                'party_ies':party_ies,
+                'top_outside_groups':top_groups,
+                'update_time':most_recent_scrape
+                
+                })
