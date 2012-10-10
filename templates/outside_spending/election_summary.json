@@ -1,5 +1,5 @@
 {
-    "update_time": "{{update_time.run_time}}"
+    "update_time": "{{update_time.run_time}}",
     "total_outside_spending": "{{total_outside}}", 
     "pres_ies": "{{pres_ies}}", 
     "superpac_itemized_contributions":"{{superpac_contribs}}", 
