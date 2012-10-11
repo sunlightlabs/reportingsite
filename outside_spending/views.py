@@ -586,9 +586,9 @@ def state_detail(request, state_abbreviation):
 
 def ies(request):
     today = datetime.date.today()
-    two_weeks_ago = today - datetime.timedelta(days=14)
+    two_weeks_ago = today - datetime.timedelta(days=5)
     ies = Expenditure.objects.select_related("committee", "candidate").filter(superceded_by_amendment=False, expenditure_date__gte=two_weeks_ago).order_by('-expenditure_date')
-    explanatory_text= 'This page shows independent expenditures made in the last two weeks.'
+    explanatory_text= 'This page shows independent expenditures made in the last 5 days.'
     return render_to_response('outside_spending/expenditure_list.html',
                             {'ies':ies, 
                             'explanatory_text':explanatory_text,
