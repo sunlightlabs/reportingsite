@@ -418,9 +418,7 @@ def committee_detail(request,committee_id):
     monthly_ie_data = Expenditure.objects.filter(committee=committee).filter(superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
 
     today = datetime.datetime.today()
-    show_current_month = False
-    if today.day > 15:
-        show_current_month = True
+    show_current_month = True
 
     monthly_ie_summary = summarize_monthly(monthly_ie_data, today, show_current_month)
 
