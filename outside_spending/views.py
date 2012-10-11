@@ -20,6 +20,7 @@ from outside_spending.models import *
 from outside_spending.utils.json_helpers import render_to_json
 
 from settings import CSV_EXPORT_DIR
+CACHE_TIME = 60 * 15
 
 data_disclaimer = """ These files are preliminary and current through %s but we cannot guarantee their accuracy. For more information, see: http://reporting.sunlightfoundation.com/super-pac/data/about/2012-june-update/ Please note that contributions in these files are as of the most recent filing deadline. Independent expenditures are not comparable to the itemized disbursements found in PAC's year-end reports. For more on independent expenditures see here: http://www.fec.gov/pages/brochures/indexp.shtml """ % (most_recent_scrape.run_time)
 
@@ -291,8 +292,10 @@ def committee_summary_private(request):
         rows.append([c.name, c.fec_id, c.superpac_status(), c.party, c.treasurer, c.street_1, c.street_2, c.city, c.zip_code, state, c.connected_org_name, interest_group_cat, ctype, designation, c.filing_frequency_text(), c.total_contributions, c.total_unitemized, c.cash_on_hand, c.cash_on_hand_date, c.total_indy_expenditures, c.ie_support_dems, c.ie_oppose_dems, c.ie_support_reps, c.ie_oppose_reps, c.org_status, c.political_orientation, c.political_orientation_verified])
     return generic_csv("Summary of all groups that have made IE's or are a super PAC", file_name, fields, rows)    
 
+
+@cache_page(CACHE_TIME)
 def all_superpacs(request):
-    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have raised at least $10,000 since the beginning of 2011. The totals, listed above, are for all super PACs. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. For the much longer list of <a href='/outside-spending/super-pacs/complete-list/'>all superpacs</a> click <a href='/outside-spending/super-pacs/complete-list/'>here</a>."
+    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have raised at least $10,000 since the beginning of 2011. The totals, listed above, are for all super PACs. Many groups that aren't super PACs are also making independent expenditures--for a more complete listing see the <a href=\"/outside-spending/all-outside-groups/\">biggest outside spending groups</a>. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. For the much longer list of <a href='/outside-spending/super-pacs/complete-list/'>all superpacs</a> click <a href='/outside-spending/super-pacs/complete-list/'>here</a>."
 
     all_superpacs = Committee_Overlay.objects.filter(is_superpac=True)
     
@@ -314,7 +317,8 @@ def all_superpacs(request):
                             'neg_percent':neg_percent,
                             'pos_percent':positive_percent,
                             }) 
-                            
+
+@cache_page(CACHE_TIME)                            
 def all_independent_expenditors(request):
     explanatory_text = "This table shows all committees making independent expenditures that have spent at least $10,000 on independent expenditures since the beginning of 2011. The totals, listed above, are for all such groups, regardless of whether they are included below. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
 
@@ -340,6 +344,7 @@ def all_independent_expenditors(request):
                             'pos_percent':positive_percent,
                             })
 
+@cache_page(CACHE_TIME)
 def complete_superpac_list(request):
     superpacs = Committee_Overlay.objects.filter(is_superpac=True).order_by('total_indy_expenditures')
     explanatory_text= 'This is a list of all super PACs.'
@@ -399,7 +404,7 @@ def summarize_monthly(summed_queryset, end_date, include_end_month=False):
             })
     return monthly_list
 
-                            
+@cache_page(CACHE_TIME)                            
 def committee_detail(request,committee_id):
     committee = get_object_or_404(Committee_Overlay, fec_id=committee_id)
     expenditures = Expenditure.objects.filter(committee=committee).filter(superceded_by_amendment=False).select_related('committee', 'candidate')
@@ -489,7 +494,7 @@ def presidential_state_summary(request, state):
                             'ec_explanation':electioneering_details
                             })
 
-
+@cache_page(CACHE_TIME)
 def races(request):
     races = Race_Aggregate.objects.exclude(district__isnull=True)
     explanatory_text = "This page shows independent expenditures made in the 2012 election cycle by race. Click on each race to see aggregate totals by candidate, and to get access to a downloadable file of all individual expenditures for this race. " + electioneering_details
@@ -520,7 +525,7 @@ def race_detail(request, office, state, district):
                             'ecs':ecs,
                             'ec_explanation':electioneering_details
                             })      
-                            
+@cache_page(CACHE_TIME)                            
 def candidates(request):
     candidates = Candidate_Overlay.objects.filter(total_expenditures__gte=10)
     explanatory_text= 'This table lists all independent expenditures made to support or oppose federal candidates during the 2012 election cycle, and all electioneering communications. Candidates not targeted by either type of spending are not included. ' + electioneering_details
@@ -581,7 +586,7 @@ def state_detail(request, state_abbreviation):
                             'this_state':this_state
                             })
 
-
+@cache_page(CACHE_TIME)
 def ies(request):
     today = datetime.date.today()
     two_weeks_ago = today - datetime.timedelta(days=5)
@@ -604,7 +609,7 @@ def ecs(request):
                             })
 
 
-
+@cache_page(CACHE_TIME)
 def organizational_superpac_contribs(request):
     contribs = Contribution.objects.select_related("committee").filter(committee__isnull=False, superceded_by_amendment=False).exclude(contrib_org='').filter(line_type__in=['SA11AI', 'SA15'])
 
@@ -618,7 +623,7 @@ def organizational_superpac_contribs(request):
                             'total_amt':total_amt,
                             'explanatory_text':explanatory_text,
                             })
-                            
+@cache_page(CACHE_TIME)                            
 def file_downloads(request):
     committees = Committee_Overlay.objects.all().order_by('name')
     states = State_Aggregate.objects.filter(total_ind_exp__gt=0).order_by('state')
@@ -632,7 +637,7 @@ def file_downloads(request):
 
 
 
-@cache_page(60 * 30)                              
+@cache_page(60 * 60)                              
 def overview(request):
     ## should put these aggregates in a table, but... 
     
