@@ -69,6 +69,7 @@ TEMPLATE_LOADERS = (
 
 MIDDLEWARE_CLASSES = (
     'django.middleware.common.CommonMiddleware',
+    'middleware.JSONPmiddleware.JSONPMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.csrf.CsrfViewMiddleware',
     'django.contrib.auth.middleware.AuthenticationMiddleware',
@@ -112,8 +113,9 @@ INSTALLED_APPS = (
     'findatcat',
     #'valeo',
     'doddfrank',
-    'rebuckley',
-    'outside_spending'
+#    'rebuckley',
+    'outside_spending', 
+    'frosh'
 )
 
 INTERNAL_IPS = ('127.0.0.1','localhost','216.15.37.167')
@@ -139,6 +141,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "django.core.context_processors.media",
     "context_processors.latest_by_site",
     "context_processors.outside_spending_updated",
+    "django.core.context_processors.request",
 )
 
 MEDIASYNC_AWS_KEY = "***REMOVED***"
