@@ -27,7 +27,6 @@
                 <th class="sort">Race</th>
                 <th class="sort">Opposing Expenditures</th>
                 <th class="sort">Supporting Expenditures</th>
-                <th class="sort">Total Expenditures</th>
                 <th class="sort">Electioneering Communications</th>                
 
             </tr>
@@ -40,7 +39,6 @@
         <td><a href="{{candidate.get_race_url}}">{{ candidate.race }}</a></td>
         <td>{% if candidate.expenditures_opposing %}${{ candidate.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</td>
         <td>{% if candidate.expenditures_supporting %}${{ candidate.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</td>
-        <td>${{ candidate.total_expenditures|intcomma }}</td>
         <td>{% if candidate.electioneering %}${{ candidate.electioneering|intcomma }}{% else %}$0{% endif %}</td>
     </tr>
     {% endfor %}
