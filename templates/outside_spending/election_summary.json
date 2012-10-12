@@ -15,5 +15,23 @@
             "url":"http://reporting.sunlightfoundation.com{{group.get_absolute_url}}"
         }{% if forloop.last %}{% else %},{% endif %}
     {% endfor %}
+        ],
+    "independent_expenditures_in_top_5_house_races": [
+    {% for race in top_house_races %}
+        {
+            "name":"{{race.race_name}}",
+            "total_ies":"{{ race.total_ind_exp}}",
+            "url":"http://reporting.sunlightfoundation.com{{race.get_absolute_url}}"
+        }{% if forloop.last %}{% else %},{% endif %}
+    {% endfor %}
+        ],
+    "independent_expenditures_in_top_5_senate_races": [    
+    {% for race in top_senate_races %}
+        {
+            "name":"{{race.race_name}}",
+            "total_ies":"{{ race.total_ind_exp}}",
+            "url":"http://reporting.sunlightfoundation.com{{race.get_absolute_url}}"
+        }{% if forloop.last %}{% else %},{% endif %}
+    {% endfor %}
         ]
 }

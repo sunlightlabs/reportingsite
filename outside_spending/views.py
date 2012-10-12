@@ -18,9 +18,11 @@ most_recent_scrape=Scrape_Time.objects.all().order_by('-run_time')[0]
 
 from outside_spending.models import *
 from outside_spending.utils.json_helpers import render_to_json
+from outside_spending.utils.chart_helpers import summarize_monthly
 
 from settings import CSV_EXPORT_DIR
-CACHE_TIME = 60 * 15
+#CACHE_TIME = 60 * 15
+CACHE_TIME = 0
 
 data_disclaimer = """ These files are preliminary and current through %s but we cannot guarantee their accuracy. For more information, see: http://reporting.sunlightfoundation.com/super-pac/data/about/2012-june-update/ Please note that contributions in these files are as of the most recent filing deadline. Independent expenditures are not comparable to the itemized disbursements found in PAC's year-end reports. For more on independent expenditures see here: http://www.fec.gov/pages/brochures/indexp.shtml """ % (most_recent_scrape.run_time)
 
@@ -352,57 +354,6 @@ def complete_superpac_list(request):
                             {'superpacs':superpacs,
                             'explanatory_text':explanatory_text,
                             })  
-                            
-def summarize_monthly(summed_queryset, end_date, include_end_month=False):
-    #print monthly_data
-    month_hash = {}
-    monthly_list = []
-    # crazy utc month numbering runs from 0 to 11
-    for month in summed_queryset:
-        this_month = {
-        'month':int(month[1])-1,
-        'year':month[0],
-        'data':month[2]/1000000
-        }
-        key = "%s-%s" % (month[0], int(month[1]-1))
-        #print key
-        month_hash[key]=this_month
-    
-    # make key list
-    this_month = 0
-    this_year = 2011
-    
-    if not end_date:
-        end_date = datetime.datetime.today()
-    
-    # Again, using utc month numbering runs from 0 to 11    
-    final_month = int(end_date.strftime("%m")) 
-    final_year = int(end_date.strftime("%Y"))
-    if include_end_month:
-        final_month += 1
-    
-    keylist = []
-    while (this_year*12+this_month < final_year*12+final_month-1):
-        this_key = "%s-%s" % (this_year, this_month)
-        keylist.append(this_key)
-        this_month += 1
-        if (this_month==12):
-            this_year += 1
-            this_month = 0
-    #print "keylist is: %s from end date: %s " % (keylist, end_date)
-
-    for key in (keylist):
-        try:
-            monthly_list.append(month_hash[key])
-            #print "trying key %s" % key
-        except KeyError:
-            date_string = key.split("-")
-            monthly_list.append({
-                'month':int(date_string[1]),
-                'year':date_string[0],
-                'data':0
-            })
-    return monthly_list
 
 @cache_page(CACHE_TIME)                            
 def committee_detail(request,committee_id):
@@ -704,6 +655,8 @@ def overview(request):
         'div_name_0':'all_ies'
         })
         
+
+
 def recent_fec_filings(request):
     
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
@@ -1198,6 +1151,9 @@ def elex_json(request):
     
     top_groups = Committee_Overlay.objects.all().order_by('-total_indy_expenditures')[:5]
     
+    top_house_races = Race_Aggregate.objects.filter(office='H').order_by('-total_ind_exp')[:5]
+    top_senate_races = Race_Aggregate.objects.filter(office='S').order_by('-total_ind_exp')[:5]
+    
     return render_to_json('outside_spending/election_summary.json', {
                 'total_outside':total_outside,
                 'pres_ies':pres_ies,
@@ -1207,6 +1163,7 @@ def elex_json(request):
                 'nonparty_ies':nonparty_ies,
                 'party_ies':party_ies,
                 'top_outside_groups':top_groups,
-                'update_time':most_recent_scrape
-                
+                'update_time':most_recent_scrape, 
+                'top_house_races':top_house_races,
+                'top_senate_races':top_senate_races,
                 })
