@@ -1,7 +1,7 @@
 import datetime
 from django.template import Library
 from outside_spending.models import Expenditure, Contribution
-from outside_spending.views import summarize_monthly
+from outside_spending.utils.chart_helpers import summarize_monthly
 from django.db.models import Sum
 
 register = Library()
@@ -52,6 +52,24 @@ def all_ies_chart(div_to_return):
     'has_series2':False,
     'return_div':div_to_return,
     }
+    
+@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+def all_ies_weekly_chart(div_to_return):
+
+    all_ies = Expenditure.objects.filter(superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
+
+    today = datetime.datetime.today()
+
+    monthly_ie_summary = summarize_monthly(all_ies, today, True)
+
+
+    return {
+    'has_series1':True,
+    'series1_data':monthly_ie_summary,
+    'series1_title':'ALL INDEPENDENT EXPENDITURES',
+    'has_series2':False,
+    'return_div':div_to_return,
+    }    
 
 @register.inclusion_tag('outside_spending/chart_templatetag.html')  
 def noncommittee_spending(div_to_return):
@@ -111,9 +129,9 @@ def party_spending(div_to_return):
 @register.inclusion_tag('outside_spending/chart_templatetag.html')  
 def superpac_partisan(div_to_return):
 
-    r_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='R').extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    r_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='R',committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
     
-    d_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='D').extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    d_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='D',committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
 
     today = datetime.datetime.today()
 
@@ -133,9 +151,9 @@ def superpac_partisan(div_to_return):
 @register.inclusion_tag('outside_spending/chart_templatetag.html')  
 def superpac_partisan_primary(div_to_return):
 
-    r_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='R', election_type="P").extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    r_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='R', election_type="P",committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
 
-    d_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='D', election_type="P").extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    d_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='D', election_type="P",committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
 
     today = datetime.datetime.today()
 
@@ -152,12 +170,14 @@ def superpac_partisan_primary(div_to_return):
     'return_div':div_to_return,
     }
 
+
+
 @register.inclusion_tag('outside_spending/chart_templatetag.html')  
 def superpac_partisan_general(div_to_return):
 
-    r_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='R', election_type="G").extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    r_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='R', election_type="G",committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
 
-    d_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='D', election_type="G").extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    d_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='D', election_type="G",committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
 
     today = datetime.datetime.today()
 
@@ -179,9 +199,9 @@ def superpac_partisan_general_presidential(div_to_return):
 
     all_pres_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='P', election_type="G").select_related('committee')
     
-    r_ies = all_pres_general_ies.filter(committee__political_orientation='R').extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    r_ies = all_pres_general_ies.filter(committee__political_orientation='R',committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
 
-    d_ies = all_pres_general_ies.filter(committee__political_orientation='D').extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    d_ies = all_pres_general_ies.filter(committee__political_orientation='D',committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
 
     today = datetime.datetime.today()
 
