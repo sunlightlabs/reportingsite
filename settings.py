@@ -75,6 +75,7 @@ MIDDLEWARE_CLASSES = (
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'gatekeeper.middleware.GatekeeperMiddleware',
     'django.contrib.flatpages.middleware.FlatpageFallbackMiddleware',
+    'django.contrib.redirects.middleware.RedirectFallbackMiddleware',
     'debug_toolbar.middleware.DebugToolbarMiddleware',
 
 )
@@ -115,7 +116,7 @@ INSTALLED_APPS = (
     'doddfrank',
 #    'rebuckley',
     'outside_spending', 
-    'frosh'
+    'django.contrib.redirects',
 )
 
 INTERNAL_IPS = ('127.0.0.1','localhost','216.15.37.167')
