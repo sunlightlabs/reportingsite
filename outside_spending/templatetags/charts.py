@@ -276,7 +276,7 @@ def presidential_all_ie_party_general(div_to_return):
     'return_div':div_to_return,
     }
     
-@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+@register.inclusion_tag('outside_spending/chart_templatetag_weekly.html')  
 def house_all_ie_party_general(div_to_return):
     # all IE spending in the presidential race by partisan intent
     # Dem = Prodem plus antirep etc.
