@@ -1,7 +1,7 @@
 import datetime
 
 
-def summarize_monthly(summed_queryset, end_date, include_end_month=False):
+def summarize_monthly(summed_queryset, end_date, include_end_month=False, start_year=2011):
     #print monthly_data
     month_hash = {}
     monthly_list = []
@@ -18,7 +18,7 @@ def summarize_monthly(summed_queryset, end_date, include_end_month=False):
 
     # make key list
     this_month = 0
-    this_year = 2011
+    this_year = start_year
 
     if not end_date:
         end_date = datetime.datetime.today()

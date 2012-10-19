@@ -2,6 +2,7 @@ import datetime
 from django.template import Library
 from outside_spending.models import Expenditure, Contribution
 from outside_spending.utils.chart_helpers import summarize_monthly
+from django.db.models import Q
 from django.db.models import Sum
 
 register = Library()
@@ -242,4 +243,94 @@ def superpac_partisan_contribs(div_to_return):
     'series2_title':'MONTHLY CONTRIBUTIONS - REPUBLICAN SUPERPACS',
     'series2_data':monthly_r_contrib_summary,
     'return_div':div_to_return,
-    }        
+    }
+    
+@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+def presidential_all_ie_party_general(div_to_return):
+    # all IE spending in the presidential race by partisan intent
+    # Dem = Prodem plus antirep etc.
+    today = datetime.datetime.today()
+    
+    all_pres_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='P', election_type="G").select_related('candidate')
+    
+    
+    pro_dem = all_pres_general_ies.filter(Q(candidate__party__iexact='DEM', support_oppose='S')|Q(candidate__party__iexact='REP', support_oppose='O'))
+    
+    pro_rep = all_pres_general_ies.filter(Q(candidate__party__iexact='REP', support_oppose='S')|Q(candidate__party__iexact='DEM', support_oppose='O'))
+    
+    monthly_pro_dem = pro_dem.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    
+    monthly_pro_rep = pro_rep.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    monthly_dem = summarize_monthly(monthly_pro_dem, today, True, 2012)
+    monthly_rep = summarize_monthly(monthly_pro_rep, today, True, 2012)
+    
+    return {
+    'has_series1':True,
+    'series1_data':monthly_dem,
+    'series1_title':'BACKINGS OBAMA',
+    'has_series2':True,
+    'series2_title':'BACKS ROMNEY',
+    'series2_data':monthly_rep,
+    'return_div':div_to_return,
+    }
+    
+@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+def house_all_ie_party_general(div_to_return):
+    # all IE spending in the presidential race by partisan intent
+    # Dem = Prodem plus antirep etc.
+    today = datetime.datetime.today()
+
+    all_house_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='H', election_type="G").select_related('candidate')
+
+
+    pro_dem = all_house_general_ies.filter(Q(candidate__party__iexact='DEM', support_oppose='S')|Q(candidate__party__iexact='REP', support_oppose='O'))
+
+    pro_rep = all_house_general_ies.filter(Q(candidate__party__iexact='REP', support_oppose='S')|Q(candidate__party__iexact='DEM', support_oppose='O'))
+
+    monthly_pro_dem = pro_dem.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    monthly_pro_rep = pro_rep.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    monthly_dem = summarize_monthly(monthly_pro_dem, today, True, 2012)
+    monthly_rep = summarize_monthly(monthly_pro_rep, today, True, 2012)
+
+    return {
+    'has_series1':True,
+    'series1_data':monthly_dem,
+    'series1_title':'BACKS DEMOCRATS',
+    'has_series2':True,
+    'series2_title':'BACKS REPUBLICANS',
+    'series2_data':monthly_rep,
+    'return_div':div_to_return,
+    } 
+    
+@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+def senate_all_ie_party_general(div_to_return):
+    # all IE spending in the presidential race by partisan intent
+    # Dem = Prodem plus antirep etc.
+    today = datetime.datetime.today()
+
+    all_senate_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='S', election_type="G").select_related('candidate')
+
+
+    pro_dem = all_senate_general_ies.filter(Q(candidate__party__iexact='DEM', support_oppose='S')|Q(candidate__party__iexact='REP', support_oppose='O'))
+
+    pro_rep = all_senate_general_ies.filter(Q(candidate__party__iexact='REP', support_oppose='S')|Q(candidate__party__iexact='DEM', support_oppose='O'))
+
+    monthly_pro_dem = pro_dem.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    monthly_pro_rep = pro_rep.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+
+    monthly_dem = summarize_monthly(monthly_pro_dem, today, True, 2012)
+    monthly_rep = summarize_monthly(monthly_pro_rep, today, True, 2012)
+
+    return {
+    'has_series1':True,
+    'series1_data':monthly_dem,
+    'series1_title':'BACKS DEMOCRATS',
+    'has_series2':True,
+    'series2_title':'BACKS REPUBLICANS',
+    'series2_data':monthly_rep,
+    'return_div':div_to_return,
+    }

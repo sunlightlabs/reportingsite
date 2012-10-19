@@ -15,39 +15,24 @@
 {% block content %}
     {% include "outside_spending/tabs.html" %}
 
-
+request is: {{ request.get_full_path }} host: {{ request.get_host }}
 <H2>INDEPENDENT EXPENDITURES</H2>
 <p><b>ALL independent expenditures</b></p>
 <div id="{{div_name_9}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 
-<p><b>super PAC (O)</b></p>
-<div id="{{div_name}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 
-<p><b>Non-Committees (I)</b></p>
-<div id="{{div_name_2 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
+<H2>PRESIDENTIAL SPENDING BY PARTY</H2>
+<p><b>Pres general election expenditures</b></p>
+<div id="{{div_name_1}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 
-<p><b>Non-Party (N, Q)</b></p>
-<div id="{{div_name_3 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
+<H2>SENATE SPENDING BY PARTY</H2>
+<p><b>Senate general election expenditures. Money "backing" republicans is the amount of outside money supporting republicans plus the money spent opposing democrats, and vice versa.</b></p>
+<div id="{{div_name_3}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 
-<p><b>Party (Y,Z)</b></p>
-<div id="{{div_name_4 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 
-<H2>SUPERPAC SPENDING BY PARY</H2>
-
-<p><b>Overall spending by superpac orientation</b></p>
-<div id="{{div_name_5 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
-
-<p><b>Overall contributions by superpac orientation</b></p>
-<div id="{{div_name_6 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
-
-<p><b>Primary election spending by superpac orientation</b></p>
-<div id="{{div_name_7 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
-
-<p><b>General election spending by superpac orientation</b></p>
-<div id="{{div_name_8 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
-
-<p><b>Presidential general election spending by superpac orientation</b></p>
-<div id="{{div_name_10 }}" class="chart_container" style="width: 507px; height: 330px;" ></div>
+<H2>HOUSE SPENDING BY PARTY</H2>
+<p><b>House general election expenditures. Money "backing" republicans is the amount of outside money supporting republicans plus the money spent opposing democrats, and vice versa.</b></p>
+<div id="{{div_name_2}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 
 {% endblock %}
 
@@ -58,58 +43,24 @@
 <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
 
 {% load cache %}
-{% cache 30 'all_ie_chart'  %}
+{% cache 1 'all_ie_chart'  %}
 {% all_ies_chart div_name_9 %}
 {% endcache %}
 
 {% load cache %}
-{% cache 30 'superpac_chart'  %}
-{% superpac_chart div_name %}
+{% cache 2 'presidential_all_ie_party_general'  %}
+{% presidential_all_ie_party_general div_name_1 %}
+{% endcache %}
+
+{% load cache %}
+{% cache 2 'senate_all_ie_party_general'  %}
+{% senate_all_ie_party_general div_name_3 %}
 {% endcache %}
 
 
 {% load cache %}
-{% cache 10 'noncommittee_spending'  %}
-{% noncommittee_spending div_name_2 %}
-{% endcache %}
-
-
-
-{% load cache %}
-{% cache 10 'nonparty_chart'  %}
-{% nonparty_spending div_name_3 %}
-{% endcache %}
-
-{% load cache %}
-{% cache 10 'party_chart'  %}
-{% party_spending div_name_4 %}
-{% endcache %}
-
-{% load cache %}
-{% cache 10 'superpac_by_parties'  %}
-{% superpac_partisan div_name_5 %}
-{% endcache %}
-
-{% load cache %}
-{% cache 10 'superpac_contribs'  %}
-{% superpac_partisan_contribs div_name_6 %}
-{% endcache %}
-
-
-{% load cache %}
-{% cache 10 'superpac_primary'  %}
-{% superpac_partisan_primary div_name_7 %}
-{% endcache %}
-
-
-{% load cache %}
-{% cache 10 'superpac_general'  %}
-{% superpac_partisan_general div_name_8 %}
-{% endcache %}
-
-{% load cache %}
-{% cache 10 'superpac_general_presidential'  %}
-{% superpac_partisan_general_presidential div_name_10 %}
+{% cache 1 'house_all_ie_party_general'  %}
+{% house_all_ie_party_general div_name_2 %}
 {% endcache %}
 
 
