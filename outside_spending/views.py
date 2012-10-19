@@ -362,7 +362,7 @@ def committee_detail(request,committee_id):
     contributions = Contribution.objects.filter(fec_committeeid=committee_id, superceded_by_amendment=False, line_type__in=['SA11AI', 'SA11B', 'SA11C', 'SA12', 'SA15'])
     candidates_supported = Pac_Candidate.objects.filter(committee=committee)
     explanatory_text = 'This table shows the overall total amount spent by this group supporting or opposing federal candidates in independent expenditures in the 2012 election cycle.'
-    explanatory_text_details = 'This table shows the total independent expenditure by this group supporting or opposing federal candidates in the 2012 election cycle. To view a more detailed file of this spending, <a href=\"%s\">click here</a>.' % (committee.superpachackcsv())
+    explanatory_text_details = 'This table shows the independent expenditures of $1,000 or more made by this group supporting or opposing federal candidates in the 2012 election cycle. To view a more detailed file of all such spending, <a href=\"%s\">click here</a>.' % (committee.superpachackcsv())
     explanatory_text_contribs = 'This table shows all contributions, related PAC transfers and operating expense offsets made to this group during the 2012 campaign cycle, as of %s. Operating expense offsets are marked with an asterisk (*). To view a more detailed file of this spending, which includes all receipt types, <a href=\"%s\">click here</a>.' % (committee.cash_on_hand_date,committee.superpachackdonorscsv())
 
     ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False, fec_id=committee_id).order_by('-exp_date')
@@ -377,7 +377,8 @@ def committee_detail(request,committee_id):
     show_current_month = True
 
     monthly_ie_summary = summarize_monthly(monthly_ie_data, today, show_current_month)
-
+    
+    display_expenditures = expenditures.filter(expenditure_amount__gte=1000)
 
     monthly_contrib_summary = None
     if (committee.is_superpac):
@@ -391,7 +392,7 @@ def committee_detail(request,committee_id):
 
     return render_to_response('outside_spending/committee_detail_2.html',
                             {'committee':committee, 
-                            'expenditures':expenditures,
+                            'expenditures':display_expenditures,
                             'contributions':contributions, 
                             'candidates':candidates_supported,
                             'explanatory_text':explanatory_text,
