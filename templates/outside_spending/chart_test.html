@@ -20,6 +20,9 @@ request is: {{ request.get_full_path }} host: {{ request.get_host }}
 <p><b>ALL independent expenditures</b></p>
 <div id="{{div_name_9}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 
+<H2>INDEPENDENT EXPENDITURES WEEKLY</H2>
+<p><b>ALL independent expenditures</b></p>
+<div id="{{div_name_4}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 
 <H2>PRESIDENTIAL SPENDING BY PARTY</H2>
 <p><b>Pres general election expenditures</b></p>
@@ -63,5 +66,10 @@ request is: {{ request.get_full_path }} host: {{ request.get_host }}
 {% house_all_ie_party_general div_name_2 %}
 {% endcache %}
 
+
+{% load cache %}
+{% cache 1 'all_ies_party_weekly'  %}
+{% all_ies_party_weekly div_name_4 %}
+{% endcache %}
 
 {% endblock %}

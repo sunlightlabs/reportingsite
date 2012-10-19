@@ -1,7 +1,7 @@
 import datetime
 from django.template import Library
 from outside_spending.models import Expenditure, Contribution
-from outside_spending.utils.chart_helpers import summarize_monthly
+from outside_spending.utils.chart_helpers import summarize_monthly, summarize_weekly
 from django.db.models import Q
 from django.db.models import Sum
 
@@ -245,33 +245,34 @@ def superpac_partisan_contribs(div_to_return):
     'return_div':div_to_return,
     }
     
-@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+@register.inclusion_tag('outside_spending/chart_templatetag_weekly.html')  
 def presidential_all_ie_party_general(div_to_return):
     # all IE spending in the presidential race by partisan intent
     # Dem = Prodem plus antirep etc.
     today = datetime.datetime.today()
+    start_date = datetime.date(2012, 6, 1)    
     
-    all_pres_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='P', election_type="G").select_related('candidate')
+    all_pres_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='P', election_type="G", expenditure_date__gte=start_date, expenditure_date__lte=today).select_related('candidate')
     
     
     pro_dem = all_pres_general_ies.filter(Q(candidate__party__iexact='DEM', support_oppose='S')|Q(candidate__party__iexact='REP', support_oppose='O'))
     
     pro_rep = all_pres_general_ies.filter(Q(candidate__party__iexact='REP', support_oppose='S')|Q(candidate__party__iexact='DEM', support_oppose='O'))
     
-    monthly_pro_dem = pro_dem.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    weekly_pro_dem = pro_dem.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
     
-    monthly_pro_rep = pro_rep.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    weekly_pro_rep = pro_rep.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
 
-    monthly_dem = summarize_monthly(monthly_pro_dem, today, True, 2012)
-    monthly_rep = summarize_monthly(monthly_pro_rep, today, True, 2012)
+    weekly_dem = summarize_weekly(weekly_pro_dem)
+    weekly_rep = summarize_weekly(weekly_pro_rep)
     
     return {
     'has_series1':True,
-    'series1_data':monthly_dem,
+    'series1_data':weekly_dem,
     'series1_title':'BACKINGS OBAMA',
     'has_series2':True,
     'series2_title':'BACKS ROMNEY',
-    'series2_data':monthly_rep,
+    'series2_data':weekly_rep,
     'return_div':div_to_return,
     }
     
@@ -280,57 +281,90 @@ def house_all_ie_party_general(div_to_return):
     # all IE spending in the presidential race by partisan intent
     # Dem = Prodem plus antirep etc.
     today = datetime.datetime.today()
+    start_date = datetime.date(2012, 6, 1)
 
-    all_house_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='H', election_type="G").select_related('candidate')
+    all_house_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='H', election_type="G", expenditure_date__gte=start_date, expenditure_date__lte=today).select_related('candidate')
 
 
     pro_dem = all_house_general_ies.filter(Q(candidate__party__iexact='DEM', support_oppose='S')|Q(candidate__party__iexact='REP', support_oppose='O'))
 
     pro_rep = all_house_general_ies.filter(Q(candidate__party__iexact='REP', support_oppose='S')|Q(candidate__party__iexact='DEM', support_oppose='O'))
 
-    monthly_pro_dem = pro_dem.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    weekly_pro_dem = pro_dem.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
 
-    monthly_pro_rep = pro_rep.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    weekly_pro_rep = pro_rep.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
 
-    monthly_dem = summarize_monthly(monthly_pro_dem, today, True, 2012)
-    monthly_rep = summarize_monthly(monthly_pro_rep, today, True, 2012)
+    weekly_dem = summarize_weekly(weekly_pro_dem)
+    weekly_rep = summarize_weekly(weekly_pro_rep)
 
     return {
     'has_series1':True,
-    'series1_data':monthly_dem,
+    'series1_data':weekly_dem,
     'series1_title':'BACKS DEMOCRATS',
     'has_series2':True,
     'series2_title':'BACKS REPUBLICANS',
-    'series2_data':monthly_rep,
+    'series2_data':weekly_rep,
     'return_div':div_to_return,
     } 
     
-@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+@register.inclusion_tag('outside_spending/chart_templatetag_weekly.html')  
 def senate_all_ie_party_general(div_to_return):
     # all IE spending in the presidential race by partisan intent
     # Dem = Prodem plus antirep etc.
     today = datetime.datetime.today()
-
-    all_senate_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='S', election_type="G").select_related('candidate')
+    start_date = datetime.date(2012, 6, 1)
+    
+    all_senate_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='S', election_type="G", expenditure_date__gte=start_date, expenditure_date__lte=today).select_related('candidate')
 
 
     pro_dem = all_senate_general_ies.filter(Q(candidate__party__iexact='DEM', support_oppose='S')|Q(candidate__party__iexact='REP', support_oppose='O'))
 
     pro_rep = all_senate_general_ies.filter(Q(candidate__party__iexact='REP', support_oppose='S')|Q(candidate__party__iexact='DEM', support_oppose='O'))
 
-    monthly_pro_dem = pro_dem.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    weekly_pro_dem = pro_dem.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
 
-    monthly_pro_rep = pro_rep.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    weekly_pro_rep = pro_rep.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
 
-    monthly_dem = summarize_monthly(monthly_pro_dem, today, True, 2012)
-    monthly_rep = summarize_monthly(monthly_pro_rep, today, True, 2012)
+    weekly_dem = summarize_weekly(weekly_pro_dem)
+    weekly_rep = summarize_weekly(weekly_pro_rep)
 
     return {
     'has_series1':True,
-    'series1_data':monthly_dem,
+    'series1_data':weekly_dem,
     'series1_title':'BACKS DEMOCRATS',
     'has_series2':True,
     'series2_title':'BACKS REPUBLICANS',
-    'series2_data':monthly_rep,
+    'series2_data':weekly_rep,
+    'return_div':div_to_return,
+    }
+    
+@register.inclusion_tag('outside_spending/chart_templatetag_weekly.html')  
+def all_ies_party_weekly(div_to_return):
+    # all IE spending in the presidential race by partisan intent
+    # Dem = Prodem plus antirep etc.
+    start_date = datetime.date(2012, 6, 1)
+    today = datetime.datetime.today()
+
+    all_senate_general_ies = Expenditure.objects.filter(superceded_by_amendment=False, expenditure_date__gte=start_date, expenditure_date__lte=today).select_related('candidate')
+
+
+    pro_dem = all_senate_general_ies.filter(Q(candidate__party__iexact='DEM', support_oppose='S')|Q(candidate__party__iexact='REP', support_oppose='O'))
+
+    pro_rep = all_senate_general_ies.filter(Q(candidate__party__iexact='REP', support_oppose='S')|Q(candidate__party__iexact='DEM', support_oppose='O'))
+
+    weekly_pro_dem = pro_dem.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
+
+    weekly_pro_rep = pro_rep.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
+
+    weekly_dem = summarize_weekly(weekly_pro_dem)
+    weekly_rep = summarize_weekly(weekly_pro_rep)
+
+    return {
+    'has_series1':True,
+    'series1_data':weekly_dem,
+    'series1_title':'BACKS DEMOCRATS',
+    'has_series2':True,
+    'series2_title':'BACKS REPUBLICANS',
+    'series2_data':weekly_rep,
     'return_div':div_to_return,
     }

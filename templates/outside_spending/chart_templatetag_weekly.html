@@ -1,0 +1,112 @@
+{% comment %}
+
+Assumes that you've loaded high charts *outside* of the template tag. This way you can put multiple charts on one page without importing highcharts many times. 
+
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
+
+{% endcomment %}
+
+ 
+
+<script type="text/javascript">
+
+function addCommas(nStr)
+{
+    nStr += '';
+    x = nStr.split('.');
+    x1 = x[0];
+    x2 = x.length > 1 ? '.' + x[1] : '';
+    var rgx = /(\d+)(\d{3})/;
+    while (rgx.test(x1)) {
+        x1 = x1.replace(rgx, '$1' + ',' + '$2');
+    }
+    return x1 + x2;
+}
+
+$(document).ready(function() {
+	var chart = new Highcharts.Chart({
+		chart: {
+			renderTo: '{{ return_div }}',
+            backgroundColor: '#f1f1ef',
+            animation: false	
+		},
+		legend: { enabled: true },
+        credits: { enabled: false },
+        title: { 
+            text: '',
+            style: {
+                display: 'none',
+                position: 'absolute',
+                left: '0',
+                top: '0'
+            }
+        },
+		xAxis: {
+            type: 'datetime',
+            dateTimeLabelFormats: {
+                  day: '%b %e',
+                  week: '%b %e',
+                  month: '%b'             
+              }
+		},
+        yAxis: {
+             min: 0,
+                  title: { text: 'Dollars (millions)',
+                           style: { color: '#414042' }
+                  }
+         },
+		tooltip: {
+		    borderRadius: 0,
+            borderWidth: 0,
+			formatter: function() {
+					return '<b>'+ this.series.name +'</b><br/>Week ending '+
+					Highcharts.dateFormat('%B %e', this.x) +': $'+ addCommas(Math.round(1000000*this.y)) +'';
+			}
+		},
+		plotOptions: {
+            series: {
+                cursor: 'pointer',
+                marker: { 
+                    radius: 3
+                },
+                lineWidth: 2,
+                //color: '#eac80e',
+                shadow: false,
+                animation: false
+            }
+        },
+
+		series: [
+		{% if has_series1 %}
+		{
+			name: '{{ series1_title }}',
+			// Define the data points. All series have a dummy year
+			// of 1970/71 in order to be compared on the same x axis. Note
+			// that in JavaScript, months start at 0 for January, 1 for February etc.
+			data: [
+			{% for data in series1_data %}
+				[Date.UTC({{ data.year }},  {{ data.month }}, {% if data.day %}{{data.day}}{% else %}1{% endif %}), {{data.data }}   ]{% if forloop.last %}{% else %},{% endif %}
+	{% endfor %}
+
+				]}
+			{% endif %}	
+				
+			{% if has_series2 %},	
+			{	name: '{{ series2_title }}',
+				// Define the data points. All series have a dummy year
+				// of 1970/71 in order to be compared on the same x axis. Note
+				// that in JavaScript, months start at 0 for January, 1 for February etc.
+				data: [
+				{% for data in series2_data %}
+					[Date.UTC({{ data.year }},  {{ data.month }}, {% if data.day %}{{data.day}}{% else %}1{% endif %}), {{data.data }}   ]{% if forloop.last %}{% else %},{% endif %}
+		{% endfor %}
+		
+
+					]
+				
+		}
+		{% endif %}
+    ]
+	});
+});
+</script>

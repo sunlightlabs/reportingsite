@@ -1,5 +1,8 @@
 import datetime
 
+janfirst2012 = datetime.date(2012,1,1)
+oneweek = datetime.timedelta(days=7)
+oneday = datetime.timedelta(days=1)
 
 def summarize_monthly(summed_queryset, end_date, include_end_month=False, start_year=2011):
     #print monthly_data
@@ -51,3 +54,22 @@ def summarize_monthly(summed_queryset, end_date, include_end_month=False, start_
                 'data':0
             })
     return monthly_list
+
+
+def get_utc_date_from_2012_week_num(weeknum):
+    last_day_of_week = janfirst2012 + weeknum*oneweek - oneday
+    return [last_day_of_week.month-1, last_day_of_week.day]
+    print weeknum, last_day_of_week
+
+def summarize_weekly(summed_queryset):
+    # start in week 9
+    weekly_list = []
+    for week in summed_queryset:
+        [utc_month, day] = get_utc_date_from_2012_week_num(week[1])
+        weekly_list.append({
+        'year':2012,
+        'month':utc_month,
+        'day':day,
+        'data':week[2]/1000000,
+        })
+    return weekly_list
