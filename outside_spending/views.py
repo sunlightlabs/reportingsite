@@ -1050,8 +1050,8 @@ def committee_summary_json(request):
                 'committees':committees
                 })
                 
-@cache_page(60 * 30)
-def superpac_party_breakdown(request):
+@cache_page(0 * 30)
+def by_affiliation(request):
     # for cash on hand:
     sps = Committee_Overlay.objects.filter(is_superpac=True)
     dem_coh = sps.filter(political_orientation='D').aggregate(total=Sum('cash_on_hand'))['total']
@@ -1063,52 +1063,58 @@ def superpac_party_breakdown(request):
     rep_contribs = all_contribs.filter(committee__political_orientation='R').aggregate(total=Sum('contrib_amt'))['total']
     oth_contribs = all_contribs.exclude(committee__political_orientation__in=('D', 'R')).aggregate(total=Sum('contrib_amt'))['total']    
     
-    all_ies = Expenditure.objects.filter(superceded_by_amendment=False).select_related('committee')
-    dem_ies = all_ies.filter(committee__political_orientation='D').aggregate(total=Sum('expenditure_amount'))['total']
-    rep_ies = all_ies.filter(committee__political_orientation='R').aggregate(total=Sum('expenditure_amount'))['total']
-    oth_ies =  all_ies.exclude(committee__political_orientation__in=('D', 'R')).aggregate(total=Sum('expenditure_amount'))['total']
+    all_sp_ies = Expenditure.objects.filter(superceded_by_amendment=False, committee__is_superpac=True).select_related('committee')
+    dem_sp_ies = all_sp_ies.filter(committee__political_orientation='D').aggregate(total=Sum('expenditure_amount'))['total']
+    rep_sp_ies = all_sp_ies.filter(committee__political_orientation='R').aggregate(total=Sum('expenditure_amount'))['total']
+    oth_sp_ies =  all_sp_ies.exclude(committee__political_orientation__in=('D', 'R')).aggregate(total=Sum('expenditure_amount'))['total']
     
-    primary_ies = all_ies.filter(election_type='P')
-    dem_primary_ies = primary_ies.filter(committee__political_orientation='D').aggregate(total=Sum('expenditure_amount'))['total']
-    rep_primary_ies = primary_ies.filter(committee__political_orientation='R').aggregate(total=Sum('expenditure_amount'))['total']
-    oth_primary_ies =  primary_ies.exclude(committee__political_orientation__in=('D', 'R')).aggregate(total=Sum('expenditure_amount'))['total']
+    general_sp_ies = Expenditure.objects.filter(superceded_by_amendment=False, committee__is_superpac=True, election_type='G').select_related('committee')
+    dem_general_sp_ies = general_sp_ies.filter(committee__political_orientation='D').aggregate(total=Sum('expenditure_amount'))['total']
+    rep_general_sp_ies = general_sp_ies.filter(committee__political_orientation='R').aggregate(total=Sum('expenditure_amount'))['total']
+    oth_general_sp_ies =  general_sp_ies.exclude(committee__political_orientation__in=('D', 'R')).aggregate(total=Sum('expenditure_amount'))['total']
     
-    general_ies = all_ies.filter(election_type='G')
-    dem_general_ies = general_ies.filter(committee__political_orientation='D').aggregate(total=Sum('expenditure_amount'))['total']
-    rep_general_ies = general_ies.filter(committee__political_orientation='R').aggregate(total=Sum('expenditure_amount'))['total']
-    oth_general_ies =  general_ies.exclude(committee__political_orientation__in=('D', 'R')).aggregate(total=Sum('expenditure_amount'))['total']
+    general_nc_ies = Expenditure.objects.filter(superceded_by_amendment=False, committee__ctype='I', election_type='G').select_related('committee')
+    dem_general_nc_ies = general_nc_ies.filter(committee__political_orientation='D').aggregate(total=Sum('expenditure_amount'))['total']
+    rep_general_nc_ies = general_nc_ies.filter(committee__political_orientation='R').aggregate(total=Sum('expenditure_amount'))['total']
+    oth_general_nc_ies =  general_nc_ies.exclude(committee__political_orientation__in=('D', 'R')).aggregate(total=Sum('expenditure_amount'))['total']
     
-    general_ies = general_ies.filter(candidate__office='P')
-    dem_pres_ies = general_ies.filter(committee__political_orientation='D').aggregate(total=Sum('expenditure_amount'))['total']
-    rep_pres_ies = general_ies.filter(committee__political_orientation='R').aggregate(total=Sum('expenditure_amount'))['total']
-    oth_pres_ies =  general_ies.exclude(committee__political_orientation__in=('D', 'R')).aggregate(total=Sum('expenditure_amount'))['total']
-    
+    general_party_ies = Expenditure.objects.filter(superceded_by_amendment=False, committee__ctype__in=('Y', 'Z'), election_type='G').select_related('committee')
+    dem_general_party_ies = general_party_ies.filter(committee__political_orientation='D').aggregate(total=Sum('expenditure_amount'))['total']
+    rep_general_party_ies = general_party_ies.filter(committee__political_orientation='R').aggregate(total=Sum('expenditure_amount'))['total']
+    oth_general_party_ies =  general_party_ies.exclude(committee__political_orientation__in=('D', 'R')).aggregate(total=Sum('expenditure_amount'))['total']
     
     return render_to_response('outside_spending/superpac_party_breakdown.html', 
     {
     'dem_coh':dem_coh,
     'rep_coh':rep_coh,
     'oth_coh':oth_coh,
+    
     'dem_contribs':dem_contribs,
     'rep_contribs':rep_contribs,
     'oth_contribs':oth_contribs,
-    'dem_ies':dem_ies,
-    'rep_ies':rep_ies,
-    'oth_ies':oth_ies,
-    'dem_primary_ies':dem_primary_ies,
-    'rep_primary_ies':rep_primary_ies,
-    'oth_primary_ies':oth_primary_ies,
-    'dem_general_ies':dem_general_ies,
-    'rep_general_ies':rep_general_ies,
-    'oth_general_ies':oth_general_ies,
-    'dem_pres_ies':dem_pres_ies,
-    'rep_pres_ies':rep_pres_ies,
-    'oth_pres_ies':oth_pres_ies,
+    
+    'dem_sp_ies':dem_sp_ies,
+    'rep_sp_ies':rep_sp_ies,
+    'oth_sp_ies':oth_sp_ies,
+
+    'dem_general_sp_ies':dem_general_sp_ies,
+    'rep_general_sp_ies':rep_general_sp_ies,
+    'oth_general_sp_ies':oth_general_sp_ies,
+
+    'dem_general_nc_ies':dem_general_nc_ies,
+    'rep_general_nc_ies':rep_general_nc_ies,
+    'oth_general_nc_ies':oth_general_nc_ies,
+
+    'dem_general_party_ies':dem_general_party_ies,
+    'rep_general_party_ies':rep_general_party_ies,
+    'oth_general_party_ies':oth_general_party_ies,
+
     'div_name_5':'superpac_by_party', 
     'div_name_6':'contribs_by_party', 
-    'div_name_7':'partisan_primary', 
     'div_name_8':'partisan_general',
-    'div_name_9':'presidential_general'
+    'div_name_9':'noncommittee_partisan_general',
+    'div_name_10':'party_committee_general',
+    
     })
 
 @cache_page(60 * 10)

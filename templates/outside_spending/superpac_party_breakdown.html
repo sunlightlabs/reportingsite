@@ -16,9 +16,9 @@
     {% include "outside_spending/tabs.html" %}
 
     <h2>
-        Super PAC spending and fundraising by political leaning, 2011-12
+        Fundraising and spending by political leaning, 2011-12
     </h2>
-<p class="tip">Totals on this page reflect money raised and spent by super PACs in the 2012 election cycle. One caveat: Super PACs account for only part of the outside spending picture. For a more complete accounting, see the <a href="/outside-spending/overview/">outside spending overview page</a>.</p>
+<p class="tip">Totals on this page reflect money raised by super PACs, and money spent by super PACS, noncommittees and party committees in the 2012 election cycle. For a more complete accounting, see the <a href="/outside-spending/overview/">outside spending overview page</a>.</p>
 <p><b>Sunlight researchers determined the political orientation of super PACs by reviewing spending and public communications patterns. We are including a "political orientation" column in <a href="/outside-spending/csv/superpac-political-orientation/">our downloadable .csv file summarizing super PACs financials</a>. For more details, see our <a href="http://reporting.sunlightfoundation.com/super-pac/data/about/2012-june-update/#political_orientation">methodology</a>.</b></p>
 <div>
 <span class="amountLine">Cash on hand, Democratic-aligned Super PACs: </span><span class="amount">${{dem_coh|floatformat:0|intcomma}}</span>
@@ -26,14 +26,6 @@
 <br><span class="amountLine">Cash on hand, all other Super PACs: </span><span class="amount">${{oth_coh|floatformat:0|intcomma}}</span>
 <p>Cash on hand reflects the balance as of each super PACs most recent filing. Some file reports monthly: They are due on the 20th of each month. Some file quarterly. Those statements are due on the 15th of the month following the close of the quarter. Note that quarterly filers also have to file pre- and post-election reports, timed to the primary and general election dates.</p>
 </div>
-
-<a name="all_ies"></a>
-<h3>Total independent expenditures by Super PAC party orientation</h3>
-<span class="amountLine">Total independent expenditures, Democratic-aligned Super PACs: </span><span class="amount">${{dem_ies|floatformat:0|intcomma}}</span>
-<br><span class="amountLine">Total independent expenditures, Republican-aligned Super PACs: </span><span class="amount">${{rep_ies|floatformat:0|intcomma}}</span>
-<br><span class="amountLine">Total independent expenditures, all other Super PACs: </span><span class="amount">${{oth_ies|floatformat:0|intcomma}}</span>
-<div id="{{div_name_5 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
-<p class="tip">Independent expenditures do not include a Super PAC's "operating expenses," which include salaries, and contributions to other PACs. Totals are from Jan. 1, 2011 through the present.</p>
 
 <a name="contribs"></a>
 <h3>Overall contributions by Super PAC party orientation</h3>
@@ -43,14 +35,41 @@
 <div id="{{div_name_6 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
 <p class="tip">Chart and totals do not include unitemized contributions of $200 or less. Totals are from Jan. 1, 2011 through the present.</p>
 
+<a name="all_ies"></a>
+<h3>Total independent expenditures by Super PAC party orientation</h3>
+<span class="amountLine">Total independent expenditures, Democratic-aligned Super PACs: </span><span class="amount">${{dem_sp_ies|floatformat:0|intcomma}}</span>
+<br><span class="amountLine">Total independent expenditures, Republican-aligned Super PACs: </span><span class="amount">${{rep_sp_ies|floatformat:0|intcomma}}</span>
+<br><span class="amountLine">Total independent expenditures, all other Super PACs: </span><span class="amount">${{oth_sp_ies|floatformat:0|intcomma}}</span>
+<div id="{{div_name_5 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+<p class="tip">Independent expenditures do not include a Super PAC's "operating expenses," which include salaries, and contributions to other PACs. Totals are from Jan. 1, 2011 through the present.</p>
+
+
+
 
 <a name="general_ies"></a>
 <h3>General election spending by Super PAC orientation</h3>
-<span class="amountLine">Total general election independent expenditures, Democratic-aligned Super PACs: </span><span class="amount">${{dem_general_ies|floatformat:0|intcomma}}</span>
-<br><span class="amountLine">Total general election independent expenditures, Republican-aligned Super PACs: </span><span class="amount">${{rep_general_ies|floatformat:0|intcomma}}</span>
-<br><span class="amountLine">Total general election independent expenditures, all other Super PACs: </span><span class="amount">${{oth_general_ies|floatformat:0|intcomma}}</span>
+<span class="amountLine">Total general election independent expenditures, Democratic-aligned Super PACs: </span><span class="amount">${{dem_general_sp_ies|floatformat:0|intcomma}}</span>
+<br><span class="amountLine">Total general election independent expenditures, Republican-aligned Super PACs: </span><span class="amount">${{rep_general_sp_ies|floatformat:0|intcomma}}</span>
+<br><span class="amountLine">Total general election independent expenditures, all other Super PACs: </span><span class="amount">${{oth_general_sp_ies|floatformat:0|intcomma}}</span>
 <div id="{{div_name_8 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
 <p class="tip">Independent expenditures do not include a Super PAC's "operating expenses," which include salaries, and contributions to other PACs. Totals are from Jan. 1, 2011 through the present. Note that primary and general election spending will not sum to total election spending because of other election codes: special elections, nominating conventions, etc. </p>
+
+<a name="general_ies"></a>
+<h3>General election spending by noncommittees, by political orientation</h3>
+<span class="amountLine">Total general election independent expenditures, Democratic-aligned noncommittees: </span><span class="amount">${{dem_general_nc_ies|floatformat:0|intcomma}}</span>
+<br><span class="amountLine">Total general election independent expenditures, Republican-aligned noncommittees: </span><span class="amount">${{rep_general_nc_ies|floatformat:0|intcomma}}</span>
+<br><span class="amountLine">Total general election independent expenditures, all other noncommittees: </span><span class="amount">${{oth_general_nc_ies|floatformat:0|intcomma}}</span>
+<div id="{{div_name_9 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+<p class="tip">Independent expenditures do not include a groups "operating expenses," which include salaries, and contributions to other PACs. Totals are from Jan. 1, 2011 through the present. Primary and general election spending will not sum to total election spending because of other election codes: special elections, nominating conventions, etc. FEC rules allow political groups to spend millions on elections without registering--for more see the <a href="/outside-spending/noncommittees/">noncommittees page</a>.</p>
+
+
+<a name="general_ies"></a>
+<h3>General election spending by party committees, by political orientation</h3>
+<span class="amountLine">Total general election independent expenditures, Democratic party committees: </span><span class="amount">${{dem_general_party_ies|floatformat:0|intcomma}}</span>
+<br><span class="amountLine">Total general election independent expenditures, Republican noncommittees: </span><span class="amount">${{rep_general_party_ies|floatformat:0|intcomma}}</span>
+<br><span class="amountLine">Total general election independent expenditures, all other party committees: </span><span class="amount">${{oth_general_party_ies|floatformat:0|intcomma}}</span>
+<div id="{{div_name_10 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+<p class="tip">FEC rules allow political parties to make both independent and coordinated expenditures--so these numbers <b>do not reflect party committees total spending</b>. Independent expenditures do not include a groups "operating expenses," which include salaries, and contributions to other PACs. Totals are from Jan. 1, 2011 through the present. Primary and general election spending will not sum to total election spending because of other election codes: special elections, nominating conventions, etc. </p>
 
 
 {% endblock content %}
@@ -74,10 +93,19 @@
 {% endcache %}
 
 
+{% load cache %}
+{% cache 1 'superpac_general_partisan_weekly'  %}
+{% superpac_partisan_general_weekly div_name_8 %}
+{% endcache %}
 
 {% load cache %}
-{% cache 7200 'superpac_general_partisan_weekly'  %}
-{% superpac_partisan_general_weekly div_name_8 %}
+{% cache 1 'noncommittee_spending_by_affiliation'  %}
+{% noncommittee_spending_by_affiliation div_name_9 %}
+{% endcache %}
+
+{% load cache %}
+{% cache 1 'party_spending_by_affiliation'  %}
+{% party_spending_by_affiliation div_name_10 %}
 {% endcache %}
 
 

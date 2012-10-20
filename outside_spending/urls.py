@@ -4,8 +4,8 @@ from outside_spending.models import *
 #from rebuckley.feeds import *
 from outside_spending.views import *
 from outside_spending.feeds import FilingFeed, FilingsFeed, FilingsFormFeed, FilingsForms, CommitteeFormsFeed, SuperpacsForms
-from django.views.generic.simple import direct_to_template
-from django.shortcuts import redirect
+from django.views.generic.simple import direct_to_template, redirect_to
+
 urlpatterns = patterns('',
 
     # temporary takedown
@@ -81,8 +81,8 @@ urlpatterns = patterns('',
     url(r'^search\/$', 'outside_spending.views.search'),
     url(r'^more-resources\/$', 'outside_spending.views.more_resources'),
     url(r'^charttest\/',direct_to_template, {'template': 'outside_spending/chart_test.html', 'extra_context': {'div_name_9':'all_ies', 'div_name_1':'pres_ge_ies', 'div_name_2':'house_ge_ies', 'div_name_3':'senate_ge_ies', 'div_name_4':'all_ies_weekly', 'div_name_5':'noncommittee_affiliation', 'div_name_6':'sp_spending_partisan', 'div_name_7':'party_spending_partisan'}}, ),
-    url(r'^superpac-by-party\/', 'outside_spending.views.superpac_party_breakdown'),
-#    url(r'^by-affiliation\/', ''),
+    url(r'^superpac-by-party\/', redirect_to, {'url': '/outside-spending/by-affiliation/'}),
+    url(r'^by-affiliation\/', 'outside_spending.views.by_affiliation'),
 #    url(r'^by-spending', ''),
     url(r'^analytics\/',direct_to_template, {'template': 'outside_spending/analytical_iframe_base.html', 'extra_context': {'content':'content'}}, ),
     url(r'^superpac-chart-embed\/$', 'outside_spending.views.chart_embed'),
