@@ -1050,7 +1050,7 @@ def committee_summary_json(request):
                 'committees':committees
                 })
                 
-@cache_page(0 * 30)
+@cache_page(60 * 30)
 def by_affiliation(request):
     # for cash on hand:
     sps = Committee_Overlay.objects.filter(is_superpac=True)

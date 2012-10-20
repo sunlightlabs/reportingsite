@@ -66,7 +66,7 @@
 <a name="general_ies"></a>
 <h3>General election spending by party committees, by political orientation</h3>
 <span class="amountLine">Total general election independent expenditures, Democratic party committees: </span><span class="amount">${{dem_general_party_ies|floatformat:0|intcomma}}</span>
-<br><span class="amountLine">Total general election independent expenditures, Republican noncommittees: </span><span class="amount">${{rep_general_party_ies|floatformat:0|intcomma}}</span>
+<br><span class="amountLine">Total general election independent expenditures, Republican party committees: </span><span class="amount">${{rep_general_party_ies|floatformat:0|intcomma}}</span>
 <br><span class="amountLine">Total general election independent expenditures, all other party committees: </span><span class="amount">${{oth_general_party_ies|floatformat:0|intcomma}}</span>
 <div id="{{div_name_10 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
 <p class="tip">FEC rules allow political parties to make both independent and coordinated expenditures--so these numbers <b>do not reflect party committees total spending</b>. Independent expenditures do not include a groups "operating expenses," which include salaries, and contributions to other PACs. Totals are from Jan. 1, 2011 through the present. Primary and general election spending will not sum to total election spending because of other election codes: special elections, nominating conventions, etc. </p>
@@ -83,28 +83,28 @@
 
 
 {% load cache %}
-{% cache 7200 'superpac_by_parties'  %}
+{% cache 3600 'superpac_by_parties'  %}
 {% superpac_partisan div_name_5 %}
 {% endcache %}
 
 {% load cache %}
-{% cache 7200 'superpac_contribs'  %}
+{% cache 3600 'superpac_contribs'  %}
 {% superpac_partisan_contribs div_name_6 %}
 {% endcache %}
 
 
 {% load cache %}
-{% cache 1 'superpac_general_partisan_weekly'  %}
+{% cache 3600 'superpac_general_partisan_weekly'  %}
 {% superpac_partisan_general_weekly div_name_8 %}
 {% endcache %}
 
 {% load cache %}
-{% cache 1 'noncommittee_spending_by_affiliation'  %}
+{% cache 3600 'noncommittee_spending_by_affiliation'  %}
 {% noncommittee_spending_by_affiliation div_name_9 %}
 {% endcache %}
 
 {% load cache %}
-{% cache 1 'party_spending_by_affiliation'  %}
+{% cache 3600 'party_spending_by_affiliation'  %}
 {% party_spending_by_affiliation div_name_10 %}
 {% endcache %}
 
