@@ -175,8 +175,8 @@ def superpac_partisan_general(div_to_return):
     
     today = datetime.datetime.today()
 
-    monthly_ie_r_summary = summarize_monthly(r_ies, today, True)
-    monthly_ie_d_summary = summarize_monthly(d_ies, today, True)
+    monthly_ie_r_summary = summarize_weekly(r_ies, today, True)
+    monthly_ie_d_summary = summarize_weelly(d_ies, today, True)
 
     return {
     'has_series1':True,
@@ -199,8 +199,8 @@ def superpac_partisan_general(div_to_return):
 
     today = datetime.datetime.today()
 
-    monthly_ie_r_summary = summarize_monthly(r_ies, today, True)
-    monthly_ie_d_summary = summarize_monthly(d_ies, today, True)
+    monthly_ie_r_summary = summarize_weekly(r_ies, today, True)
+    monthly_ie_d_summary = summarize_weekly(d_ies, today, True)
 
     return {
     'has_series1':True,
