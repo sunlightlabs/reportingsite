@@ -145,17 +145,17 @@ def party_spending_by_affiliation(div_to_return):
     start_date = datetime.date(2012, 6, 1)   
     today = datetime.datetime.today()
 
-    noncommittee_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__ctype__in=('Y', 'Z'), expenditure_date__gte=start_date, expenditure_date__lte=today).select_related('committee')
+    partycommittee_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__ctype__in=('Y', 'Z'), expenditure_date__gte=start_date, expenditure_date__lte=today).select_related('committee')
 
-    noncommittee_rep = noncommittee_ies.filter(committee__political_orientation='R')
-    noncommittee_dem = noncommittee_ies.filter(committee__political_orientation='D')
+    partycommittee_rep = partycommittee_ies.filter(committee__political_orientation='R')
+    partycommittee_dem = partycommittee_ies.filter(committee__political_orientation='D')
 
-    weekly_noncommittee_dem = noncommittee_dem.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
+    weekly_partycommittee_dem = partycommittee_dem.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
 
-    weekly_noncommittee_rep = noncommittee_rep.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
+    weekly_partycommittee_rep = partycommittee_rep.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
 
-    weekly_dem = summarize_weekly(weekly_noncommittee_dem)
-    weekly_rep = summarize_weekly(weekly_noncommittee_rep)
+    weekly_dem = summarize_weekly(weekly_partycommittee_dem)
+    weekly_rep = summarize_weekly(weekly_partycommittee_rep)
 
     today = datetime.datetime.today()
 
@@ -170,7 +170,7 @@ def party_spending_by_affiliation(div_to_return):
     'return_div':div_to_return,
     }
     
-@register.inclusion_tag('outside_spending/chart_templatetag_weekly.html')  
+@register.inclusion_tag('outside_spending/chart_templatetag.html')  
 def superpac_partisan(div_to_return):
  
     today = datetime.datetime.today()
