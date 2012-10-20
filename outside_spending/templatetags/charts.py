@@ -23,7 +23,7 @@ def superpac_chart(div_to_return):
     
     # hack to only show contribs after the 20th of the month--which misses quarterly contribs, but... 
     m = datetime.timedelta(days=17)
-    monthly_contrib_summary = summarize_monthly(monthly_contrib_data, today-m)
+    monthly_contrib_summary = summarize_monthly(monthly_contrib_data, today-m, False, 2011)
     print monthly_contrib_summary
     
     return {
@@ -43,7 +43,7 @@ def all_ies_chart(div_to_return):
 
     today = datetime.datetime.today()
 
-    monthly_ie_summary = summarize_monthly(all_ies, today, True)
+    monthly_ie_summary = summarize_monthly(all_ies, today, True, 2011)
 
 
     return {
@@ -53,24 +53,7 @@ def all_ies_chart(div_to_return):
     'has_series2':False,
     'return_div':div_to_return,
     }
-    
-@register.inclusion_tag('outside_spending/chart_templatetag.html')  
-def all_ies_weekly_chart(div_to_return):
 
-    all_ies = Expenditure.objects.filter(superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
-
-    today = datetime.datetime.today()
-
-    monthly_ie_summary = summarize_monthly(all_ies, today, True)
-
-
-    return {
-    'has_series1':True,
-    'series1_data':monthly_ie_summary,
-    'series1_title':'ALL INDEPENDENT EXPENDITURES',
-    'has_series2':False,
-    'return_div':div_to_return,
-    }    
 
 @register.inclusion_tag('outside_spending/chart_templatetag.html')  
 def noncommittee_spending(div_to_return):
@@ -79,7 +62,7 @@ def noncommittee_spending(div_to_return):
 
     today = datetime.datetime.today()
 
-    monthly_ie_summary = summarize_monthly(noncommittee_ies, today, True)
+    monthly_ie_summary = summarize_monthly(noncommittee_ies, today, True, 2011)
 
     
     return {
@@ -90,6 +73,36 @@ def noncommittee_spending(div_to_return):
     'return_div':div_to_return,
     }
     
+@register.inclusion_tag('outside_spending/chart_templatetag_weekly.html')  
+def noncommittee_spending_by_affiliation(div_to_return):
+    start_date = datetime.date(2012, 6, 1)   
+    today = datetime.datetime.today()
+
+    noncommittee_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__ctype='I', expenditure_date__gte=start_date, expenditure_date__lte=today).select_related('committee')
+    
+    noncommittee_rep = noncommittee_ies.filter(committee__political_orientation='R')
+    noncommittee_dem = noncommittee_ies.filter(committee__political_orientation='D')
+    
+    weekly_noncommittee_dem = noncommittee_dem.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
+
+    weekly_noncommittee_rep = noncommittee_rep.extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
+
+    weekly_dem = summarize_weekly(weekly_noncommittee_dem)
+    weekly_rep = summarize_weekly(weekly_noncommittee_rep)
+
+    today = datetime.datetime.today()
+
+
+    return {
+    'has_series1':True,
+    'series1_data':weekly_dem,
+    'series1_title':'NONCOMMITTEES, DEMOCRATIC',
+    'has_series2':True,
+    'series2_data':weekly_rep,
+    'series2_title':'NONCOMMITTEES, REPUBLICAN',
+    'return_div':div_to_return,
+    }
+            
 @register.inclusion_tag('outside_spending/chart_templatetag.html')  
 def nonparty_spending(div_to_return):
 
@@ -97,7 +110,7 @@ def nonparty_spending(div_to_return):
 
     today = datetime.datetime.today()
 
-    monthly_ie_summary = summarize_monthly(nonparty_ies, today, True)
+    monthly_ie_summary = summarize_monthly(nonparty_ies, today, True, 2011)
 
 
     return {
@@ -116,7 +129,7 @@ def party_spending(div_to_return):
 
     today = datetime.datetime.today()
 
-    monthly_ie_summary = summarize_monthly(party_ies, today, True)
+    monthly_ie_summary = summarize_monthly(party_ies, today, True, 2011)
 
 
     return {
@@ -127,24 +140,28 @@ def party_spending(div_to_return):
     'return_div':div_to_return,
     } 
     
-@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+@register.inclusion_tag('outside_spending/chart_templatetag_weekly.html')  
 def superpac_partisan(div_to_return):
-
-    r_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='R',committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    start_date = datetime.date(2012, 6, 1)   
+    today = datetime.datetime.today()
     
-    d_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='D',committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    expenditures = Expenditure.objects.filter(superceded_by_amendment=False,committee__is_superpac=True, expenditure_date__gte=start_date, expenditure_date__lte=today)
+    
+    r_ies = expenditures.filter(committee__political_orientation='R').extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
+    
+    d_ies = expenditures.filter(committee__political_orientation='D').extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
 
     today = datetime.datetime.today()
 
-    monthly_ie_r_summary = summarize_monthly(r_ies, today, True)
-    monthly_ie_d_summary = summarize_monthly(d_ies, today, True)
+    weekly_ie_r_summary = summarize_weekly(r_ies)
+    weekly_ie_d_summary = summarize_weekly(d_ies)
 
     return {
     'has_series1':True,
-    'series2_data':monthly_ie_r_summary,
+    'series2_data':weekly_ie_r_summary,
     'series2_title':'REPUBLICAN SUPERPAC SPENDING',
     'has_series2':True,
-    'series1_data':monthly_ie_d_summary,
+    'series1_data':weekly_ie_d_summary,
     'series1_title':'DEMOCRATIC SUPERPAC SPENDING',
     'return_div':div_to_return,
     }

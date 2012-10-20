@@ -37,6 +37,14 @@ request is: {{ request.get_full_path }} host: {{ request.get_host }}
 <p><b>House general election expenditures. Money "backing" republicans is the amount of outside money supporting republicans plus the money spent opposing democrats, and vice versa.</b></p>
 <div id="{{div_name_2}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 
+
+<H2>NON COMMITTEE BY AFFILIATION</H2>
+<p><b></b></p>
+<div id="{{div_name_5}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
+
+<H2>Super PAC spending affilitation</H2>
+<p><b></b></p>
+<div id="{{div_name_6}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 {% endblock %}
 
 {% block js %}
@@ -70,6 +78,16 @@ request is: {{ request.get_full_path }} host: {{ request.get_host }}
 {% load cache %}
 {% cache 1 'all_ies_party_weekly'  %}
 {% all_ies_party_weekly div_name_4 %}
+{% endcache %}
+
+{% load cache %}
+{% cache 1 'noncommittee_spending_by_affiliation'  %}
+{% noncommittee_spending_by_affiliation div_name_5 %}
+{% endcache %}
+
+{% load cache %}
+{% cache 1 'superpac_partisan'  %}
+{% superpac_partisan div_name_6 %}
 {% endcache %}
 
 {% endblock %}
