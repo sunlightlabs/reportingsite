@@ -276,7 +276,7 @@ def superpac_partisan_general_presidential(div_to_return):
 def superpac_partisan_contribs(div_to_return):
     
     today = datetime.datetime.today()
-    m = datetime.timedelta(days=20)
+    m = datetime.timedelta(days=19)
     
     monthly_r_contribs = Contribution.objects.filter(committee__is_superpac=True, superceded_by_amendment=False, committee__political_orientation='R', line_type__in=['SA11AI', 'SA11B', 'SA11C', 'SA12', 'SA15']).extra(select={'year': 'EXTRACT(year FROM contrib_date)','month': 'EXTRACT(month FROM contrib_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('contrib_amt'))
     
