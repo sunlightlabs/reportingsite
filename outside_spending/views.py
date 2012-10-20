@@ -1117,7 +1117,7 @@ def by_affiliation(request):
     
     })
     
-@cache_page(60*0)
+@cache_page(60*30)
 def by_spending(request):
     
     all_pres_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='P', election_type="G").select_related('candidate')

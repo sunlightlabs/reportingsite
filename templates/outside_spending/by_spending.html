@@ -57,19 +57,19 @@
 
 
 {% load cache %}
-{% cache 1 'presidential_all_ie_party_general'  %}
+{% cache 3600 'presidential_all_ie_party_general'  %}
 {% presidential_all_ie_party_general div_name_1 %}
 {% endcache %}
 
 
 {% load cache %}
-{% cache 2 'senate_all_ie_party_general'  %}
+{% cache 3600 'senate_all_ie_party_general'  %}
 {% senate_all_ie_party_general div_name_2 %}
 {% endcache %}
 
 
 {% load cache %}
-{% cache 3 'house_all_ie_party_general'  %}
+{% cache 3600 'house_all_ie_party_general'  %}
 {% house_all_ie_party_general div_name_3 %}
 {% endcache %}
 
