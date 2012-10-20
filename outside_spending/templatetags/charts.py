@@ -36,19 +36,19 @@ def superpac_chart(div_to_return):
     'return_div':div_to_return,
     }
 
-@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+@register.inclusion_tag('outside_spending/chart_templatetag_weekly.html')  
 def all_ies_chart(div_to_return):
 
-    all_ies = Expenditure.objects.filter(superceded_by_amendment=False).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
-
+    start_date = datetime.date(2012, 1, 1)
     today = datetime.datetime.today()
 
-    monthly_ie_summary = summarize_monthly(all_ies, today, True, 2011)
+    all_ies = Expenditure.objects.filter(superceded_by_amendment=False, expenditure_date__gte=start_date, expenditure_date__lte=today).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
 
+    weekly_ie_summary = summarize_weekly(all_ies)
 
     return {
     'has_series1':True,
-    'series1_data':monthly_ie_summary,
+    'series1_data':weekly_ie_summary,
     'series1_title':'ALL INDEPENDENT EXPENDITURES',
     'has_series2':False,
     'return_div':div_to_return,
@@ -322,7 +322,7 @@ def presidential_all_ie_party_general(div_to_return):
     return {
     'has_series1':True,
     'series1_data':weekly_dem,
-    'series1_title':'BACKINGS OBAMA',
+    'series1_title':'BACKS OBAMA',
     'has_series2':True,
     'series2_title':'BACKS ROMNEY',
     'series2_data':weekly_rep,

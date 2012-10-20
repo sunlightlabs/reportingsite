@@ -1116,6 +1116,35 @@ def by_affiliation(request):
     'div_name_10':'party_committee_general',
     
     })
+    
+@cache_page(60*0)
+def by_spending(request):
+    
+    all_pres_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='P', election_type="G").select_related('candidate')
+    dem_general_pres_ies = all_pres_general_ies.filter(Q(candidate__party__iexact='DEM', support_oppose='S')|Q(candidate__party__iexact='REP', support_oppose='O')).aggregate(total=Sum('expenditure_amount'))['total']
+    rep_general_pres_ies = all_pres_general_ies.filter(Q(candidate__party__iexact='REP', support_oppose='S')|Q(candidate__party__iexact='DEM', support_oppose='O')).aggregate(total=Sum('expenditure_amount'))['total']
+    
+    
+    all_sen_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='S', election_type="G").select_related('candidate')
+    dem_general_sen_ies = all_sen_general_ies.filter(Q(candidate__party__iexact='DEM', support_oppose='S')|Q(candidate__party__iexact='REP', support_oppose='O')).aggregate(total=Sum('expenditure_amount'))['total']
+    rep_general_sen_ies = all_sen_general_ies.filter(Q(candidate__party__iexact='REP', support_oppose='S')|Q(candidate__party__iexact='DEM', support_oppose='O')).aggregate(total=Sum('expenditure_amount'))['total']
+    
+    all_house_general_ies = Expenditure.objects.filter(superceded_by_amendment=False,candidate__office='H', election_type="G").select_related('candidate')
+    dem_general_house_ies = all_house_general_ies.filter(Q(candidate__party__iexact='DEM', support_oppose='S')|Q(candidate__party__iexact='REP', support_oppose='O')).aggregate(total=Sum('expenditure_amount'))['total']
+    rep_general_house_ies = all_house_general_ies.filter(Q(candidate__party__iexact='REP', support_oppose='S')|Q(candidate__party__iexact='DEM', support_oppose='O')).aggregate(total=Sum('expenditure_amount'))['total']
+    
+    return render_to_response('outside_spending/by_spending.html', 
+    {
+    'dem_general_pres_ies':dem_general_pres_ies,
+    'rep_general_pres_ies':rep_general_pres_ies,
+    'dem_general_sen_ies':dem_general_sen_ies,
+    'rep_general_sen_ies':rep_general_sen_ies,
+    'dem_general_house_ies':dem_general_house_ies,
+    'rep_general_house_ies':rep_general_house_ies,
+    'div_name_1':'pres_gen_ies', 
+    'div_name_2':'pres_sen_ies',
+    'div_name_3':'pres_house_ies',        
+    })
 
 @cache_page(60 * 10)
 def chart_embed(request):

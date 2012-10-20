@@ -1,0 +1,76 @@
+{% extends "outside_spending/buckley_base.html" %}
+
+
+{% load humanize %}
+{% load charts %}
+
+{% block title %}General election outside spending by candidate backed, 2011-12 - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }}  {% endblock %}
+
+{% block breadcrumb %}{{ block.super }}
+<li>{{ committee.name }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "outside_spending/tabs.html" %}
+
+    <h2>
+        General election outside spending by candidate backed, 2011-12
+    </h2>
+<p><b>This page shows independent expenditures made during the general election in terms of party supported. Dollars spent backing Republicans, for example, includes money spent supporting Republican candidates plus money spent opposing Democratic candidates.</b></p>
+
+
+
+<a name="presidential_ies"></a>
+<h3>Independent expenditures backing a presidential candidate in the general election</h3>
+<span class="amountLine">Total general election independent expenditures backing a Democrat: </span><span class="amount">${{dem_general_pres_ies|floatformat:0|intcomma}}</span>
+<br><span class="amountLine">Total general election independent expenditures backing a Republican: </span><span class="amount">${{rep_general_pres_ies|floatformat:0|intcomma}}</span>
+<div id="{{div_name_1 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+<p class="tip"></p>
+
+
+<a name="sen_ies"></a>
+<h3>Independent expenditures backing a senate candidate in the general election</h3>
+<span class="amountLine">Total general election independent expenditures backing a Democrat: </span><span class="amount">${{dem_general_sen_ies|floatformat:0|intcomma}}</span>
+<br><span class="amountLine">Total general election independent expenditures backing a Republican: </span><span class="amount">${{rep_general_sen_ies|floatformat:0|intcomma}}</span>
+<div id="{{div_name_2 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+<p class="tip"></p>
+
+
+<a name="house_ies"></a>
+<h3>Independent expenditures backing a house candidate in the general election</h3>
+<span class="amountLine">Total general election independent expenditures backing a Democrat: </span><span class="amount">${{dem_general_house_ies|floatformat:0|intcomma}}</span>
+<br><span class="amountLine">Total general election independent expenditures backing a Republican: </span><span class="amount">${{rep_general_house_ies|floatformat:0|intcomma}}</span>
+<div id="{{div_name_3 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
+<p class="tip"></p>
+
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+
+
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/highcharts.js"></script>
+
+
+
+{% load cache %}
+{% cache 1 'presidential_all_ie_party_general'  %}
+{% presidential_all_ie_party_general div_name_1 %}
+{% endcache %}
+
+
+{% load cache %}
+{% cache 2 'senate_all_ie_party_general'  %}
+{% senate_all_ie_party_general div_name_2 %}
+{% endcache %}
+
+
+{% load cache %}
+{% cache 3 'house_all_ie_party_general'  %}
+{% house_all_ie_party_general div_name_3 %}
+{% endcache %}
+
+{% endblock %}
