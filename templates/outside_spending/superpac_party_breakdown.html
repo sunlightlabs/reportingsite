@@ -43,13 +43,6 @@
 <div id="{{div_name_6 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
 <p class="tip">Chart and totals do not include unitemized contributions of $200 or less. Totals are from Jan. 1, 2011 through the present.</p>
 
-<a name="primary_ies"></a>
-<h3>Primary election spending by Super PAC orientation</h3>
-<span class="amountLine">Total primary election independent expenditures, Democratic-aligned Super PACs: </span><span class="amount">${{dem_primary_ies|floatformat:0|intcomma}}</span>
-<br><span class="amountLine">Total primary election independent expenditures, Republican-aligned Super PACs: </span><span class="amount">${{rep_primary_ies|floatformat:0|intcomma}}</span>
-<br><span class="amountLine">Total primary election independent expenditures, all other Super PACs: </span><span class="amount">${{oth_primary_ies|floatformat:0|intcomma}}</span>
-<div id="{{div_name_7 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
-<p class="tip">Independent expenditures do not include a Super PAC's "operating expenses," which include salaries, and contributions to other PACs. Totals are from Jan. 1, 2011 through the present. Note that primary and general election spending will not sum to total election spending because of other election codes: special elections, nominating conventions, etc. </p>
 
 <a name="general_ies"></a>
 <h3>General election spending by Super PAC orientation</h3>
@@ -58,16 +51,6 @@
 <br><span class="amountLine">Total general election independent expenditures, all other Super PACs: </span><span class="amount">${{oth_general_ies|floatformat:0|intcomma}}</span>
 <div id="{{div_name_8 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
 <p class="tip">Independent expenditures do not include a Super PAC's "operating expenses," which include salaries, and contributions to other PACs. Totals are from Jan. 1, 2011 through the present. Note that primary and general election spending will not sum to total election spending because of other election codes: special elections, nominating conventions, etc. </p>
-
-
-<a name="pres_general_ies"></a>
-<h3>Presidential general election spending by Super PAC orientation</h3>
-<span class="amountLine">Total presidential general election independent expenditures, "operating expenses,"  Super PACs: </span><span class="amount">${{dem_pres_ies|floatformat:0|intcomma}}</span>
-<br><span class="amountLine">Total presidential general election independent expenditures, Republican-aligned Super PACs: </span><span class="amount">${{rep_pres_ies|floatformat:0|intcomma}}</span>
-<br><span class="amountLine">Total presidential general election independent expenditures, all other Super PACs: </span><span class="amount">${{oth_pres_ies|floatformat:0|intcomma}}</span>
-<div id="{{div_name_9 }}" class="chart_container" style="width: 100%; height: 330px;" ></div>
-<p class="tip">Independent expenditures do not include a Super PAC's "operating expenses," which include salaries, and contributions to other PACs. Totals are from Jan. 1, 2011 through the present. Note that primary and general election spending will not sum to total election spending because of other election codes: special elections, nominating conventions, etc. </p>
-
 
 
 {% endblock content %}
@@ -91,19 +74,11 @@
 {% endcache %}
 
 
+
 {% load cache %}
-{% cache 7200 'superpac_primary'  %}
-{% superpac_partisan_primary div_name_7 %}
+{% cache 7200 'superpac_general_partisan_weekly'  %}
+{% superpac_partisan_general_weekly div_name_8 %}
 {% endcache %}
 
 
-{% load cache %}
-{% cache 7200 'superpac_general'  %}
-{% superpac_partisan_general div_name_8 %}
-{% endcache %}
-
-{% load cache %}
-{% cache 7200 'superpac_general_presidential'  %}
-{% superpac_partisan_general_presidential div_name_9 %}
-{% endcache %}
 {% endblock %}

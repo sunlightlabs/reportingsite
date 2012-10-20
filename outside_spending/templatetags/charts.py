@@ -172,10 +172,10 @@ def party_spending_by_affiliation(div_to_return):
     
 @register.inclusion_tag('outside_spending/chart_templatetag_weekly.html')  
 def superpac_partisan(div_to_return):
-    start_date = datetime.date(2012, 6, 1)   
+ 
     today = datetime.datetime.today()
     
-    expenditures = Expenditure.objects.filter(superceded_by_amendment=False,committee__is_superpac=True, expenditure_date__gte=start_date, expenditure_date__lte=today)
+    expenditures = Expenditure.objects.filter(superceded_by_amendment=False,committee__is_superpac=True)
     
     r_ies = expenditures.filter(committee__political_orientation='R').extra(select={'year': 'EXTRACT(year FROM expenditure_date)','month': 'EXTRACT(month FROM expenditure_date)'}).values_list('year', 'month').order_by('year', 'month').annotate(Sum('expenditure_amount'))
     
@@ -183,20 +183,20 @@ def superpac_partisan(div_to_return):
 
     today = datetime.datetime.today()
 
-    weekly_ie_r_summary = summarize_weekly(r_ies)
-    weekly_ie_d_summary = summarize_weekly(d_ies)
+    monthly_ie_r_summary = summarize_monthly(r_ies, today, True, 2011)
+    monthly_ie_d_summary = summarize_monthly(d_ies,  today, True, 2011)
 
     return {
     'has_series1':True,
-    'series2_data':weekly_ie_r_summary,
+    'series2_data':monthly_ie_r_summary,
     'series2_title':'REPUBLICAN SUPERPAC SPENDING',
     'has_series2':True,
-    'series1_data':weekly_ie_d_summary,
+    'series1_data':monthly_ie_d_summary,
     'series1_title':'DEMOCRATIC SUPERPAC SPENDING',
     'return_div':div_to_return,
     }
     
-@register.inclusion_tag('outside_spending/chart_templatetag.html')  
+@register.inclusion_tag('outside_spending/chart_templatetag_weekly.html')  
 def superpac_partisan_general(div_to_return):
 
     r_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='R', election_type="G",committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
@@ -205,15 +205,15 @@ def superpac_partisan_general(div_to_return):
     
     today = datetime.datetime.today()
 
-    monthly_ie_r_summary = summarize_weekly(r_ies, today, True)
-    monthly_ie_d_summary = summarize_weelly(d_ies, today, True)
+    weekly_ie_r_summary = summarize_weekly(r_ies)
+    weekly_ie_d_summary = summarize_weekly(d_ies)
 
     return {
     'has_series1':True,
-    'series2_data':monthly_ie_r_summary,
+    'series2_data':weekly_ie_r_summary,
     'series2_title':'PRIMARY ELECTION REPUBLICAN SUPERPAC SPENDING',
     'has_series2':True,
-    'series1_data':monthly_ie_d_summary,
+    'series1_data':weekly_ie_d_summary,
     'series1_title':'PRIMARY ELECTION DEMOCRATIC SUPERPAC SPENDING',
     'return_div':div_to_return,
     }
@@ -222,25 +222,29 @@ def superpac_partisan_general(div_to_return):
 
 @register.inclusion_tag('outside_spending/chart_templatetag_weekly.html')  
 def superpac_partisan_general_weekly(div_to_return):
-
-    r_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='R', election_type="G",committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
     
-
-    d_ies = Expenditure.objects.filter(superceded_by_amendment=False,committee__political_orientation='D', election_type="G",committee__is_superpac=True).extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
-    
-
     today = datetime.datetime.today()
+    start_date = datetime.date(2012, 6, 1)
 
-    weekly_ie_r_summary = summarize_weekly(r_ies, today, True)
-    weekly_ie_d_summary = summarize_weekly(d_ies, today, True)
+    all_sp_ies = Expenditure.objects.filter(superceded_by_amendment=False, election_type="G",committee__is_superpac=True, expenditure_date__gte=start_date, expenditure_date__lte=today).select_related('candidate')
+    
+    
+
+    r_ies = all_sp_ies.filter(committee__political_orientation='R').extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
+    
+
+    d_ies = all_sp_ies.filter(committee__political_orientation='D').extra(select={'year': 'EXTRACT(year FROM expenditure_date)','week': 'EXTRACT(week FROM expenditure_date)'}).values_list('year', 'week').order_by('year', 'week').annotate(Sum('expenditure_amount'))
+
+    weekly_ie_r_summary = summarize_weekly(r_ies)
+    weekly_ie_d_summary = summarize_weekly(d_ies)
 
     return {
     'has_series1':True,
     'series2_data':weekly_ie_r_summary,
-    'series2_title':'GENERAL ELECTION REPUBLICAN SUPERPAC SPENDING',
+    'series2_title':'RIGHT-LEANING SUPERPACS',
     'has_series2':True,
     'series1_data':weekly_ie_d_summary,
-    'series1_title':'GENERAL ELECTION DEMOCRATIC SUPERPAC SPENDING',
+    'series1_title':'LEFT-LEANING SUPERPACS',
     'return_div':div_to_return,
     }
     
