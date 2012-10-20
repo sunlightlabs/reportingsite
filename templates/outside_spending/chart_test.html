@@ -42,9 +42,14 @@ request is: {{ request.get_full_path }} host: {{ request.get_host }}
 <p><b></b></p>
 <div id="{{div_name_5}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 
-<H2>Super PAC spending affilitation</H2>
+<H2>Super PAC spending affiliation weekly</H2>
 <p><b></b></p>
 <div id="{{div_name_6}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
+
+
+<H2>Party spending affiliation weekly</H2>
+<p><b></b></p>
+<div id="{{div_name_7}}" class="chart_container" style="width: 507px; height: 330px;" ></div>
 {% endblock %}
 
 {% block js %}
@@ -86,8 +91,15 @@ request is: {{ request.get_full_path }} host: {{ request.get_host }}
 {% endcache %}
 
 {% load cache %}
-{% cache 1 'superpac_partisan'  %}
+{% cache 1 'superpac_partisan_general_weekly'  %}
 {% superpac_partisan div_name_6 %}
 {% endcache %}
+
+
+{% load cache %}
+{% cache 1 'party_spending_by_affiliation'  %}
+{% party_spending_by_affiliation div_name_7 %}
+{% endcache %}
+
 
 {% endblock %}
