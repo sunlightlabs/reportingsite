@@ -345,6 +345,25 @@ def all_independent_expenditors(request):
                             'neg_percent':neg_percent,
                             'pos_percent':positive_percent,
                             })
+                            
+                            
+@cache_page(CACHE_TIME)                            
+def october_club(request):
+    explanatory_text = "This table shows all committees making independent expenditures that have spent at least $10,000 on independent expenditures in October or November of 2012--but nothing prior to that. "
+    october_first = datetime.date(2012,10,1)
+    summaries = Expenditure.objects.filter(superceded_by_amendment=False, expenditure_date__gte=october_first,committee__total_indy_expenditures__gte=10000).select_related("committee").values('committee__fec_id', 'committee__name', 'committee__slug', 'committee__total_indy_expenditures', 'committee__ctype').annotate(postseptember=Sum('expenditure_amount'))
+    october_club = []
+    for summary in summaries:
+        if summary['postseptember'] == summary['committee__total_indy_expenditures']:
+            october_club.append(summary)
+    
+
+
+
+    return render_to_response('outside_spending/october_club.html',
+                            {'explanatory_text':explanatory_text, 
+                            'superpacs':october_club, 
+                            })
 
 @cache_page(CACHE_TIME)
 def complete_superpac_list(request):

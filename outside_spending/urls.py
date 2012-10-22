@@ -88,6 +88,7 @@ urlpatterns = patterns('',
     url(r'^superpac-chart-embed\/$', 'outside_spending.views.chart_embed'),
     #direct_to_template, {'template': 'outside_spending/chart_embedder.html', 'extra_context': {'div_name':'this_is_the_chart_div'}}, ),
     url(r'^election_summary.json$', 'outside_spending.views.elex_json'),
+    url(r'^october-club\/$', 'outside_spending.views.october_club'),
     url(r'$', 'outside_spending.views.all_superpacs'),
     
 
