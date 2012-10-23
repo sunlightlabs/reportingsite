@@ -596,7 +596,7 @@ def organizational_superpac_contribs(request):
                             })
 @cache_page(CACHE_TIME)                            
 def file_downloads(request):
-    committees = Committee_Overlay.objects.all().order_by('name')
+    committees = Committee_Overlay.objects.filter(total_contributions__gte=1000).order_by('name')
     states = State_Aggregate.objects.filter(total_ind_exp__gt=0).order_by('state')
     races = Race_Aggregate.objects.filter(total_ind_exp__gt=0).order_by('state', 'office', 'district')
 

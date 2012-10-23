@@ -34,27 +34,19 @@
 
 <a name="states"></a>
 <div class="space_above"><h3>State Files</h3></div>
-<p>Donor files include all donors to super PACs; expenditure files include all independent expenditures made in the state. Note that expenditures made in the general election to support or oppose presidential candidates do not need to disclose a state. Furthermore, many expenditures made in the primary fail to list a state, even though FEC regulations require it. </p>
+<p>Donor files include all donors to super PACs.</p>
 
     
 {% for state in states %}
-<p>{{ state}}: <span class="amountLine"><a href="/outside-spending/csv/state/expenditures/{{ state.state }}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('/outside-spending/csv/state/expenditures/{{ state.state }}');">Expenditures</a></span>&nbsp;|&nbsp;<span class="amountLine"><a href="/outside-spending/csv/state/{{ state.state }}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('/outside-spending/csv/state/{{ state.state }}');">Donors</a></span></p>
-{% endfor %}
-
-<a name="races"></a>
-<div class="space_above"><h3>Expenditures by race</h3></div>
-
-{% for race in races %}
-<p>{{ race.race_name }}: <span class="amountLine"><a href="/outside-spending/csv/race/expenditures/{{ race.office }}/{{race.state}}/{{race.district}}/" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('/outside-spending/csv/race/expenditures/{{ race.office }}/{{race.state}}/{{race.district}}/');">Expenditures</a></span></p>
+<p>{{ state}}: <span class="amountLine"><a href="/outside-spending/csv/state/{{ state.state }}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('/outside-spending/csv/state/{{ state.state }}');">Contributors</a></span></p>
 {% endfor %}
 
 <a name="super-pacs"></a>
-<div class="space_above"><h3>Contributions / Expenditures by committee</h3></div>
+<div class="space_above"><h3>Contributors by committee</h3></div>
 <p>Super PACS, hybrid super PACs and other groups that have recorded independent expenditures in the 2012 cycle are shown below. </p>
     
 {% for committee in committees %}
-<p><a href="{{committee.get_absolute_url}}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('{{committee.get_absolute_url}}');">{{ committee.name}}</a>: <span class="amountLine"><a href="{{committee.superpachackdonorscsv}}">Donors</a> {% if committee.cash_on_hand_date %}(As of {{committee.cash_on_hand_date}}){% endif %}</span>&nbsp;|&nbsp;
-<span class="amountLine"><a href="{{committee.superpachackcsv}}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('{{committee.superpachackcsv}}');">Expenditures</a></span>&nbsp;|&nbsp;<span class="amountLine"><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">FEC filings</a></span>
+<p><a href="{{committee.get_absolute_url}}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('{{committee.get_absolute_url}}');">{{ committee.name}}</a>: <span class="amountLine"><a href="{{committee.superpachackdonorscsv}}">Donors</a> {% if committee.cash_on_hand_date %}(As of {{committee.cash_on_hand_date}}){% endif %}</span>&nbsp;|&nbsp;<span class="amountLine"><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">FEC filings</a></span>
 </p>
 {% endfor %}
 
