@@ -21,8 +21,8 @@ from outside_spending.utils.json_helpers import render_to_json
 from outside_spending.utils.chart_helpers import summarize_monthly
 
 from settings import CSV_EXPORT_DIR
-#CACHE_TIME = 60 * 15
-CACHE_TIME = 0
+CACHE_TIME = 60 * 15
+
 
 data_disclaimer = """ These files are preliminary and current through %s but we cannot guarantee their accuracy. For more information, see: http://reporting.sunlightfoundation.com/super-pac/data/about/2012-june-update/ Please note that contributions in these files are as of the most recent filing deadline. Independent expenditures are not comparable to the itemized disbursements found in PAC's year-end reports. For more on independent expenditures see here: http://www.fec.gov/pages/brochures/indexp.shtml """ % (most_recent_scrape.run_time)
 
