@@ -350,7 +350,7 @@ def all_independent_expenditors(request):
 @cache_page(CACHE_TIME)                            
 def october_club(request):
     explanatory_text = "This table shows committees that began making expenditures in October or November of 2012 and have spent at least $50,000 to date." 
-    october_first = datetime.date(2012,4,1)
+    october_first = datetime.date(2012,10,1)
     summaries = Expenditure.objects.filter(superceded_by_amendment=False, expenditure_date__gte=october_first,committee__total_indy_expenditures__gte=50000).select_related("committee").values('committee__fec_id', 'committee__name', 'committee__slug', 'committee__total_indy_expenditures', 'committee__ctype', 'committee__cash_on_hand_date').annotate(postseptember=Sum('expenditure_amount')).annotate(firstbuy=Min('expenditure_date'))
     october_club = []
     for summary in summaries:
