@@ -47,6 +47,7 @@ urlpatterns = patterns('',
     url(r'^file-downloads\/?$', 'outside_spending.views.file_downloads'),    
 
     url(r'^electioneering-communications\/?$', 'outside_spending.views.ecs'),
+    url(r'^electioneering-groups\/?$', 'outside_spending.views.all_electioneering_groups'),
     url(r'^overview\/?$', 'outside_spending.views.overview'),
     url(r'^recent-FEC-filings\/superpacs\/?$', 'outside_spending.views.recent_superpac_filings'),
     url(r'^recent-FEC-filings\/superpacs\/new-F3X\/?$', 'outside_spending.views.recent_superpac_filings_f3x'),

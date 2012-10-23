@@ -32,7 +32,8 @@ electioneering_details="""<a target="_new" href="http://www.fec.gov/pages/brochu
 reported as independent expenditures. Electioneering communication
 reports do not state whether the communication was in support of or in
 opposition to the candidate, and they sometimes refer to multiple
-candidates."""
+candidates. """
+
 
 expenditure_file_description = """ This file contains all schedule E transactions reported electronically. Filers are generally required to report these transactions twice: within 24-hours, and then again in a monthly/quarterly report. The numbers reported on 24-hour reports are only used when monthly reports covering that time period are not available."""
 
@@ -345,7 +346,19 @@ def all_independent_expenditors(request):
                             'neg_percent':neg_percent,
                             'pos_percent':positive_percent,
                             })
-                            
+
+def all_electioneering_groups(request):
+    explanatory_text = "This table shows all committees that have spent at least $1,000 on electioneering communications since the beginning of 2011. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. The Federal Election Commission creates separate committees for electioneering communications, so many of these groups have affiliated groups devoted to other types of political spending; try searching for a committee name to find it.<br>Also see a <a href='/outside-spending/electioneering-communications/'>list of the most recent electioneering communications</a>."
+
+    all_groups = Committee_Overlay.objects.filter(total_electioneering__gt=1000)
+
+
+    return render_to_response('outside_spending/all_electioneers.html',
+                            {'explanatory_text':explanatory_text, 
+                            'superpacs':all_groups, 
+                            })
+    
+    
                             
 @cache_page(CACHE_TIME)                            
 def october_club(request):
@@ -572,11 +585,11 @@ def ies(request):
 def ecs(request):
     #today = datetime.date.today()
     #two_weeks_ago = today - datetime.timedelta(days=14)
-    ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False).order_by('-exp_date')
+    ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False, exp_amo__gte=50000).order_by('-exp_date')
     #explanatory_text= 'This page shows electioneering communications.'
     return render_to_response('outside_spending/electioneering_list.html',
                             {'ecs':ecs, 
-                            'explanatory_text':electioneering_details
+                            'explanatory_text':electioneering_details + "<br>This list includes amounts of $50,000 or more. Also see <a href='/outside-spending/electioneering-groups/'>a summary of electioneering groups</a>"
                             })
 
 

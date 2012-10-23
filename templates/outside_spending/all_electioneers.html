@@ -1,0 +1,73 @@
+{% extends "outside_spending/buckley_base.html" %}
+
+{% load humanize %}
+{% load media %}
+
+
+{% block title %}Electioneering Communication Committees{% endblock %}
+
+{% block body %}{{ block.super }}{% endblock %}
+
+{% comment %}
+{% block breadcrumb %}{{ block.super }}
+{% endblock %}
+{% endcomment %}
+
+{% block content %}
+    {% include "outside_spending/tabs.html" %}
+
+<h2>
+    Electioneering Communication Committees
+</h2>
+
+<p class="space_above">{{ explanatory_text|safe }}</p>
+
+
+{% if superpacs %}
+
+<p class="tip">Click on each group's name in the left column to see breakdowns of their spending, including aggregate amounts spent supporting or opposing individual candidates, and a chronological list of all their individual independent expenditure filings with the Federal Election Commission.</p>
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Name</th>
+            <th class="sort">Electioneering Communications</th>
+            <th>FEC Filings</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for superpac in superpacs %}
+            
+                <tr class="{% cycle 'odd' 'even' %}">
+                    <td><a href="{{ superpac.get_absolute_url }}">{{ superpac.name }}</a></td>
+                    <td>{% if superpac.total_electioneering%}${{ superpac.total_electioneering|intcomma }}{% endif %}</td>
+                    <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ superpac.committee__fec_id }}">PDFs</a>&nbsp;|&nbsp;<a href="http://query.nictusa.com/cgi-bin/dcdev/forms/{{ superpac.committee__fec_id }}/">html</a></td>
+                </tr>
+            
+        {% endfor %}
+    </tbody>
+</table>
+
+{% else %}
+<br/><br/>No spending has been reported for this cycle.
+{% endif %}
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[1,1]' as sortdir %}
+{% include "outside_spending/tablesorter.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

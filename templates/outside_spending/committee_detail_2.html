@@ -31,7 +31,8 @@
 	{% if committee.is_superpac %}<b>This group is a super PAC</b><br>{% endif %}
 	{% if committee.is_not_a_committee  %}<b>This group is not a political committee</b><br>{% endif %}
 	{% if committee.is_hybrid %}<b>This group is a hybrid super PAC</b><br>{% endif %}
-	{% if committee.has_linkable_url %}Read <a href="{{committee.profile_url}}" name="PROFILE: {{ committee.name }}">a profile of this group{% endif %}{% if committee.has_linkable_url %}</a><br>{% endif %}Filing Frequency: {{committee.filing_frequency_text}} </span><br>See <a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">FEC Filings</a>
+	{% if committee.has_linkable_url %}Read <a href="{{committee.profile_url}}" name="PROFILE: {{ committee.name }}">a profile of this group{% endif %}{% if committee.has_linkable_url %}</a><br>{% endif %}Filing Frequency: {{committee.filing_frequency_text}} </span>
+	<br>See FEC filings <a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">PDF</a>&nbsp;|&nbsp;<a href="http://query.nictusa.com/cgi-bin/dcdev/forms/{{ committee.fec_id}}/">html</a>
 	
 <div class="space_above">
 
@@ -42,7 +43,7 @@
 
 
 {% if committee.total_indy_expenditures%}
-    <span class="amountLine">Independent Expenditures: </span><span class="amount">{% if committee.total_indy_expenditures%}${{ committee.total_indy_expenditures|intcomma }}{% endif %}</span><br>Jump to <a href="#spending">expenditures</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackcsv}}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('{{committee.superpachackcsv}}');">.csv file of all independent expenditures</a>
+    <span class="amountLine">Independent Expenditures: </span><span class="amount">{% if committee.total_indy_expenditures%}${{ committee.total_indy_expenditures|intcomma }}{% endif %}</span><br>Jump to <a href="#spending">expenditures</a>&nbsp;|&nbsp;Download  <a href="http://assets.sunlightfoundation.com/reporting/FTUM-data/all_expenditures.csv" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('bulk expenditure file');">.csv file of all independent expenditures.</a>
     <br><br>
 {% endif %}   
 
@@ -128,8 +129,10 @@
        {% endfor %}
        </tbody>
        </table>
-       {% endif %}
-
+		{% else %}
+		<div class="space_above"><h3>Independent Expenditures </h3></div>
+		<p>There are no independent expenditures over $1,000 for this committee. See the <a href="http://assets.sunlightfoundation.com/reporting/FTUM-data/all_expenditures.csv">complete file</a> of independent expenditures for amounts less than $1,000.
+		{% endif %}
 
 
 

@@ -65,6 +65,12 @@ class Command(BaseCommand):
                 sp.total_presidential_indy_expenditures = 0
             
             
+            total_ecs = Electioneering_93.objects.filter(committee=sp, superceded_by_amendment=False).aggregate(total_spent=Sum('exp_amo'))['total_spent']
+            if total_ecs:
+                print "Total ecs: %s - sp: %s " % (total_ecs, sp)
+                sp.total_electioneering = total_ecs
+            
+            
             sp.save()
             
 
