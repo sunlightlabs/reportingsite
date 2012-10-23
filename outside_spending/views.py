@@ -7,7 +7,7 @@ from django.views.decorators.cache import cache_page
 from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response, redirect
 # in 1.3 there's django.shortcuts.render . D'oh!
 from django.http import *
-from django.db.models import Sum
+from django.db.models import Sum, Min
 from django.db.models import Q
 from django.contrib.localflavor.us.us_states import STATE_CHOICES
 from django.contrib.humanize.templatetags.humanize import intcomma
@@ -349,9 +349,9 @@ def all_independent_expenditors(request):
                             
 @cache_page(CACHE_TIME)                            
 def october_club(request):
-    explanatory_text = "This table shows all committees making independent expenditures that have spent at least $10,000 on independent expenditures in October or November of 2012--but nothing prior to that. "
+    explanatory_text = "This table shows committees that began making expenditures in October or November of 2012 and has spent at least $50,000 to date." 
     october_first = datetime.date(2012,10,1)
-    summaries = Expenditure.objects.filter(superceded_by_amendment=False, expenditure_date__gte=october_first,committee__total_indy_expenditures__gte=10000).select_related("committee").values('committee__fec_id', 'committee__name', 'committee__slug', 'committee__total_indy_expenditures', 'committee__ctype').annotate(postseptember=Sum('expenditure_amount'))
+    summaries = Expenditure.objects.filter(superceded_by_amendment=False, expenditure_date__gte=october_first,committee__total_indy_expenditures__gte=50000).select_related("committee").values('committee__fec_id', 'committee__name', 'committee__slug', 'committee__total_indy_expenditures', 'committee__ctype').annotate(postseptember=Sum('expenditure_amount')).annotate(firstbuy=Min('expenditure_date'))
     october_club = []
     for summary in summaries:
         if summary['postseptember'] == summary['committee__total_indy_expenditures']:
