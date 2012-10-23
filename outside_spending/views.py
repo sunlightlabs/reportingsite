@@ -350,8 +350,8 @@ def all_independent_expenditors(request):
 @cache_page(CACHE_TIME)                            
 def october_club(request):
     explanatory_text = "This table shows committees that began making expenditures in October or November of 2012 and have spent at least $50,000 to date." 
-    october_first = datetime.date(2012,10,1)
-    summaries = Expenditure.objects.filter(superceded_by_amendment=False, expenditure_date__gte=october_first,committee__total_indy_expenditures__gte=50000).select_related("committee").values('committee__fec_id', 'committee__name', 'committee__slug', 'committee__total_indy_expenditures', 'committee__ctype').annotate(postseptember=Sum('expenditure_amount')).annotate(firstbuy=Min('expenditure_date'))
+    october_first = datetime.date(2012,4,1)
+    summaries = Expenditure.objects.filter(superceded_by_amendment=False, expenditure_date__gte=october_first,committee__total_indy_expenditures__gte=50000).select_related("committee").values('committee__fec_id', 'committee__name', 'committee__slug', 'committee__total_indy_expenditures', 'committee__ctype', 'committee__cash_on_hand_date').annotate(postseptember=Sum('expenditure_amount')).annotate(firstbuy=Min('expenditure_date'))
     october_club = []
     for summary in summaries:
         if summary['postseptember'] == summary['committee__total_indy_expenditures']:
@@ -560,9 +560,9 @@ def state_detail(request, state_abbreviation):
 @cache_page(CACHE_TIME)
 def ies(request):
     today = datetime.date.today()
-    two_weeks_ago = today - datetime.timedelta(days=5)
-    ies = Expenditure.objects.select_related("committee", "candidate").filter(superceded_by_amendment=False, expenditure_date__gte=two_weeks_ago, expenditure_amount__gte=1000).order_by('-expenditure_date')
-    explanatory_text= 'This page shows independent expenditures made in the last 5 days for $1,000 or more. See the <a href="http://assets.sunlightfoundation.com/reporting/FTUM-data/all_expenditures.csv">complete file</a> of independent expenditures for amounts less than $1,000.'
+    two_weeks_ago = today - datetime.timedelta(days=7)
+    ies = Expenditure.objects.select_related("committee", "candidate").filter(superceded_by_amendment=False, expenditure_date__gte=two_weeks_ago, expenditure_amount__gte=50000).order_by('-expenditure_date')
+    explanatory_text= 'This page shows independent expenditures made in the last 7 days for $50,000 or more. See the <a href="http://assets.sunlightfoundation.com/reporting/FTUM-data/all_expenditures.csv">complete file</a> of independent expenditures for amounts less than $50,000.'
     return render_to_response('outside_spending/expenditure_list.html',
                             {'ies':ies, 
                             'explanatory_text':explanatory_text,
