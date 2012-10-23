@@ -29,7 +29,7 @@
             <th class="sort">Name</th>
             <th class="sort">Independent expenditures</th>
             <th class="sort">Type</th>
-            <th></th>
+            <th> FEC<br>Filings</th>
         </tr>
     </thead>
     <tbody>
@@ -39,7 +39,7 @@
                     <td><a href="http://reporting.sunlightfoundation.com/outside-spending/committee/{{ superpac.committee__slug }}/{{ superpac.committee__fec_id}}/">{% if superpac.committee__name %}{{ superpac.committee__name }}{% else %}Registration not yet filed{% endif %}</a></td>
                     <td>{% if superpac.committee__total_indy_expenditures%}${{ superpac.committee__total_indy_expenditures|intcomma }}{% endif %}</td>
                     <td>{{ superpac.committee__ctype }}</td>
-                    <td>FEC<a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ superpac.committee__fec_id }}">PDFs</a>&nbsp;|&nbsp;<a href="http://query.nictusa.com/cgi-bin/dcdev/forms/{{ superpac.committee__fec_id }}/">html</a></td>
+                    <td><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{ superpac.committee__fec_id }}">PDFs</a>&nbsp;|&nbsp;<a href="http://query.nictusa.com/cgi-bin/dcdev/forms/{{ superpac.committee__fec_id }}/">html</a></td>
 
                 </tr>
             
