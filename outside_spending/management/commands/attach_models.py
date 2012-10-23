@@ -61,5 +61,12 @@ class Command(BaseCommand):
                     
                         
                         
-
-                    #print "Couldn't attach candidate to expenditure: %s - %s" % (ie.raw_candidate_id, ie.candidate_name)
+            # attach to missing ecs groups. 
+            missing_ecs = Electioneering_93.objects.filter(committee__isnull=True)
+            for ecs in missing_ecs:
+                spending_committee = get_or_create_committee_overlay(ecs.fec_id, cycle)
+                if (spending_committee):
+                    ecs.committee =  spending_committee
+                    ecs.save()
+                    
+            
