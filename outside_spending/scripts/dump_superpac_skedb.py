@@ -24,7 +24,7 @@ outfile = open(dumpfilename, 'w')
 fp = form_parser()
 
 
-def process_file(filingnum, csvwriter):
+def process_file(filingnum, csvwriter, name):
     f1 = filing(filingnum)
     f1.download()
     form = f1.get_form_type()
@@ -49,14 +49,12 @@ def process_file(filingnum, csvwriter):
             orgname = parsed_line['payee_organization_name'].replace('"','')
             
             parsed_line['orgname_parsed']=str(OrganizationNameCleaver(orgname).parse())
-            parsed_line['orgname_kernel']=str(OrganizationNameCleaver(orgname).parse().kernel())
-            parsed_line['orgname_expand']=str(OrganizationNameCleaver(orgname).parse().expand())
-            
+            parsed_line['committee_name'] = name
             #map_parsed_line(parsed_line)
             csvwriter.writerow(parsed_line)
 
 
-field_list = ['filer_committee_id_number', 'committee_name' ,'form_type', 'transaction_id_number', 'expenditure_amount', 'expenditure_date', 'entity_type',  'payee_first_name', 'payee_last_name', 'payee_organization_name', 'orgname_parsed', 'orgname_kernel', 'orgname_expand','payee_street_1', 'payee_street_2', 'payee_city', 'filer_committee_id_number', 'expenditure_purpose_descrip', 'category_code', 'beneficiary_committee_name', 'beneficiary_committee_fec_id', 'conduit_name', 'conduit_city', 'conduit_state', 'memo_code', 'refund_or_disposal_of_excess', 'back_reference_tran_id_number', 'back_reference_sched_name']
+field_list = ['filer_committee_id_number', 'committee_name' ,'form_type', 'transaction_id_number', 'expenditure_amount', 'expenditure_date', 'entity_type',  'payee_first_name', 'payee_last_name', 'payee_organization_name', 'orgname_parsed','payee_street_1', 'payee_street_2', 'payee_city', 'payee_state', 'payee_zip', 'election_code', 'expenditure_purpose_descrip', 'category_code', 'beneficiary_committee_name', 'beneficiary_committee_fec_id', 'conduit_name', 'conduit_city', 'conduit_state', 'memo_code', 'refund_or_disposal_of_excess', 'back_reference_tran_id_number', 'back_reference_sched_name']
 
 #field_list = ['form_type', 'entity_type', 'contributor_name', 'contributor_organization_name','contribution_aggregate', 'contribution_amount', 'contribution_date', 'contributor_employer', 'contributor_occupation', 'contributor_first_name', 'contributor_middle_name', 'contributor_last_name', 'contributor_suffix', 'contributor_street_1', 'contributor_street_2', 'contributor_city', 'contributor_state', 'contributor_zip', 'election_code']
 
@@ -72,8 +70,10 @@ superpac_ids = Committee_Overlay.objects.filter(is_superpac=True).values('fec_id
 
 for sp in superpac_ids:
     this_id = sp['fec_id']
+    committee = Committee_Overlay.objects.get(fec_id=this_id)
+    name = committee.name
     filings = F3X_Summary.objects.filter(fec_id=this_id, superceded_by_amendment=False)
     for afiling in filings:
         thisfilenum = afiling.filing_number
         print "Processing %s %s" % (this_id, afiling.filing_number)
-        process_file(thisfilenum, csvwriter)
+        process_file(thisfilenum, csvwriter, name)
