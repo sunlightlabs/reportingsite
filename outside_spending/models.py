@@ -418,6 +418,23 @@ class Candidate_Overlay(models.Model):
     # need to add electioneering here:
     electioneering = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     
+    # Is this candidate a winner in the general election?
+    cand_is_gen_winner = models.NullBooleanField(null=True)
+    # I = incumbent, O = Open seat, C=Challenger. Redistricting complicates this; they can both be incumbents. 
+    cand_ici = models.CharField(max_length=1, blank=True, null=True)
+    # Are they in the general election ? 
+    is_general_candidate = models.NullBooleanField(null=True)
+    ### data from the candidates own committees. Can be outta date for senate. From weball. 
+    cand_ttl_receipts= models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    cand_total_disbursements = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    cand_ending_cash = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    cand_ttl_ind_contribs = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    cand_cand_contrib = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    cand_cand_loans = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    cand_debts_owed_by = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    cand_report_date = models.DateField(null=True)
+    
+    
     def __unicode__(self):
         return str(self.fec_name)
         
