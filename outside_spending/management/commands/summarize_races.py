@@ -95,7 +95,8 @@ class Command(BaseCommand):
             state = race[0]
             office = race[1]
             district = race[2]
-            print "Handling %s %s %s" % (state, office, district)
+            rating = race[4]
+            print "\n\nHandling %s %s %s - rated: %s" % (state, office, district, rating)
             general_candidates = None
             all_candidates = None
             if office == 'S':
