@@ -109,10 +109,10 @@ class Command(BaseCommand):
             all_id_list = join_fecid_values(all_candidates.values('fec_id'))
             
             total_ies = all_ies.filter(candidate__fec_id__in=all_id_list).aggregate(total=Sum('expenditure_amount'))['total']
-            total_raised = all_candidates.aggregate(total=Sum('cand_ttl_receipts'))['total']
+            total_spent = all_candidates.aggregate(total=Sum('cand_total_disbursements'))['total']
             
             general_ies = all_gen_ies.filter(candidate__fec_id__in=general_id_list).aggregate(total=Sum('expenditure_amount'))['total']
-            total_raised_gen_candidates = general_candidates.aggregate(total=Sum('cand_ttl_receipts'))['total']
+            total_spent_gen_candidates = general_candidates.aggregate(total=Sum('cand_total_disbursements'))['total']
             
 
             
@@ -124,7 +124,7 @@ class Command(BaseCommand):
             anti_dem_general = all_gen_ies.filter(candidate__fec_id__in=general_id_list, candidate__party='DEM', support_oppose='O').aggregate(total=Sum('expenditure_amount'))['total'] or 0
             total_pro_rep_general = pro_rep_general + anti_dem_general
             
-            print "Total ies %s total raised %s general ies %s total raised gen candidates (including primary): %s total_gen_pro_dem %s total_gen_pro_rep %s" % (total_ies, total_raised, general_ies, total_raised_gen_candidates, total_pro_dem_general, total_pro_rep_general)
+            print "Total ies %s total spent %s general ies %s total spent gen candidates (including primary): %s total_gen_pro_dem %s total_gen_pro_rep %s" % (total_ies, total_spent, general_ies, total_spent_gen_candidates, total_pro_dem_general, total_pro_rep_general)
             
             
             num_gen_candidates = len(general_id_list)
@@ -132,6 +132,6 @@ class Command(BaseCommand):
                 print "Not 2 candidates found!!"
                 
             for can in general_candidates:
-                print "Found candidate %s %s" % (can.party, can)
+                print "Found candidate %s %s total_spent: %s" % (can.party, can, can.cand_total_disbursements)
                 
             
