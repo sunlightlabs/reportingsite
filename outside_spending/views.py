@@ -521,9 +521,9 @@ def candidates(request):
 def candidate_detail(request, candidate_id):
     candidate = Candidate_Overlay.objects.get(fec_id=candidate_id)
     explanatory_text= 'This is a list of all super PACs that have made independent expenditures supporting or opposing this candidate.'
-    explanatory_text_details = 'This is a list of all independent expenditures made by any committee for or against this candidate.'
+    explanatory_text_details = 'This is a list of all independent expenditures of $10,000 or more made by any committee for or against this candidate.'
     superpacs = Pac_Candidate.objects.filter(candidate=candidate)
-    expenditures = Expenditure.objects.filter(superceded_by_amendment=False, candidate=candidate).select_related("committee")
+    expenditures = Expenditure.objects.filter(superceded_by_amendment=False, candidate=candidate, expenditure_amount__gte=10000).select_related("committee")
     
     ecs = Electioneering_93.objects.select_related("target", "target__candidate").filter(superceded_by_amendment=False, target__candidate=candidate).order_by('-exp_date')
     ec_total_dict = ecs.aggregate(total=Sum('exp_amo'))
