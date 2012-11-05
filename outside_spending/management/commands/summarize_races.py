@@ -114,7 +114,18 @@ class Command(BaseCommand):
             general_ies = all_gen_ies.filter(candidate__fec_id__in=general_id_list).aggregate(total=Sum('expenditure_amount'))['total']
             total_raised_gen_candidates = general_candidates.aggregate(total=Sum('cand_ttl_receipts'))['total']
             
-            print "Total ies %s total raised %s general ies %s total raised gen candidates %s" % (total_ies, total_raised, general_ies, total_raised_gen_candidates)
+
+            
+            pro_dem_general = all_gen_ies.filter(candidate__fec_id__in=general_id_list, candidate__party='DEM', support_oppose='S').aggregate(total=Sum('expenditure_amount'))['total'] or 0
+            anti_rep_general = all_gen_ies.filter(candidate__fec_id__in=general_id_list, candidate__party='REP', support_oppose='O').aggregate(total=Sum('expenditure_amount'))['total'] or 0
+            total_pro_dem_general = pro_dem_general + anti_rep_general
+            
+            pro_rep_general = all_gen_ies.filter(candidate__fec_id__in=general_id_list, candidate__party='REP', support_oppose='S').aggregate(total=Sum('expenditure_amount'))['total'] or 0
+            anti_dem_general = all_gen_ies.filter(candidate__fec_id__in=general_id_list, candidate__party='DEM', support_oppose='O').aggregate(total=Sum('expenditure_amount'))['total'] or 0
+            total_pro_rep_general = pro_rep_general + anti_dem_general
+            
+            print "Total ies %s total raised %s general ies %s total raised gen candidates (including primary): %s total_gen_pro_dem %s total_gen_pro_rep %s" % (total_ies, total_raised, general_ies, total_raised_gen_candidates, total_pro_dem_general, total_pro_rep_general)
+            
             
             num_gen_candidates = len(general_id_list)
             if num_gen_candidates != 2:
