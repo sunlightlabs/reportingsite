@@ -1,10 +1,12 @@
 import gspread
 
 from datetime import date
+from dateutil.parser import parse as dateparse
 
 from django.core.management.base import BaseCommand, CommandError
 from outside_spending.models import Candidate_Overlay
 from django.conf import settings
+from overlay_utils import get_or_create_candidate_overlay
 
 GOOGLE_SPREADSHEET_USERNAME = settings.GOOGLE_SPREADSHEET_USERNAME
 GOOGLE_SPREADSHEET_PASSWORD = settings.GOOGLE_SPREADSHEET_PASSWORD
@@ -16,12 +18,12 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         
         gc = gspread.login(GOOGLE_SPREADSHEET_USERNAME,GOOGLE_SPREADSHEET_PASSWORD)
-        doc_name = 'candidates1'
+        doc_name = 'candidates2'
         # Open a worksheet from spreadsheet with one shot
         wks = gc.open(doc_name).sheet1
         worksheet_data = wks.get_all_values()
         # preelection reports are through: I think senate is updated... 
-        update_date = date(2012,10,17)
+        #update_date = date(2012,10,17)
         
         # ignore header row
         for row in worksheet_data[1:]:
@@ -35,11 +37,12 @@ class Command(BaseCommand):
             cand_contrib = row[15]
             cand_loans = row[16]
             debts_owed_by = row[17]
+            update_date = dateparse(row[18])
             
             #print "fec_id %s name %s cand_ici %s tot_recpts %s totl_contribs %s" % (fec_id, row[1], cand_ici, total_receipts, ttl_ind_contribs)
             
             try:
-                co = Candidate_Overlay.objects.get(fec_id=fec_id)
+                co = get_or_create_candidate_overlay(fec_id, 12)
                 co.cand_ici = cand_ici
                 co.is_general_candidate = True
                 co.cand_ttl_receipts = total_receipts
