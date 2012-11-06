@@ -1236,7 +1236,7 @@ def elex_json(request):
                 'top_senate_races':top_senate_races,
                 })
                 
-@cache_page(60 * 0)
+@cache_page(60 * 15)
 def competitive_races(request):
     races = Race_Aggregate.objects.filter(cook_rating__isnull=False).order_by('state', '-office')
     for race in races:
