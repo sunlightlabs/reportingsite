@@ -7,6 +7,7 @@ competitive_races = [
 ["AZ", "H", "01", "", "Toss Up"],
 ["AZ", "H", "02", "Y", "Lean Democratic"],
 ["AZ", "H", "09", "", "Lean Democratic"],
+["AZ", "S", "", "", "Toss Up"],
 ["CA", "H", "07", "", "Toss Up"],
 ["CA", "H", "09", "", "Toss Up"],
 ["CA", "H", "10", "Y", "Toss Up"],
@@ -38,6 +39,7 @@ competitive_races = [
 ["IA", "H", "04", "", "Lean Republican"],
 ["KY", "H", "06", "", "Toss Up"],
 ["MA", "H", "06", "", "Lean Republican"],
+["MA", "S", "", "", "Toss Up"],
 ["ME", "S", "", "", "Toss Up"],
 ["MI", "H", "01", "Y", "Toss Up"],
 ["MI", "H", "11", "", "Lean Republican"],
@@ -130,12 +132,12 @@ class Command(BaseCommand):
             
 
             
-            pro_dem_general = all_gen_ies.filter(candidate__fec_id__in=general_id_list, candidate__party='DEM', support_oppose='S').aggregate(total=Sum('expenditure_amount'))['total'] or 0
+            pro_dem_general = all_gen_ies.filter(candidate__fec_id__in=general_id_list, candidate__party__in=('DEM', 'IND'), support_oppose='S').aggregate(total=Sum('expenditure_amount'))['total'] or 0
             anti_rep_general = all_gen_ies.filter(candidate__fec_id__in=general_id_list, candidate__party='REP', support_oppose='O').aggregate(total=Sum('expenditure_amount'))['total'] or 0
             total_pro_dem_general = pro_dem_general + anti_rep_general
             
             pro_rep_general = all_gen_ies.filter(candidate__fec_id__in=general_id_list, candidate__party='REP', support_oppose='S').aggregate(total=Sum('expenditure_amount'))['total'] or 0
-            anti_dem_general = all_gen_ies.filter(candidate__fec_id__in=general_id_list, candidate__party='DEM', support_oppose='O').aggregate(total=Sum('expenditure_amount'))['total'] or 0
+            anti_dem_general = all_gen_ies.filter(candidate__fec_id__in=general_id_list, candidate__party__in=('DEM', 'IND'), support_oppose='O').aggregate(total=Sum('expenditure_amount'))['total'] or 0
             total_pro_rep_general = pro_rep_general + anti_dem_general
             
             print "Total ies %s total spent %s general ies %s total spent gen candidates (including primary): %s total_gen_pro_dem %s total_gen_pro_rep %s" % (total_ies, total_receipts, general_ies, total_receipts_gen_candidates, total_pro_dem_general, total_pro_rep_general)
