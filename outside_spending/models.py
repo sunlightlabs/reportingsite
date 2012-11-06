@@ -696,6 +696,18 @@ class Race_Aggregate(models.Model):
     total_ind_exp = models.DecimalField(max_digits=19, decimal_places=2, null=True) 
     total_ec = models.DecimalField(max_digits=19, decimal_places=2, null=True)
     
+    # summaries populated after the fact
+    total_receipts = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+#    contrib_date_approximate = models.DateField(null=True)
+    general_ies = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    total_receipts_gen_candidates = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    percent_outside = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    total_pro_dem_general = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    total_pro_rep_general = models.DecimalField(max_digits=19, decimal_places=2, null=True)
+    winner = models.ForeignKey(Candidate_Overlay, null=True)
+    is_freshman = models.NullBooleanField(null=True, blank=True)
+    cook_rating = models.CharField(max_length=31, null=True, blank=True)
+
     class Meta:
         ordering = ('-total_ind_exp', )    
     

@@ -92,11 +92,18 @@ class Command(BaseCommand):
         all_gen_ies = all_ies.filter(election_type='G')
         
         for race in competitive_races:
+            
             state = race[0]
             office = race[1]
             district = race[2]
             rating = race[4]
+                        
             print "\n\nHandling %s %s %s - rated: %s" % (state, office, district, rating)
+            try:
+                this_race_aggregate = Race_Aggregate.objects.get(state=state, office=office, district=district)
+            except Race_Aggregate.DoesNotExist:
+                continue
+            
             general_candidates = None
             all_candidates = None
             if office == 'S':
@@ -110,10 +117,10 @@ class Command(BaseCommand):
             all_id_list = join_fecid_values(all_candidates.values('fec_id'))
             
             total_ies = all_ies.filter(candidate__fec_id__in=all_id_list).aggregate(total=Sum('expenditure_amount'))['total']
-            total_spent = all_candidates.aggregate(total=Sum('cand_total_disbursements'))['total']
+            total_receipts = all_candidates.aggregate(total=Sum('cand_ttl_receipts'))['total']
             
             general_ies = all_gen_ies.filter(candidate__fec_id__in=general_id_list).aggregate(total=Sum('expenditure_amount'))['total']
-            total_spent_gen_candidates = general_candidates.aggregate(total=Sum('cand_total_disbursements'))['total']
+            total_receipts_gen_candidates = general_candidates.aggregate(total=Sum('cand_ttl_receipts'))['total'] or 0
             
 
             
@@ -125,8 +132,22 @@ class Command(BaseCommand):
             anti_dem_general = all_gen_ies.filter(candidate__fec_id__in=general_id_list, candidate__party='DEM', support_oppose='O').aggregate(total=Sum('expenditure_amount'))['total'] or 0
             total_pro_rep_general = pro_rep_general + anti_dem_general
             
-            print "Total ies %s total spent %s general ies %s total spent gen candidates (including primary): %s total_gen_pro_dem %s total_gen_pro_rep %s" % (total_ies, total_spent, general_ies, total_spent_gen_candidates, total_pro_dem_general, total_pro_rep_general)
+            print "Total ies %s total spent %s general ies %s total spent gen candidates (including primary): %s total_gen_pro_dem %s total_gen_pro_rep %s" % (total_ies, total_receipts, general_ies, total_receipts_gen_candidates, total_pro_dem_general, total_pro_rep_general)
             
+            
+            
+            this_race_aggregate.total_receipts = total_receipts
+            this_race_aggregate.general_ies = general_ies
+            this_race_aggregate.total_receipts_gen_candidates = total_receipts_gen_candidates
+            if (total_receipts and this_race_aggregate.total_ind_exp):
+                this_race_aggregate.percent_outside = 100 * (this_race_aggregate.total_ind_exp / total_receipts)
+            this_race_aggregate.total_pro_dem_general = total_pro_dem_general
+            this_race_aggregate.total_pro_rep_general = total_pro_rep_general
+            if race[4]=='Y':
+                this_race_aggregate.is_freshman = True
+            this_race_aggregate.cook_rating = rating
+            
+            this_race_aggregate.save()
             
             num_gen_candidates = len(general_id_list)
             if num_gen_candidates != 2:
@@ -134,5 +155,8 @@ class Command(BaseCommand):
                 
             for can in general_candidates:
                 print "Found candidate %s %s total_spent: %s" % (can.party, can, can.cand_total_disbursements)
+                if can.cand_is_gen_winner and not this_race_aggregate.winner:
+                    this_race_aggregate.winner = can
+                    this_race_aggregate.save()
                 
             
