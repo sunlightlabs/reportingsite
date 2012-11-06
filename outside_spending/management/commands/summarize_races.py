@@ -38,6 +38,7 @@ competitive_races = [
 ["IA", "H", "04", "", "Lean Republican"],
 ["KY", "H", "06", "", "Toss Up"],
 ["MA", "H", "06", "", "Lean Republican"],
+["ME", "S", "", "", "Toss Up"],
 ["MI", "H", "01", "Y", "Toss Up"],
 ["MI", "H", "11", "", "Lean Republican"],
 ["MN", "H", "06", "", "Lean Republican"],
