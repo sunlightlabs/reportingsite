@@ -19,6 +19,7 @@
 
     <h2>Outside spending by race: {{ race_name }}</h2>
     <div>
+	{% if race_aggregate.winner %}<b>WINNER: {{ race_aggregate.winner }} {{ race_aggregate.winner.display_party }}</b><br>{% endif %}
     <span class="amountLine">Total independent expenditures in this race: </span><span class="amount">${{race_aggregate.total_ind_exp|intcomma}}</span>
     {% if race_aggregate.total_ec %}<br><span class="amountLine">Total electioneering communications in this race: </span><span class="amount">${{race_aggregate.total_ec|intcomma}}</span><br><a href="#ec">Jump to electioneering communications</a>{% endif %}
 </div>

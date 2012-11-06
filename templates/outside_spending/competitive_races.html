@@ -1,0 +1,66 @@
+{% extends "outside_spending/buckley_base.html" %}
+
+{% block title %}Competitive Races - {{ block.super }}{% endblock %}
+
+{% block body %}expendituresHome fullWidth {% endblock %}
+
+
+{% load humanize %}
+{% load media %}
+
+{% block breadcrumb %}
+<li>Races</li>
+{% endblock %}
+
+
+{% block content %}
+    {% include "outside_spending/tabs.html" %}
+
+    <h2>
+        Competitive races
+    </h2>
+    <p>In the below "General election outside support" is the total amount of outside money helping a candidate in a general election; in other words, the sum of expenditures helping the candidate and opposing their opponent. Candidate fundraising is total receipts reported through October 17; it does not include last-minute contributions. The race-wide totals include spending by and against primary candidates. </p>
+
+
+
+    {% for race in races %}
+	<div style="margin-top:40px;">
+    <h3 style="margin-bottom:0px;"><a href="{{race.get_absolute_url}}">{{ race.race_name }}</a></h3>
+	Cook rating: {{ race.cook_rating}}
+      <br> Total outside money: ${{ race.total_ind_exp|intcomma }}
+	<br>Total candidate fundraising: ${{ race.total_receipts|intcomma }}
+	<table id="competitiveracetable">
+	<thead>
+        <tr>
+            <th style="padding:2px; line-height:16px">Candidate</th>
+            <th style="padding:2px; line-height:16px">General election outside support</th>
+            <th style="padding:2px; line-height:16px">Candidate fundraising</th>
+        </tr>
+    </thead>
+
+	<tbody>
+	<tr><td style="padding:2px; line-height:16px">{% if race.demcand.cand_is_gen_winner %}<b>winner</b> {% endif %}<a href="{{ race.demcand.get_absolute_url }}">{{ race.demcand }} (D)</a> {% ifequal 'I' race.demcand.seat_status %}(Incumbent){% endifequal %}</td><td style="padding:2px; line-height:16px">${{ race.total_pro_dem_general|intcomma }}</td><td style="padding:2px; line-height:16px">${{ race.demcand.cand_ttl_receipts|intcomma }}</td></tr>
+	<tr><td style="padding:2px; line-height:16px">{% if race.repcand.cand_is_gen_winner %}<b>winner</b> {% endif %}<a href="{{ race.repcand.get_absolute_url }}">{{ race.repcand }} (R)</a> {% ifequal 'I' race.repcand.seat_status %}(Incumbent){% endifequal %}</td><td style="padding:2px; line-height:16px">${{ race.total_pro_rep_general|intcomma }}</td><td style="padding:2px; line-height:16px">${{ race.repcand.cand_ttl_receipts|intcomma }}</td></tr>
+	</tbody>
+	</table>
+	</div>
+	
+    {% endfor %}
+
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

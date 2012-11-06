@@ -1235,3 +1235,25 @@ def elex_json(request):
                 'top_house_races':top_house_races,
                 'top_senate_races':top_senate_races,
                 })
+                
+@cache_page(60 * 0)
+def competitive_races(request):
+    races = Race_Aggregate.objects.filter(cook_rating__isnull=False).order_by('state', '-office')
+    for race in races:
+        office = race.office
+        state = race.state
+        district = race.district
+        if office == 'S':
+            general_candidates = Candidate_Overlay.objects.filter(office = office, state_race=state, is_general_candidate = True )
+        else:
+            general_candidates = Candidate_Overlay.objects.filter(office = office, state_race=state, district=district, is_general_candidate = True )
+        for c in general_candidates:
+            if c.party == "DEM":
+                race.demcand = c
+            elif c.party == "REP":
+                race.repcand = c
+        
+    return render_to_response('outside_spending/competitive_races.html', {
+                'races':races,
+                })
+    

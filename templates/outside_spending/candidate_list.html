@@ -35,7 +35,7 @@
 
     {% for candidate in candidates %}
     <tr>
-        <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.fec_name }}</a> {{ candidate.display_party }}</td>
+        <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.fec_name }}</a> {{ candidate.display_party }} {% if candidate.cand_is_gen_winner %}<b>winner</b> {% endif %}</td>
         <td><a href="{{candidate.get_race_url}}">{{ candidate.race }}</a></td>
         <td>{% if candidate.expenditures_opposing %}${{ candidate.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</td>
         <td>{% if candidate.expenditures_supporting %}${{ candidate.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</td>
