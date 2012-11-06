@@ -42,7 +42,7 @@ class Command(BaseCommand):
             #print "fec_id %s name %s cand_ici %s tot_recpts %s totl_contribs %s" % (fec_id, row[1], cand_ici, total_receipts, ttl_ind_contribs)
             
             try:
-                co = get_or_create_candidate_overlay(fec_id, 12)
+                co = get_or_create_candidate_overlay(fec_id, 2012)
                 co.cand_ici = cand_ici
                 co.is_general_candidate = True
                 co.cand_ttl_receipts = total_receipts
