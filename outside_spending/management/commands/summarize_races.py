@@ -33,6 +33,7 @@ competitive_races = [
 ["IL", "H", "13", "", "Toss Up"],
 ["IL", "H", "17", "Y", "Toss Up"],
 ["IN", "H", "08", "Y", "Lean Republican"],
+["IN", "S", "", "", "Toss Up"],
 ["IA", "H", "03", "", "Lean Republican"],
 ["IA", "H", "04", "", "Lean Republican"],
 ["KY", "H", "06", "", "Toss Up"],
