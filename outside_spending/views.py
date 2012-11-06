@@ -1238,7 +1238,7 @@ def elex_json(request):
                 
 @cache_page(60 * 15)
 def competitive_races(request):
-    races = Race_Aggregate.objects.filter(cook_rating__isnull=False).order_by('state', '-office')
+    races = Race_Aggregate.objects.filter(cook_rating__isnull=False).order_by('state', 'office', 'district')
     for race in races:
         office = race.office
         state = race.state

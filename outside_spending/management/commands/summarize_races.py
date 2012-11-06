@@ -100,13 +100,17 @@ class Command(BaseCommand):
                         
             print "\n\nHandling %s %s %s - rated: %s" % (state, office, district, rating)
             try:
-                this_race_aggregate = Race_Aggregate.objects.get(state=state, office=office, district=district)
+                if office=='S':
+                    this_race_aggregate = Race_Aggregate.objects.get(state=state, office=office)
+                else:
+                    this_race_aggregate = Race_Aggregate.objects.get(state=state, office=office, district=district)
             except Race_Aggregate.DoesNotExist:
                 continue
             
             general_candidates = None
             all_candidates = None
             if office == 'S':
+                print "Got senate race"
                 general_candidates = Candidate_Overlay.objects.filter(office = office, state_race=state, is_general_candidate = True )
                 all_candidates = Candidate_Overlay.objects.filter(office = office, state_race=state)
             else:
