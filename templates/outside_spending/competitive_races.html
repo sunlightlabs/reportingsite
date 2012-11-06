@@ -27,8 +27,8 @@
 	<div style="margin-top:40px;">
     <h3 style="margin-bottom:0px;"><a href="{{race.get_absolute_url}}">{{ race.race_name }}</a></h3>
 	Cook rating: {{ race.cook_rating}}
-      <br> Total outside money: ${{ race.total_ind_exp|intcomma }}
-	<br>Total candidate fundraising: ${{ race.total_receipts|intcomma }}
+      <br> Total outside money: ${{ race.total_ind_exp|floatformat:0|intcomma }}
+	<br>Total candidate fundraising: ${{ race.total_receipts|floatformat:0|intcomma }}
 	<table id="competitiveracetable">
 	<thead>
         <tr>
@@ -39,10 +39,18 @@
     </thead>
 
 	<tbody>
-	<tr><td style="padding:2px; line-height:16px">{% if race.demcand.cand_is_gen_winner %}<b>winner</b> {% endif %}<a href="{{ race.demcand.get_absolute_url }}">{{ race.demcand }} (D)</a> {% ifequal 'I' race.demcand.seat_status %}(Incumbent){% endifequal %}</td><td style="padding:2px; line-height:16px">${{ race.total_pro_dem_general|intcomma }}</td><td style="padding:2px; line-height:16px">${{ race.demcand.cand_ttl_receipts|intcomma }}</td></tr>
-	<tr><td style="padding:2px; line-height:16px">{% if race.repcand.cand_is_gen_winner %}<b>winner</b> {% endif %}<a href="{{ race.repcand.get_absolute_url }}">{{ race.repcand }} (R)</a> {% ifequal 'I' race.repcand.seat_status %}(Incumbent){% endifequal %}</td><td style="padding:2px; line-height:16px">${{ race.total_pro_rep_general|intcomma }}</td><td style="padding:2px; line-height:16px">${{ race.repcand.cand_ttl_receipts|intcomma }}</td></tr>
+	{% ifequal race.state 'ME' %}
+	<tr><td style="padding:2px; line-height:16px"><a href="/outside-spending/candidate/dill-cynthia-ann/S2ME00083/">KING, ANGUS (I)</a> </td><td style="padding:2px; line-height:16px">*</td><td style="padding:2px; line-height:16px">$2,542,779</td></tr>
+	<tr><td style="padding:2px; line-height:16px"><a href="/outside-spending/candidate/dill-cynthia-ann/S2ME00083/">DILL, CYNTHIA ANN (D)</a> </td><td style="padding:2px; line-height:16px">*</td><td style="padding:2px; line-height:16px">$161,833</td></tr>
+		<tr><td style="padding:2px; line-height:16px"><a href="/outside-spending/candidate/summers-charles-edward-jr/S2ME00133/">SUMMERS, CHARLES EDWARD JR (R)</a> </td><td style="padding:2px; line-height:16px">*</td><td style="padding:2px; line-height:16px">$1,125,418</td></tr>
+	
+	{% else %}
+	<tr><td style="padding:2px; line-height:16px">{% if race.demcand.cand_is_gen_winner %}<b>winner</b> {% endif %}<a href="{{ race.demcand.get_absolute_url }}">{{ race.demcand }} (D)</a> {% ifequal 'I' race.demcand.seat_status %}(Incumbent){% endifequal %}</td><td style="padding:2px; line-height:16px">${{ race.total_pro_dem_general|floatformat:0|intcomma }}</td><td style="padding:2px; line-height:16px">${{ race.demcand.cand_ttl_receipts|floatformat:0|intcomma }}</td></tr>
+	<tr><td style="padding:2px; line-height:16px">{% if race.repcand.cand_is_gen_winner %}<b>winner</b> {% endif %}<a href="{{ race.repcand.get_absolute_url }}">{{ race.repcand }} (R)</a> {% ifequal 'I' race.repcand.seat_status %}(Incumbent){% endifequal %}</td><td style="padding:2px; line-height:16px">${{ race.total_pro_rep_general|floatformat:0|intcomma }}</td><td style="padding:2px; line-height:16px">${{ race.repcand.cand_ttl_receipts|floatformat:0|intcomma }}</td></tr>
+	{% endifequal %}
 	</tbody>
 	</table>
+	{% ifequal race.state 'ME' %}Because there are three prominent candidates in this race it's hard to say who outside spending has benefitted. For example, the <a href="http://reporting.sunlightfoundation.com/outside-spending/committee/maine-freedom/C00527408/">Maine Freedom Fund</a> claims to support Cynthia Dill, a Democrat, but because the PAC's treasurer, <a href="http://query.nictusa.com/cgi-bin/fecimg/?C00527408">Michael G. Adams</a> is <a href="http://rga-org.myrga.org/index.php?option=com_content&view=article&id=8&Itemid=11">general counsel for the Republican Governor's Association</a> it is assumed the PAC is actually trying to siphon off Angus King's support.{% endifequal %}
 	</div>
 	
     {% endfor %}
