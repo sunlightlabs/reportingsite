@@ -20,7 +20,7 @@
         Competitive races
     </h2>
     <p>
-		The listings below describe the money landscape in congressional races described as the country's most competitive by the non-partisan Cook Political Report.
+		The listings below describe the money landscape in congressional races described as the country's most competitive by the non-partisan Cook Political Report. We're updating this page as more results become official.
 		<ul> 
 		<li><strong>Total outside money</strong> represents all outside spending for the entire 2012 campaign cycle, <em>including</em> the primary. </li>
 		<li><strong>General candidate fundraising</strong> represents the total receipts raised by the candidates who ran in the general election.</li>
@@ -35,6 +35,7 @@
 	Cook rating: {{ race.cook_rating}}
       <br> Total outside money: ${{ race.total_ind_exp|floatformat:0|intcomma }}
 	<br>General candidate fundraising: ${{ race.total_receipts_gen_candidates|floatformat:0|intcomma }}
+	{% if race.winner %}{% else %}<br><b>This race has not yet been decided</b>{% endif %}
 	<table id="competitiveracetable">
 	<thead>
         <tr>
