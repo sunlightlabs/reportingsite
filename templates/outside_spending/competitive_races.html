@@ -23,7 +23,7 @@
 		The listings below describe the money landscape in congressional races described as the country's most competitive by the non-partisan Cook Political Report.
 		<ul> 
 		<li><strong>Total outside money</strong> represents all outside spending for the entire 2012 campaign cycle, <em>including</em> the primary. </li>
-		<li><strong>Total candidate fundraising</strong> represents the amount raised by the major contenders.</li>
+		<li><strong>General candidate fundraising</strong> represents the total receipts raised by the candidates who ran in the general election.</li>
 		<li>  <strong>General election outside support</strong> represents the total amount of outside money helping a candidate in the fall campaign: the sum of expenditures supporting that candidate and opposing his or her rival. </li>
 		<li><strong>Candidate fundraising</strong> represents the total amount collected by a candidates' committees through Oct. 17; it does not include last-minute contributions. </li></p>
 
@@ -34,7 +34,7 @@
     <h3 style="margin-bottom:0px;"><a href="{{race.get_absolute_url}}">{{ race.race_name }}</a></h3>
 	Cook rating: {{ race.cook_rating}}
       <br> Total outside money: ${{ race.total_ind_exp|floatformat:0|intcomma }}
-	<br>Total candidate fundraising: ${{ race.total_receipts|floatformat:0|intcomma }}
+	<br>General candidate fundraising: ${{ race.total_receipts_gen_candidates|floatformat:0|intcomma }}
 	<table id="competitiveracetable">
 	<thead>
         <tr>
