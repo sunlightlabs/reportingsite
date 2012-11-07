@@ -87,7 +87,7 @@
     {% for candidate_pac in candidates %}
     <tr>
     <td><a href="{{candidate_pac.candidate.get_race_url}}">{{ candidate_pac.candidate.race }}</a></td>
-    <td><a href="{{candidate_pac.candidate.get_absolute_url}}">{{ candidate_pac.candidate.fec_name }} {{ candidate_pac.candidate.display_party }} </a></td>
+    <td><a href="{{candidate_pac.candidate.get_absolute_url}}">{{ candidate_pac.candidate.fec_name }} {{ candidate_pac.candidate.display_party }} </a>{% if candidate_pac.candidate.cand_is_gen_winner %}<b>winner</b> {% endif %}</td>
     <td>{{ candidate_pac.support_or_oppose }}</td>
     <td>{% if candidate_pac.total_ind_exp %}${{ candidate_pac.total_ind_exp|intcomma }}{% endif %}</td>   
     </tr>                
