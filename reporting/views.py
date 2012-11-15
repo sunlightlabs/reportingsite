@@ -238,7 +238,7 @@ def index(request):
 def bysite(request, site):
     topinfo=''
     if site=='features':
-        stories = Post.objects.published().filter(is_favorite=True)   
+        stories = Post.objects.published().filter(is_featured=True)   
     else:
         stories = Post.objects.published().filter(whichsite=site)  
 

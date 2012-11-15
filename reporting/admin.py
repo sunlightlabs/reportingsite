@@ -35,6 +35,7 @@ class PostAdmin(admin.ModelAdmin):
                        'override_byline', 
                        'is_published', 
                        'is_favorite', 
+                       'is_featured',
                        'show_on_index_pages',
                        'comments_enabled', 
                        'tags', ),

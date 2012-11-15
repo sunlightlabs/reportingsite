@@ -60,6 +60,7 @@ class Post(models.Model):
     is_published = models.BooleanField(default=False)
     
     is_favorite = models.BooleanField( default=False)
+    is_featured = models.BooleanField(default=False)
     
     comments_enabled = models.BooleanField(default=True)
     
