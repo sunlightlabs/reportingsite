@@ -40,8 +40,8 @@ Months = [
 
 Agencies = Agency.objects.order_by('name')
 
-cache_time_minutes = 0
-results_per_page = 50
+cache_time_minutes = 60
+results_per_page = 100
 
 @cache_page(60*cache_time_minutes)
 def index(request):
