@@ -1,8 +1,5 @@
 
-from django.conf.urls.defaults import *
-from outside_spending.models import *
-#from rebuckley.feeds import *
-from outside_spending.views import *
+from django.conf.urls.defaults import patterns, url
 from outside_spending.feeds import FilingFeed, FilingsFeed, FilingsFormFeed, FilingsForms, CommitteeFormsFeed, SuperpacsForms
 from django.views.generic.simple import direct_to_template, redirect_to
 
