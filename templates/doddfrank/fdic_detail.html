@@ -6,8 +6,11 @@
 {% block content %}
 <h2>Federal Deposit Insurance Corporation</h2>
 <p class="tip">The FDIC is an independent agency created by the Congress to maintain stability and public confidence in the nation's financial system by insuring deposits; examining and supervising financial institutions for safety and soundness and consumer protection; and managing receiverships. (<a href="http://www.fdic.gov/about/mission/index.html">source</a>)</p>
-<p class="tip">Updated biweekly</p>
-
+<p class="tip">Updated biweekly. Showing page {{ this_page }} of {{last_page}}.</p>
+<div id="paginator">
+{% if prev_page %}<a class="lobbying_paginatorPrevious" href="?page={{prev_page}}">« Previous</a>{% endif %}
+{% if next_page %}<a class="lobbying_paginatorNext" href="?page={{next_page}}">Next »</a>{% endif %}
+</div>
 <table class="agencyTable">
     <thead>
         <tr>
@@ -24,7 +27,10 @@
     </tr>
     {% endfor %}
 </table>
-
+<div id="paginator">
+{% if prev_page %}<a class="lobbying_paginatorPrevious" href="?page={{prev_page}}">« Previous</a>{% endif %}
+{% if next_page %}<a class="lobbying_paginatorNext" href="?page={{next_page}}">Next »</a>{% endif %}
+</div>
 {% include "doddfrank/fdic_source.html" %}
 
 {% endblock content %}

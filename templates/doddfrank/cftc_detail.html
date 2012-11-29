@@ -6,8 +6,11 @@
 {% block content %}
 <h2>Commodity Futures Trading Commission</h2>
 <p class="tip">The CFTC's mission is to protect market users and the public from fraud, manipulation, abusive practices and systemic risk related to derivatives that are subject to the Commodity Exchange Act, and to foster open, competitive, and financially sound markets. (<a href="http://www.cftc.gov/About/MissionResponsibilities/index.htm">source</a>)</p>
-<p class="tip">Updated daily</p>
-
+<p class="tip">Updated daily. Showing page {{ this_page }} of {{last_page}}.</p>
+<div id="paginator">
+{% if prev_page %}<a class="lobbying_paginatorPrevious" href="?page={{prev_page}}">« Previous</a>{% endif %}
+{% if next_page %}<a class="lobbying_paginatorNext" href="?page={{next_page}}">Next »</a>{% endif %}
+</div>
 <table class="agencyTable">
     <thead>
         <tr>
@@ -34,7 +37,10 @@
     </tr>
     {% endfor %}
 </table>
-
+<div id="paginator">
+{% if prev_page %}<a class="lobbying_paginatorPrevious" href="?page={{prev_page}}">« Previous</a>{% endif %}
+{% if next_page %}<a class="lobbying_paginatorNext" href="?page={{next_page}}">Next »</a>{% endif %}
+</div>
 {% include "doddfrank/cftc_source.html" %}
 
 {% endblock content %}

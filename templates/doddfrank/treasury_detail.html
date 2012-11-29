@@ -6,8 +6,11 @@
 {% block content %}
 <h2>Department of Treasury</h2>
 <p class="tip">The Treasury Department is the executive agency responsible for promoting economic prosperity and ensuring the financial security of the United States. (<a href="http://www.treasury.gov/about/role-of-treasury/Pages/default.aspx">source</a>)</p>
-<p class="tip">Updated monthly</p>
-
+<p class="tip">Updated monthly. Showing page {{ this_page }} of {{last_page}}.</p>
+<div id="paginator">
+{% if prev_page %}<a class="lobbying_paginatorPrevious" href="?page={{prev_page}}">« Previous</a>{% endif %}
+{% if next_page %}<a class="lobbying_paginatorNext" href="?page={{next_page}}">Next »</a>{% endif %}
+</div>
 <table class="agencyTable">
     <thead>
         <tr>
@@ -36,6 +39,9 @@
     </tr>
     {% endfor %}
 </table>
-
+<div id="paginator">
+{% if prev_page %}<a class="lobbying_paginatorPrevious" href="?page={{prev_page}}">« Previous</a>{% endif %}
+{% if next_page %}<a class="lobbying_paginatorNext" href="?page={{next_page}}">Next »</a>{% endif %}
+</div>
 {% include "doddfrank/treasury_source.html" %}
 {% endblock content %}

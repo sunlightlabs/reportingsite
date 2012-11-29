@@ -15,6 +15,9 @@ from django.views.decorators.cache import cache_page
 from django.db.models import Q, Count, Min, Max
 from django.db import connections
 
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
+from django.views.decorators.cache import cache_page
+
 from doddfrank.models import Agency, Meeting, Attendee, Organization
 from unicodecsv import UnicodeCsvWriter
 
@@ -37,7 +40,10 @@ Months = [
 
 Agencies = Agency.objects.order_by('name')
 
+cache_time_minutes = 0
+results_per_page = 50
 
+@cache_page(60*cache_time_minutes)
 def index(request):
     latest_meetings = Meeting.objects.order_by('-created', '-date')[:20]
     
@@ -47,7 +53,7 @@ def index(request):
     }
     return render_to_response('doddfrank/index.html', scope)
 
-
+@cache_page(60*cache_time_minutes)
 def agency_detail(request, agency_slug):
     try:
         agency = Agency.objects.get(slug=agency_slug)
@@ -55,16 +61,35 @@ def agency_detail(request, agency_slug):
         raise Http404
 
     meetings = Meeting.objects.filter(agency=agency).order_by('-date')
+    
+    pagenum = request.GET.get('page', 1)
+    paginator = Paginator(meetings, results_per_page)
+    last_page = paginator.num_pages
+    try:
+        page = paginator.page(pagenum)
+    except PageNotAnInteger:
+        # If page is not an integer, deliver first page.
+        page = paginator.page(1)
+        pagenum = 1
+    except EmptyPage:
+        # If page is out of range (e.g. 9999), deliver last page of results.
+        page = paginator.page(last_page)
+        pagenum = last_page
+
 
     template = 'doddfrank/%s_detail.html' % agency.slug
     scope = {
         'agencies': Agencies,
         'agency': agency,
-        'meetings': meetings
+        'meetings': page.object_list,
+        'next_page':page.next_page_number(),
+        'prev_page':page.previous_page_number(),
+        'this_page':pagenum,
+        'last_page':last_page,
     }
     return render_to_response(template, scope)
 
-
+@cache_page(60*cache_time_minutes)
 def organization_disambiguation(request, organization_slug):
     organizations = Organization.objects.filter(slug=organization_slug)
     scope = {
@@ -73,7 +98,7 @@ def organization_disambiguation(request, organization_slug):
     }
     return render_to_response('doddfrank/organization_disambiguation.html', scope)
 
-
+@cache_page(60*cache_time_minutes)
 def organization_detail(request, organization_slug=None, organization_id=None):
     try:
         if organization_slug:
@@ -92,7 +117,7 @@ def organization_detail(request, organization_slug=None, organization_id=None):
     }
     return render_to_response('doddfrank/organization_detail.html', scope)
 
-
+@cache_page(60*cache_time_minutes)
 def organization_list(request):
     organizations = Organization.objects.order_by('name')
 
@@ -152,7 +177,7 @@ def freq_table(objs, field, valuefunc):
     rows = [(k, valuefunc(grp)) for (k, grp) in grouped.iteritems()]
     return rows
 
-
+@cache_page(60*cache_time_minutes)
 def agency_topic_freq(request, agency_slug):
     timespan = Meeting.objects.aggregate(fro=Min('date'), to=Max('date'))
     years = range(timespan['fro'].year, timespan['to'].year + 1)
@@ -175,7 +200,7 @@ def agency_topic_freq(request, agency_slug):
     }
     return render_to_response('doddfrank/agency_topic_freq.html', scope)
                
-    
+@cache_page(60*cache_time_minutes)
 def agency_topic_xtab(request, agency_slug, year):
     timespan = Meeting.objects.aggregate(fro=Min('date'), to=Max('date'))
     years = range(timespan['fro'].year, timespan['to'].year + 1)
@@ -218,7 +243,7 @@ def agency_topic_xtab(request, agency_slug, year):
     }
     return render_to_response('doddfrank/agency_topic_xtab.html', scope)
 
-
+@cache_page(60*cache_time_minutes)
 def agency_meeting_freq_table(request):
     timespan = Meeting.objects.aggregate(fro=Min('date'), to=Max('date'))
     years = range(max(2010, timespan['fro'].year),
@@ -276,7 +301,7 @@ def agency_meeting_freq_table(request):
     }
     return render_to_response('doddfrank/agency_meeting_freq.html', scope)
     
-
+@cache_page(60*cache_time_minutes)
 def organization_frequency_table(request, agency=None):
     agency_names = [a.initials for a in Agency.objects.all()]
     organizations = Organization.objects.filter(~Q(name__in=agency_names))
@@ -301,7 +326,7 @@ def solidify_grouping(grouping):
     return dict(((k, list(vs))
                  for (k, vs) in grouping))
 
-
+@cache_page(60*cache_time_minutes)
 def meeting_detail(request, agency_slug, id):
     try:
         agency = Agency.objects.get(slug=agency_slug)
