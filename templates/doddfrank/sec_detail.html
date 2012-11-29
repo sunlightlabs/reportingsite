@@ -12,15 +12,24 @@
     <thead>
         <tr>
             <th>Date</th>
-            <th>Participants</th>
+            <th>Topics</th>
+            <th>Attendees</th>
             <th></th>
         </tr>
     </thead>
     {% for meeting in meetings %}
-    <tr class="{% cycle 'even' 'odd' %}">
-        <td style="width: 150px;">{{ meeting.meeting_time|date:"F j, Y" }}</td>
-        <td>{{ meeting.attendees }}</td>
-        <td><a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency|slugify id=meeting|get_id %}">Details</a></td>
+        <td style="width: 150px;">{{ meeting.date }}</td>
+        <td>
+            {{ meeting.category }}
+        </td>
+        <td>
+            {% if meeting.organizations.count %}
+            {{ meeting.organizations.all|and_others }}
+            {% else %}
+            {{ meeting.attendees.all|and_others }}
+            {% endif %}
+        </td>
+        <td><a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.pk %}">Details</a></td>
     </tr>
     {% endfor %}
 </table>

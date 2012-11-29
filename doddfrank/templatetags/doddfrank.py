@@ -57,3 +57,26 @@ def get_cftc_rulemaking_link(rulemaking):
 @register.filter
 def length(i):
     return len(i)
+
+@register.filter
+def and_others(parties, n=3):
+    if len(parties) > n:
+        return ', '.join([str(p) for p in parties[:n]]) + ', others'
+    else:
+        return ', '.join([str(p) for p in parties])
+
+
+@register.filter
+def getitem(d, key):
+    return d[key]
+
+@register.filter
+def dictdig(d, keys):
+    e = d
+    for key in keys:
+        try:
+            e = e.get[key]
+        except KeyError:
+            return None
+    return e
+

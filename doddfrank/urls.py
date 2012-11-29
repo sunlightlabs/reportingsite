@@ -1,6 +1,5 @@
 
 from django.conf.urls.defaults import *
-from django.views.decorators.cache import cache_page
 
 from doddfrank.views import *
 
@@ -16,32 +15,50 @@ urlpatterns = patterns('',
                            {},
                            name='doddfrank_search'),
 
+                       url(r'^search/meetings/?$',
+                           search,
+                           {'restrict_to': 'meetings'},
+                           name='doddfrank_meeting_search'),
+
                        url(r'^organization\/?$',
                            organization_list,
                            {},
                            name='doddfrank_organization_list'),
+
+                       url(r'agency/(?P<agency_slug>[-\w]+)/topics/(?P<year>\d{4})/?$',
+                           agency_topic_xtab, 
+                           {},
+                           name='doddfrank_agency_topic_xtab'),
+
+                       url(r'agency/(?P<agency_slug>[-\w]+)/topics/?$',
+                           agency_topic_freq,
+                           {},
+                           name='doddfrank_agency_topics'),
+
+                       url(r'agency/frequency/?$',
+                           agency_meeting_freq_table,
+                           {},
+                           name='doddfrank_agency_frequency'),
+
+                       url(r'^organization/frequency\/?$',
+                           organization_frequency_table,
+                           {},
+                           name='doddfrank_organization_frequency'),
 
                        url(r'^organization\/list_of_orgs\/?$',
                            organization_cleanup_csv,
                            {},
                            name='doddfrank_organization_cleanup_csv'),
 
+                       url(r'^organization\/(?P<organization_id>[\d]+)\/?$',
+                           organization_detail,
+                           {},
+                           name='doddfrank_organization_detail_unamb'),
+
                        url(r'^organization\/(?P<organization_slug>[-\w]+)\/?$',
                            organization_detail,
                            {},
                            name='doddfrank_organization_detail'),
-
-                       url(r'^agency/federal-reserve/?$',
-                           'django.views.generic.simple.direct_to_template',
-                           {'template': 'doddfrank/federal_reserve_takedown_notice.html'}),
-
-                       url(r'^agency/sec/?$',
-                           'django.views.generic.simple.direct_to_template',
-                           {'template': 'doddfrank/sec_takedown_notice.html'}),
-
-                       url(r'^agency/treasury/?$',
-                           'django.views.generic.simple.direct_to_template',
-                           {'template': 'doddfrank/treasury_takedown_notice.html'}),
 
                        url(r'^agency\/(?P<agency_slug>[-\w]+)\/?$',
                            agency_detail,
@@ -68,8 +85,15 @@ urlpatterns = patterns('',
                            {'template': 'doddfrank/widget.js',
                             'mimetype': 'text/javascript',
                            },
-                           name='doddfrank_meetings_widget_js')
+                           name='doddfrank_meetings_widget_js'),
 
+                       url(r'^problems/?$',
+                           problems,
+                           name='doddfrank-problems'),
+
+                       url(r'^download/meetings/?$',
+                           download_meetings,
+                           name='download-meetings'),
 
 )
 

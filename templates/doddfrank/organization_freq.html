@@ -1,0 +1,20 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% load partition %}
+
+{% block body %}{{ block.super }} organizations{% endblock %}
+
+{% block content %}
+
+<h3>Organizations with the most meetings{% if agency %} with the {{ agency.initials }}{% endif %}:</h3>
+<table>
+{% for organization in organizations %}
+    <tr>
+        <td><a href="{% url doddfrank_organization_detail organization_slug=organization.slug %}">{{ organization }}</a> </td>
+        <td>{{ organization.num_meetings }}</td>
+    </tr>
+{% endfor %}
+</table>
+
+{% endblock content %}
+

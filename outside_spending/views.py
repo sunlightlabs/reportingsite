@@ -38,7 +38,6 @@ expenditure_file_description = """ This file contains all schedule E transaction
 contribution_file_description = """ This file contains a wider range of receipt types than those listed on the web pages. Specifically, contributions (11AI, 11B, and 11C) ; Transfers through affiliates (SA12), Loan repayments received (SA14); Offsets to operating expenses (SA15); Refunds of contributions made to Federal Candidates and Other Political Committees and (SA17) other Federal Receipts."""
 
 
-
 organizational_file_description = """ This file contains contributions (11AI, 11B, and 11C) and offsets to operating expenses (SA15)."""
 
 def write_csv_to_file(file_description, local_file, fields, rows):

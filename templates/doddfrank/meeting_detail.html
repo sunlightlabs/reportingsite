@@ -1,0 +1,63 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+{% load doddfrank %}
+
+{% block body %}{{ block.super }} {{ agency.slug }}{% endblock %}
+
+{% block content %}
+
+<h2>{{ agency.name }}</h2>
+{% if agency.slug == 'fed' %}
+<p class="tip">The Federal Reserve's main responsibilities are conducting the nation's monetary policy by influencing money and credit conditions; supervising and regulating banks and other financial institutions; maintaining the stability of the financial system and containing systemic risk; and providing financial services to the government and financial institutions. (<a href="http://www.federalreserve.gov/faqs/about_12594.htm">source</a>)</p>
+{% endif %}
+
+<h3>{{ meeting.date }}</h3>
+<p><strong>Type</strong>: {{ meeting.communication_type }}</p>
+<p><strong>Topic</strong>: {% firstof meeting.topic meeting.subcategory meeting.category %}
+
+{% if meeting.description %}
+<h4 style="float: left;">Summary</h4>
+<p style="float: right; width: 65%">{{ meeting.description }}</p>
+{% endif %}
+
+<div class="clear"></div>
+<hr/>
+<h4>Participants</h4>
+{% if not organizations and not attendees %}
+<p class="clear">We could not find the list of persons attending this meeting nor a list of organizations represented. The Federal Reserve publishes these lists in many slightly different formats that make it impossible to reliably extract the list of participants. Please review the source material for a list of attendees.</p>
+<div class="clear"></div>
+{% endif %}
+
+
+{% if attendees.count > 0 %}
+    {% regroup attendees by org as org_attendees %}
+    {% for group in org_attendees %}
+        <div class="clear"></div>
+        <h4 style="float: left;">{% if group.grouper.slug %}<a href="{% url doddfrank_organization_detail organization_slug=group.grouper.slug %}">{{ group.grouper.name }}</a>{% else %}Unaffiliated{% endif %}</h4>
+        <ul style="float: right; width: 65%">
+            {% for attendee in group.list %}
+                <li>{{ attendee.name }}</li>
+            {% endfor %}
+        </ul>
+        {% endfor %}
+
+{% else %}
+
+    {% if organizations %}
+        {% for org in organizations %}
+            <div class="clear"></div>
+            <h4 style="float: left;"><a href="{% url doddfrank_organization_detail organization_slug=org.slug %}">{{ org }}</a></h4>
+        {% endfor %}
+    {% endif %}
+{% endif %}
+
+<div class="clear"></div>
+<hr/>
+
+{% if meeting.source_url %}
+<h4 style="float: left;">Documents</h4>
+<ul style="float: right; width: 65%">
+    <li><a href="{{ meeting.source_url }}">{{ meeting.communication_type }} information</a></li>
+</ul>
+{% endif %}
+
+{% endblock content %}

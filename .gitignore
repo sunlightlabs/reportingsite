@@ -1,6 +1,7 @@
 *.pyc
 *~
 .*.swp
+*.aspx
 local_settings.py
 reporting.sql
 buckley/data/
@@ -10,3 +11,4 @@ rebuckley/data/12/
 *.DS_Store
 outside_spending/data/
 outside_spending/outside_spending_settings.py
+suggestions*.csv

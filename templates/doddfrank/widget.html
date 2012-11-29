@@ -25,23 +25,24 @@
             <h2>{{ dategroup.date|date:"F j" }}</h2>
             <ul class="firstList">
                 {% for meeting in dategroup.meetings %}
+                    <li>
+                        <span class="title">Agency:</span>
+            <span><a target="_top" href="{% url doddfrank_agency_detail agency_slug=meeting.agency.slug %}">{{ meeting.agency.name }}</a></span>
+                    </li>
                 {% if meeting.organizations or meeting.attendees %}
                 <li>
                 <ul class="secondList">
                     <li>
                     {% if meeting.organizations %}
-                    <a class="listTitle" target="_top" href="{% url doddfrank_meeting_detail agency_slug=meeting.agency|slugify id=meeting|get_id %}">{% for organization in meeting.organizations|slice:"3" %}{{ organization }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if meeting.organizations|length > 3 %}, others{% endif %}
-                        {% else %}
-                        {% if meeting.attendees %}
-                        {{ meeting.attendees }}
-                        {% endif %}
-                        {% endif %}
+                    Organizations: <a class="listTitle" target="_top" href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.id %}">{{ meeting.organizations|and_others }} </a>
+                    {#                    Organizations: <a class="listTitle" target="_top" href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.id %}">{% for organization in meeting.organizations.all %}{{ organization }}{% if not forloop.last %}, {% endif %}{% endfor %}{% if meeting.organizations|length > 3 %}, others{% endif %}</a> #}
+                    </li>
+                    {% endif %}
+
+                    {% if meeting.attendees %}
+                    <li>Attendees: {{ meeting.attendees|and_others }}</li>
+                    {% endif %}
                     </a>
-                    </li>
-                    <li>
-                        <span class="title">Agency:</span>
-            <span><a target="_top" href="{% url doddfrank_agency_detail agency_slug=meeting.agency|slugify %}">{{ meeting.agency }}</a></span>
-                    </li>
                 </ul>
                 </li>
                 {% endif %}

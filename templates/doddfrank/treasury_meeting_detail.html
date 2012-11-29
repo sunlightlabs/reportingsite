@@ -7,7 +7,8 @@
 <h2>Department of Treasury</h2>
 <p class="tip">The Treasury Department is the executive agency responsible for promoting economic prosperity and ensuring the financial security of the United States. (<a href="http://www.treasury.gov/about/role-of-treasury/Pages/default.aspx">source</a>)</p>
 
-<h3>{{ meeting.meeting_time|date:"F j, Y" }}</h3>
+
+<h3>{{ meeting.date }}</h3>
 
 {% if meeting.description %}
 <h4 style="float: left;">Topics</h4>
@@ -21,10 +22,10 @@
             <div class="clear"></div>
             <hr/>
 
-{% if meeting.organizations %}
+{% if organizations %}
 <h4 style="float: left;">Participating organizations</h4>
 <ul style="float: right; width: 70%">
-    {% for organization in meeting.organizations %}
+    {% for organization in organizations %}
     <li><a href="{% url doddfrank_organization_detail organization_slug=organization|slugify %}">{{ organization }}</a></li>
     {% endfor %}
 </ul>
@@ -33,11 +34,11 @@
             <div class="clear"></div>
             <hr/>
 
-{% if meeting.visitors %}
+{% if attendees %}
 <h4 style="float: left;">Participants</h4>
 <ul style="float: right; width: 70%">
-{% for visitor in meeting.visitors %}
-<li>{{ visitor.name }}{% if visitor.org %} (<a href="{% url doddfrank_organization_detail organization_slug=visitor.org|slugify %}">{{ visitor.org }}</a>){% endif %}</li>
+{% for attendee in attendees %}
+<li>{{ attendee.name }}{% if attendee.org %} (<a href="{% url doddfrank_organization_detail organization_slug=attendee.org|slugify %}">{{ attendee.org }}</a>){% endif %}</li>
 {% endfor %}
 </ul>
 {% endif %}

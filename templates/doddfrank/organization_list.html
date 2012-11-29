@@ -19,8 +19,8 @@
 <ol class="browseTable">
     {% for row in organizations|columns_across:3 %}
         {% for organization in row %}
-        {% if organization %}
-        <li class="{% cycle 'one' 'two' 'three' %}"><a href="{% url doddfrank_organization_detail organization_slug=organization|slugify %}">{{ organization }}</a></li>
+        {% if organization and organization.slug %}
+        <li class="{% cycle 'one' 'two' 'three' %}"><a href="{% url doddfrank_organization_detail organization_slug=organization.slug %}">{{ organization }}</a></li>
         {% endif %}
         {% endfor %}
     {% endfor %}
