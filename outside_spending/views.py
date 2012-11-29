@@ -1,18 +1,22 @@
 # Create your views here.
 import csv
 import datetime
-import time
 
 from django.views.decorators.cache import cache_page
-from django.shortcuts import get_list_or_404, get_object_or_404, render_to_response, redirect
+from django.shortcuts import get_object_or_404, render_to_response
 # in 1.3 there's django.shortcuts.render . D'oh!
-from django.http import *
+from django.http import HttpResponse, Http404
 from django.db.models import Sum, Min
 from django.db.models import Q
 from django.contrib.localflavor.us.us_states import STATE_CHOICES
-from django.contrib.humanize.templatetags.humanize import intcomma
 
-from outside_spending.models import *
+from outside_spending.models import (Scrape_Time, Contribution, Expenditure, 
+                                     Committee, Candidate,
+                                     Committee_Overlay, Candidate_Overlay,
+                                     Pac_Candidate, Electioneering_93,
+                                     Race_Aggregate, State_Aggregate,
+                                     Filing_Scrape_Time, unprocessed_filing,
+                                     President_State_Pac_Aggregate)
 from outside_spending.utils.json_helpers import render_to_json
 from outside_spending.utils.chart_helpers import summarize_monthly
 
@@ -302,10 +306,15 @@ def all_superpacs(request):
     all_superpacs = Committee_Overlay.objects.filter(is_superpac=True)
     
     totals = all_superpacs.aggregate(support_dems=Sum('ie_support_dems'), oppose_dems=Sum('ie_oppose_dems'), oppose_reps=Sum('ie_oppose_reps'), support_reps=Sum('ie_support_reps'), total=Sum('total_indy_expenditures'), total_contribs=Sum('total_contributions'))
+    totals = dict([(k, v or 0) for (k, v) in totals.items()])
     
     total_amt = totals['total']
-    neg_percent = 100*(totals['oppose_dems']+totals['oppose_reps'])/totals['total']
-    positive_percent = 100*(totals['support_dems']+totals['support_reps'])/totals['total']
+    if total_amt is None or total_amt == 0:
+        neg_percent = 0
+        positive_percent = 0
+    else:
+        neg_percent = 100*(totals['oppose_dems']+totals['oppose_reps'])/totals['total']
+        positive_percent = 100*(totals['support_dems']+totals['support_reps'])/totals['total']
     
     
     
