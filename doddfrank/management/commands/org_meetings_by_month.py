@@ -34,14 +34,20 @@ class Command(BaseCommand):
                         orgs_of_interest.add(line)
         orgs_of_interest = list(orgs_of_interest)
         lower_orgs_of_interest = [o.lower() for o in orgs_of_interest]
-        print >>sys.stderr, u'{0} organizations of interest.'.format(len(orgs_of_interest))
+        if len(orgs_of_interest) > 0:
+            print >>sys.stderr, u'{0} organizations of interest.'.format(len(orgs_of_interest))
 
         print >>sys.stderr, u'Fetching meetings.'
+
+        meetings = Meeting.objects.all()
+        agency = options.get('agency')
+        if agency is not None:
+            meetings = meetings.filter(agency__initials=agency)
 
         attendances = [{'yearmonth': '{year}-{month!s:0>2}'.format(year=m.date.year,
                                                                    month=m.date.month),
                         'org': org.name}
-                       for m in Meeting.objects.all()
+                       for m in meetings
                        for org in m.organizations.all()
                        if (len(orgs_of_interest) == 0
                            or org.name.lower().strip() in lower_orgs_of_interest)
