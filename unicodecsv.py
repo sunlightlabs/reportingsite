@@ -15,7 +15,7 @@ class UnicodeCsvReader(object):
         # read and split the csv row into fields
         row = self.csv_reader.next() 
         # now decode
-        return [unicode(cell, self.encoding) for cell in row]
+        return [cell.decode(self.encoding) for cell in row]
 
     @property
     def line_num(self):
