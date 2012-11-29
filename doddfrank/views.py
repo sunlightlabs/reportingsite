@@ -179,6 +179,7 @@ def agency_topic_freq(request, agency_slug):
 def agency_topic_xtab(request, agency_slug, year):
     timespan = Meeting.objects.aggregate(fro=Min('date'), to=Max('date'))
     years = range(timespan['fro'].year, timespan['to'].year + 1)
+    years = range(2010, datetime.date.today().year)
 
     year = int(year)
     agency = Agency.objects.get(slug=agency_slug)
@@ -434,7 +435,19 @@ def download_meetings(request):
 
 
 def problems(request):
-    return ''
+    ancient_meetings = (Meeting.objects
+                        .filter(date__lt=datetime.date(2010, 1, 1))
+                        .order_by('-date'))
+    future_meetings = (Meeting.objects
+                       .filter(date__gt=datetime.date.today())
+                       .order_by('-date'))
+
+    scope = {
+        'ancient_meetings': ancient_meetings,
+        'future_meetings': future_meetings
+    }
+    return render_to_response('doddfrank/problems.html', scope)
+
 
 # From http://docs.python.org/library/csv.html
 class UnicodeWriter:
