@@ -20,7 +20,7 @@
     <tr class="{% cycle 'even' 'odd' %}">
         <td style="width: 150px;">{{ meeting.date }}</td>
         <td>{{ meeting.topic }}</td>
-        <td><a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.pk %}">Details</a></td>
+        <td><a href="{% url doddfrank_meeting_detail agency_slug=agency.slug id=meeting.pk %}">Details</a></td>
     </tr>
     {% endfor %}
 </table>

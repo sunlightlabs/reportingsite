@@ -23,13 +23,15 @@
             {{ meeting.category }}
         </td>
         <td>
-            {% if meeting.organizations.count %}
-            {{ meeting.organizations.all|and_others }}
-            {% else %}
-            {{ meeting.attendees.all|and_others }}
-            {% endif %}
+            {% with meeting.organizations.all as theseorgs %}
+                {% if theseorgs %}
+                    {{ theseorgs|and_others }}
+                {% else %}
+                    {{ meeting.attendees.all|and_others }}
+                {% endif %}
+            {% endwith %}
         </td>
-        <td><a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.pk %}">Details</a></td>
+        <td><a href="{% url doddfrank_meeting_detail agency_slug=agency.slug id=meeting.pk %}">Details</a></td>
     </tr>
     {% endfor %}
 </table>
