@@ -13,4 +13,4 @@ class PostIndex(RealTimeSearchIndex):
         return Post.objects.published() | Post.objects.filter(is_published=True, show_on_index_pages=False)
 
 
-site.register(Post, PostIndex)
+#site.register(Post, PostIndex)
