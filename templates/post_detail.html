@@ -12,7 +12,7 @@
     <meta property="og:locale" content="en_US">
  	<meta property="fb:admins" content="7812952">
     <meta property="og:title" content="{{post.title}}">
-    {% if post.excerpt %}<meta property="og:description" content="{{ post.excerpt|striptags }}">{% endif %}
+    {% if post.excerpt %}<meta property="og:description" content="{{ post.excerpt|striptags|safe }}">{% endif %}
     {% if post.fb_image_url %}<meta property="og:image" content="{{ post.fb_image_url }}">{% endif %}
 {% endblock %}
 
