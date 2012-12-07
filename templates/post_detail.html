@@ -13,7 +13,7 @@
  	<meta property="fb:admins" content="7812952">
     <meta property="og:title" content="{{post.title}}">
     {% if post.excerpt %}<meta property="og:description" content="{{ post.excerpt|striptags|safe }}">{% endif %}
-    {% if post.fb_image_url %}<meta property="og:image" content="{{ post.fb_image_url }}">{% endif %}
+    {% if post.fb_image_url %}<meta property="og:image" content="{{ post.fb_image_url }}">{% else %}<meta property="og:image" content="http://assets.sunlightfoundation.com/reporting/1.0/img/sunlightrg.png">{% endif %}
 {% endblock %}
 
 {% block headjs %}<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>{% endblock %}
