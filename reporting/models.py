@@ -76,6 +76,7 @@ class Post(models.Model):
     show_on_index_pages = models.BooleanField(default=True)
 
     users_editing = models.ManyToManyField(User, through='UserEditingPost')
+    fb_image_url = models.CharField(help_text="Suggest an image for facebook to use in sharing the post; note that this doesn't guarantee that facebook will actually use it.", max_length=512, null=True, blank=True)
 
 
     def shortbyline(self):

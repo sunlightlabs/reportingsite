@@ -13,6 +13,8 @@
 
     <title>{% block title %}{%if post%}{{post}} - {%endif%}Sunlight Foundation Reporting Group{% endblock %}</title>
 
+
+
     <link rel="shortcut icon" href="http://assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
     <link rel="alternate" type="application/rss+xml" title="Sunlight Foundation Transparency Ecosystem" href="http://feeds.feedburner.com/SunlightFoundationReportingGroup" />
     <link rel="icon" href="http://assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
@@ -23,6 +25,9 @@
     {% endblock %}
     <!--[if IE 6]>{% css "css/buggy.css" %}<![endif]-->
     <!--[if IE 7]>{% css "css/buggy7.css" %}<![endif]-->
+    
+    
+    {% block opengraphtags %}{% endblock %}
 	{% block headjs %}{% endblock %}
 	
 	<script type="text/javascript">

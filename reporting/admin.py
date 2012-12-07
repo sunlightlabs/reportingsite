@@ -38,7 +38,8 @@ class PostAdmin(admin.ModelAdmin):
                        'is_featured',
                        'show_on_index_pages',
                        'comments_enabled', 
-                       'tags', ),
+                       'tags',
+                       'fb_image_url' ),
         }),
     )
 

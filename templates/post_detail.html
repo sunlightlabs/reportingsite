@@ -5,6 +5,17 @@
 {%load lede%}
 
 
+{% block opengraphtags %}
+    <meta property="og:site_name" content="Sunlight Foundation Reporting Group">
+    <meta property="og:type" content="article">
+    <meta property="og:url" content="http://reporting.sunlightfoundation.com{{ post.get_absolute_url }}">
+    <meta property="og:locale" content="en_US">
+ 	<meta property="fb:admins" content="7812952">
+    <meta property="og:title" content="{{post.title}}">
+    {% if post.excerpt %}<meta property="og:description" content="{{ post.excerpt }}">{% endif %}
+    {% if post.fb_image_url %}<meta property="og:image" content="{{ post.fb_image_url }}">{% endif %}
+{% endblock %}
+
 {% block headjs %}<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>{% endblock %}
 
 {% block body %}{% endblock %}
