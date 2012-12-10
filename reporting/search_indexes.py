@@ -1,7 +1,6 @@
 from haystack import indexes
 from reporting.models import Post
 
-
 class PostIndex(indexes.SearchIndex, indexes.Indexable):
     title = indexes.CharField()
     text = indexes.CharField(document=True, use_template=True)
@@ -20,6 +19,3 @@ class PostIndex(indexes.SearchIndex, indexes.Indexable):
         
     def get_updated_field(self):
         return 'last_updated'
-
-
-#site.register(Post, PostIndex)

@@ -3,6 +3,7 @@
 {% load lede %}
 {% load humanize %}
 {% load repeat %}
+{% load highlight %}
 
 {% block content %}
     <h2>Search{% if query %} Results{% endif %}</h2>
@@ -32,7 +33,7 @@
     {% endif %}
 
 
-    <ol class="moduleLists">
+    <ol class="moduleLists" id="searchresults">
         {% for result in page.object_list %}
             {% with result.object as post %}
             <li class="module posts">
@@ -42,7 +43,8 @@
                     <span class="postdate">{{ post.date_published|date:"M j, Y" }}</span>
                     <span class="posttime">{{ post.date_published|date:"P" }}</span>
                 </span>
-                {{ post|lede|safe }}
+                <p>{% highlight post.content with request.GET.q %}</p>
+                <a class="continueReading" href="{% url blogdor_post post.date_published.year post.slug %}">Read all about it</a>
             </li>
             {% endwith %}
         {% endfor %}
