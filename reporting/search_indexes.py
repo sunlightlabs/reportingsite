@@ -20,4 +20,4 @@ class PostIndex(indexes.SearchIndex, indexes.Indexable):
         return self.get_model().objects.all()
 
 
-site.register(Post, PostIndex)
+#site.register(Post, PostIndex)
