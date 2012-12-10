@@ -400,7 +400,8 @@ def do_meeting_search(q, scope, limit=None):
 
 def meetings_widget(request):
     cutoff = datetime.datetime.now() - datetime.timedelta(60)
-    meetings = Meeting.objects.filter(date__gt=cutoff).order_by('-date')
+    tomorrow = datetime.date.today() + datetime.timedelta(days=1)
+    meetings = Meeting.objects.filter(date__range=(cutoff, tomorrow)).order_by('-date')
 
     meetings_by_date = [{'date': d, 
                          'meetings': [{'id': m.id,
