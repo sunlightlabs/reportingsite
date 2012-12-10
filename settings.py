@@ -165,11 +165,15 @@ AWS_ACCESS_KEY_ID  = MEDIASYNC_AWS_KEY
 AWS_SECRET_ACCESS_KEY = MEDIASYNC_AWS_SECRET
 AWS_STORAGE_BUCKET_NAME = MEDIASYNC_AWS_BUCKET
 
+"""
 HAYSTACK_SEARCH_ENGINE = 'solr'
-HAYSTACK_SOLR_URL = 'http://morgan.sunlightlabs.org:8080/solr/core_reporting'
-HAYSTACK_SITECONF = 'search_sites'
-HAYSTACK_SEARCH_RESULTS_PER_PAGE = 20
+#HAYSTACK_SOLR_URL = 'http://morgan.sunlightlabs.org:8080/solr/core_reporting'
+HAYSTACK_SOLR_URL = 'http://ec2-184-72-184-231.compute-1.amazonaws.com:8984/solr/core_reporting'
 
+HAYSTACK_SITECONF = 'search_sites'
+
+"""
+HAYSTACK_SEARCH_RESULTS_PER_PAGE = 20
 
 try:
     from local_settings import *
