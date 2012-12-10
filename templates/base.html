@@ -5,7 +5,7 @@
   <head>
 
     <meta name="keywords" content="" />
-    <meta name="description" content="" />
+    <meta name="description" content="{% block metadescription %}{% endblock %}" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="google-site-verification" content="3wa4E5iGsKSwN886ts897uQBnZWj_kXWxnnQ2EOaheE" />
     
@@ -149,8 +149,11 @@
         </div>
       </div>
     </div>
-
+    {# Allow override of jquery, b/c this is an *ancient* version. Not sure what parts of site would be broken by mass upgrade, so instead selectively overriding. #}
+    {% block jquery %}
     <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+    {% endblock %}
+    
     {%js "js/reporting.js"%}
     {%js "js/script.js"%}
 

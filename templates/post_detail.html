@@ -12,9 +12,12 @@
     <meta property="og:locale" content="en_US">
  	<meta property="fb:admins" content="7812952">
     <meta property="og:title" content="{{post.title}}">
-    {% if post.excerpt %}<meta property="og:description" content="{{ post.excerpt|striptags|safe }}">{% endif %}
+    <meta property="og:description" content="{% if post.excerpt %}{{ post.excerpt|striptags|safe }}{% else %}{{ post|body|striptags|truncatewords:30 }}{% endif %}">
     {% if post.fb_image_url %}<meta property="og:image" content="{{ post.fb_image_url }}">{% else %}<meta property="og:image" content="http://assets.sunlightfoundation.com/reporting/1.0/img/sunlightrg.png">{% endif %}
 {% endblock %}
+
+{% block metadescription %}{% if post.excerpt %}{{ post.excerpt|striptags|safe }}{% else %}{{ post|body|striptags|truncatewords:30 }}{% endif %}{% endblock %}
+
 
 {% block headjs %}<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>{% endblock %}
 
@@ -100,8 +103,10 @@
   {%endautoescape%}
 {%endblock%}
 
-
-
+{# use newer version of jquery #}
+{% block jquery %}
+ <script type="text/javascript" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery-1.8.2.min.js"></script>
+{% endblock %}
 
 {%block sidebar%}
 {% include "feedbar.html" %}
