@@ -312,10 +312,16 @@ class Committee_Overlay(models.Model):
         return False
     
     def neg_percent(self):
-        return 100*(self.ie_oppose_reps + self.ie_oppose_dems ) / self.total_indy_expenditures
+        if self.total_indy_expenditures == 0:
+            return 0
+        else:
+            return 100*(self.ie_oppose_reps + self.ie_oppose_dems ) / self.total_indy_expenditures
     
     def pos_percent(self):
-        return 100*(self.ie_support_reps + self.ie_support_dems ) / self.total_indy_expenditures
+        if self.total_indy_expenditures == 0:
+            return 0
+        else:
+            return 100*(self.ie_support_reps + self.ie_support_dems ) / self.total_indy_expenditures
 
         
     def __unicode__(self):
