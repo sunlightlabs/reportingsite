@@ -62,11 +62,11 @@ class Command(BaseCommand):
         if (not senate):
             print "retrieving house records for range %s - %s" % (start_date, end_date)
             scraper = house_post_employment.postEmploymentScraper()
-            #scraper.scrape(start_date, end_date)
+            scraper.scrape(start_date, end_date)
         
         for year in range(start_year, thisyear+1):
             print "retrieving senate records for year: %s" % (year)
-            #senate_post_employment.get_senate(year)
+            senate_post_employment.get_senate(year)
             sleep(2)
         
 
