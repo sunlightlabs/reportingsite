@@ -14,11 +14,21 @@ class Command(BaseCommand):
                 default=False,
                 help='Retrieve all records, not just the current year',
             ),
+            make_option('-s', '--senate-only',
+                action='store_true',
+                dest='senate',
+                default=False,
+                help='Only grab senate records',
+            ),
     )
     
     def handle(self, *args, **options):
         
         runallyears = options.get('allyears')
+        senate = options.get('senate')
+        if (senate):
+            print "Only running senate"
+        body = options.get('body')
         year = 2013
         has_year = False
         if args:
@@ -49,13 +59,14 @@ class Command(BaseCommand):
             start_date = "01/01/%s" % year
             end_date = "12/31/%s" % year
             
-        print "retrieving house records for range %s - %s" % (start_date, end_date)
-        scraper = house_post_employment.postEmploymentScraper()
-        scraper.scrape(start_date, end_date)
+        if (not senate):
+            print "retrieving house records for range %s - %s" % (start_date, end_date)
+            scraper = house_post_employment.postEmploymentScraper()
+            #scraper.scrape(start_date, end_date)
         
         for year in range(start_year, thisyear+1):
             print "retrieving senate records for year: %s" % (year)
-            senate_post_employment.get_senate(year)
+            #senate_post_employment.get_senate(year)
             sleep(2)
         
 
