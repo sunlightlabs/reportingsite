@@ -248,11 +248,17 @@ def electioneering_csv(request):
                 candidate_name = "%s %s %s" % (candidate.fec_name, candidate.display_party(), candidate.race()) 
                 target_id_list.append(candidate.fec_id)
                 target_list.append(candidate_name)
+            else:
+                # If we haven't id'ed the candidate, use the raw text provided in the line 94 entry
+                alt_name = "%s (%s)" % (target.can_name.upper(), target.can_state)
+                target_list.append(alt_name)
+                target_id_list.append(target.can_id)
+
         names = ";".join(target_list)
         ids = ";".join(target_id_list)
         rows.append([l93.transaction_id, l93.filing_number, l93.amnd_ind, l93.spe_nam, l93.fec_id, l93.exp_amo, l93.exp_date, l93.payee, l93.purpose, names, ids])
     file_name = "electioneering.csv"
-    info_row = "This is a summary of electioneering expenses. Because electioneering can target multiple candidates their names and ids are grouped together in the Target Names and Target Ids field. Electioneering groups do not disclose whether their ads support or oppose the ad targets."
+    info_row = "This is a summary of electioneering expenses. Because electioneering can target multiple candidates their names and ids are grouped together in the Target Names and Target Ids field. Electioneering groups do not disclose whether their ads support or oppose the ad targets. Candidate ids are missing for filings that omitted them."
     return generic_csv(info_row, file_name, fields, rows)
     
     
