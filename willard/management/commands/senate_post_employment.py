@@ -7,6 +7,7 @@ import urllib2
 from dateutil.parser import parse as dateparse
 import lxml.etree
 import lxml.html
+import datetime
 
 from django.db import IntegrityError
 from willard.models import PostEmploymentNotice
@@ -19,9 +20,11 @@ def get_senate(year):
         url = 'http://www.senate.gov/legislative/termination_disclosure/report2012.xml'
     if (year==2013):
         # they don't have this file made yet. 
-        return None 
+        return None
+    if (year < 2008):
+        return None
     else:
-        url = 'http://senate.gov/legislative/termination_disclosure/%s/report%s.xml' % (year, year)
+        url = 'http://www.senate.gov/legislative/termination_disclosure/%s/report%s.xml' % (year, year)
 
     print url
     doc = lxml.etree.fromstring(urllib2.urlopen(url).read())

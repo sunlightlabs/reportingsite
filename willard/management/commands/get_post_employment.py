@@ -3,6 +3,7 @@ from django.core.management.base import BaseCommand
 from willard.management.commands import house_post_employment, senate_post_employment
 from optparse import make_option
 from datetime import datetime
+from time import sleep
 
 class Command(BaseCommand):
 
@@ -18,6 +19,14 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
         
         runallyears = options.get('allyears')
+        year = 2013
+        has_year = False
+        if args:
+            year = int(args[0])
+            if (year > 2006 and year < 2016 ):
+                has_year = True
+                print "Running year: %s" % (year)
+        
         
         today = datetime.now()
         thisyear = today.year
@@ -33,14 +42,23 @@ class Command(BaseCommand):
             start_year = 2008
             # House started doing this in Nov. 07.
             start_date = '11/01/2007'
+            
+        elif has_year:
+            start_year = year
+            thisyear = year
+            start_date = "01/01/%s" % year
+            end_date = "12/31/%s" % year
+            
+        print "retrieving house records for range %s - %s" % (start_date, end_date)
+        scraper = house_post_employment.postEmploymentScraper()
+        scraper.scrape(start_date, end_date)
         
         for year in range(start_year, thisyear+1):
             print "retrieving senate records for year: %s" % (year)
             senate_post_employment.get_senate(year)
+            sleep(2)
         
-        print "retrieving house records for range %s - %s" % (start_date, end_date)
-        scraper = house_post_employment.postEmploymentScraper()
-        scraper.scrape(start_date, end_date)
+
             
             
         
