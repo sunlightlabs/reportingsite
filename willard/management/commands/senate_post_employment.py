@@ -17,6 +17,9 @@ socket.setdefaulttimeout(60*60*60)
 def get_senate(year):
     if (year==2012):
         url = 'http://www.senate.gov/legislative/termination_disclosure/report2012.xml'
+    if (year==2013):
+        # they don't have this file made yet. 
+        return None 
     else:
         url = 'http://senate.gov/legislative/termination_disclosure/%s/report%s.xml' % (year, year)
 
