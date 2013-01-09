@@ -120,14 +120,14 @@ def make_expenditure_list(expenditure_queryset):
 def expenditure_csv(request, committee_id):
     committee = get_object_or_404(Committee_Overlay, fec_id=committee_id)
     expenditures = Expenditure.objects.select_related("committee", "candidate").filter(committee=committee).filter(superceded_by_amendment=False)
-    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Election Type', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
+    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
     rows = make_expenditure_list(expenditures)
     file_name = committee.slug + "_expenditures.csv"
     return generic_csv(expenditure_file_description, file_name, fields, rows) 
 
 def all_expenditures_csv(request):
     expenditures = Expenditure.objects.select_related("committee", "candidate").filter(superceded_by_amendment=False)
-    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Election Type', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
+    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
     rows = make_expenditure_list(expenditures)
     file_name =  "all_expenditures.csv"
             
@@ -135,7 +135,7 @@ def all_expenditures_csv(request):
     
 def all_expenditures_csv_to_file():
     expenditures = Expenditure.objects.select_related("committee", "candidate").filter(superceded_by_amendment=False)
-    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Election Type', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
+    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
     rows = make_expenditure_list(expenditures)
     
     file_name =  "%s/all_expenditures.csv" % (CSV_EXPORT_DIR)
@@ -145,7 +145,7 @@ def all_expenditures_csv_to_file():
 
 def expenditure_csv_state(request, state):
     expenditures = Expenditure.objects.select_related("committee", "candidate").filter(state=state).filter(superceded_by_amendment=False)
-    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Election Type', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
+    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
     rows = make_expenditure_list(expenditures)
     file_name = state + "_expenditures.csv"
     return generic_csv(expenditure_file_description, file_name, fields, rows)    
@@ -158,7 +158,7 @@ def expenditure_csv_race(request, office, state, district):
     if (office == 'H'):
         expenditures = expenditures.filter(candidate__district=district)    
 
-    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Election Type', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
+    fields = ['Spending Committee', 'Spending Committee ID', 'Superpac?', 'Election Type','Candidate supported / opposed', 'support/oppose', 'Candidate ID', 'Candidate Party', 'Candidate Office', 'Candidate District', 'Candidate State', 'Expenditure amount', 'Expenditure state', 'Expenditure date', 'Recipient', 'Purpose', 'Transaction ID', 'Filing Number' ]
     rows = make_expenditure_list(expenditures)
     file_name = office + "_" + state + "_" + district + "_expenditures.csv"
     return generic_csv(expenditure_file_description, file_name, fields, rows)
@@ -235,6 +235,27 @@ def all_contribs_csv_to_file():
     write_csv_to_file(contribution_file_description, file_name, fields, rows)
 
 
+def electioneering_csv(request):
+    line93s = Electioneering_93.objects.filter(superceded_by_amendment=False)
+    fields = ['Transaction ID', 'Filing Number', 'Is amended', 'Name', 'Committee ID', 'Amount', 'Date', 'Payee', 'Purpose', 'Target names', 'Target ids']
+    rows = []
+    for l93 in line93s:
+        target_list = []
+        target_id_list = []
+        for target in l93.target.all():
+            candidate = target.candidate
+            if candidate:
+                candidate_name = "%s %s %s" % (candidate.fec_name, candidate.display_party(), candidate.race()) 
+                target_id_list.append(candidate.fec_id)
+                target_list.append(candidate_name)
+        names = ";".join(target_list)
+        ids = ";".join(target_id_list)
+        rows.append([l93.transaction_id, l93.filing_number, l93.amnd_ind, l93.spe_nam, l93.fec_id, l93.exp_amo, l93.exp_date, l93.payee, l93.purpose, names, ids])
+    file_name = "electioneering.csv"
+    info_row = "This is a summary of electioneering expenses. Because electioneering can target multiple candidates their names and ids are grouped together in the Target Names and Target Ids field. Electioneering groups do not disclose whether their ads support or oppose the ad targets."
+    return generic_csv(info_row, file_name, fields, rows)
+    
+    
 def committee_summary_public(request):
     committees = Committee_Overlay.objects.filter( Q(is_superpac=True)|Q(total_indy_expenditures__gt=0) |Q(total_electioneering__gt=0)).select_related('committee_master_record')
     

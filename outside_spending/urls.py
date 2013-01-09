@@ -19,6 +19,7 @@ urlpatterns = patterns('',
     url(r'^csv/committees\/$', 'outside_spending.views.committee_summary_public'),
     url(r'^csv/committees-all-details\/$', 'outside_spending.views.committee_summary_private'),
     url(r'^csv/superpac-political-orientation\/$', 'outside_spending.views.superpac_political_orientation'),
+    url(r'^csv/electioneering\/$', 'outside_spending.views.electioneering_csv'),
     # this url used to be /super-pacs/all/ => outside-spending/super-pacs/
     url(r'^super-pacs/?$', 'outside_spending.views.all_superpacs'),
     url(r'^all-outside-groups/?$', 'outside_spending.views.all_independent_expenditors'),

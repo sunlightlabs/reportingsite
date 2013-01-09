@@ -23,7 +23,7 @@ class Command(BaseCommand):
         
         # There's no programmatic way to remove amendments from this data. We're gonna have to ingest something else. 
         """
-        mysql> select distinct filing_number, fec_id from outside_spending_Electioneering_93 where amnd_ind != 'N';
+        mysql> select distinct filing_number, fec_id from outside_spending_electioneering_93 where amnd_ind != 'N';
         +---------------+-----------+
         | filing_number | fec_id    |
         +---------------+-----------+
@@ -31,6 +31,9 @@ class Command(BaseCommand):
         |        767351 | C30001655 |
         |        767476 | C30001655 |
         |        767479 | C30001655 |
+    -    |        776628 | C30001945 |
+    -    |        793291 | C30001952 |
+    -    |        814346 | C30001028
         +---------------+-----------+
         4 rows in set (0.01 sec)
         """
@@ -44,7 +47,9 @@ class Command(BaseCommand):
         # american conservative union
         '766315':'764912',
         # PLANNED PARENTHOOD ACTION FUND INC. - C30001945
-        '776628':'764197'
+        '776628':'764197',
+        '793291':'769723',
+        '814346':'814213',
         }
         
         
