@@ -13,7 +13,7 @@ from outside_spending.models import newCommittee
 # url is: http://www.fec.gov/press/press2011/new_form1dt.shtml
 # local copy saved as http://www.fec.gov/press/press2011/new_form1dt.shtml
 
-local_file = "/Users/jfenton/reporting/reportingsitenew/reportingsite/outside_spending/management/commands/new_form1dt.shtml"
+
 
 def clean_entry(htmlbit):   
     if htmlbit:
@@ -29,11 +29,10 @@ def addCommittee(fec_id, ctype, name, date_filed):
 def scrape_page():
     url ="http://www.fec.gov/press/press2011/new_form1dt.shtml"
     
-    #response = requests.request("GET", url)
-    #assert response.status_code == 200, 'Unable to retrieve {0}, method {1}, status {2}'.format(url, method, response.status_code)
-    #rawhtml = response.content
-        
-    rawhtml = open(local_file, 'r').read()
+    response = requests.request("GET", url)
+    assert response.status_code == 200, 'Unable to retrieve {0}, method {1}, status {2}'.format(url, method, response.status_code)
+    rawhtml = response.content
+
 
     #print rawhtml
     doc = lxml.html.fromstring(rawhtml)
