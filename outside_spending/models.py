@@ -46,7 +46,22 @@ class Scrape_Time(models.Model):
 class Filing_Scrape_Time(models.Model):
     run_time = models.DateTimeField(auto_now=True)
 
-
+# This is just to hold newly formed committees, scraped from a special page on the press site here: http://www.fec.gov/press/press2011/new_form1dt.shtml. Form F1's don't have to be filed electronically, so the press page appears to be the best resource out there. 
+class newCommittee(models.Model):
+    fec_id = models.CharField(max_length=9, blank=True, unique=True)
+    ctype = models.CharField(max_length=255)
+    name = models.CharField(max_length=255)
+    date_filed = models.DateField()
+    # is it in our system? 
+    has_overlay = models.NullBooleanField(null=True)
+    
+    
+    class Meta:
+        ordering = ('-date_filed', )
+        
+    def __unicode__(self):
+        return "%s formed %s" % (self.name, self.date_filed)
+    
 # populated from fec's candidate master
 class Candidate(models.Model):
     cycle = models.CharField(max_length=4)

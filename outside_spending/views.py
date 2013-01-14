@@ -16,7 +16,7 @@ from outside_spending.models import (Scrape_Time, Contribution, Expenditure,
                                      Pac_Candidate, Electioneering_93,
                                      Race_Aggregate, State_Aggregate,
                                      Filing_Scrape_Time, unprocessed_filing,
-                                     President_State_Pac_Aggregate)
+                                     President_State_Pac_Aggregate, newCommittee)
 from outside_spending.utils.json_helpers import render_to_json
 from outside_spending.utils.chart_helpers import summarize_monthly
 
@@ -1291,4 +1291,23 @@ def competitive_races(request):
     return render_to_response('outside_spending/competitive_races.html', {
                 'races':races,
                 })
+
+def new_committees(request):
+    today = datetime.datetime.today()
+    month_ago = today - datetime.timedelta(days=30)
+    committees=newCommittee.objects.filter(date_filed__gte=month_ago).order_by('-date_filed')
+    return render_to_response('outside_spending/new_committees.html', {
+                'committees':committees,
+                'explanatory_text':'These are committees formed within the last 30 days. It may take several days after a PAC is formed for details to be posted. Also see <a href="/outside-spending/new-superpacs/">new super PACs</a>.',
+                'title':'New Committees'
+                })
     
+def new_superpacs(request):
+    today = datetime.datetime.today()
+    month_ago = today - datetime.timedelta(days=30)
+    committees=newCommittee.objects.filter(date_filed__gte=month_ago).filter(ctype='INDEPENDENT EXPENDITURE-ONLY').order_by('-date_filed')
+    return render_to_response('outside_spending/new_committees.html', {
+                'committees':committees,
+                'explanatory_text':'These are super PACs formed within the last 30 days. It may take several days after a PAC is formed for details to be posted. Also see <a href="/outside-spending/new-committees/">all new committees</a>.',
+                'title':'New Super PACs',
+                })    

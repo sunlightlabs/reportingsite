@@ -88,7 +88,9 @@ urlpatterns = patterns('',
     #direct_to_template, {'template': 'outside_spending/chart_embedder.html', 'extra_context': {'div_name':'this_is_the_chart_div'}}, ),
     url(r'^election_summary.json$', 'outside_spending.views.elex_json'),
     url(r'^october-club\/$', 'outside_spending.views.october_club'),
-    url(r'^competitive-races\/$', 'outside_spending.views.competitive_races'),    
+    url(r'^competitive-races\/$', 'outside_spending.views.competitive_races'),
+    url(r'^new-committees\/$', 'outside_spending.views.new_committees'),
+    url(r'^new-superpacs\/$', 'outside_spending.views.new_superpacs'),
     url(r'$', 'outside_spending.views.all_superpacs'),
     
 
