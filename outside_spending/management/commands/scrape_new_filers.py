@@ -44,8 +44,10 @@ def scrape_page():
         try:
             count, cid, ctype, name, raw_date = [clean_entry(x.text_content()) for x in row.getchildren()]
             file_date = dateparse(raw_date)
-            print count, cid, ctype, name, file_date
-            addCommittee(cid, ctype, name, file_date)
+
+            new = addCommittee(cid, ctype, name, file_date)
+            if new:
+                print "added: %s, %s, %s, %s" % (cid, ctype, name, file_date)
         except ValueError:
             print "Couldn't parse line: %s" % row.text_content()
             pass
