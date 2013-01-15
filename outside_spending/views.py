@@ -328,7 +328,7 @@ def committee_summary_private(request):
 
 @cache_page(CACHE_TIME)
 def all_superpacs(request):
-    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have raised or spent at least $10,000 since the beginning of 2011. The totals, listed above, are for all super PACs. Many groups that aren't super PACs are also making independent expenditures--for a more complete listing see the <a href=\"/outside-spending/all-outside-groups/\">biggest outside spending groups</a>. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. For the much longer list of <a href='/outside-spending/super-pacs/complete-list/'>all superpacs</a> click <a href='/outside-spending/super-pacs/complete-list/'>here</a>."
+    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have raised or spent at least $10,000 since the beginning of 2011. The totals, listed above, are for all super PACs. Many groups that aren't super PACs are also making independent expenditures--for a more complete listing see the <a href=\"/outside-spending/all-outside-groups/\">biggest outside spending groups</a>. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. For the much longer list of <a href='/outside-spending/super-pacs/complete-list/'>all superpacs</a> click <a href='/outside-spending/super-pacs/complete-list/'>here</a>. Also see the list of <a href='/outside-spending/new-superpacs/'>new superpacs</a> and <a href='/outside-spending/new-committees/'>all new committees</a>."
 
     all_superpacs = Committee_Overlay.objects.filter(is_superpac=True)
     
