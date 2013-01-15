@@ -68,11 +68,3 @@ class Command(BaseCommand):
             print "retrieving senate records for year: %s" % (year)
             senate_post_employment.get_senate(year)
             sleep(2)
-        
-
-            
-            
-        
-
-        
-        

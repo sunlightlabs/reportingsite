@@ -20,6 +20,7 @@ def get_senate(year):
         url = 'http://www.senate.gov/legislative/termination_disclosure/report2012.xml'
     elif (year==2013):
         # they don't have this file made yet. 
+        print "Skipping 2013; not published yet."
         return None
     elif (year < 2008):
         return None
