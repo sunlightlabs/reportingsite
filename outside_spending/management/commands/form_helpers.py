@@ -190,8 +190,8 @@ def process_F24(f24_to_process, fp):
             
             if is_amendment:
                 original_ies = Expenditure.objects.filter(filing_number=original)
+                print "Writing amended original: %s %s" % (original, filingnum)
                 for original_ie in original_ies:
-                    print "Writing amended original: %s %s" % (original, filingnum)
                     original_ie.superceded_by_amendment=True
                     original_ie.amended_by = filingnum
                     original_ie.save()
