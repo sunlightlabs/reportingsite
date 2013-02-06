@@ -30,14 +30,14 @@
     {% load tz %}
     {% load wptags %}
 
-    <title>Sunlight Labs</title>
-    <link>http://sunlightlabs.com/blog/</link>
-    <description>Sunlight Labs technology blog</description>
+    <title>Sunlight Reporting Group</title>
+    <link>http://reporting.sunlightfoundation.com/</link>
+    <description>Sunlight Reporting Group</description>
     <pubDate>{{ now|rfc822 }}</pubDate>
     <language>en-US</language>
     <wp:wxr_version>1.2</wp:wxr_version>
-    <wp:base_site_url>http://sunlightlabs.com/blog/</wp:base_site_url>
-    <wp:base_blog_url>http://sunlightlabs.com/blog/</wp:base_blog_url>
+    <wp:base_site_url>http://reporting.sunlightfoundation.com/</wp:base_site_url>
+    <wp:base_blog_url>http://reporting.sunlightfoundation.com/</wp:base_blog_url>
 
     {% for author in authors %}
         <wp:author><wp:author_id>{{ author.pk }}</wp:author_id><wp:author_login>{{ author.username }}</wp:author_login><wp:author_email>{{ author.email }}</wp:author_email><wp:author_display_name><![CDATA[{{ author.get_full_name }}]]></wp:author_display_name><wp:author_first_name><![CDATA[{{ author.first_name }}]]></wp:author_first_name><wp:author_last_name><![CDATA[{{ author.last_name }}]]></wp:author_last_name></wp:author>
@@ -48,7 +48,7 @@
     {% for post in posts %}
         <item>
             <title>{{ post.title }}</title>
-            <link>http://sunlightlabs.com{{ post.get_absolute_url }}</link>
+            <link>http://reporting.sunlightfoundation.com/{{ post.get_absolute_url }}</link>
             <pubDate>{{ post.date_published|rfc822 }}</pubDate>
             <dc:creator>{{ post.author.username }}</dc:creator>
             <guid isPermaLink="false">http://sunlightlabs.com{{ post.get_absolute_url }}</guid>
