@@ -51,13 +51,13 @@
             <link>http://reporting.sunlightfoundation.com/{{ post.get_absolute_url }}</link>
             <pubDate>{{ post.date_published|rfc822 }}</pubDate>
             <dc:creator>{{ post.author.username }}</dc:creator>
-            <guid isPermaLink="false">http://sunlightlabs.com{{ post.get_absolute_url }}</guid>
+            <guid isPermaLink="false">http://reporting.sunlightfoundation.com{{ post.get_absolute_url }}</guid>
             <description></description>
             <content:encoded><![CDATA[{{ post.content }}]]></content:encoded>
             <excerpt:encoded><![CDATA[{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|truncatewords_html:100 }}{% endif %}]]></excerpt:encoded>
             <wp:post_id>{{ post.pk }}</wp:post_id>
-            <wp:post_date>{{ post.date_published_local.isoformat }}</wp:post_date>
-            <wp:post_date_gmt>{{ post.date_published_gmt.isoformat }}</wp:post_date_gmt>
+            <wp:post_date>{{ post.date_published.isoformat }}</wp:post_date>
+            <wp:post_date_gmt>{{ post.date_published_gmt|date:"c" }}</wp:post_date_gmt>
             <wp:comment_status>closed</wp:comment_status>
             <wp:ping_status>closed</wp:ping_status>
             <wp:post_name>{{ post.slug }}</wp:post_name>

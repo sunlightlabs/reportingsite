@@ -1,3 +1,7 @@
+## Todo -- very rarely an electronic filing will be missing, and the full text of it will be this: 
+# 'Sorry. The server is under maintenance.'
+# Handle this somehow. 
+
 import urllib2
 import os
 import re
@@ -115,7 +119,7 @@ class filing(object):
             if form_last_char == 'A':
                 self.is_amendment = True
                 #print "Found amendment %s : %s " % (self.filing_number, self.headers['report_id'])
-                amendment_match = re.search('^FEC-(\d+)', self.headers['report_id'])
+                amendment_match = re.search('^FEC\s*-\s*(\d+)', self.headers['report_id'])
                 if amendment_match:
                     original = amendment_match.group(1)
                     #print "Amends filing: %s" % original
