@@ -113,6 +113,10 @@ class Post(models.Model):
 
     def days_old(self):
         return (datetime.datetime.now() - self.date_published).days
+        
+    def date_published_gmt(self):
+        # hack to return an approximate gmt time.
+        return(self.date_published  +  datetime.timedelta(hours=5) )
 
 
 def cache_updater(sender, **kwargs):
