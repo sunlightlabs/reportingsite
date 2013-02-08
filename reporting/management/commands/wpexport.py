@@ -10,7 +10,7 @@ from reporting.models import Post
 #import blogdor
 
 EXPORT_PATH = './export/'
-PER_PAGE = 200
+PER_PAGE = 150
 
 
 class Command(BaseCommand):
