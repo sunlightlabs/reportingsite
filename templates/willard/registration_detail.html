@@ -8,7 +8,9 @@
 {% include "willard/registration_header.html" %}
 
 <h3>{{ object.registrant }} for {{ object.client }}</h3>
-
+<p>
+<strong>Date received: </strong> {{ object.received|date:"N j, Y" }} 
+</p>
 <p>
 <strong>Issues:</strong>
 {% for issue in object.denormalized_issues %}
