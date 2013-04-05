@@ -61,9 +61,9 @@ def main():
                          'org_name', meeting_keyfunc)
 
     meeting_objects = Meeting.objects.filter(agency=SEC)
-    reconcile_database(meeting_objects, meetings)
+    #reconcile_database(meeting_objects, meetings)
 
-    prune_organizations()
+    #prune_organizations()
 
     print obj_counts.update().diffstat()
     print 'Done'
