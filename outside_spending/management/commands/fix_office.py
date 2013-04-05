@@ -27,9 +27,9 @@ class Command(BaseCommand):
                             candidate_state_abbrev = candidate_id[2:4]
                             candidate_office = candidate_id[0]
                             if (candidate_office == 'P'):
-                                print "Presidential district: %s" % e.candidate.district
-                            
-                            print "Got state %s abbrev: %s" % (candidate_id, candidate_state_abbrev)
+                                #print "Presidential district: %s" % e.candidate.district
+                                pass
+                            #print "Got state %s abbrev: %s" % (candidate_id, candidate_state_abbrev)
                         
                     else:
                         print "Missing candidate: %s " % (e.candidate_name) 

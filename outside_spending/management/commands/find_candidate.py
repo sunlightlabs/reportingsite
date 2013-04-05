@@ -69,60 +69,42 @@ candidate_lookup={
     "BRIDGEWATER, TIM":"S0UT00157",
     "FIORINA, CARLY":"S0CA00330",
     "HERGER, WALLY":"H6CA02010",
-#    "BRIGHT, BOBBY":
     "BARLETTA, LOU":"H2PA11098",
     "CHABOT, STEVE":"H8OH01043",
     "GIBSON, CHRIS":"H0NY20095",
     "PANTANO, ILARIO":"H0NC07108",
-    "HEINRICH, MARTIN":"S2NM00088", # he's running for both house and senate at the same time? 
+    "HEINRICH, MARTIN":"S2NM00088", 
     "FEINSTEIN, DIANNE":"S0CA00199",
-#    "CARLOS, LUNA": -- I think he's used in the $45 million ie test.
-#    "CANDIDATE, GENERAL":
-#    "HAWK, DAVID":
     "CARDIN, BENJAMIN L":"S6MD03177",
-    "BALDWIN, TAMMY":"S2WI00219", # she's in the house? 
+    "BALDWIN, TAMMY":"S2WI00219", 
     "LUGAR, DICK":"S4IN00014",
     "KUCINICH, DENNIS":"H6OH23033",
-#    "UNKNOWN, UNKNOWN":
     "REILLY, CHRIS":"H0PA19095",
-#    "DICKERSON, STEVE":
     "SANDERS, BERNARD":"S4VT00033",
     "LEWIS, JOHN R":"H6GA05217",
     "SALDANA, LORI":"H2CA52063",
-#    "HUNTER, CHUCK":
     "CAPPS, LOIS":"H8CA22089",
     "ROGERS, LEE":"H2CA25143",
     "GARAMENDI, JOHN":"H0CA10149",
-#    "THOMPSON, MIKE": # ambiguous -- is this oklahoma or pennsylania. 
-#    "CLOUD, CYNTHIA": unknown
+#    "THOMPSON, MIKE": # ambiguous -- is this oklahoma or pennsylania ?
     "VANN, KIM": 'H2CA03090',
-# EMANUEL, RAHM  outta congress now
-# HUNTER, CHUCK           |
-# WALKER, SCOTT -- not a federal candidate (wisconsin recall)
-    'BERG, RICK' :'S2ND00073', # running for congress and senate -- probably this is for senate
+    'BERG, RICK' :'S2ND00073', 
     'CRIMMINS, MICHAEL':'H8CA53019',
     'WILSON, HEATHER':'S8NM00168',
     'RANGEL, CHARLES': 'H6NY19029',
     'CRAMER, KEVIN J': 'H0ND01026',
 #    'JOHN, SULLIVAN': This is ambiguous - H2OK and H6IL
-#+-----------+------------------+
-#| fec_id    | fec_name         |
-#+-----------+------------------+
-#| H2OK01093 | SULLIVAN, JOHN   |
-#| H6IL03114 | SULLIVAN, JOHN P | 
     "D'AMBOISE, SCOTT": 'S2ME00042',
     'CROWLEY, ELIZABETH': 'H2NY06124',
     'LAMALFA, DOUG':'H2CA02142',
     'MATSUI, DORIS':'H6CA05195',
     'MCDOWELL, GARY':'H0MI01153',
     'REHBERG, DENNY':'S6MT00097',
-    # STEWART, JOHN MARK
     'AUBUCHON, GARY':'H2FL14145',
     # ambiguous JOHNSON, GARY -- | P20002671 | JOHNSON, GARY EARL  ; H0LA02192 | JOHNSON , GARY 
     'WRIGHTS, LEE':'P20002952',
     'BENTIVOLIO, KERRY':'H2MI11133',
     'HEITKAMP, HEIDI':'S2ND00099',
-    # Ambiguous -- both house and senate seats. 
     'HELLER, DEAN':'S2NV00183',
     'LINGLE, LINDA':'S2HI00114',
     'COSTELLO, FREDRICK':'H2FL06158',
@@ -173,10 +155,8 @@ candidate_lookup={
     'MCLEOD, GLORIA NEGRETE':'H2CA35118',
     'SHERMAN, BRAD':'H6CA24113',
     # STEVE KING IS AMBIGUOUS -- IS IT H2 IA, OR H2 MI ? 
-#    'KING, STEVE':'',
-    
+#    'KING, STEVE':'',    
     'CHANDLER, BENJAMIN':'H4KY06072',
-    # CAMP, DAVID ? WTF. APPARENTLY IT'S NOT A FAKE NAME. 
     'CAMP, DAVID':'H0MI10071',
     'BENISHEK, DAN':'H0MI01088',
     'CRAVAACK, CHIP':'H0MN08115',
@@ -294,8 +274,6 @@ candidate_lookup={
     'VILSACK, CHRISTIE':'H2IA04117',
     'MITT, ROMNEY':'P80003353',
     'TAMMY SUZANNE, BALDWIN':'S2WI00219',
-    # who's andy tobin? 
-    #'TOBIN, ANDY':'',
     'MURPHY, CHRIS':'S2CT00132',
     'FISCHER, DEB':'S2NE00094',
     'DAINES, STEVE':'S2MT00096',
@@ -303,10 +281,6 @@ candidate_lookup={
     'YOUNG, BILL':'H6FL06035',
     'WILLIAMS, ROGER':'S2TX00270',
     '"GALLEGO", "PETE"':'H2TX23124',
-    # ambiguous--there are two tim murphys.
-#    'MURPHY, TIM':'',
-#    'TOBIN, ANDY':'',
-#    'PETERS, DAVID':'',
     'MALDONADO, ABEL':'H2CA23106',
     'BELLAVIA, DAVID':'H8NY26087',
     'KICINSKI, MICHAEL':'H2NY22154',
@@ -329,8 +303,6 @@ candidate_lookup={
     'WEST, ALLEN':'H8FL22038',
     'LANGE, BEN':'H0IA01117',
     'ARCHER, JOHN':'H2IA02053',
-    # maybe this is rodney davis ? 
-#    'DAVID, RODNEY':'',
     'BASS, CHARLIE':'H0NH02017',
     'RUNYAN, JON':'H0NJ03153',
     'JOHNSON, BILL':'H0OH06189',
@@ -338,14 +310,11 @@ candidate_lookup={
     'FITZPATRICK, MIKE':'H4PA08074',
     'YOUNG, C.W. "BILL"':'H6FL06035',
     'FITZPATRICK, JIM':'H0NY01160',
-    # Wow, this should be hernandez, jose. Nice spelling, guys!
     'HERNANDEZ, HOSE':'H2CA10145',
     'BONO-MACK, MARY':'H8CA44034',
     'DOLD, BOB':'H0IL10302',
     '"GALLEGO", "PETE"':'H2TX23124',
     'YOUNG, C.W "BILL"':'H6FL06035',
-    # davis rodney perhaps? H2IL13120
-    #'DAVID, RODNEY':'',
     'YOUNG, C.W. "BILL"':'H6FL06035',
     'DANIEL, BENISHEK':'H0MI01088',
     'BOEHNER, JOHN':'H0OH08029',
@@ -369,20 +338,16 @@ candidate_lookup={
     'MCMAHON, LINDA':'S0CT00151',
     'HECK, JOSEPH':'H0NV03058',
     'HIRONO, MAZIE':'S2HI00106',
-#    'HASSAN, MAGGIE':'',
     'ROYCE, ED':'H6CA39020',
     'ALAN, GRAYSON':'H6FL08213',
     'SHERROD, BROWN':'S6OH00163',
     'ELIZABETH, WARREN':'S2MA00170',
-#    '"MCINTYRE", "MIKE"':'',
     'PETERS, SCOTT':'H2CA52089',
     'BRIAN, BILBRAY':'H4CA49032',
     'DONNELLY, JOE':'S2IN00091',
     'CRAWFORD, RICK':'H0AR01083',
     '"QUICO" CANSECO, FRANCISCO':'',
     'CANSECO, QUICO':'H4TX28046',
-# WTF?
-#    'ROMNEY, MARY ROSE':'',
     'YOUNG, C.W.':'H6FL06035',
     'ROMNEY, W MITT':'P80003353',
     'IMUS, GREGG':'H2CA41116',
@@ -415,8 +380,6 @@ candidate_lookup={
     'RIGEL, SCOTT':'H0VA02084',
     '"DEMINGS", "VAL"':'H2FL08063',
     'SHEA PORTOR, CAROL':'H6NH01230',
-# steve kind is amiguous -- iowa or michigan ?     
-#    'KING, STEVEN':'',
     'MARY, MACK':'H8CA44034',
     'ABEL, MALDONADO':'H2CA23106',
     'TAMMY, DUCKWORTH':'H6IL06141',
@@ -455,8 +418,6 @@ candidate_lookup={
     'CASEY, BOB':'S6PA00217',
     'SMITH, TOM':'S2PA00224',
     'JEFF, FLAKE':'S2AZ00141',
-# huh? 
-#    'STRICKLAND, STEVE':'',
     'MARIA, CANTWELL':'S8WA00194',
     'DENNY, HECK':'H0WA03161',
     'EMKEN, ELIZABETH':'S2CA00641',

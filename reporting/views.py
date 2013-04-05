@@ -295,6 +295,8 @@ def search(request):
     )
 
 
+
+
 def adminfiles(request):
     uploads = Upload.objects.all().order_by('-pk')  
     return render_to_response('uploads.html', {'uploads': uploads})
