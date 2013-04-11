@@ -1,0 +1,69 @@
+{% extends "outside_spending_2014/buckley_base.html" %}
+
+{% load humanize %}
+
+{% block title %}New Committees{% endblock %}
+
+{% block body %}  fullWidth newCommittees {% endblock %}
+
+{% block breadcrumb %}
+<li>{{ title }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+
+    {% include "outside_spending_2014/tabs.html" %}
+
+
+    <h2>
+        {{ title }}
+    </h2>
+    <p>{{ explanatory_text|safe }}</p>
+
+    {% if committees %}
+    <p class="tip">Click on a race, committee or candidate name for more details</p>
+
+   
+    <table id="contrib_details" class="tablesorter">
+        <thead>
+            <tr>
+                <th class="sort">Date</th>
+                <th class="sort">Type</th>
+                <th class="sort" >Committee</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for committee in committees %}    
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td>{{ committee.date_filed }}</td>
+                <td>{{ committee.ctype }}</td> 
+                <td>{{ committee.name }}</td> 
+                <td><a href="http://images.nictusa.com/cgi-bin/fecimg/?{{ committee.fec_id }}">FEC filings</a></td>                               
+            </tr>
+        {% endfor %}
+        </tbody>
+        </table>    
+        {% endif %}
+        
+        {% block js %}
+        {{ block.super }}
+        <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+        {% with '[0,1]' as sortdir %}
+        {% include "outside_spending/tablesorter_contribs.html" %}
+        {% endwith %}
+		<script type="text/javascript">
+		    $(document).ready(function () {
+		        $("#searchbox").focus(function () {
+		            if ($(this)[0].value === 'Search for a candidate or committee') {
+		                $(this).val('');
+		            }
+		        });
+		    });
+		</script>
+
+        {% endblock %}        
+        
+
+{% endblock content %}

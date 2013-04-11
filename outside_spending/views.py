@@ -1,4 +1,4 @@
-# Create your views here.
+# 2012
 import csv
 import datetime
 
@@ -9,6 +9,8 @@ from django.http import HttpResponse, Http404
 from django.db.models import Sum, Min
 from django.db.models import Q
 from django.contrib.localflavor.us.us_states import STATE_CHOICES
+
+from django.template import RequestContext, loader
 
 from outside_spending.models import (Scrape_Time, Contribution, Expenditure, 
                                      Committee, Candidate,
@@ -24,6 +26,7 @@ from settings import CSV_EXPORT_DIR
 
 CACHE_TIME = 60 * 15
 STATE_CHOICES = dict(STATE_CHOICES)
+CYCLE='2014'
 
 try:
     most_recent_scrape=Scrape_Time.objects.all().order_by('-run_time')[0]
@@ -346,15 +349,15 @@ def all_superpacs(request):
     
     
     superpacs = all_superpacs.filter(is_superpac=True).filter(Q(total_contributions__gte=10000)|Q(total_indy_expenditures__gte=10000))
+    data_dict = {'explanatory_text':explanatory_text, 
+    'superpacs':superpacs, 
+    'total_amt':total_amt, 
+    'total_contribs':totals['total_contribs'],
+    'neg_percent':neg_percent,
+    'pos_percent':positive_percent,
+    }
+    return render_to_response('outside_spending/superpac_list.html',data_dict) 
     
-    return render_to_response('outside_spending/superpac_list.html',
-                            {'explanatory_text':explanatory_text, 
-                            'superpacs':superpacs, 
-                            'total_amt':total_amt, 
-                            'total_contribs':totals['total_contribs'],
-                            'neg_percent':neg_percent,
-                            'pos_percent':positive_percent,
-                            }) 
 
 @cache_page(CACHE_TIME)                            
 def all_independent_expenditors(request):
@@ -627,7 +630,7 @@ def ecs(request):
                             'explanatory_text':electioneering_details + "<br>This list includes amounts of $50,000 or more. Also see <a href='/outside-spending/electioneering-groups/'>a summary of electioneering groups</a>"
                             })
 
-
+# No organizational donors yet. 
 @cache_page(CACHE_TIME)
 def organizational_superpac_contribs(request):
     contribs = Contribution.objects.select_related("committee").filter(committee__isnull=False, superceded_by_amendment=False).exclude(contrib_org='').filter(line_type__in=['SA11AI', 'SA15'])
@@ -980,7 +983,7 @@ def committee_search_html(request):
 def subscribe_to_alerts(request):
     
     return render_to_response('outside_spending/subscribe.html',
-        {}
+        {'cycle':CYCLE}
     )
 
 def noncommittees(request):
@@ -1291,6 +1294,8 @@ def competitive_races(request):
     return render_to_response('outside_spending/competitive_races.html', {
                 'races':races,
                 })
+                
+                
 
 def new_committees(request):
     today = datetime.datetime.today()
@@ -1310,4 +1315,4 @@ def new_superpacs(request):
                 'committees':committees,
                 'explanatory_text':'These are super PACs formed within the last 30 days. It may take several days after a PAC is formed for details to be posted. Also see <a href="/outside-spending/new-committees/">all new committees</a>.',
                 'title':'New Super PACs',
-                })    
+                })   

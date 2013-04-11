@@ -2,7 +2,7 @@
 from django.conf.urls.defaults import patterns, url
 from outside_spending.feeds import FilingFeed, FilingsFeed, FilingsFormFeed, FilingsForms, CommitteeFormsFeed, SuperpacsForms
 from django.views.generic.simple import direct_to_template, redirect_to
-
+# 2012
 urlpatterns = patterns('',
 
     # temporary takedown
@@ -79,7 +79,7 @@ urlpatterns = patterns('',
     #url(r'^searchtest\/$', 'django.views.generic.simple.direct_to_template', {'template': 'mobile_test/searchtest.html'}),      
     url(r'^search\/$', 'outside_spending.views.search'),
     url(r'^more-resources\/$', 'outside_spending.views.more_resources'),
-    url(r'^charttest\/',direct_to_template, {'template': 'outside_spending/chart_test.html', 'extra_context': {'div_name_9':'all_ies', 'div_name_1':'pres_ge_ies', 'div_name_2':'house_ge_ies', 'div_name_3':'senate_ge_ies', 'div_name_4':'all_ies_weekly', 'div_name_5':'noncommittee_affiliation', 'div_name_6':'sp_spending_partisan', 'div_name_7':'party_spending_partisan'}}, ),
+    #url(r'^charttest\/',direct_to_template, {'template': 'outside_spending/chart_test.html', 'extra_context': {'div_name_9':'all_ies', 'div_name_1':'pres_ge_ies', 'div_name_2':'house_ge_ies', 'div_name_3':'senate_ge_ies', 'div_name_4':'all_ies_weekly', 'div_name_5':'noncommittee_affiliation', 'div_name_6':'sp_spending_partisan', 'div_name_7':'party_spending_partisan'}}, ),
     url(r'^superpac-by-party\/', redirect_to, {'url': '/outside-spending/by-affiliation/'}),
     url(r'^by-affiliation\/', 'outside_spending.views.by_affiliation'),
     url(r'^by-spending', 'outside_spending.views.by_spending'),
@@ -89,8 +89,8 @@ urlpatterns = patterns('',
     url(r'^election_summary.json$', 'outside_spending.views.elex_json'),
     url(r'^october-club\/$', 'outside_spending.views.october_club'),
     url(r'^competitive-races\/$', 'outside_spending.views.competitive_races'),
-    url(r'^new-committees\/$', 'outside_spending.views.new_committees'),
-    url(r'^new-superpacs\/$', 'outside_spending.views.new_superpacs'),
+    #url(r'^new-committees\/$', 'outside_spending.views.new_committees'),
+    #url(r'^new-superpacs\/$', 'outside_spending.views.new_superpacs'),
     url(r'$', 'outside_spending.views.all_superpacs'),
     
 

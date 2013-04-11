@@ -319,7 +319,7 @@ class Committee_Overlay(models.Model):
         ordering = ('-total_indy_expenditures', )
 
     def get_absolute_url(self):  
-        return ("/outside-spending/committee/%s/%s/" % (self.slug, self.fec_id))
+        return ("/outside-spending-2012/committee/%s/%s/" % (self.slug, self.fec_id))
         
     def is_not_a_committee(self):
         if self.committee_master_record.ctype=='I':
@@ -361,10 +361,10 @@ class Committee_Overlay(models.Model):
             return 'N'
             
     def superpachackcsv(self):
-        return "/outside-spending/csv/committee/%s/%s/" % (self.slug, self.fec_id) 
+        return "/outside-spending-2012/csv/committee/%s/%s/" % (self.slug, self.fec_id) 
 
     def superpachackdonorscsv(self):
-        return "/outside-spending/csv/contributions/%s/%s/" % (self.slug, self.fec_id)
+        return "/outside-spending-2012/csv/contributions/%s/%s/" % (self.slug, self.fec_id)
         
     def filing_frequency_text(self):
         if (self.filing_frequency.upper()=='M'):
@@ -485,10 +485,10 @@ class Candidate_Overlay(models.Model):
             district='00'
 
 
-        return "/outside-spending/race_detail/%s/%s/%s/" % (office, state, district)                        
+        return "/outside-spending-2012/race_detail/%s/%s/%s/" % (office, state, district)                        
 
     def get_absolute_url(self):
-        return "/outside-spending/candidate/%s/%s/" % (self.slug, self.fec_id)
+        return "/outside-spending-2012/candidate/%s/%s/" % (self.slug, self.fec_id)
         
 
     def full_race_name(self):
@@ -742,7 +742,7 @@ class Race_Aggregate(models.Model):
             return '%s-%s (House)' % (self.state, self.district.lstrip('0')) 
             
     def get_absolute_url(self):
-        return "/outside-spending/race_detail/%s/%s/%s/" % (self.office, self.state, self.district) 
+        return "/outside-spending-2012/race_detail/%s/%s/%s/" % (self.office, self.state, self.district) 
         
 class State_Aggregate(models.Model):
     state = models.CharField(max_length=2, blank=True, null=True)
@@ -765,7 +765,7 @@ class State_Aggregate(models.Model):
         return STATE_CHOICES[self.state]
     
     def get_absolute_url(self):
-        return "/outside-spending/state/%s/" % (self.state)
+        return "/outside-spending-2012/state/%s/" % (self.state)
         
 #    def state_name(self):
 

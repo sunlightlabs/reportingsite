@@ -1,0 +1,68 @@
+{% extends "outside_spending_2014/buckley_base.html" %}
+
+{% load humanize %}
+
+{% block title %}File downloads, {{cycle}} cycle- {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} filedownloads {% endblock %}
+
+{% block breadcrumb %}
+<li>File downloads</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "outside_spending_2014/tabs.html" %}
+
+    <h2>
+        File downloads  (.csv format) for the {{ cycle}} cycle
+    </h2>
+    <p>Files are available for download throughout this site; all that are available are aggregated on this page below. Please read the <a href="http://reporting.sunlightfoundation.com/super-pac/data/about/year-end/2011/">detailed information about the data</a> before using them. 
+    <br>Jump to: <a href="#super-pacs">Super PACs</a>&nbsp;|&nbsp;<a href="#states">States</a></p>
+
+
+<div class="clear"></div>
+
+<div class="space_above"><h3>Complete files</h3>
+<p>The contribution file includes all contributions to all super PACs during the {{ cycle }} election cycle; the independent expenditure files include all reported independent expenditures--both those made by super PACs and not. The summary file includes totals for all super PACs, as well as Sunlight's <a href="http://reporting.sunlightfoundation.com/super-pac/data/about/2012-june-update/#political_orientation">designation of their political orientation</a>.</p>
+    </div>
+
+<span class="amountLine"><a href="http://assets.sunlightfoundation.com/reporting/FTUM-data-{{cycle}}/all_expenditures-{{ cycle }}.csv" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('/outside-spending/csv/all/expenditures/');">Independent Expenditures</a></span><br>
+<span class="amountLine"><a href="http://assets.sunlightfoundation.com/reporting/FTUM-data-{{cycle}}/all_contribs-{{cycle}}.csv" onClick="javascript: _gaq.push(['_trackPageview', '/outside-spending/csv/all/']);">Contributions</a></span><br>
+<span class="amountLine"></span><br>
+
+
+
+<a name="states"></a>
+<div class="space_above"><h3>State Files</h3></div>
+<p>Donor files include all donors to super PACs.</p>
+
+    
+{% for state in states %}
+<p>{{ state}}: <span class="amountLine"><a href="/outside-spenders/{{cycle}}/csv/state/{{ state.state }}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('/outside-spenders/{{cycle}}/csv/state/{{ state.state }}');">Contributors</a></span></p>
+{% endfor %}
+
+<a name="super-pacs"></a>
+<div class="space_above"><h3>Contributors by committee</h3></div>
+<p>Super PACS, hybrid super PACs and other groups that have recorded independent expenditures in the {{ cycle }} cycle are shown below. </p>
+    
+{% for committee in committees %}
+<p><a href="{{committee.get_absolute_url}}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('{{committee.get_absolute_url}}');">{{ committee.name}}</a>: <span class="amountLine"><a href="{{committee.superpachackdonorscsv}}">Donors</a> {% if committee.cash_on_hand_date %}(As of {{committee.cash_on_hand_date}}){% endif %}</span>&nbsp;|&nbsp;<span class="amountLine"><a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">FEC filings</a></span>
+</p>
+{% endfor %}
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

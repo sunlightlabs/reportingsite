@@ -116,6 +116,8 @@ INSTALLED_APPS = (
     'doddfrank',
 #    'rebuckley',
     'outside_spending', 
+    'outside_spending_2014',
+    'fec_alerts',
     'django.contrib.redirects',
 )
 
@@ -143,6 +145,7 @@ TEMPLATE_CONTEXT_PROCESSORS = (
     "context_processors.latest_by_site",
     "context_processors.outside_spending_updated",
     "django.core.context_processors.request",
+#    "outside_spending_2014.cycle_context_processor.add_cycle",
 )
 
 MEDIASYNC_AWS_KEY = "***REMOVED***"

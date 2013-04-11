@@ -1,0 +1,149 @@
+{% extends "outside_spending_2014/buckley_base.html" %}
+
+{% load humanize %}
+{% load buckley %}
+
+{% block title %}{{ candidate.fec_name }} {{ candidate.race }} ( {{ cycle }} cycle ) - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} {% endblock %}
+
+{% block breadcrumb %}
+<li><a href="/outside-spending/candidates/">Candidates</a></li>
+<li>{{ candidate.fec_name }} {{ candidate.race }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "outside_spending_2014/tabs.html" %}
+
+
+    <h2>
+        {{ candidate.fec_name }}  {{ candidate.display_party }} <br>Office Sought: {{ candidate.race }}
+    </h2>
+
+    <div class="amountLine clear">
+        <ul><li><b>{{ cycle }} election cycle outside spending summary</b></li>
+            <li>Independent expenditures made <b>supporting</b> this candidate: <span class="amount">{% if candidate.expenditures_supporting %}${{ candidate.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</span> </li>
+            <li>Independent expenditures made <b>opposing</b> this candidate: <span class="amount">{% if candidate.expenditures_opposing %}${{ candidate.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</span> </li>
+            {% if ec_total %}<li>Electioneering communications*: <span class="amount">${{ ec_total|intcomma }}</span> </li>
+            {% endif %}
+        </ul>
+        {% if ec_total %}<p>* Electioneering communications may be for or against this candidate, and may mention one or many candidates.</p>{% endif %}
+    {% if candidate.transparencydata_id %}
+    <br>
+    See complete <a name="{{ candidate.fec_name }} on Influence Explorer" href="{{ candidate.influence_explorer_url }}">candidate profile on Influence Explorer</a>
+    {% endif %}
+    <p><a href="{{ candidate.get_race_url}}">Compare to other candidates in this race</a></p>
+    
+    </div>
+    
+
+<div class="space_above"><h3>Independent Expenditure Summary</h3></div>
+<p>This is a list of all groups that have supported or opposed this candidate with independent expenditures.</p>
+    <div class="clear"></div>
+    {% if superpacs %}
+    <table id="expendituresData" class="tablesorter">
+        <thead>
+            <tr>
+                <th class="sort">Committee</th>
+                <th class="sort">Support/oppose</th>
+                <th class="sort">Amount</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate_pac in superpacs %}
+            <tr class="{% cycle 'odd' 'even' %}">
+                <td><a href="{{candidate_pac.committee.get_absolute_url}}">{{ candidate_pac.committee.name }}</a></td>
+                <td>{{ candidate_pac.support_or_oppose }}</td>
+                <td>{% if candidate_pac.total_ind_exp %}${{ candidate_pac.total_ind_exp|intcomma }}{% endif %}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    {% endif %}
+    
+    {% if expenditures %}
+    <div class="space_above"><h3>Independent Expenditures </h3></div>
+    <p>{{ explanatory_text_details|safe }}</p>
+    <table id="expenditure_details" class="tablesorter">
+           <thead>
+               <tr>
+                   <th class="sort">Date</th>
+                   <th class="sort">Committee</th>
+                   <th class="sort">Support/Oppose</th>
+                   <th class="sort">Amount</th>
+                   <th class="sort">State</th>                   
+                   <th class="sort">Purpose</th>
+               </tr>
+           </thead>
+           <tbody>
+           {% for ie in expenditures %}    
+               <tr class="{% cycle 'odd' 'even' %}">
+                   <td>{{ ie.expenditure_date }}</td>
+                   <td><a href="{{ie.committee.get_absolute_url}}">{{ ie.committee.name }}</a></td> 
+                   <td>{{ ie.support_or_oppose }}</td>
+                   <td>${{ ie.expenditure_amount|intcomma }}</td>   
+                   <td>{% if ie.state %}{{ ie.state }}{% endif %}</td>                                               
+                   <td>{{ ie.expenditure_purpose }}</td>
+               </tr>
+           {% endfor %}
+           </tbody>
+           </table>
+           {% endif %}
+
+
+
+{% if ecs %}
+   <a name="ec"></a>
+   <div class="space_above"><h3>Electioneering Communications</h3></div>
+   {{ec_explanation|safe}}
+   <p class="tip">Click on a race, committee or candidate name for more details</p>
+
+
+   <table id="contrib_details" class="tablesorter">
+       <thead>
+           <tr>
+               <th class="sort">Date</th>
+               <th class="sort" >Committee</th>
+               <th class="sort">Amount</th>
+               <th class="sort">Purpose</th>
+               <th class="sort">Payee</th>
+               <th class="sort">Candidate(s) mentioned, state targeted</th>
+           </tr>
+       </thead>
+       <tbody>
+       {% for ec in ecs %}    
+           <tr class="{% cycle 'odd' 'even' %}">
+               <td>{{ ec.exp_date }}</td>
+               <td><a href="{{ec.committee.get_absolute_url}}">{{ ec.committee.name }}</a></td> 
+               <td>${{ ec.exp_amo|intcomma }}</td>                               
+               <td>{{ ec.purpose }} </td>
+               <td>{{ ec.payee }} </td>
+               <td>{% for t in ec.target.all %}{% if t.candidate %}<a href="{{t.candidate.get_absolute_url}}">{% endif %}{{t.can_name}}{% if t.candidate %}</a>{% endif %} ({{t.can_state}}){% if forloop.last %}{% else %}; {% endif %}{% endfor %}</td>
+           </tr>
+       {% endfor %}
+       </tbody>
+       </table>    
+{% endif %}
+{% endblock %}
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[2,1]' as sortdir %}
+{% include "outside_spending/tablesorter.html" %}
+{% endwith %}
+{% with '[0,1]' as sortdir %}
+{% include "outside_spending/tablesorter_expenditure_details.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

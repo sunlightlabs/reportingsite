@@ -8,11 +8,10 @@
 
 {% block body %}{{ block.super }} expendituresCommittee{% endblock %}
 
-{% comment %}
-{% block breadcrumb %}{{ block.super }}
+{% block breadcrumb %}
 <li>Super PACs</li>
 {% endblock %}
-{% endcomment %}
+
 
 {% block content %}
     {% include "outside_spending/tabs.html" %}

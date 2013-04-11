@@ -1,0 +1,75 @@
+{% extends "outside_spending_2014/buckley_base.html" %}
+
+{% block title %}Outside spending in {{ state_name }}, {{cycle}} cycle - {{ block.super }}{% endblock %}
+
+{% block body %}fullWidth {% endblock %}
+
+
+{% load humanize %}
+{% load media %}
+
+{% block breadcrumb %}
+<li>States</li>
+<li>Independent expenditures in {{ state_name }}</li>
+{% endblock %}
+
+{% block content %}
+    {% include "outside_spending_2014/tabs.html" %}
+
+    <h2>
+        Outside spending in {{ state_name }}, {{cycle}} cycle
+    </h2>
+    <p>{{ explanatory_text|safe }}</p>
+
+
+<p class="tip">Select a race to see details.</p>
+
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Race</th>
+            <th class="sort">Independent Expenditures</th>
+        </tr>
+    </thead>
+    <tbody>
+        {% if this_state.total_pres_ind_exp %}
+        <tr class="odd">
+            <td>Presidential primary (<a href="/outside-spending/president-state-detail/{{this_state.state}}/">{{this_state}} only)</a></td>
+            <td>${{ this_state.total_pres_ind_exp|intcomma }}</td>
+        </tr>        
+        {% endif %}
+        
+        {% for race in races %}
+        <tr class="{% cycle 'even' 'odd' %}">
+            <td><a href="{{race.get_absolute_url}}">{{ race.race_name }}</a></td>
+            <td>${{ race.total_ind_exp|intcomma }}</td>
+            <td>{% if race.total_ec %}${{ race.total_ec|intcomma }}{% else %}$0{% endif %}</td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+
+
+
+
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[1,1]' as sortdir %}
+{% include "outside_spending/tablesorter.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

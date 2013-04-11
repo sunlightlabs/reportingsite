@@ -1,0 +1,72 @@
+{% extends "outside_spending_2014/buckley_base.html" %}
+
+{% load humanize %}
+{% load media %}
+
+{% block title %}Candidates - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} expendituresCandidate{% endblock %}
+
+{% block breadcrumb %}
+<li>Candidates</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "outside_spending_2014/tabs.html" %}
+
+    <h2>Candidates, {{ cycle }} cycle</h2>
+<p>{{ explanatory_text|safe }}</p>
+{% if candidates %}
+
+    <p class="tip">Select a candidate or a race to see details.</p>
+    <br>
+    <table id="expendituresData" class="tablesorter">
+        <thead>
+            <tr>
+                <th class="sort">Candidate</th>
+                <th class="sort">Race</th>
+                <th class="sort">Opposing Expenditures</th>
+                <th class="sort">Supporting Expenditures</th>              
+
+            </tr>
+        </thead>
+        <tbody>
+
+    {% for candidate in candidates %}
+    <tr>
+        <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.fec_name }}</a> {{ candidate.display_party }} {% if candidate.cand_is_gen_winner %}<b>winner</b> {% endif %}</td>
+        <td><a href="{{candidate.get_race_url}}">{{ candidate.race }}</a></td>
+        <td>{% if candidate.expenditures_opposing %}${{ candidate.expenditures_opposing|intcomma }}{% else %}$0{% endif %}</td>
+        <td>{% if candidate.expenditures_supporting %}${{ candidate.expenditures_supporting|intcomma }}{% else %}$0{% endif %}</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+
+    
+
+{% else %}
+<br/><br/>No spending has been reported for this cycle.
+{% endif %}
+
+{% endblock content %}
+
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[2,1]' as sortdir %}
+{% include "outside_spending/tablesorter.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

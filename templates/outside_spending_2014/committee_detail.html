@@ -1,0 +1,180 @@
+{% extends "outside_spending_2014/buckley_base.html" %}
+
+{% load buckley %}
+{% load humanize %}
+
+{% block title %}{{ committee.name }}, {{ cycle }} - {{ block.super }}{% endblock %}
+
+{% block body %}{{ block.super }} {% endblock %}
+
+{% block breadcrumb %}{{ block.super }}
+<li>{{ committee.name }}</li>
+{% endblock breadcrumb %}
+
+{% block content %}
+    {% include "outside_spending_2014/tabs.html" %}
+
+    <h2>
+        {{ committee.name }}, {{ cycle }} CYCLE
+    </h2>
+
+<div><span class="amountLine">{% if committee.supporting %}Supporting: {{committee.supporting}}<br>{% endif %}
+{% if committee.is_superpac %}<b>This group is a super PAC</b><br>{% endif %}
+{% if committee.is_not_a_committee  %}<b>This group is not a political committee</b><br>{% endif %}
+{%if committee.is_hybrid %}<b>This group is a hybrid super PAC</b><br>{% endif %}
+{% if committee.has_linkable_url %}Read <a href="{{committee.profile_url}}" name="PROFILE: {{ committee.name }}">a profile of this group{% endif %}{% if committee.has_linkable_url %}</a><br>{% endif %}Filing Frequency: {{committee.filing_frequency_text}}</span>
+<br>See <a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">FEC filings</a>
+</div>
+
+
+<div class="space_above">
+{% if committee.total_indy_expenditures%}
+    <span class="amountLine">Independent Expenditures: </span><span class="amount">{% if committee.total_indy_expenditures%}${{ committee.total_indy_expenditures|intcomma }}{% endif %}</span><br>Jump to <a href="#spending">expenditures</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackcsv}}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('{{committee.superpachackcsv}}');">.csv file of independent expenditures.</a>
+    <br><br>
+{% endif %}   
+
+ 
+    {% if contributions %}
+    <span class="amountLine">Contributions (as of {{ committee.cash_on_hand_date }}): </span><span class="amount">{% if committee.total_contributions %}${{ committee.total_contributions|intcomma }}{% endif %}</span><br>Jump to <a href="#contributors"> contributors</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackdonorscsv}}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('{{committee.superpachackdonorscsv}}');">.csv file of committee contributions</a>
+
+    {% endif %}
+</div>    
+
+<div class="clear"></div>
+
+{% if candidates %}
+
+<div class="space_above"><h3>Independent Expenditure Summary</h3>
+
+<span class="amountLine"><b>Negative: {{ committee.neg_percent|floatformat:0}}%</b> </span>&nbsp;&nbsp;<span class="amountLine">Opposes Democrats: </span><span class="amount">${{ committee.ie_oppose_dems|intcomma }}</span> &nbsp; <span class="amountLine">Opposes Republicans: </span><span class="amount">${{ committee.ie_oppose_reps|intcomma }}</span>
+<br>
+<span class="amountLine"><b>Positive: {{ committee.pos_percent|floatformat:0}}%</b> </span>&nbsp;&nbsp;<span class="amountLine">Supports Democrats: </span><span class="amount">${{ committee.ie_support_dems|intcomma }}</span> &nbsp; <span class="amountLine">Supports Republicans: </span><span class="amount">${{ committee.ie_support_reps|intcomma }}</span>
+</div>
+<div class="space_above">
+<p>{{ explanatory_text|safe }}</p>
+</div>
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">Race</th>
+            <th class="sort">Candidate</th>
+            <th class="sort">Support/oppose</th>
+            <th class="sort">Amount</th>
+
+        </tr>
+    </thead>
+    <tbody>
+    {% for candidate_pac in candidates %}
+    <tr>
+    <td><a href="{{candidate_pac.candidate.get_race_url}}">{{ candidate_pac.candidate.race }}</a></td>
+    <td><a href="{{candidate_pac.candidate.get_absolute_url}}">{{ candidate_pac.candidate.fec_name }} {{ candidate_pac.candidate.display_party }} </a></td>
+    <td>{{ candidate_pac.support_or_oppose }}</td>
+    <td>{% if candidate_pac.total_ind_exp %}${{ candidate_pac.total_ind_exp|intcomma }}{% endif %}</td>   
+    </tr>                
+    {% endfor %}    
+    </tbody>
+</table>
+
+{% else %}
+<br/><br/>No candidates have been supported by independent expenditures this cycle.
+{% endif %}
+
+<a name="spending"></a>
+{% if expenditures %}
+<div class="space_above"><h3>Independent Expenditures </h3></div>
+<p>{{ explanatory_text_details|safe }}</p>
+<table id="expenditure_details" class="tablesorter">
+       <thead>
+           <tr>
+               <th class="sort">Date</th>
+               <th class="sort">Committee</th>
+               <th class="sort">Candidate</th>
+               <th class="sort">Support/Oppose</th>
+               <th class="sort">Amount</th>
+               <th class="sort">State</th>                   
+               <th class="sort">Purpose</th>
+           </tr>
+       </thead>
+       <tbody>
+       {% for ie in expenditures %}    
+           <tr class="{% cycle 'odd' 'even' %}">
+               <td>{{ ie.expenditure_date }}</td>
+               <td><a href="{{ie.committee.get_absolute_url}}">{{ ie.committee.name }}</a></td>
+               <td><a href="{{ie.candidate.get_absolute_url}}">{{ ie.candidate.fec_name }}</a> {{ ie.candidate.display_party}}</td>                
+               <td>{{ ie.support_or_oppose }}</td>
+               <td>${{ ie.expenditure_amount|intcomma }}</td>   
+               <td>{% if ie.state %}{{ ie.state }}{% endif %}</td>                                               
+               <td>{{ ie.expenditure_purpose }}</td>
+           </tr>
+       {% endfor %}
+       </tbody>
+       </table>
+{% else %}
+<div class="space_above"><h3>Independent Expenditures </h3></div>
+<p>There are no independent expenditures over $1,000 for this committee. See the <a href="http://assets.sunlightfoundation.com/reporting/FTUM-data/all_expenditures.csv">complete file</a> of independent expenditures for amounts less than $1,000.
+{% endif %}
+
+
+
+
+
+
+       <a name="contributors"></a>
+       {% if contributions %}
+       <div class="space_above"><h3>Super PAC Contributions </h3></div>
+       <p>{{ explanatory_text_contribs|safe }}</p>
+       <table id="contrib_details" class="tablesorter">
+              <thead>
+                  <tr>
+                      <th class="sort">Date</th>
+                      <th class="sort">Amount</th>
+                      <th class="sort">Donor</th>
+                      <th class="sort">Donor employer</th>
+                      <th class="sort">City</th>                   
+                      <th class="sort">State</th>
+                  </tr>
+              </thead>
+              <tbody>
+              {% for contrib in contributions %}    
+                  <tr class="{% cycle 'odd' 'even' %}">
+                      <td>{{ contrib.contrib_date }}</td>
+                      <td>{% if contrib.contrib_amt %}${{ contrib.contrib_amt|intcomma }}{% endif %}</a></td> 
+                      <td>{{ contrib.donor_display }}</td>
+                      <td>{{ contrib.contrib_employer }}</td>   
+                      <td>{{ contrib.contrib_city }}</td>                                               
+                      <td>{{ contrib.contrib_state }}</td>
+                  </tr>
+              {% endfor %}
+              </tbody>
+              </table>
+              {% endif %}
+
+
+
+
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[3,1]' as sortdir %}
+{% include "outside_spending/tablesorter.html" %}
+{% endwith %}
+{% with '[0,1]' as sortdir %}
+{% include "outside_spending/tablesorter_expenditure_details.html" %}
+{% endwith %}
+{% with '[1,1]' as sortdir %}
+{% include "outside_spending/tablesorter_contribs.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+{% endblock %}

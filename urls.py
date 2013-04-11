@@ -34,8 +34,14 @@ urlpatterns = patterns('reporting.views',
     #url(r'^outside-spending/$', redirect_to, {'url': '/super-pacs/all/'}),
     url(r'^recovery/', include('millions.urls')),
     # super pac hack:
+    
     url(r'^super-pacs/', include('rebuckley.urls')),
-    url(r'^outside-spending/', include('outside_spending.urls')),
+    url(r'^outside-spending-2012/', include('outside_spending.urls')),
+    url(r'^outside-spenders/', include('outside_spending_2014.urls')),
+    url(r'^fec-alerts/', include('fec_alerts.urls')),
+    # RSS locations ? 
+    url(r'^outside-spending/', include('outside_spending_2014.old_redirect_urls')),
+    
     # comment urls
     url(r'^comment/', include('django.contrib.comments.urls')),
     

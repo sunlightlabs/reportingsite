@@ -1,0 +1,73 @@
+{% extends "outside_spending_2014/buckley_base.html" %}
+
+{% block title %}States, {{ cycle }} cycle - {{ block.super }}{% endblock %}
+
+{% block body %}expendituresHome fullWidth expendituresStates{% endblock %}
+
+
+{% load humanize %}
+{% load media %}
+
+{% block breadcrumb %}
+<li>States</li>
+{% endblock %}
+
+{% block content %}
+    {% include "outside_spending_2014/tabs.html" %}
+
+    <h2>
+        Outside spending by state, {{ cycle }} cycle
+    </h2>
+    <p>{{ explanatory_text|safe }}</p>
+{% if states %}
+
+<p class="tip">Select a state to see details.</p>
+
+<table id="expendituresData" class="tablesorter">
+    <thead>
+        <tr>
+            <th class="sort">State</th>
+            <th class="sort">Total Independent Expenditures</th>            
+            <th class="sort">Senate Independent Expenditures</th>
+            <th class="sort">House Independent Expenditures</th>          
+        </tr>
+    </thead>
+    <tbody>
+    {% for state in states %}
+    <tr class="{% cycle 'odd' 'even' %}">
+        <td><a href="{{ state.get_absolute_url}}">{{ state }}</a></td>
+        <td>{% if state.total_ind_exp %}${{ state.total_ind_exp|intcomma }}{% else %}$0{% endif %}</td>
+        <td>{% if state.total_senate_ind_exp %}${{ state.total_senate_ind_exp|intcomma }}{% else %}$0{% endif %}</td>
+        <td>{% if state.total_house_ind_exp %}${{ state.total_house_ind_exp|intcomma }}{% else %}$0{% endif %}</td>               
+        
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+
+
+
+{% else %}
+<br/><br/>No spending has been reported for this cycle.
+{% endif %}
+
+{% endblock content %}
+
+{% block js %}
+{{ block.super }}
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+
+{% with '[1,1]' as sortdir %}
+{% include "outside_spending/tablesorter.html" %}
+{% endwith %}
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#searchbox").focus(function () {
+            if ($(this)[0].value === 'Search for a candidate or committee') {
+                $(this).val('');
+            }
+        });
+    });
+</script>
+
+{% endblock %}

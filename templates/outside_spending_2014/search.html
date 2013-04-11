@@ -1,0 +1,125 @@
+{% extends "outside_spending_2014/buckley_base.html" %}
+
+{% load humanize %}
+
+{% block title %}Search - {{ block.super }}{% endblock %}
+
+{% block breadcrumb %}{{ block.super }}
+<li>Search</li>
+{% endblock %}
+
+{% block content %}
+{% include "outside_spending_2014/tabs.html" %}
+
+
+{% if terms %}
+<h2>Search Results for &#8220;{{ terms }}&#8221; in {{ cycle}} cycle</h2>
+{% else %}
+<h2>Search Results in {{ cycle}} cycle</h2>
+{% endif %}
+
+{% if terms %}
+
+    {% ifequal num_results 0 %}
+    <h3>No results found</h3>
+    {% endifequal %}
+
+    {% if has_candidates %}
+    <h3>Candidates</h3>
+    <table>
+        <thead>
+            <tr>
+                <th class="sort">Candidate</th>
+                <th class="sort">Party</th>
+                <th class="sort">Race</th>
+                <th class="sort">Independent Expenditures<br>(for or against)</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for candidate in candidate_overlays %}
+            <tr class="{% cycle 'odd' 'even'  as candidate_cycle %}">
+                <td><a href="{{ candidate.get_absolute_url }}">{{ candidate.fec_name }}</a></td>
+                <td>{{ candidate.party }}</td>
+                <td><a href="{{ candidate.get_race_url}}">{{ candidate.race }}</a></td>
+                <td>${{ candidate.total_expenditures|intcomma }}</td>
+            </tr>
+            {% endfor %}
+            {% for candidate in candidates %}
+            <tr class="{% cycle candidate_cycle %}">
+                <td>{{ candidate.fec_name }}</td>
+                <td>{{ candidate.party }}</td>
+                <td>{{ candidate.race }}</td>
+                <td></td>
+            </tr>
+            {% endfor %}
+
+
+        </tbody>
+    </table>
+    {% endif %}
+
+    <br><br>
+
+    
+    <h3>Committees </h3>
+<p>Only non-independent committees must disclose who they are supporting. Independent committees--which include all Super PACs--are not required to list a specific candidate (and may support multiple candidates).</p>
+	{% if has_committees %}    
+	<table>
+        <thead>
+            <tr>
+                <th>Name</th>
+				<th>Type</th>
+                <th>Total independent expenditures</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for committee in committee_overlays %}
+                    <tr class="{% cycle 'odd' 'even' as rowcolors %}">
+                        <td><a href="{{ committee.get_absolute_url }}">{{ committee.name }}</a></td>
+						<td>{{ committee.display_type }}</td>
+						<td>${{ committee.total_indy_expenditures|intcomma }}</td>
+                        
+                    </tr>
+            {% endfor %}
+		
+            {% for committee in committees %}
+                    <tr class="{% cycle rowcolors %}" >
+                        <td>{{ committee.name }} {% if committee.related_candidate %}( supports {{ committee.related_candidate.fec_name }}){% endif %}<br>See <a href="http://query.nictusa.com/cgi-bin/fecimg/?{{committee.fec_id}}">FEC records</a></td>
+						<td>{{ committee.display_type }}</td>
+						<td></td>
+                        
+                    </tr>
+            {% endfor %}
+
+        </tbody>
+    </table>
+
+    {% endif %}
+
+<br><br>
+
+
+    {% else %}
+	{% if invalid_search %}
+	    <h3>Invalid search. Please enter at least 3 letters to search for. </h3>
+	{% else %}
+    <h3>No results found.</h3>
+    {% endif %}
+    {% endif %}
+
+	 {% block js %}
+        {{ block.super }}
+		<script type="text/javascript">
+		    $(document).ready(function () {
+		        $("#searchbox").focus(function () {
+		            if ($(this)[0].value === 'Search for a candidate or committee') {
+		                $(this).val('');
+		            }
+		        });
+		    });
+		</script>
+
+       {% endblock %}
+
+{% endblock %}
+
