@@ -334,7 +334,7 @@ def committee_summary_private(request, cycle):
 @cache_page(CACHE_TIME)
 def all_superpacs(request, cycle):
     year_start = int(cycle)-1
-    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have spent at least $10,000 since the beginning of %s. The totals, listed above, are for all super PACs. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. Also see the list of <a href='/fec-alerts/new-superpacs/'>new superpacs</a> and <a href='/fec-alerts/new-committees/'>all new committees</a>." % (year_start)
+    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have raisd or spent at least $10,000 since the beginning of %s, or reported having at least $100,000 in the bank on their last report. The totals, listed above, are for all super PACs. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. Also see the list of <a href='/fec-alerts/new-superpacs/'>new superpacs</a> and <a href='/fec-alerts/new-committees/'>all new committees</a>." % (year_start)
 
     all_superpacs = Committee_Overlay.objects.filter(is_superpac=True, cycle=cycle)
 
@@ -351,7 +351,7 @@ def all_superpacs(request, cycle):
 
 
 
-    superpacs = all_superpacs.filter(is_superpac=True, cycle=cycle).filter(Q(total_indy_expenditures__gte=10000))
+    superpacs = all_superpacs.filter(is_superpac=True, cycle=cycle).filter(Q(total_indy_expenditures__gte=10000)|Q(total_contributions__gte=10000)|Q(cash_on_hand__gte=100000)).order_by('-total_indy_expenditures', '-cash_on_hand')
     data_dict = {'explanatory_text':explanatory_text, 
     'superpacs':superpacs, 
     'total_amt':total_amt, 
