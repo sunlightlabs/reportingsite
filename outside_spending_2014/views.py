@@ -23,6 +23,8 @@ from outside_spending_2014.models import (Scrape_Time, Contribution, Expenditure
 from outside_spending_2014.utils.json_helpers import render_to_json
 from outside_spending_2014.utils.chart_helpers import summarize_monthly
 
+from outside_spending.models import Committee_Overlay as Committee_Overlay_2012
+
 from settings import CSV_EXPORT_DIR
 
 CACHE_TIME = 60 * 15
@@ -373,6 +375,12 @@ def committee_detail(request,cycle, committee_id):
     explanatory_text_details = 'This table shows the independent expenditures of $1,000 or more made by this group supporting or opposing federal candidates in the %s election cycle. To view a more detailed file of all such spending, <a href=\"%s\">click here</a>.' % (cycle, committee.superpachackcsv())
     explanatory_text_contribs = 'This table shows all contributions, related PAC transfers and operating expense offsets made to this group during the %s campaign cycle, as of %s. Operating expense offsets are marked with an asterisk (*). To view a more detailed file of this spending, which includes all receipt types, <a href=\"%s\">click here</a>.' % (cycle, committee.cash_on_hand_date,committee.superpachackdonorscsv())
     
+    earlier_committee = None
+    try:
+        earlier_committee = Committee_Overlay_2012.objects.get(fec_id=committee_id)
+    except Committee_Overlay_2012.DoesNotExist:
+        print "missing committee for 2012"
+        pass
 
     display_expenditures = expenditures.filter(expenditure_amount__gte=1000)
     has_chart = False 
@@ -387,6 +395,7 @@ def committee_detail(request,cycle, committee_id):
                             'explanatory_text_contribs':explanatory_text_contribs, 
                             'has_chart':has_chart, 
                             'cycle':cycle,
+                            'earlier_committee':earlier_committee,
                             })
                             
 

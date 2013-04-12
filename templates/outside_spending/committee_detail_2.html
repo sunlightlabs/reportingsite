@@ -17,7 +17,7 @@
     <h2>
         {{ committee.name }}
     </h2>
-
+{% if later_committee %}<span class="amountLine">See this PAC's fundraising<a href="{{later_committee.get_absolute_url}}" title="{{ committee.name }}, 2014 CYCLE"> for the 2014 cycle</a>.</span>{% endif %}
 {% if has_chart %}
 <div style="float: right; width: 507px;">
 <div id="chart_container" class="chart_container" style="width: 507px; height: 330px;" ></div>
