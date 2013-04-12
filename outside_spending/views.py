@@ -21,6 +21,7 @@ from outside_spending.models import (Scrape_Time, Contribution, Expenditure,
                                      President_State_Pac_Aggregate, newCommittee)
 from outside_spending.utils.json_helpers import render_to_json
 from outside_spending.utils.chart_helpers import summarize_monthly
+from outside_spending_2014.models import Committee_Overlay as Committee_Overlay_2014
 
 from settings import CSV_EXPORT_DIR
 
@@ -459,6 +460,12 @@ def committee_detail(request,committee_id):
     print "length is %s" % (len(monthly_ie_data))    
     if (committee.is_superpac or len(monthly_ie_data) > 0):
         has_chart = True
+        
+    later_committee = None
+    try:
+        later_committee = Committee_Overlay_2014.objects.get(fec_id=committee_id, cycle='2014')
+    except Committee_Overlay_2014.DoesNotExist:
+        pass
 
     return render_to_response('outside_spending/committee_detail_2.html',
                             {'committee':committee, 
@@ -473,7 +480,8 @@ def committee_detail(request,committee_id):
                             'ec_total':ec_total, 
                             'monthly_ie_summary':monthly_ie_summary,
                             'monthly_contrib_summary':monthly_contrib_summary,
-                            'has_chart':has_chart
+                            'has_chart':has_chart,
+                            'later_committee':later_committee,
                             })                            
 
 def presidential_superpacs(request):
