@@ -15,7 +15,7 @@
     {% include "outside_spending/tabs.html" %}
 
     <h2>
-        {{ committee.name }}
+        {{ committee.name }}, 2012 CYCLE
     </h2>
 {% if later_committee %}<span class="amountLine">See this PAC's fundraising<a href="{{later_committee.get_absolute_url}}" title="{{ committee.name }}, 2014 CYCLE"> for the 2014 cycle</a>.</span>{% endif %}
 {% if has_chart %}
