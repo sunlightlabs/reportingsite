@@ -29,6 +29,11 @@
 
 
 <div class="space_above">
+    {% if committee.cash_on_hand %}
+        <span class="amountLine">Cash on hand: (as of {{ committee.cash_on_hand_date }}): </span><span class="amount">${{ committee.cash_on_hand|intcomma }}</span>
+        <br><br>
+    {% endif %}
+    
 {% if committee.total_indy_expenditures%}
     <span class="amountLine">Independent Expenditures: </span><span class="amount">{% if committee.total_indy_expenditures%}${{ committee.total_indy_expenditures|intcomma }}{% endif %}</span><br>Jump to <a href="#spending">expenditures</a>&nbsp;|&nbsp;Download <a href="{{committee.superpachackcsv}}" onClick="javascript: var pageTracker = _gat._getTracker('UA-1265484-45'); pageTracker._trackPageview('{{committee.superpachackcsv}}');">.csv file of independent expenditures.</a>
     <br><br>
