@@ -334,7 +334,7 @@ def committee_summary_private(request, cycle):
 @cache_page(CACHE_TIME)
 def all_superpacs(request, cycle):
     year_start = int(cycle)-1
-    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have spent at least $10,000 since the beginning of %s. The totals, listed above, are for all super PACs. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. For the much longer list of <a href='/outside-spenders/%s/super-pacs/complete-list/'>all superpacs</a> click <a href='/outside-spenders/%s/super-pacs/complete-list/'>here</a>. Also see the list of <a href='/fec-alerts/new-superpacs/'>new superpacs</a> and <a href='/fec-alerts/new-committees/'>all new committees</a>." % (year_start, cycle, cycle)
+    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have spent at least $10,000 since the beginning of %s. The totals, listed above, are for all super PACs. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. Also see the list of <a href='/fec-alerts/new-superpacs/'>new superpacs</a> and <a href='/fec-alerts/new-committees/'>all new committees</a>." % (year_start)
 
     all_superpacs = Committee_Overlay.objects.filter(is_superpac=True, cycle=cycle)
 
