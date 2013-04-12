@@ -80,7 +80,7 @@ def process_F24(f24_to_process, fp):
         # don't save it if it's too early
         expenditure_date = dateparse(thisrow['expenditure_date'])
         if expenditure_date < epoch_start or expenditure_date > epoch_end:
-            return
+            continue
         
         print "Looking for filing %s transaction number %s" % (filingnum, transaction_id)
         
@@ -259,7 +259,7 @@ def process_F3X(f3x_to_process, fp):
             # short circuit this if it's before 1/1/2011
             expenditure_date = dateparse(thisrow['expenditure_date'])
             if expenditure_date < epoch_start or expenditure_date > epoch_end:
-                return
+                continue
 
             this_candidate = get_or_create_candidate_overlay(thisrow['candidate_id_number'], CYCLE)
             this_committee = get_or_create_committee_overlay(committee_id, CYCLE)
@@ -365,6 +365,12 @@ def process_F3X(f3x_to_process, fp):
 # the rest is for processing contrib stuff. 
 
 def process_contrib_line(values_dict, is_amendment, original, filing_number, committee_obj, committee_name):
+    
+    contrib_date = dateparse(values_dict['contribution_date'])
+    
+    # we add filings that landed at the end of last cycle, but don't add the contribs.
+    if contrib_date < epoch_start or contrib_date > epoch_end:
+        return
     obj, created = Contribution.objects.get_or_create(filing_number=filing_number, transaction_id=values_dict['transaction_id'],
         defaults={
             "line_type": values_dict['form_type'],
@@ -387,7 +393,7 @@ def process_contrib_line(values_dict, is_amendment, original, filing_number, com
             "contrib_city":values_dict['contributor_city'][:30],
             "contrib_state":values_dict['contributor_state'][:2],
             "contrib_zip":values_dict['contributor_zip'],
-            "contrib_date":dateparse(values_dict['contribution_date']),
+            "contrib_date":contrib_date,
             "contrib_amt":clean_currency_field(values_dict['contribution_amount']),
             "contrib_agg":clean_currency_field(values_dict['contribution_aggregate']),
             "contrib_purpose":values_dict['contribution_purpose_descrip'],
