@@ -17,6 +17,7 @@
     <h2>
         {{ committee.name }}
     </h2>
+{% if later_committee %}<span class="amountLine">See this PAC's fundraising<a href="{{later_committee.get_absolute_url}}"> for the 2014 cycle</a>.</span>{% endif %}
 
 <div><span class="amountLine">{% if committee.supporting %}Supporting: {{committee.supporting}}<br>{% endif %}
 {% if committee.is_superpac %}<b>This group is a super PAC</b><br>{% endif %}
