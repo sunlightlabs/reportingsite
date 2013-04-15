@@ -336,7 +336,7 @@ def committee_summary_private(request, cycle):
 @cache_page(CACHE_TIME)
 def all_superpacs(request, cycle):
     year_start = int(cycle)-1
-    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have raisd or spent at least $10,000 since the beginning of %s, or reported having at least $100,000 in the bank on their last report. The totals, listed above, are for all super PACs. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. Also see the list of <a href='/fec-alerts/new-superpacs/'>new superpacs</a> and <a href='/fec-alerts/new-committees/'>all new committees</a>." % (year_start)
+    explanatory_text = "This table shows all independent expenditure-only committees--better known as super PACs--that have raised or spent at least $10,000 since the beginning of %s, or reported having at least $100,000 in the bank on their last report. The totals, listed above, are for all super PACs. See a much longer list of <a href='/outside-spenders/2014/super-pacs/complete-list/'>all super pacs</a> and <a href='/outside-spenders/2014/all-outside-groups/'>all outside spenders</a> for this cycle. <br>Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site. Also see the list of <a href='/fec-alerts/new-superpacs/'>new superpacs</a> and <a href='/fec-alerts/new-committees/'>all new committees</a>." % (year_start)
 
     all_superpacs = Committee_Overlay.objects.filter(is_superpac=True, cycle=cycle)
 
@@ -628,5 +628,39 @@ def file_downloads(request, cycle):
                             {'committees':committees, 
                             'states':states,
                             'races':races,
+                            'cycle':cycle,
+                            })
+                            
+@cache_page(CACHE_TIME)                            
+def all_independent_expenditors(request, cycle):
+    explanatory_text = "This table shows all committees making independent expenditures that have spent at least $1,000 in the 2014 election cycle. The totals, listed above, are for all such groups, regardless of whether they are included below. Click on the 'FEC filings' links to see the original filings on the Federal Election Commission's web site."
+
+    all_groups = Committee_Overlay.objects.all()
+
+    totals = all_groups.aggregate(support_dems=Sum('ie_support_dems'), oppose_dems=Sum('ie_oppose_dems'), oppose_reps=Sum('ie_oppose_reps'), support_reps=Sum('ie_support_reps'), total=Sum('total_indy_expenditures'))
+
+    total_amt = totals['total']
+    neg_percent = 100*(totals['oppose_dems']+totals['oppose_reps'])/totals['total']
+    positive_percent = 100*(totals['support_dems']+totals['support_reps'])/totals['total']
+
+    all_groups = all_groups.filter(total_indy_expenditures__gte=1000)
+
+    return render_to_response('outside_spending_2014/all-outside-spenders.html',
+                            {'explanatory_text':explanatory_text, 
+                            'superpacs':all_groups, 
+                            'total_amt':total_amt, 
+                            'neg_percent':neg_percent,
+                            'pos_percent':positive_percent,
+                            'cycle':cycle,
+                            })
+
+@cache_page(CACHE_TIME)
+def complete_superpac_list(request, cycle):
+    superpacs = Committee_Overlay.objects.filter(is_superpac=True, cycle=cycle, ).filter(Q(total_contributions__gte=1000)|Q(total_indy_expenditures__gte=1000)|Q(cash_on_hand__gte=1000)).order_by('total_indy_expenditures')
+    
+    explanatory_text= 'This is a list of all super PACs that have either spent $1,000 on independent expenditures, raised $1,000, or reported having $1,000 in the bank during the 2014 cycle.'
+    return render_to_response('outside_spending_2014/superpac_show_all.html',
+                            {'superpacs':superpacs,
+                            'explanatory_text':explanatory_text,
                             'cycle':cycle,
                             })

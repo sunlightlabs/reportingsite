@@ -34,7 +34,8 @@ urlpatterns = patterns('',
     url(r'^(?P<cycle>201[24])/search/?$', 'outside_spending_2014.views.search'),
     url(r'^(?P<cycle>201[24])/file-downloads\/?$', 'outside_spending_2014.views.file_downloads'),    
 
-
+    url(r'^(?P<cycle>201[24])/all-outside-groups/?$', 'outside_spending_2014.views.all_independent_expenditors'),
+    url(r'^(?P<cycle>201[24])/super-pacs/complete-list/?$', 'outside_spending_2014.views.complete_superpac_list'),
 )
 
 """
