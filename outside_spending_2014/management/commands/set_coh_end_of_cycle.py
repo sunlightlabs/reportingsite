@@ -16,7 +16,7 @@ class Command(BaseCommand):
     def handle(self, *args, **options):
 
         # get superpacs missing cash on hand -- ignore administrativel terminated ones
-        all_superpacs = Committee_Overlay.objects.filter(cycle=CYCLE, is_superpac=True, cash_on_hand_date__isnull=True).exclude(committee_master_record__filing_frequency='T')
+        all_superpacs = Committee_Overlay.objects.filter(cycle=CYCLE, is_superpac=True, cash_on_hand__isnull=True).exclude(committee_master_record__filing_frequency='T')
         
         for i, sp in enumerate(all_superpacs):
             freq = sp.committee_master_record.filing_frequency
