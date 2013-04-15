@@ -8,7 +8,7 @@ from django.core.management.base import BaseCommand, CommandError
 from django.db.models import Sum, Count
 from dateutil.parser import parse as dateparse
 from outside_spending_2014.models import *
-from outside_spending_2014.read_FEC_settings import CYCLE, CYCLE_START, CYCLE_END
+from outside_spending_2014.read_FEC_settings import CYCLE, CYCLE_START, CYCLE_END, LAST_CYCLE_END
 
 epoch_start = dateparse(CYCLE_START)
 
@@ -46,8 +46,8 @@ class Command(BaseCommand):
 
         
             except IndexError:
-                sp.cash_on_hand=None
-            
+                
+                pass
 
             
             num_contributions = Contribution.objects.filter(fec_committeeid=sp.fec_id, superceded_by_amendment=False,contrib_date__gte=epoch_start).aggregate(num=Count('fec_committeeid'))
