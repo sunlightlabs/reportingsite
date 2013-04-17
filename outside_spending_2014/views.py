@@ -439,7 +439,7 @@ def race_detail(request, cycle, office, state, district):
 @cache_page(CACHE_TIME)                            
 def candidates(request,cycle):
     candidates = Candidate_Overlay.objects.filter(total_expenditures__gte=10, cycle=cycle)
-    explanatory_text= "This table lists all independent expenditures made to support or oppose federal candidates during the %s election cycle. Candidates not targeted are not included."
+    explanatory_text= "This table lists all independent expenditures made to support or oppose federal candidates during the %s election cycle. Candidates not targeted are not included." % (cycle)
     return render_to_response('outside_spending_2014/candidate_list.html',
                             {'candidates':candidates, 
                             'explanatory_text':explanatory_text,

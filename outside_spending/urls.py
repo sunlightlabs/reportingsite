@@ -27,6 +27,7 @@ urlpatterns = patterns('',
     
     ### working on this one: 
     url(r'^super-pacs/complete-list/?$', 'outside_spending.views.complete_superpac_list'),
+    url(r'^all-outside-groups/?$', 'outside_spending.views.all_independent_expenditors'), 
     # This is not used
     #url(r'^about/?$', 'outside_spending.views.about'),
     url(r'^committee\/[\w-]+\/(?P<committee_id>C\d{8})\/?$', 'outside_spending.views.committee_detail'),
