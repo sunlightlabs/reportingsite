@@ -24,7 +24,8 @@ urlpatterns = patterns('',
     url(r'^analytics\/',redirect_to, {'url': '/outside-spending-2012/analytics/'}),
     url(r'^superpac-chart-embed\/$', redirect_to, {'url': 'superpac-chart-embed'}),
     
-    
+    # most people are looking for old stuff
+    url(r'^candidate\/(?P<candidate_slug>[\w-]+)\/(?P<candidate_id>[\w\d]+)\/?$', redirect_to, {'url':'/outside-spending-2012/candidate/%(candidate_slug)s/%(candidate_id)s/'}),
 
     url(r'^super-pacs/?$', redirect_to, {'url': '/outside-spenders/2014/super-pacs/'}),
     url(r'^all-outside-groups/?$', redirect_to, {'url': '/outside-spenders/2014/all-outside-groups/'}),
@@ -33,7 +34,7 @@ urlpatterns = patterns('',
     url(r'^committee\/(?P<committee_slug>[\w-]+)\/(?P<committee_id>C\d{8})\/?$', redirect_to, {'url': '/outside-spenders/2014/committee/%(committee_slug)s/%(committee_id)s/'}),
     
     url(r'^candidates\/?$', redirect_to, {'url':'/outside-spenders/2014/candidates/'}),
-    url(r'^candidate\/(?P<candidate_slug>[\w-]+)\/(?P<candidate_id>[\w\d]+)\/?$', redirect_to, {'url':'/outside-spenders/2014/candidate/%(candidate_slug)s/%(candidate_id)s/'}),
+    
     
     url(r'^states\/?$', redirect_to, {'url':'/outside-spenders/2014/states/'}),
     url(r'^state\/(?P<state_abbreviation>\w\w)\/?$', redirect_to, {'url':'/outside-spenders/2014/%(state_abbreviation)s/'}),    
