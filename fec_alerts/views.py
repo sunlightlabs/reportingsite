@@ -225,7 +225,7 @@ def recent_fec_filings_superpacs_f3x(request):
     )
 
 def recent_fec_filings_48hr_contrib_mobile(request):
-    filings = new_filing.objects.filter(form_type='F6N').order_by('-filing_number')[:25]
+    filings = new_filing.objects.filter(form_type__in=['F6N', 'F6A']).order_by('-filing_number')[:25]
     update_time=Filing_Scrape_Time.objects.all().order_by('-run_time')[0]
     title='48-hr Contribution Reports - FEC filings - Sunlight Foundation'
     explanatory_text="These 48 hour reports are used to disclose the receipt of last-minute contributions of $1,000 or more. Principal campaign committees must file these notices for contributions received after the 20th day, but more than 48 hours, before the day the candidate's election."
