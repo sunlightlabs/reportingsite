@@ -65,8 +65,16 @@
     </tbody>
 </table>
 
-{% load media %}
-{% js "js/jquery.tablesorter.min.js" %}
+
+
+
+
+{% block js %}
+<script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/reporting.js"></script>
+ <script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/script.js"></script>
+<script type="text/javascript" charset="utf-8" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.tablesorter.min.js"></script>
+{{ block.super }}
 <script type="text/javascript">
 $(document).ready(function() {
 $.tablesorter.addParser({
@@ -92,7 +100,7 @@ $.tablesorter.addParser({
     });
 });
 </script>
-
+{% endblock %}
 
 
 {% endblock content %}
