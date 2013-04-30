@@ -4,6 +4,7 @@ from willard.management.commands import house_post_employment, senate_post_emplo
 from optparse import make_option
 from datetime import datetime
 from time import sleep
+from house_post_employment import run_house_scrape
 
 class Command(BaseCommand):
 
@@ -60,9 +61,8 @@ class Command(BaseCommand):
             end_date = "12/31/%s" % year
             
         if (not senate):
-            print "retrieving house records for range %s - %s" % (start_date, end_date)
-            scraper = house_post_employment.postEmploymentScraper()
-            scraper.scrape(start_date, end_date)
+            print "retrieving all house records" 
+            run_house_scrape()
         
         for year in range(start_year, thisyear+1):
             print "retrieving senate records for year: %s" % (year)
