@@ -319,8 +319,8 @@ def process_F3X(f3x_to_process, fp):
                 amends_filing=original,                
                 amends_earlier_filing = is_amendment,
                 #process_time = processtime,
-                memo_code = values_dict['memo_code'][:100],
-                memo_text_description = values_dict['memo_text_description'][:100],
+                memo_code = thisrow['memo_code'][:100],
+                memo_text_description = thisrow['memo_text_description'][:100],
                 filing_source = 'F3X'
             )
 
