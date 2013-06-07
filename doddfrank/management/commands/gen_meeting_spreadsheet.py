@@ -33,6 +33,7 @@ class Command(BaseCommand):
         header_row = [u'Meeting Hash',
                       u'Agency',
                       u'Date',
+                      u'Topic',
                       u'Communication Type',
                       u'Description'
                      ]
@@ -42,6 +43,7 @@ class Command(BaseCommand):
             writer.writerow([mtg.import_hash,
                              mtg.agency.slug,
                              mtg.date.strftime('%Y-%m-%d'),
+                             mtg.topic or mtg.subcategory or mtg.category,
                              mtg.communication_type,
                              mtg.description])
 
