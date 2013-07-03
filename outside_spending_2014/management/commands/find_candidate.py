@@ -18,4 +18,20 @@ candidate_lookup={
     'SMITH, JASON':'H4MO08162',
     'BERA, AMERISH':'H0CA03078',
     'MAFFEI, DAN':'H6NY25125',
+# grimes hasn't declared yet
+#    'GRIMES, ALISON':
+    'SHAHEEN, JEANNE':'S0NH00219',
+    'BEGICH, MARK':'S8AK00090',
+    'LANDRIEU, MARY':'S6LA00227',
+    'DURBIN, DICK':'S6IL00151',
+    'UDALL, MARK':'S8CO00172',
+    'WARNER, MARK':'S6VA00093',
+    'BOSTIC, CURTIS':'H4SC00018',
+    'UDALL, TOM':'S8NM00184',
+    'MERKLEY, JEFF':'S8OR00207',
+    'HAGAN, KAY':'S8NC00239',
+    'FRANKEN, AL':'S8MN00438',
+    'PRYOR, MARK':'S0AR00028',
+    # by itself jeff reed is ambiguous: is it jack reed of RI or jeff reed of MO? 
+    #'REED, JEFF':'H0MO09168'
 }
