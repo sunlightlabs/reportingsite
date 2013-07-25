@@ -19,7 +19,7 @@ candidate_lookup={
     'BERA, AMERISH':'H0CA03078',
     'MAFFEI, DAN':'H6NY25125',
 # grimes hasn't declared yet
-#    'GRIMES, ALISON':
+    'GRIMES, ALISON': 'S4KY00091',
     'SHAHEEN, JEANNE':'S0NH00219',
     'BEGICH, MARK':'S8AK00090',
     'LANDRIEU, MARY':'S6LA00227',
@@ -32,6 +32,9 @@ candidate_lookup={
     'HAGAN, KAY':'S8NC00239',
     'FRANKEN, AL':'S8MN00438',
     'PRYOR, MARK':'S0AR00028',
+#
+#    SCHROEDER, DANIEL|S|MD|2
+    'BOSTIC, CURITS': 'H4SC00018',
     # by itself jeff reed is ambiguous: is it jack reed of RI or jeff reed of MO? 
     #'REED, JEFF':'H0MO09168'
 }
