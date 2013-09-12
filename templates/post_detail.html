@@ -22,10 +22,7 @@
 {% block headjs %}<script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>{% endblock %}
 
 
-{% block js %}
-{{ block.super }}
-<script type="text/javascript" src="http://assets.sunlightfoundation.com/reporting/ReportingTables/js/jquery.tablesorter.min.js"></script>
-{% endblock %}
+
 
 {% block body %}{% endblock %}
 
@@ -163,4 +160,5 @@
         gigya.socialize.showShareBarUI(params);
     });
 </script>
+ <script type="text/javascript" src="http://assets.sunlightfoundation.com/reporting/ReportingTables/js/jquery.tablesorter.min.js"></script>
 {% endblock %}
