@@ -19,7 +19,7 @@
 {% block metadescription %}{% if post.excerpt %}{{ post.excerpt|striptags|safe }}{% else %}{{ post|body|striptags|truncatewords:30 }}{% endif %}{% endblock %}
 
 
-{% block headjs %}
+{% block topjs %}
 <script type="text/javascript" src="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery-1.8.2.min.js"></script>
 <script type="text/javascript" src="http://assets.sunlightfoundation.com/reporting/ReportingTables/js/jquery.tablesorter.min.js"></script>
 <script type="text/javascript" src="http://cdn.gigya.com/js/gigyaGAIntegration.js" ></script>{% endblock %}

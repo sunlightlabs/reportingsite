@@ -45,6 +45,8 @@
 	</script>
   </head>
   <body class="{% block body %}reporting{% endblock %}">
+    {# load jquery etc so it can be executed in the user-entered content #}
+    {% block topjs %}{% endblock %}
     <div id="sunlightHeader">
         <div id="sunHeaderInterior">  
         <a href="http://sunlightfoundation.com">Sunlight Foundation</a>
@@ -158,6 +160,7 @@
     {%js "js/script.js"%}
 
 	{% block js %}
+	<script type="text/javascript" src="http://assets.sunlightfoundation.com/reporting/ReportingTables/js/jquery.tablesorter.js"></script>
 	{% endblock %}
 
     <script src="http://use.typekit.com/foz3kwy.js"></script>
