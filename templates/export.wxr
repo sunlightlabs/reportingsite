@@ -53,8 +53,8 @@
             <dc:creator>{{ post.author.username }}</dc:creator>
             <guid isPermaLink="false">http://reporting.sunlightfoundation.com{{ post.get_absolute_url }}</guid>
             <description></description>
-            <content:encoded><![CDATA[{{ post.content }}]]></content:encoded>
-            <excerpt:encoded><![CDATA[{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|truncatewords_html:100 }}{% endif %}]]></excerpt:encoded>
+            <content:encoded><![CDATA[{% autoescape off %}{{ post.content }}{% endautoescape %}]]></content:encoded>
+            <excerpt:encoded><![CDATA[{% autoescape off %}{% if post.excerpt %}{{ post.excerpt }}{% else %}{{ post.content|truncatewords_html:100 }}{% endif %}{% endautoescape %}]]></excerpt:encoded>
             <wp:post_id>{{ post.pk }}</wp:post_id>
             <wp:post_date>{{ post.date_published.isoformat }}</wp:post_date>
             <wp:post_date_gmt>{{ post.date_published_gmt|date:"c" }}</wp:post_date_gmt>
@@ -76,17 +76,17 @@
                     <category domain="post_tag" nicename="{{ tag.name }}"><![CDATA[{{ tag.name }}]]></category>
                 {% endfor %}
             {% endif %}
-            
+
             <wp:postmeta>
                 <wp:meta_key>sfcom-reporting-byline</wp:meta_key>
                 <wp:meta_value><![CDATA[{{ post.override_byline }}]]></wp:meta_value>
             </wp:postmeta>
-            
+
             <wp:postmeta>
                 <wp:meta_key>sfcom-reporting-featured</wp:meta_key>
                 <wp:meta_value><![CDATA[{{ post.is_featured }}]]></wp:meta_value>
             </wp:postmeta>
-            
+
             <wp:postmeta>
                 <wp:meta_key>sfcom-reporting-ogimage</wp:meta_key>
                 <wp:meta_value><![CDATA[{{ post.fb_image_url }}]]></wp:meta_value>
