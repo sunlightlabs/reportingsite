@@ -47,7 +47,7 @@
 
     {% for post in posts %}
         <item>
-            <title>{{ post.title }}</title>
+            <title>{% autoescape off %}{{ post.title }}{% endautoescape %}</title>
             <link>http://reporting.sunlightfoundation.com/{{ post.get_absolute_url }}</link>
             <pubDate>{{ post.date_published|rfc822 }}</pubDate>
             <dc:creator>{{ post.author.username }}</dc:creator>
