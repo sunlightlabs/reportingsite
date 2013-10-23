@@ -18,6 +18,6 @@ class Command(BaseCommand):
         for post in posts:
 
             pre_url = "http://reporting.sunlightfoundation.com%s" % post.get_absolute_url()
-            post_url = "http://sunlightfoundation.com/blog/%s/%s" % (post.date_published.stftime("%Y/%m/%d"), post.slug.rstrip('-'))
+            post_url = "http://sunlightfoundation.com/blog/%s/%s" % (post.date_published.strftime("%Y/%m/%d"), post.slug.rstrip('-'))
 
             writer.writerow((pre_url, post_url))
