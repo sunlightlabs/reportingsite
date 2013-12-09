@@ -26,6 +26,9 @@ def rss_author_redirect(request, authorname):
     return HttpResponsePermanentRedirect("http://sunlightfoundation.com/blog/rss/author/%s/" % authorname)
     
 
+def author_redirect(request, authorname):
+    return HttpResponsePermanentRedirect("http://sunlightfoundation.com/people/%s/" % authorname)
+
 
 urlpatterns =  patterns('reporting.views',
 
@@ -81,20 +84,20 @@ urlpatterns =  patterns('reporting.views',
     
     
     # blog posts
+    url(r'^(?P<year>\d{4})/$', sunlight_blog_redirect),
+
     url(r'^\d{4}/', blog_redirector),
     
-    url(r'^(?P<year>\d{4})/$',
-        'archive_year', name='blogdor_archive_year'),
+
+    url(r'^(?P<year>\d{4})/(?P<month>\d{2})/$', sunlight_blog_redirect),
+
+#    url(r'^author/(?P<username>[\w\s]+)/$', 'author', name='blogdor_author'),
+    url(r'^author/(?P<authorname>[\w\s]+)/$', author_redirect, name='blogdor_author'),
     url(r'^(?P<year>\d{4})/(?P<slug>[\w-]+)/$',
-        'post_detail', name='blogdor_post'),
-    url(r'^(?P<year>\d{4})/(?P<month>\d{2})/$',
-        'archive_month', name='blogdor_archive_month'),
-    url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[\w-]+)/$',
-        'post_detail', name='blogdor_post_wpcompat'),
-    url(r'^author/(?P<username>[\w\s]+)/$', 'author', name='blogdor_author'),
-    url(r'^blog/$', 'archive', name='blogdor_archive'),
-    url(r'^features/$', 'bysite', {'site': 'features'}),
-    url(r'^(?P<site>\w{1,4})/$', 'bysite'),
+        sunlight_blog_redirect, name='blogdor_post'),
+    url(r'^blog/$', sunlight_blog_redirect),
+    url(r'^features/$', sunlight_blog_redirect),
+    url(r'^(?P<site>\w{1,4})/$', sunlight_blog_redirect),
     #url(r'^(?P<year>\d{4})/(?P<month>\d{2})/(?P<day>\d{2})/(?P<slug>[\w-]+)/$', 'post_wpcompat', name='blogdor_post_wpcompat'),
 
     # budget forecasts vs reality
