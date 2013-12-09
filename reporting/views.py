@@ -20,6 +20,7 @@ from feedinator.models import Feed, FeedEntry
 from haystack.query import SearchQuerySet
 from tagging.models import Tag
 from tagging.views import tagged_object_list
+from django.template.defaultfilters import slugify
 
 from reportingsite.reporting.models import *
 
@@ -98,7 +99,12 @@ def archive_year(request, year):
 #
 # Post tag views
 #
-
+@cache_page(60*10)
+def tag_redirect(request, tag):
+    sf_tag = slugify(tag)
+    return HttpResponseRedirect("http://sunlightfoundation.com/blog/tag/%s/" % (sf_tag))
+    
+    
 @cache_page(60*10)
 def tag(request, tag):
     return tagged_object_list(
