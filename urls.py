@@ -65,10 +65,10 @@ urlpatterns =  patterns('reporting.views',
     # tags
     #url(r'^tag/admin/$', 'tag_list_admin', name='blogdor_tag_list'),
     url(r'^tag/admin/$', sunlight_blog_redirect),
-    url(r'^tag/(?P<tag>[^/]+)/$', 'tag_redirect', name='tag_redirect'),
+    url(r'^tag/(?P<tag>[^/]+)/$', 'tag_redirect', name='blogdor_tag'),
     #url(r'^tag/(?P<tag>[^/]+)/$', 'tag', name='blogdor_tag'),
     #url(r'^tag/$', 'tag_list', name='blogdor_tag_list'),
-    url(r'^tag/$', sunlight_blog_redirect),
+    url(r'^tag/$', sunlight_blog_redirect, name='blogdor_tag_list'),
     
 
     # documents
@@ -86,9 +86,11 @@ urlpatterns =  patterns('reporting.views',
     # blog posts
     url(r'^(?P<year>\d{4})/$', sunlight_blog_redirect),
 
-    url(r'^\d{4}/', blog_redirector),
-    
+    # hack for moving page: http://reporting.sunlightfoundation.com/2013/were-moving/
+    url(r'^(?P<year>2013)/(?P<slug>were-moving)/$', 'post_detail'),
 
+    url(r'^\d{4}/', blog_redirector),
+        
     url(r'^(?P<year>\d{4})/(?P<month>\d{2})/$', sunlight_blog_redirect),
 
 #    url(r'^author/(?P<username>[\w\s]+)/$', 'author', name='blogdor_author'),
