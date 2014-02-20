@@ -6,37 +6,39 @@ from django.views.generic.simple import direct_to_template, redirect_to
 urlpatterns = patterns('',
     
 
-    url(r'^(?P<cycle>201[24])/csv/race/expenditures/(?P<office>\w)\/(?P<state>[\w0]+)\/(?P<district>\d\d)\/?$', 'outside_spending_2014.views.expenditure_csv_race'),
-    url(r'^(?P<cycle>201[24])/csv/committees\/$', 'outside_spending_2014.views.committee_summary_public'),
-    url(r'^csv/committees-all-details\/$', 'outside_spending_2014.views.committee_summary_private'),
-    url(r'^(?P<cycle>201[24])/csv/superpac-political-orientation\/$', 'outside_spending_2014.views.superpac_political_orientation'),
-    url(r'^(?P<cycle>201[24])/csv/electioneering\/$', 'outside_spending_2014.views.electioneering_csv'),
-    url(r'^(?P<cycle>201[24])/races\/?$', 'outside_spending_2014.views.races'),
-    
-    url(r'^(?P<cycle>201[24])/race_detail\/(?P<office>\w)\/(?P<state>[\w0]+)\/(?P<district>\d\d)\/?$', 'outside_spending_2014.views.race_detail'),    
-    url(r'^(?P<cycle>201[24])/candidates\/?$', 'outside_spending_2014.views.candidates'),
-    url(r'^(?P<cycle>201[24])/candidate\/[\w-]+\/(?P<candidate_id>[\w\d]+)\/?$', 'outside_spending_2014.views.candidate_detail'),      
-    url(r'^(?P<cycle>201[24])/states\/?$', 'outside_spending_2014.views.states'),
-    url(r'^(?P<cycle>201[24])/state\/(?P<state_abbreviation>\w\w)\/?$', 'outside_spending_2014.views.state_detail'),    
-    url(r'^(?P<cycle>201[24])/independent-expenditures\/?$', 'outside_spending_2014.views.ies'),
-    
-    # url(r'^(?P<cycle>201[24])/super-pacs/donating-organizations/', 'outside_spending_2014.views.organizational_superpac_contribs'),
-   
-    url(r'^(?P<cycle>201[24])/super-pacs/?$', 'outside_spending_2014.views.all_superpacs'),
-    url(r'^(?P<cycle>201[24])/committee\/[\w-]+\/(?P<committee_id>C\d{8})\/?$', 'outside_spending_2014.views.committee_detail'),
-    url(r'^(?P<cycle>201[24])/csv/committee\/[\w-]+\/(?P<committee_id>C\d{8})\/?$', 'outside_spending_2014.views.expenditure_csv'),
-    url(r'^(?P<cycle>201[24])/csv/contributions\/[\w-]+\/(?P<committee_id>C\d{8})\/?$', 'outside_spending_2014.views.contribs_csv'),
-    url(r'^(?P<cycle>201[24])/csv/organizational-contributions\/$', 'outside_spending_2014.views.organizational_contribs_csv'),    
-    url(r'^(?P<cycle>201[24])/csv/all/?$', 'outside_spending_2014.views.all_contribs_csv'),    
-    url(r'^(?P<cycle>201[24])/csv/all/expenditures\/?$', 'outside_spending_2014.views.all_expenditures_csv'),    
-    url(r'^(?P<cycle>201[24])/csv/state/(?P<state>\w\w)\/?$', 'outside_spending_2014.views.state_contribs_csv'),
-    url(r'^(?P<cycle>201[24])/csv/state/expenditures/(?P<state>\w\w)\/?$', 'outside_spending_2014.views.expenditure_csv_state'),
-    url(r'^(?P<cycle>201[24])/search/?$', 'outside_spending_2014.views.search'),
-    url(r'^(?P<cycle>201[24])/file-downloads\/?$', 'outside_spending_2014.views.file_downloads'),    
+   url(r'^(?P<cycle>2014)/csv/race/expenditures/(?P<office>\w)\/(?P<state>[\w0]+)\/(?P<district>\d\d)\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/download-index/'}),
+    url(r'^(?P<cycle>2014)/csv/committees\/$', redirect_to, {'url':'http://realtime.influenceexplorer.com/download-index/'}),
+    url(r'^csv/committees-all-details\/$', redirect_to, {'url':'http://realtime.influenceexplorer.com/download-index/'}),
+    url(r'^(?P<cycle>2014)/csv/superpac-political-orientation\/$', redirect_to, {'url':'http://realtime.influenceexplorer.com/download-index/'}),
+    url(r'^(?P<cycle>2014)/csv/electioneering\/$', redirect_to, {'url':'http://realtime.influenceexplorer.com/download-index/'}),
+    url(r'^(?P<cycle>2014)/races\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/races/'}),
 
-    url(r'^(?P<cycle>201[24])/all-outside-groups/?$', 'outside_spending_2014.views.all_independent_expenditors'),
-    url(r'^(?P<cycle>201[24])/super-pacs/complete-list/?$', 'outside_spending_2014.views.complete_superpac_list'),
+    url(r'^(?P<cycle>2014)/race_detail\/(?P<office>\w)\/(?P<state>[\w0]+)\/(?P<district>\d\d)\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/races/'}),    
+    url(r'^(?P<cycle>2014)/candidates\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/house/#?candidate_filter=all'}),
+
+    url(r'^(?P<cycle>2014)/candidate\/[\w-]+\/(?P<candidate_id>[\w\d]+)\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/house/#?candidate_filter=all'}),      
+    url(r'^(?P<cycle>2014)/states\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/house/#?candidate_filter=all'}),
+    url(r'^(?P<cycle>2014)/state\/(?P<state_abbreviation>\w\w)\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/house/#?candidate_filter=all'}),    
+    url(r'^(?P<cycle>2014)/independent-expenditures\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/outside-spending/#?ordering=-expenditure_date_formatted'}),
+
+    # url(r'^(?P<cycle>2014)/super-pacs/donating-organizations/', 'outside_spending_2014.views.organizational_superpac_contribs'),
+
+    url(r'^(?P<cycle>2014)/super-pacs/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/pacs/#?ordering=-cash_on_hand&committee_class=UO'}),
+    url(r'^(?P<cycle>2014)/committee\/(?P<committee_slug>[\w-]+)\/(?P<committee_id>C\d{8})\/?$', redirect_to, {'url': 'http://realtime.influenceexplorer.com/committee/%(committee_slug)s/%(committee_id)s/'}),
+    url(r'^(?P<cycle>2014)/csv/committee\/(?P<committee_slug>[\w-]+)\/(?P<committee_id>C\d{8})\/?$', redirect_to, {'url': 'http://realtime.influenceexplorer.com/committee/%(committee_slug)s/%(committee_id)s/'}),
+    url(r'^(?P<cycle>2014)/csv/contributions\/(?P<committee_slug>[\w-]+)\/(?P<committee_id>C\d{8})\/?$', redirect_to, {'url': 'http://realtime.influenceexplorer.com/committee/%(committee_slug)s/%(committee_id)s/'}),
+    url(r'^(?P<cycle>2014)/csv/organizational-contributions\/$', redirect_to, {'url':'http://realtime.influenceexplorer.com/download-index/'}),    
+    url(r'^(?P<cycle>2014)/csv/all/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/download-index/'}),    
+    url(r'^(?P<cycle>2014)/csv/all/expenditures\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/download-index/'}),    
+    url(r'^(?P<cycle>2014)/csv/state/(?P<state>\w\w)\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/download-index/'}),
+    url(r'^(?P<cycle>2014)/csv/state/expenditures/(?P<state>\w\w)\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/download-index/'}),
+    url(r'^(?P<cycle>2014)/search/?$', 'outside_spending_2014.views.search'),
+    url(r'^(?P<cycle>2014)/file-downloads\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/download-index/'}),    
+
+    url(r'^(?P<cycle>2014)/all-outside-groups/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/pacs/'}),
+    url(r'^(?P<cycle>2014)/super-pacs/complete-list/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/pacs/#?ordering=-cash_on_hand&committee_class=UO'}),
 )
+
 
 """
 url(r'^all-outside-groups/?$', 

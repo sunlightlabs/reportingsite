@@ -5,7 +5,7 @@ from django.views.generic.simple import direct_to_template, redirect_to
 
 urlpatterns = patterns('',
 
-    url(r'^$', redirect_to, {'url': '/outside-spenders/2014/super-pacs/'}),
+    url(r'^$', redirect_to, {'url': 'http://realtime.influenceexplorer.com/pacs/#?ordering=-cash_on_hand&committee_class=UO'}),
 
     ## redirect to 2012 b/c there are no pages for 2014 yet. 
     url(r'^super-pacs/presidential/?$', redirect_to, {'url': '/outside-spending-2012/super-pacs/presidential/'}),
@@ -27,31 +27,31 @@ urlpatterns = patterns('',
     # most people are looking for old stuff
     url(r'^candidate\/(?P<candidate_slug>[\w-]+)\/(?P<candidate_id>[\w\d]+)\/?$', redirect_to, {'url':'/outside-spending-2012/candidate/%(candidate_slug)s/%(candidate_id)s/'}),
 
-    url(r'^super-pacs/?$', redirect_to, {'url': '/outside-spenders/2014/super-pacs/'}),
-    url(r'^all-outside-groups/?$', redirect_to, {'url': '/outside-spenders/2014/all-outside-groups/'}),
+    url(r'^super-pacs/?$', redirect_to, {'url': 'http://realtime.influenceexplorer.com/pacs/#?ordering=-cash_on_hand&committee_class=UO'}),
+    url(r'^all-outside-groups/?$', redirect_to, {'url': 'http://realtime.influenceexplorer.com/pacs/#?ordering=-total_disbursements&committee_class=I'}),
     
-    url(r'^super-pacs/complete-list/?$', redirect_to, {'url':'/outside-spenders/2014/super-pacs/complete-list/'}),
-    url(r'^committee\/(?P<committee_slug>[\w-]+)\/(?P<committee_id>C\d{8})\/?$', redirect_to, {'url': '/outside-spenders/2014/committee/%(committee_slug)s/%(committee_id)s/'}),
+    url(r'^super-pacs/complete-list/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/pacs/#?ordering=-cash_on_hand&committee_class=UOVW'}),
+    url(r'^committee\/(?P<committee_slug>[\w-]+)\/(?P<committee_id>C\d{8})\/?$', redirect_to, {'url': 'http://realtime.influenceexplorer.com/committee/%(committee_slug)s/%(committee_id)s/'}),
     
-    url(r'^candidates\/?$', redirect_to, {'url':'/outside-spenders/2014/candidates/'}),
+    url(r'^candidates\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/house/#?candidate_filter=all'}),
     
     
-    url(r'^states\/?$', redirect_to, {'url':'/outside-spenders/2014/states/'}),
-    url(r'^state\/(?P<state_abbreviation>\w\w)\/?$', redirect_to, {'url':'/outside-spenders/2014/%(state_abbreviation)s/'}),    
-    url(r'^independent-expenditures\/?$', redirect_to, {'url':'/outside-spenders/2014/independent-expenditures/'}),
+    url(r'^states\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/races/'}),
+    url(r'^state\/(?P<state_abbreviation>\w\w)\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/outside-spending/#?ordering=-expenditure_date_formatted&candidate_state_checked=%(state_abbreviation)s/'}),    
+    url(r'^independent-expenditures\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/outside-spending/'}),
 
 
-    url(r'^file-downloads\/?$', redirect_to, {'url':'/outside-spenders/2014/file-downloads/'}),  
+    url(r'^file-downloads\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/download-index/'}),  
 
     
     ## REDIRECT TO FEC ALERTS --these shouldn't be linked anywhere, but...
-    url(r'^recent-FEC-filings\/superpacs\/?$', redirect_to, {'url':'/fec-alerts/superpacs/'}),
-    url(r'^recent-FEC-filings\/superpacs\/new-F3X\/?$', redirect_to, {'url':'/fec-alerts/superpacs/new-F3X\/'}),
-    url(r'^recent-FEC-filings\/independent-expenditures\/?$', redirect_to, {'url':'/fec-alerts/independent-expenditures/'}),  
-    url(r'^recent-FEC-filings\/significant-committees\/?$', redirect_to, {'url':'/fec-alerts/significant-committees/'}),
-    url(r'^recent-FEC-filings\/significant-committees\/new-periodic\/?$',redirect_to, {'url':'/fec-alerts/significant-committees/new-periodic\/'}),
-    url(r'^recent-FEC-filings\/48-hr-reports\/?$', redirect_to, {'url':'/fec-alerts/48-hr-reports/'}),
-    url(r'^recent-FEC-filings\/?$', redirect_to, {'url':'/fec-alerts/'}),
+    url(r'^recent-FEC-filings\/superpacs\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/newest-filings/#?ordering=-filing_number&committee_class=UO&time_range=cycle'}),
+    url(r'^recent-FEC-filings\/superpacs\/new-F3X\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/newest-filings/#?ordering=-filing_number&committee_class=UO&time_range=cycle&report_type=monthly'}),
+    url(r'^recent-FEC-filings\/independent-expenditures\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/newest-filings/#?ordering=-filing_number&time_range=cycle&report_type=ies'}),  
+    url(r'^recent-FEC-filings\/significant-committees\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/newest-filings/#?ordering=-filing_number&time_range=cycle'}),
+    url(r'^recent-FEC-filings\/significant-committees\/new-periodic\/?$',redirect_to, {'url':'http://realtime.influenceexplorer.com/newest-filings/#?ordering=-filing_number&time_range=cycle'}),
+    url(r'^recent-FEC-filings\/48-hr-reports\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/newest-filings/#?ordering=-filing_number&time_range=cycle&report_type=F6'}),
+    url(r'^recent-FEC-filings\/?$', redirect_to, {'url':'http://realtime.influenceexplorer.com/newest-filings/'}),
     
     ## feeds -- same url, but now served from fec-alerts and powerd by 2014 data    
     url(r'^recent-FEC-filings\/feeds\/committee\/(?P<committee_id>C\d+)/$', FilingFeed()),    
