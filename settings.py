@@ -50,7 +50,7 @@ MEDIA_ROOT = '/media/'
 # trailing slash if there is a path component (optional in other cases).
 # Examples: "http://media.lawrence.com", "http://example.com/media/"
 #MEDIA_URL = '/media/'
-MEDIA_URL = 'http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/'
+MEDIA_URL = '//assets-reporting.s3.amazonaws.com/1.0/'
 #MEDIA_URL = 'http://reporting.sunlightlabs.com/media/'
 
 # URL prefix for admin media -- CSS, JavaScript and images. Make sure to use a
@@ -150,8 +150,8 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 
 MEDIASYNC_AWS_KEY = "***REMOVED***"
 MEDIASYNC_AWS_SECRET = "***REMOVED***"
-MEDIASYNC_AWS_BUCKET = "assets.sunlightfoundation.com" #"bucket_name"  
-MEDIASYNC_AWS_PREFIX = "reporting/1.0"
+MEDIASYNC_AWS_BUCKET = "assets-reporting" #"bucket_name"  
+MEDIASYNC_AWS_PREFIX = "1.0"
 MEDIASYNC_SERVE_REMOTE = True
 
 MEDIASYNC = {
