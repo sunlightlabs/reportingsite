@@ -8,6 +8,7 @@
     <meta name="description" content="{% block metadescription %}{% endblock %}" />
     <meta http-equiv="Content-Type" content="text/html; charset=UTF-8" />
     <meta name="google-site-verification" content="3wa4E5iGsKSwN886ts897uQBnZWj_kXWxnnQ2EOaheE" />
+    {% if request.get_full_path %}<link rel="canonical" href="http://reporting.sunlightfoundation.com{{ request.get_full_path }}"/>{% endif %}
     
     <script>var _sf_startpt=(new Date()).getTime()</script>
 
@@ -20,7 +21,7 @@
     <link rel="icon" href="http://assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
 
     {% css "css/main.css" %}
-    {# <link rel="stylesheet" href="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/css/main.css" media="screen, projection" /> #}
+    <link rel="stylesheet" href="http://assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/css/main.css" media="screen, projection" />
     {% block css %}
     {% endblock %}
     <!--[if IE 6]>{% css "css/buggy.css" %}<![endif]-->
