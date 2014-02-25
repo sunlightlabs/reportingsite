@@ -6,14 +6,13 @@
 
 {% block content %}
 
-{% js "js/jquery.sparkline.min.js "%}
-
+<script type="text/javascript" charset="utf-8" src="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/js/jquery.sparkline.min.js "></script>
 
 {% block breadcrumb %}{% endblock %}
 
             <div id="halfColumn_lt">
                 <div class="lobbyingModule">
-                    <a href="{% url willard_registrations_home %}"><img id="registrationImg" alt="Image of footsteps" src="{% media_url %}/img/bg_registration.png" /></a>
+                    <a href="{% url willard_registrations_home %}"><img id="registrationImg" alt="Image of footsteps" src="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/bg_registration.png" /></a>
                     <div class="lobbyingHeader">
                         <h3 class="withTip"><a href="{% url willard_registrations_home %}">Lobbying Registration Tracker</a></h3>
                         <p class="tip tipLg">The Lobbyist Registration Tracker, updated weekly, shows which special interests have hired new lobbyists within the last 45 days and includes all registrants since 2008.</p>
@@ -62,7 +61,7 @@
 
                 {# fara #}
                 <div class="lobbyingModule">
-                    <a href="/lobbying/postemployment"><img id="employmentImg" alt="Image of briefcase" src="{% media_url %}/img/bg_employment.png" /></a>
+                    <a href="/lobbying/postemployment"><img id="employmentImg" alt="Image of briefcase" src="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/bg_employment.png" /></a>
                     <div class="lobbyingHeader">
                         <h3 class="withTip"><a href="/lobbying/postemployment">Post Employment Tracker</a></h3>
                         <p class="tip tipLg">The Post Employment Tracker shows when covered congressional officials—former members and high-ranking staffers—can legally begin to lobby their old colleagues, though note that not everyone listed has become a lobbyist.</p>
@@ -85,7 +84,7 @@
 
             <div id="halfColumn_rt">
 
-                    <a id="foreignLobby_column" href="http://foreignlobbying.org"><img id="foreignLobbyingImg" alt="Image of globe" src="{% media_url %}/img/bg_foreignLobbying.png" /></a>
+                    <a id="foreignLobby_column" href="http://foreignlobbying.org"><img id="foreignLobbyingImg" alt="Image of globe" src="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/bg_foreignLobbying.png" /></a>
                     <div class="lobbyingHeader">
                         <h3 class="withTip"><a href="http://foreignlobbying.org">Foreign Lobbying Filings</a></h3>
                         <p class="tip tipLg">Representatives of foreign governments, political parties and government-controlled entities must disclose detailed information about their work to influence U.S. policy. These are the latest filings submitted under the Foreign Agent Registration Act.</p>
@@ -110,7 +109,7 @@
             <div id="lobbyingOther">
                 <h3>Other Lobbying Resources</h3>
                 <div id="partyTime">
-                    <img alt="party time icon" src="{% media_url %}/img/icon_partyTime.png"/>
+                    <img alt="party time icon" src="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/icon_partyTime.png"/>
                     <div id="partyDetails">
                         <h4><a href="http://politicalpartytime.org/">PartyTime</a></h4>
                         <p class="tip tipLg">Party Time contains invitations to fundraisers for members of Congress sent to lobbyists; registered lobbyists sometimes host these events.</p>
