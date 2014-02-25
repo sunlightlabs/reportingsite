@@ -16,11 +16,11 @@
 
 
 
-    <link rel="shortcut icon" href="//assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="http://assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
     <link rel="alternate" type="application/rss+xml" title="Sunlight Foundation Transparency Ecosystem" href="http://feeds.feedburner.com/SunlightFoundationReportingGroup" />
-    <link rel="icon" href="//assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="http://assets.sunlightfoundation.com/favicon.ico" type="image/x-icon">
 
-    <link rel="stylesheet" href="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/css/main.css" media="screen, projection" />
+    {% css "css/main.css" %}
     {% block css %}
     {% endblock %}
     <!--[if IE 6]>{% css "css/buggy.css" %}<![endif]-->
@@ -94,7 +94,7 @@
         <div id="fullWidth">
           <div id="otherPosts">
             <div class="otherProperty">
-              <a href="/SLRG"><img class="reportinggroupLogo" alt="Reporting Group Logo" src="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_reporting_grey.png" data-grey="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_reporting_grey.png" data-color="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_reporting_color.png"/></a>
+              <a href="/SLRG"><img class="reportinggroupLogo" alt="Reporting Group Logo" src="{% media_url %}/img/logo_reporting_grey.png" data-grey="{% media_url %}/img/logo_reporting_grey.png" data-color="{% media_url %}/img/logo_reporting_color.png"/></a>
               <span>Sunlight Foundation Reporting Group</span>
               <ol>
                 {% for entry in SLRG %}
@@ -103,7 +103,7 @@
               </ol>
             </div>
             <div class="otherProperty">
-              <a href="/FLIT"><img class="flitLogo" alt="Foreign Lobbying Influence Tracker Logo" src="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_flit_grey.png" data-grey="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_flit_grey.png" data-color="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_flit_color.png"/></a>
+              <a href="/FLIT"><img class="flitLogo" alt="Foreign Lobbying Influence Tracker Logo" src="{% media_url %}/img/logo_flit_grey.png" data-grey="{% media_url %}/img/logo_flit_grey.png" data-color="{% media_url %}/img/logo_flit_color.png"/></a>
               <span>Foreign Lobbying Influence Tracker</span>
               <ol>
                 {% for entry in FLIT %}
@@ -112,7 +112,7 @@
               </ol>
             </div>
             <div class="otherProperty">
-              <a href="/SS"><img class="subsityscopeLogo" alt="Subsidy Scope Logo" src="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_subsity_grey.png" data-color="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_subsity_color.png"/></a>
+              <a href="/SS"><img class="subsityscopeLogo" alt="Subsidy Scope Logo" src="{% media_url %}/img/logo_subsity_grey.png" data-grey="{% media_url %}/img/logo_subsity_grey.png" data-color="{% media_url %}/img/logo_subsity_color.png"/></a>
               <span>SubsidyScope</span>
               <ol>
                 {% for entry in SS %}
@@ -121,7 +121,7 @@
               </ol>
             </div>
             <div class="otherProperty">
-              <a href="http://blog.politicalpartytime.org"><img class="partytimeLogo" alt="Party Time Logo" src="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_partytime_grey.png" data-grey="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_partytime_grey.png" data-color="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/img/logo_partytime_color.png"/></a>
+              <a href="http://blog.politicalpartytime.org"><img class="partytimeLogo" alt="Party Time Logo" src="{% media_url %}/img/logo_partytime_grey.png" data-grey="{% media_url %}/img/logo_partytime_grey.png" data-color="{% media_url %}/img/logo_partytime_color.png"/></a>
               <span>Political Party Time</span>
               <ol>
                 {% for entry in PT %}
@@ -160,7 +160,7 @@
     {%js "js/script.js"%}
 
 	{% block js %}
-	<script type="text/javascript" src="//assets.sunlightfoundation.com/reporting/ReportingTables/js/jquery.tablesorter.js"></script>
+	<script type="text/javascript" src="http://assets.sunlightfoundation.com/reporting/ReportingTables/js/jquery.tablesorter.js"></script>
 	{% endblock %}
 
     <script src="http://use.typekit.com/foz3kwy.js"></script>

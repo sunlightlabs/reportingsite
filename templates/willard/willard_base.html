@@ -5,10 +5,9 @@
 {% block title %}{{ block.super }}: Lobbying Tracker{% endblock %}
 
 {% block body %}fullWidth{% endblock %}
-{% block css %}
-<link rel="stylesheet" href="//assets.sunlightfoundation.com.s3.amazonaws.com/reporting/1.0/css/lobbying.css" media="screen, projection" />
-{% endblock %}
 {% block main_content %}
+{% css "css/lobbying.css" %}
+
 {% block lobbyheader %}
 <div id="columns">
     <div id="fullColumn" style="overflow:hidden;">
