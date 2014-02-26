@@ -16,11 +16,11 @@
 
 
 
-    <link rel="shortcut icon" href="{% media_url %}/img/favicon.ico" type="image/x-icon">
+    <link rel="shortcut icon" href="//assets-reporting.s3.amazonaws.com/1.0/img/favicon.ico" type="image/x-icon">
     <link rel="alternate" type="application/rss+xml" title="Sunlight Foundation Transparency Ecosystem" href="http://feeds.feedburner.com/SunlightFoundationReportingGroup" />
-    <link rel="icon" href="{% media_url %}/img/favicon.ico" type="image/x-icon">
+    <link rel="icon" href="//assets-reporting.s3.amazonaws.com/1.0/img/favicon.ico" type="image/x-icon">
 
-    <link rel="stylesheet" href="{% media_url %}/css/main.css" media="screen, projection" />
+    <link rel="stylesheet" href="//assets-reporting.s3.amazonaws.com/1.0/css/main.css" media="screen, projection" />
     {% block css %}
     {% endblock %}
     <!--[if IE 6]>{% css "css/buggy.css" %}<![endif]-->
@@ -94,7 +94,7 @@
         <div id="fullWidth">
           <div id="otherPosts">
             <div class="otherProperty">
-              <a href="/SLRG"><img class="reportinggroupLogo" alt="Reporting Group Logo" src="{% media_url %}/img/logo_reporting_grey.png" data-grey="{% media_url %}/img/logo_reporting_grey.png" data-color="{% media_url %}/img/logo_reporting_color.png"/></a>
+              <a href="/SLRG"><img class="reportinggroupLogo" alt="Reporting Group Logo" src="//assets-reporting.s3.amazonaws.com/1.0/img/logo_reporting_grey.png" data-grey="//assets-reporting.s3.amazonaws.com/1.0/img/logo_reporting_grey.png" data-color="//assets-reporting.s3.amazonaws.com/1.0/img/logo_reporting_color.png"/></a>
               <span>Sunlight Foundation Reporting Group</span>
               <ol>
                 {% for entry in SLRG %}
@@ -103,7 +103,7 @@
               </ol>
             </div>
             <div class="otherProperty">
-              <a href="/FLIT"><img class="flitLogo" alt="Foreign Lobbying Influence Tracker Logo" src="{% media_url %}/img/logo_flit_grey.png" data-grey="{% media_url %}/img/logo_flit_grey.png" data-color="{% media_url %}/img/logo_flit_color.png"/></a>
+              <a href="/FLIT"><img class="flitLogo" alt="Foreign Lobbying Influence Tracker Logo" src="//assets-reporting.s3.amazonaws.com/1.0/img/logo_flit_grey.png" data-grey="//assets-reporting.s3.amazonaws.com/1.0/img/logo_flit_grey.png" data-color="//assets-reporting.s3.amazonaws.com/1.0/img/logo_flit_color.png"/></a>
               <span>Foreign Lobbying Influence Tracker</span>
               <ol>
                 {% for entry in FLIT %}
@@ -112,7 +112,7 @@
               </ol>
             </div>
             <div class="otherProperty">
-              <a href="/SS"><img class="subsityscopeLogo" alt="Subsidy Scope Logo" src="{% media_url %}/img/logo_subsity_grey.png" data-grey="{% media_url %}/img/logo_subsity_grey.png" data-color="{% media_url %}/img/logo_subsity_color.png"/></a>
+              <a href="/SS"><img class="subsityscopeLogo" alt="Subsidy Scope Logo" src="//assets-reporting.s3.amazonaws.com/1.0/img/logo_subsity_grey.png" data-grey="//assets-reporting.s3.amazonaws.com/1.0/img/logo_subsity_grey.png" data-color="//assets-reporting.s3.amazonaws.com/1.0/img/logo_subsity_color.png"/></a>
               <span>SubsidyScope</span>
               <ol>
                 {% for entry in SS %}
@@ -121,7 +121,7 @@
               </ol>
             </div>
             <div class="otherProperty">
-              <a href="http://blog.politicalpartytime.org"><img class="partytimeLogo" alt="Party Time Logo" src="{% media_url %}/img/logo_partytime_grey.png" data-grey="{% media_url %}/img/logo_partytime_grey.png" data-color="{% media_url %}/img/logo_partytime_color.png"/></a>
+              <a href="http://blog.politicalpartytime.org"><img class="partytimeLogo" alt="Party Time Logo" src="//assets-reporting.s3.amazonaws.com/1.0/img/logo_partytime_grey.png" data-grey="//assets-reporting.s3.amazonaws.com/1.0/img/logo_partytime_grey.png" data-color="//assets-reporting.s3.amazonaws.com/1.0/img/logo_partytime_color.png"/></a>
               <span>Political Party Time</span>
               <ol>
                 {% for entry in PT %}
@@ -153,14 +153,14 @@
     </div>
     {# Allow override of jquery, b/c this is an *ancient* version. Not sure what parts of site would be broken by mass upgrade, so instead selectively overriding. #}
     {% block jquery %}
-    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
+    <script src="//ajax.googleapis.com/ajax/libs/jquery/1.4.3/jquery.min.js"></script>
     {% endblock %}
     
     {%js "js/reporting.js"%}
     {%js "js/script.js"%}
 
 	{% block js %}
-	<script type="text/javascript" src="http://assets.sunlightfoundation.com/reporting/ReportingTables/js/jquery.tablesorter.js"></script>
+	<script type="text/javascript" src="//assets.sunlightfoundation.com/reporting/ReportingTables/js/jquery.tablesorter.js"></script>
 	{% endblock %}
 
     <script src="http://use.typekit.com/foz3kwy.js"></script>
