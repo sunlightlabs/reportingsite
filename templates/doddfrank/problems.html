@@ -1,0 +1,23 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+{% load doddfrank %}
+
+{% block body %}{{ block.super }} Problems{% endblock %}
+
+{% block content %}
+
+<h3>Meetings that took place before the passage of Dodd-Frank</h3>
+{% for meeting in ancient_meetings %}
+<div>
+    {{ meeting.date }}, <a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.id %}">Details</a>, <a href="{{ meeting.source_url }}">Source</a>
+</div>
+{% endfor %}
+
+<h3>Meetings that took place in the future</h3>
+{% for meeting in future_meetings %}
+<div>
+    {{ meeting.date }}, <a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.id %}">Details</a>, <a href="{{ meeting.source_url }}">Source</a>
+</div>
+{% endfor %}
+
+
+{% endblock content %}

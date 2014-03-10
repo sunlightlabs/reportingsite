@@ -1,0 +1,30 @@
+{% extends "doddfrank/doddfrank_base.html" %}
+
+{% load doddfrank %}
+
+{% block content %}
+
+<h2>Search{% if q %} results{% endif %}</h2>
+<b>These results do not include all recent meetings with officials at the Fed, the Treasury Department or at the SEC; these agencies do not make this information available in a machine-readable format.</b><br />
+<br/><br/>
+
+<h3>Meeting Results</h3>
+<table>
+    <thead>
+        <tr>
+            <th>Date</th>
+            <th>Agency</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        {% for meeting in meetings|slice:":7" %}
+        <tr class="{% cycle 'odd' 'even' %}">
+            <td>{{ meeting.date }}</td>
+            <td>{{ meeting.agency.initials }}</td>
+            <td><a href="{% url doddfrank_meeting_detail agency_slug=meeting.agency.slug id=meeting.pk %}">Details</a></td>
+        </tr>
+        {% endfor %}
+    </tbody>
+</table>
+<br>
