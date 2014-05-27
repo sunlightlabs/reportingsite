@@ -5,6 +5,7 @@ from outside_spending_2014.models import Committee
 from fec_alerts.models import new_filing, Filing_Scrape_Time
 
 
+
 class FilingFeedBase(Feed):
     description_template = 'feeds/fec_filing_description.html'
 
