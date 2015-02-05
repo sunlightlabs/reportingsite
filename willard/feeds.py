@@ -24,7 +24,8 @@ class RegistrationFeed(Feed):
         return Registration.objects.order_by('-received')[:100]
 
     def item_link(self, item):
-        return '/lobbying'
+        return item.get_absolute_url()
+        #return '/lobbying'
 
     def item_description(self, item):
         return make_item_description(item)
