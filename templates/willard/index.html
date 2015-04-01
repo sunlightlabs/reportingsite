@@ -15,6 +15,7 @@
                     <a href="{% url willard_registrations_home %}"><img id="registrationImg" alt="Image of footsteps" src="{% media_url %}/img/bg_registration.png" /></a>
                     <div class="lobbyingHeader">
                         <h3 class="withTip"><a href="{% url willard_registrations_home %}">Lobbying Registration Tracker</a></h3>
+                        {% include "willard/lrt_deprecation.html" %}
                         <p class="tip tipLg">The Lobbyist Registration Tracker, updated weekly, shows which special interests have hired new lobbyists within the last 45 days and includes all registrants since 2008.</p>
                     </div>
 
@@ -64,6 +65,7 @@
                     <a href="/lobbying/postemployment"><img id="employmentImg" alt="Image of briefcase" src="{% media_url %}/img/bg_employment.png" /></a>
                     <div class="lobbyingHeader">
                         <h3 class="withTip"><a href="/lobbying/postemployment">Post Employment Tracker</a></h3>
+                        {% include "willard/pet_deprecation.html" %}
                         <p class="tip tipLg">The Post Employment Tracker shows when covered congressional officials—former members and high-ranking staffers—can legally begin to lobby their old colleagues, though note that not everyone listed has become a lobbyist.</p>
                     </div>
                     {% for dategroup in postemployment|slice:"2" %}
@@ -87,6 +89,7 @@
                     <a id="foreignLobby_column" href="http://foreignlobbying.org"><img id="foreignLobbyingImg" alt="Image of globe" src="{% media_url %}/img/bg_foreignLobbying.png" /></a>
                     <div class="lobbyingHeader">
                         <h3 class="withTip"><a href="http://foreignlobbying.org">Foreign Lobbying Filings</a></h3>
+                        {% include "willard/fara_deprecation.html" %}
                         <p class="tip tipLg">Representatives of foreign governments, political parties and government-controlled entities must disclose detailed information about their work to influence U.S. policy. These are the latest filings submitted under the Foreign Agent Registration Act.</p>
                     </div>
                     {% for dategroup in fara %}
