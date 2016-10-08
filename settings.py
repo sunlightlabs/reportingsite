@@ -3,9 +3,7 @@
 DEBUG = False
 TEMPLATE_DEBUG = DEBUG
 
-ADMINS = (
-     ('Drew Vogel', 'dvogel@sunlightfoundation.com'),
-)
+ADMINS = ()
 
 MANAGERS = ADMINS
 
@@ -59,7 +57,7 @@ MEDIA_URL = '//assets-reporting.s3.amazonaws.com/1.0/'
 ADMIN_MEDIA_PREFIX = 'http://assets.sunlightfoundation.com.s3.amazonaws.com/admin/1.2.1/'
 
 # Make this unique, and don't share it with anybody.
-SECRET_KEY = '***REMOVED***'
+SECRET_KEY = ''
 
 # List of callables that know how to import templates from various sources.
 TEMPLATE_LOADERS = (
@@ -101,7 +99,7 @@ INSTALLED_APPS = (
     'reporting',
     'django.contrib.humanize',
     'mediasync',
-    #'reportingsite.millions', 
+    #'reportingsite.millions',
     'storages',
     'debug_toolbar',
     'haystack',
@@ -115,13 +113,13 @@ INSTALLED_APPS = (
     #'valeo',
     'doddfrank',
 #    'rebuckley',
-    'outside_spending', 
+    'outside_spending',
     'outside_spending_2014',
     'fec_alerts',
     'django.contrib.redirects',
 )
 
-INTERNAL_IPS = ('127.0.0.1','localhost','216.15.37.167')
+INTERNAL_IPS = ('127.0.0.1','localhost')
 
 DEBUG_TOOLBAR_CONFIG = {
     'INTERCEPT_REDIRECTS': False,
@@ -132,7 +130,7 @@ DEFAULT_MARKUP = 'plain'
 BLOGDOR_POSTS_PER_PAGE = 14
 BLOGDOR_ENABLE_FEEDS = True
 
-AKISMET_KEY = '***REMOVED***'
+AKISMET_KEY = ''
 
 WHICHSITE_CHOICES = [('SLRG', 'Sunlight Reporting Group'), ('SS', 'SubsidyScope'), ('FLIT', 'FLIT')]
 ENTRY_TYPES = [('B', 'Blog'), ('R','Report')]
@@ -148,10 +146,10 @@ TEMPLATE_CONTEXT_PROCESSORS = (
 #    "outside_spending_2014.cycle_context_processor.add_cycle",
 )
 
-MEDIASYNC_AWS_KEY = "***REMOVED***"
-MEDIASYNC_AWS_SECRET = "***REMOVED***"
-MEDIASYNC_AWS_BUCKET = "assets-reporting" #"bucket_name"  
-MEDIASYNC_AWS_PREFIX = "1.0"
+MEDIASYNC_AWS_KEY = ""
+MEDIASYNC_AWS_SECRET = ""
+MEDIASYNC_AWS_BUCKET = "" #"bucket_name"
+MEDIASYNC_AWS_PREFIX = ""
 MEDIASYNC_SERVE_REMOTE = True
 
 MEDIASYNC = {
@@ -164,14 +162,14 @@ MEDIASYNC = {
 }
 
 DEFAULT_FILE_STORAGE = 'storages.backends.s3boto.S3BotoStorage'
-AWS_ACCESS_KEY_ID  = MEDIASYNC_AWS_KEY 
+AWS_ACCESS_KEY_ID  = MEDIASYNC_AWS_KEY
 AWS_SECRET_ACCESS_KEY = MEDIASYNC_AWS_SECRET
 AWS_STORAGE_BUCKET_NAME = MEDIASYNC_AWS_BUCKET
 
 """
 HAYSTACK_SEARCH_ENGINE = 'solr'
-#HAYSTACK_SOLR_URL = 'http://morgan.sunlightlabs.org:8080/solr/core_reporting'
-HAYSTACK_SOLR_URL = 'http://ec2-184-72-184-231.compute-1.amazonaws.com:8984/solr/core_reporting'
+#HAYSTACK_SOLR_URL = ''
+HAYSTACK_SOLR_URL = ''
 
 HAYSTACK_SITECONF = 'search_sites'
 
