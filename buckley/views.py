@@ -783,7 +783,7 @@ def committee_contribution_list(request, slug):
 
 
 def committee_filings(request):
-    apikey = '***REMOVED***'
+    apikey = ''
 
     start = datetime.date.today() - datetime.timedelta(1)
     curr = start

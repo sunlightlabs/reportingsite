@@ -682,8 +682,8 @@ from cStringIO import StringIO
 from buckley import MultipartPostHandler
 
 
-USERNAME = '***REMOVED***'
-PASSWORD = '***REMOVED***'
+USERNAME = ''
+PASSWORD = ''
 
 def doccloud_upload(sender, **kwargs):
     """Via http://www.muckrock.com/blog/using-the-documentcloud-api/

@@ -206,7 +206,7 @@ class Command(BaseCommand):
     
     def handle(self, *args, **options):
 
-        apikey = '***REMOVED***'
+        apikey = ''
         if args:
             date = dateparse(args[0]).date()
         else:

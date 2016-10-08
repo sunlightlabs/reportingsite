@@ -6,7 +6,7 @@ from django.core.management.base import BaseCommand, CommandError
 
 import MySQLdb
 
-cursor = MySQLdb.Connection('localhost', 'reporting', '***REMOVED***', 'reporting').cursor()
+cursor = MySQLdb.Connection('localhost', 'reporting', '', 'reporting').cursor()
 
 def get_candidates():
     cursor.execute("SELECT * from all_candidates")
