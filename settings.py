@@ -12,9 +12,9 @@ CACHE_BACKEND = 'memcached://127.0.0.1:11211'
 
 DATABASES = {
         'default': {
-            'NAME': 'reporting',
-            'USER': 'reporting',
-            'PASSWORD': '***REMOVED***',
+            'NAME': '',
+            'USER': '',
+            'PASSWORD': '',
             'ENGINE': 'django.db.backends.mysql',
             #'HOST': 'belushi.sunlightlabs.org',
 	    'HOST': '',

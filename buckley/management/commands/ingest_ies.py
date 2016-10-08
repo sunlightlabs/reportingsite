@@ -54,7 +54,7 @@ def td_lookup(name):
         return NAMES[name]
 
     url = 'http://transparencydata.com/api/1.0/entities.json'
-    body = urllib.urlencode({'apikey': '***REMOVED***', 'search': name})
+    body = urllib.urlencode({'apikey': '', 'search': name})
     url += '?%s' % body
     print url
     data = urllib2.urlopen(url).read()

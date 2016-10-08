@@ -109,7 +109,7 @@ def td_candidate_lookup(name):
     """Look up a candidate by name in Transparency Data
     """
     time.sleep(.5)
-    body = urllib.urlencode({'apikey': '***REMOVED***', 'search': name})
+    body = urllib.urlencode({'apikey': '', 'search': name})
     url = 'http://transparencydata.com/api/1.0/entities.json?%s' % body
     print url
     data = urllib2.urlopen(url).read()

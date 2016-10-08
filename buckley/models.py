@@ -589,8 +589,8 @@ class Candidate(models.Model):
         if not self.crp_id:
             return ''
 
-        body = urllib.urlencode({'apikey': '***REMOVED***',
-                                 'namespace': 'urn:crp:recipient', 
+        body = urllib.urlencode({'apikey': '',
+                                 'namespace': 'urn:crp:recipient',
                                  'id': self.crp_id, })
         url = 'http://transparencydata.com/api/1.0/entities/id_lookup.json?%s' % body
         response = urllib2.urlopen(url).read()

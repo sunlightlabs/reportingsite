@@ -27,7 +27,7 @@ def get_ie_data(name):
     """Get data on an entity from Influence Explorer.
     """
     url = 'http://transparencydata.com/api/1.0/entities.json'
-    body = urllib.urlencode({'apikey': '***REMOVED***',
+    body = urllib.urlencode({'apikey': '',
                              'search': name, })
     url = '%s?%s' % (url, body)
     data = json.loads(urllib2.urlopen(url).read())

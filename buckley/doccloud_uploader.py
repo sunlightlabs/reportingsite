@@ -12,8 +12,8 @@ import MultipartPostHandler
 
 socket.setdefaulttimeout(25)
 
-USERNAME = '***REMOVED***'
-PASSWORD = '***REMOVED***'
+USERNAME = ''
+PASSWORD = ''
 
 def doccloud_upload(sender, **kwargs):
     """Via http://www.muckrock.com/blog/using-the-documentcloud-api/
